@@ -154,8 +154,6 @@ Forget the seen video.,Lupakan video yang telah dilihat.
 Forget the video @%2$s has seen.,Lupakan video yang telah dilihat @%2$s.
 Got it,Mengerti
 Hide profile shortcuts,Sembunyikan pintasan profil
-Hide profile tabs,Sembunyikan tab profil
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.","Pilih tab yang disembunyikan dari strip di atas video profil, misalnya Postingan ulang atau Video yang disukai. Satu tab selalu tetap ada. Mulai ulang TikTok agar berlaku."
 Private videos,Video pribadi
 Reposts,Postingan ulang
 Favorites,Favorit
@@ -2885,3 +2883,7 @@ Keep suggestions on profiles,Tetap tampilkan saran di profil
 "The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.","Baris Akun yang disarankan di bawah tombol Ikuti pada profil tetap muncul, jadi kamu bisa menemukan akun serupa setelah mengikuti seseorang."
 Sort pinned videos with the rest,Urutkan video yang disematkan bersama lainnya
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.","Video yang disematkan menempati tempatnya dalam urutan, tidak tetap di atas, jadi Terbaru dulu menaruhnya sesuai tanggal diunggah."
+Hide or reorder profile tabs,Sembunyikan atau urutkan ulang tab profil
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.","Pilih tab yang disembunyikan dari strip di atas video profil, misalnya Postingan ulang atau Video yang disukai, lalu pakai tanda panah untuk mengatur urutan tab lainnya. Satu tab selalu tetap ada. Mulai ulang TikTok agar berlaku."
+Hide Add bio,Sembunyikan Tambahkan bio
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,Sembunyikan ajakan Tambahkan bio yang ditampilkan TikTok di profil Anda sendiri selama belum ada bio. Anda tetap bisa menambahkannya dari Edit profil.

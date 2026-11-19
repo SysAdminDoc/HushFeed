@@ -157,9 +157,7 @@ Forget the video @%2$s has seen.	Olvidar el vídeo que ha visto @%2$s.
 Got it	Entendido
 Hide profile shortcuts	Ocultar accesos directos del perfil
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	Ocultar pestañas del perfil
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Elige las pestañas que quieres ocultar en la franja sobre los vídeos de un perfil, como Republicaciones o Vídeos que le gustaron. Siempre se queda una pestaña. Reinicia TikTok para que se aplique.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Vídeos privados
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3038,3 +3036,7 @@ Keep suggestions on profiles	Mantener sugerencias en los perfiles
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	La fila de Cuentas sugeridas bajo el botón Seguir de un perfil se sigue mostrando, para que encuentres cuentas parecidas después de seguir a alguien.
 Sort pinned videos with the rest	Ordenar los vídeos fijados con el resto
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Los vídeos fijados ocupan su lugar en el orden en vez de quedarse arriba, así que Más recientes primero los pone en la fecha en que se publicaron.
+Hide or reorder profile tabs	Ocultar o reordenar las pestañas del perfil
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Elige las pestañas que quieres ocultar en la franja sobre los vídeos de un perfil, como Republicaciones o Vídeos que le gustaron, y usa las flechas para poner las demás en tu orden. Siempre se queda una pestaña. Reinicia TikTok para que se aplique.
+Hide Add bio	Ocultar Añadir biografía
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Oculta el aviso Añadir biografía que TikTok muestra en tu propio perfil mientras no tiene biografía. Puedes seguir añadiendo una desde Editar perfil.

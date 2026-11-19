@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -19,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,11 +33,16 @@ import app.morphe.extension.tiktok.settings.Settings;
 
 /**
  * Picks the profile tabs to hide from a fixed list, since TikTok names every tab by an icon rather
- * than a word. A pick the list no longer has is kept.
+ * than a word, and the order of the ones left (#466). A pick the list no longer has is kept.
  */
 @SuppressWarnings("deprecation")
 public final class ProfileTabChecklistPreference extends DialogPreference {
+    /** Where a recreated screen keeps the unsaved order, next to the picks. */
+    private static final String DRAFT_ORDER = "profile_tab_order";
+
     private final Set<String> selected = new LinkedHashSet<>();
+    /** Every row's key, top to bottom, as the strip will take them. */
+    private final List<String> rowOrder = new ArrayList<>();
     private LinearLayout rows;
     private String originalPicks = "";
     private boolean selectionSaved;
@@ -45,8 +52,8 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
     public ProfileTabChecklistPreference(Context context) {
         super(context);
         setKey("profile_tab_checklist");
-        setTitle("Hide profile tabs");
-        setSummary("Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.");
+        setTitle("Hide or reorder profile tabs");
+        setSummary("Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.");
     }
 
     @Override
@@ -66,6 +73,8 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
         originalPicks = Settings.PROFILE_TAB_PICKS.savedValue();
         selected.clear();
         selected.addAll(selectedKeys(originalPicks));
+        rowOrder.clear();
+        rowOrder.addAll(ProfileTabs.shownOrder(Settings.PROFILE_TAB_ORDER.savedValue()));
 
         LinearLayout root = new LinearLayout(context);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -100,9 +109,17 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
 
     private void renderRows() {
         rows.removeAllViews();
-        for (ProfileTabs.Row row : ProfileTabs.ROWS) {
-            CheckBox check = new CheckBox(getContext());
-            check.setText(L10n.t(getContext(), row.label));
+        Context context = getContext();
+        for (int index = 0; index < rowOrder.size(); index++) {
+            ProfileTabs.Row row = row(rowOrder.get(index));
+            if (row == null) continue;
+            String label = L10n.t(context, row.label);
+            LinearLayout line = new LinearLayout(context);
+            line.setOrientation(LinearLayout.HORIZONTAL);
+            line.setGravity(Gravity.CENTER_VERTICAL);
+
+            CheckBox check = new CheckBox(context);
+            check.setText(label);
             SettingsUi.styleCheckBoxRow(check);
             check.setTag("profile_tab_" + row.key);
             check.setChecked(selected.contains(row.key));
@@ -110,9 +127,43 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
                 if (checked) selected.add(row.key);
                 else selected.remove(row.key);
             });
-            rows.addView(check, new LinearLayout.LayoutParams(
+            line.addView(check, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+            line.addView(moveButton(row.key, label, "↑", "Move up", index > 0, -1));
+            line.addView(moveButton(row.key, label, "↓", "Move down", index < rowOrder.size() - 1, 1));
+            rows.addView(line, new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
+    }
+
+    private TextView moveButton(String key, String label, String arrow, String action, boolean enabled, int step) {
+        Context context = getContext();
+        TextView button = SettingsUi.text(context, arrow, SettingsUi.TEXT_TITLE, SettingsUi.textPrimary(),
+                Typeface.NORMAL);
+        SettingsUi.styleTextAction(button, false);
+        button.setTag("profile_tab_" + key + (step < 0 ? "_up" : "_down"));
+        button.setContentDescription(L10n.f(context, "%1$s: %2$s", L10n.t(context, action), label));
+        button.setEnabled(enabled);
+        button.setClickable(true);
+        button.setOnClickListener(view -> move(key, step));
+        return button;
+    }
+
+    /** Moves a row one place, and keeps the focus on the arrow that moved it. */
+    void move(String key, int step) {
+        int from = rowOrder.indexOf(key);
+        int to = from + step;
+        if (from < 0 || to < 0 || to >= rowOrder.size()) return;
+        Collections.swap(rowOrder, from, to);
+        renderRows();
+        View again = rows.findViewWithTag("profile_tab_" + key + (step < 0 ? "_up" : "_down"));
+        if (again != null && again.isEnabled()) again.requestFocus();
+    }
+
+    private static ProfileTabs.Row row(String key) {
+        for (ProfileTabs.Row row : ProfileTabs.ROWS) {
+            if (row.key.equals(key)) return row;
+        }
+        return null;
     }
 
     @Override
@@ -120,6 +171,21 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
         builder.setPositiveButton(L10n.t(getContext(), "Save"), (dialog, which)
                 -> onClick(dialog, DialogInterface.BUTTON_POSITIVE));
         builder.setNegativeButton(L10n.t(getContext(), "Cancel"), null);
+        // Its own click listener below, so it sorts the rows without closing the dialog.
+        builder.setNeutralButton(L10n.t(getContext(), "Original order"), null);
+    }
+
+    /** Puts the rows back in the list's own order, which saves as TikTok's order. */
+    void resetOrder() {
+        rowOrder.clear();
+        rowOrder.addAll(ProfileTabs.shownOrder(""));
+        renderRows();
+    }
+
+    /** The order to save: empty while the rows are in the list's own order, so TikTok's stays. */
+    String buildOrder() {
+        if (rowOrder.equals(ProfileTabs.shownOrder(""))) return "";
+        return String.join(", ", rowOrder);
     }
 
     @Override
@@ -136,16 +202,25 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
         if (draft != null) {
             selected.clear();
             selected.addAll(DialogDraft.picks(draft));
+            List<String> order = draft.getStringArrayList(DRAFT_ORDER);
+            if (order != null) {
+                rowOrder.clear();
+                rowOrder.addAll(ProfileTabs.shownOrder(String.join(",", order)));
+            }
             renderRows();
         }
         SettingsUi.styleFramedDialog(getDialog());
         AlertDialog dialog = (AlertDialog) getDialog();
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(view -> {
+            if (view.isEnabled()) resetOrder();
+        });
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
             if (!view.isEnabled()) return;
             String picks = buildPicks();
+            String order = buildOrder();
             setChoicesEnabled(dialog, false);
             boolean accepted = Utils.runOnBackgroundThread(() -> {
-                boolean saved = Settings.PROFILE_TAB_PICKS.save(picks);
+                boolean saved = Settings.PROFILE_TAB_PICKS.save(picks) && Settings.PROFILE_TAB_ORDER.save(order);
                 Utils.runOnMainThread(() -> {
                     if (saved) notifyChanged();
                     if (getDialog() != dialog || !dialog.isShowing()) {
@@ -173,7 +248,9 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
         if (!DialogDraft.open(getDialog()) || rows == null) return superState;
-        return new DialogDraft(superState, DialogDraft.ofPicks(selected, null));
+        Bundle values = DialogDraft.ofPicks(selected, null);
+        values.putStringArrayList(DRAFT_ORDER, new ArrayList<>(rowOrder));
+        return new DialogDraft(superState, values);
     }
 
     @Override
@@ -194,8 +271,17 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
     private void setChoicesEnabled(AlertDialog dialog, boolean enabled) {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(enabled);
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(enabled);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(enabled);
+        if (enabled) {
+            // The arrows at the ends stay off, so draw the rows again rather than switch them on.
+            renderRows();
+            return;
+        }
         for (int index = 0; index < rows.getChildCount(); index++) {
-            rows.getChildAt(index).setEnabled(enabled);
+            ViewGroup line = (ViewGroup) rows.getChildAt(index);
+            for (int child = 0; child < line.getChildCount(); child++) {
+                line.getChildAt(child).setEnabled(false);
+            }
         }
     }
 
@@ -204,7 +290,7 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
     }
 
     private void saveSelection() {
-        if (Settings.PROFILE_TAB_PICKS.save(buildPicks())) {
+        if (Settings.PROFILE_TAB_PICKS.save(buildPicks()) && Settings.PROFILE_TAB_ORDER.save(buildOrder())) {
             notifyChanged();
         } else {
             reportSaveFailure();

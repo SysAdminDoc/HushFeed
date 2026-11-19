@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import app.morphe.extension.shared.Utils;
@@ -36,10 +37,52 @@ public class ProfileTabChecklistTest {
 
     @After public void reset() {
         Settings.PROFILE_TAB_PICKS.save("");
+        Settings.PROFILE_TAB_ORDER.save("");
     }
 
     private static CheckBox row(View root, String key) {
         return (CheckBox) root.findViewWithTag("profile_tab_" + key);
+    }
+
+    /** The key of each row, top to bottom, as the dialog shows them. */
+    private static String shown(View root) {
+        ViewGroup rows = (ViewGroup) row(root, "videos").getParent().getParent();
+        StringBuilder keys = new StringBuilder();
+        for (int index = 0; index < rows.getChildCount(); index++) {
+            View check = ((ViewGroup) rows.getChildAt(index)).getChildAt(0);
+            if (keys.length() > 0) keys.append(", ");
+            keys.append(String.valueOf(check.getTag()).substring("profile_tab_".length()));
+        }
+        return keys.toString();
+    }
+
+    @Test public void theArrowsMoveARowAndTheOrderSaves() {
+        Settings.PROFILE_TAB_ORDER.save("like");
+        try (var owner = Robolectric.buildActivity(Host.class).setup()) {
+            Utils.setContext(owner.get());
+            ProfileTabChecklistPreference checklist = new ProfileTabChecklistPreference(owner.get());
+            View root = checklist.onCreateDialogView();
+
+            assertEquals("like, videos, private, repost, favorite, shop, music, effect, series, sticker, cast",
+                    shown(root));
+            assertFalse("the top row can't go up", root.findViewWithTag("profile_tab_like_up").isEnabled());
+            assertFalse("the last row can't go down", root.findViewWithTag("profile_tab_cast_down").isEnabled());
+            assertEquals("Move up: Reposts",
+                    root.findViewWithTag("profile_tab_repost_up").getContentDescription().toString());
+
+            row(root, "repost").setChecked(true);
+            assertTrue(root.findViewWithTag("profile_tab_repost_up").performClick());
+            assertTrue(root.findViewWithTag("profile_tab_like_down").performClick());
+            assertEquals("videos, like, repost, private, favorite, shop, music, effect, series, sticker, cast",
+                    shown(root));
+            assertEquals(shown(root), checklist.buildOrder());
+            assertTrue("a pick stays ticked when its row moves", row(root, "repost").isChecked());
+            assertEquals("repost", checklist.buildPicks());
+
+            checklist.resetOrder();
+            assertEquals("the list's own order saves as TikTok's", "", checklist.buildOrder());
+            assertEquals(String.join(", ", ProfileTabs.shownOrder("")), shown(root));
+        }
     }
 
     @Test public void everyRowShowsAndAPickNoRowOffersIsKept() {

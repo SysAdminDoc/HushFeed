@@ -61,6 +61,7 @@
       "VIDEO_LENGTH_ON_GRID",
       "HIDE_GRID_VIEW_COUNT",
       "PROFILE_GRID_SORT",
+      "SORT_PINNED_WITH_REST",
       "LIKED_GRID_SORT",
       "FAVORITES_GRID_SORT",
       "COLLECTION_GRID_SORT",
@@ -444,7 +445,9 @@
       "HIDDEN_PROFILE_SHORTCUTS",
       "PROFILE_SHORTCUT_PICKS",
       "PROFILE_TAB_PICKS",
+      "PROFILE_TAB_ORDER",
       "HIDE_PROFILE_THOUGHTS",
+      "HIDE_ADD_BIO",
       "ENABLE_THOUGHTS"
     ],
     "Hide search suggestions": [
@@ -453,7 +456,8 @@
       "DISCOVER_SEARCH_BAR_ONLY"
     ],
     "Hide suggested accounts": [
-      "HIDE_INBOX_SUGGESTED_ACCOUNTS"
+      "HIDE_INBOX_SUGGESTED_ACCOUNTS",
+      "KEEP_PROFILE_SUGGESTED_ACCOUNTS"
     ],
     "Hide the launcher shortcuts": [
       "HIDE_LAUNCHER_SHORTCUTS"

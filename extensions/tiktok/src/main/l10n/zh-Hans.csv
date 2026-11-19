@@ -747,8 +747,6 @@ Don't open a reply under each comment. View replies still shows all of them.,不
 Hide playlist videos,隐藏播放列表视频
 Hide subscriber-only videos,隐藏仅限订阅者的视频
 Hide profile shortcuts,隐藏个人资料快捷方式
-Hide profile tabs,隐藏个人资料标签页
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.",选择要在个人资料视频上方的标签栏中隐藏的标签页，例如转发或喜欢的视频。始终保留一个标签页。重新启动 TikTok 以应用此操作.
 Private videos,私密视频
 Reposts,转发
 Favorites,收藏
@@ -2883,3 +2881,7 @@ Keep suggestions on profiles,在个人主页保留推荐
 "The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.",个人主页关注按钮下的推荐账号一栏会继续显示，方便你关注某人后找到相似的账号.
 Sort pinned videos with the rest,置顶视频与其他视频一起排序
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.",置顶视频按所选顺序排在相应位置，而不是留在最前面，所以「最新的在前」会按发布日期放置它们.
+Hide or reorder profile tabs,隐藏或重新排列个人资料标签页
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.",选择要在个人资料视频上方的标签栏中隐藏的标签页，例如转发或喜欢的视频，并用箭头把其余标签页排成你想要的顺序。始终保留一个标签页。重新启动 TikTok 以应用此操作.
+Hide Add bio,隐藏添加简介
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,隐藏 TikTok 在你自己的主页还没有简介时显示的添加简介提示。你仍然可以在编辑主页中添加简介.

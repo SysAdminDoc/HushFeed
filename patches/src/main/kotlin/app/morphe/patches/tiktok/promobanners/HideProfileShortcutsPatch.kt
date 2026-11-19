@@ -57,8 +57,9 @@ val hideProfileShortcutsPatch = bytecodePatch(
     name = "Hide profile shortcuts",
     description = "Hides the shortcuts you pick from the row under a profile's bio, like " +
         "TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked " +
-        "videos. It can hide the Thoughts bubble, and Balance and the " +
-        "TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts " +
+        "videos, with the tabs that stay in your order. It can hide the Thoughts bubble and the " +
+        "Add bio prompt, plus Balance and the TikTok Minis icons in your profile's menu. It can " +
+        "also turn Thoughts on for accounts " +
         "TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
     default = true,
 ) {
@@ -83,6 +84,14 @@ val hideProfileShortcutsPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Hide thoughts on profiles on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // The Add bio prompt on your own profile (#466), held by ProfileAddBioAnchorsTest.
+        val addBio = try {
+            ProfileAddBioBindFingerprint.method.let { it to it.addBioShow(PATCH_NAME) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Hide Add bio on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         // Balance in your profile's menu (#194), held the same way by ProfileMenuCellsAnchorsTest.
@@ -121,6 +130,14 @@ val hideProfileShortcutsPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileThoughts()V",
+            )
+        }
+        if (addBio != null) {
+            val (bind, show) = addBio
+            bind.hideAddBio(show)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAddBio()V",
             )
         }
         if (menuCells != null) {

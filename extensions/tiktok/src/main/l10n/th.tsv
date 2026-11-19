@@ -160,9 +160,7 @@ Forget the video @%2$s has seen.	ลืมวิดีโอที่ @%2$s ไ�
 Got it	รับทราบ
 Hide profile shortcuts	ซ่อนทางลัดในโปรไฟล์
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	ซ่อนแท็บในโปรไฟล์
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	เลือกแท็บที่จะซ่อนจากแถบเหนือวิดีโอของโปรไฟล์ เช่น รีโพสต์ หรือ วิดีโอที่ถูกใจ จะเหลือแท็บไว้อย่างน้อยหนึ่งแท็บเสมอ รีสตาร์ท TikTok เพื่อนำการเปลี่ยนแปลงนี้ไปใช้
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	วิดีโอส่วนตัว
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3041,3 +3039,7 @@ Keep suggestions on profiles	คงคำแนะนำไว้ในโปร
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	แถวบัญชีที่แนะนำใต้ปุ่มติดตามในโปรไฟล์ยังแสดงอยู่ เพื่อให้คุณหาบัญชีที่คล้ายกันได้หลังจากติดตามใครสักคน
 Sort pinned videos with the rest	เรียงวิดีโอที่ปักหมุดไปพร้อมกับวิดีโออื่น
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	วิดีโอที่ปักหมุดจะอยู่ตามลำดับแทนที่จะค้างอยู่ด้านบน ดังนั้น ใหม่ล่าสุดก่อน จะวางไว้ตามวันที่โพสต์
+Hide or reorder profile tabs	ซ่อนหรือจัดลำดับแท็บในโปรไฟล์
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	เลือกแท็บที่จะซ่อนจากแถบเหนือวิดีโอของโปรไฟล์ เช่น รีโพสต์ หรือ วิดีโอที่ถูกใจ และใช้ลูกศรจัดลำดับแท็บที่เหลือตามที่ต้องการ จะเหลือแท็บไว้อย่างน้อยหนึ่งแท็บเสมอ รีสตาร์ท TikTok เพื่อนำการเปลี่ยนแปลงนี้ไปใช้
+Hide Add bio	ซ่อนเพิ่มประวัติ
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	ซ่อนข้อความชวนเพิ่มประวัติที่ TikTok แสดงบนโปรไฟล์ของคุณเมื่อยังไม่มีประวัติ คุณยังเพิ่มประวัติได้จากแก้ไขโปรไฟล์

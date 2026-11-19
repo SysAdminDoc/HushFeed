@@ -160,9 +160,7 @@ Forget the video @%2$s has seen.	Das Video vergessen, das @%2$s gesehen hat.
 Got it	Verstanden
 Hide profile shortcuts	Profil-Verknüpfungen ausblenden
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	Profil-Tabs ausblenden
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Wähle die Tabs, die über den Videos eines Profils ausgeblendet werden, etwa Reposts oder Gelikte Videos. Ein Tab bleibt immer. TikTok neu starten, damit das gilt.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Private Videos
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3041,3 +3039,7 @@ Keep suggestions on profiles	Vorschläge auf Profilen behalten
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	Die Zeile mit vorgeschlagenen Konten unter dem Folgen-Button eines Profils bleibt sichtbar, damit du nach dem Folgen ähnliche Konten findest.
 Sort pinned videos with the rest	Angeheftete Videos mit einsortieren
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Angeheftete Videos bekommen ihren Platz in der Reihenfolge, statt oben zu bleiben, sodass Neueste zuerst sie beim Datum ihrer Veröffentlichung einordnet.
+Hide or reorder profile tabs	Profil-Tabs ausblenden oder umsortieren
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Wähle die Tabs, die über den Videos eines Profils ausgeblendet werden, etwa Reposts oder Gelikte Videos, und bring die übrigen mit den Pfeilen in deine Reihenfolge. Ein Tab bleibt immer. TikTok neu starten, damit das gilt.
+Hide Add bio	Bio hinzufügen ausblenden
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Blende den Hinweis Bio hinzufügen aus, den TikTok auf deinem eigenen Profil zeigt, solange es keine Bio hat. Unter Profil bearbeiten kannst du weiterhin eine hinzufügen.

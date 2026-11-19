@@ -1827,8 +1827,12 @@ public class Settings extends BaseSettings {
     // Profile tabs: the checklist rows picked to hide (private, repost, favorite and the rest). Read
     // whenever a profile lays out its tabs, so a profile opened after a change follows it.
     public static final StringSetting PROFILE_TAB_PICKS = new StringSetting("profile_tab_picks", "");
+    // The same checklist's rows in the order picked for the strip (#466). Empty keeps TikTok's.
+    public static final StringSetting PROFILE_TAB_ORDER = new StringSetting("profile_tab_order", "");
     /** The Thoughts bubble above a profile picture (#122). Read when a profile's picture is built. */
     public static final BooleanSetting HIDE_PROFILE_THOUGHTS = new BooleanSetting("hide_profile_thoughts", FALSE, true);
+    /** The "+ Add bio" prompt on your own profile when it has no bio (#466). Read whenever the header binds. */
+    public static final BooleanSetting HIDE_ADD_BIO = new BooleanSetting("hide_add_bio", FALSE);
     /** TikTok's two Thoughts gates answer yes (#186). A restart, since TikTok keeps what it built. */
     public static final BooleanSetting ENABLE_THOUGHTS = new BooleanSetting("enable_thoughts", FALSE, true);
     // Popup labels (TikTok's own popup layer): the labels ticked in the checklist, and the ones

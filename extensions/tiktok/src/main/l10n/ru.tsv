@@ -202,9 +202,7 @@ Forget the video @%2$s has seen.	Забыть видео, просмотренн
 Got it	Понятно
 Hide profile shortcuts	Скрыть ярлыки профиля
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	Скрыть вкладки профиля
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Выберите вкладки, которые нужно скрыть над видео профиля, например Репосты или Понравившиеся видео. Одна вкладка остаётся всегда. Перезапустите TikTok, чтобы это применить.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Личные видео
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3221,3 +3219,7 @@ Keep suggestions on profiles	Оставить рекомендации в про
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	Строка «Рекомендуемые аккаунты» под кнопкой «Подписаться» в профиле остаётся, чтобы после подписки можно было найти похожие аккаунты.
 Sort pinned videos with the rest	Сортировать закреплённые видео вместе с остальными
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Закреплённые видео встают на своё место в порядке, а не остаются наверху, поэтому «Сначала новые» ставит их по дате публикации.
+Hide or reorder profile tabs	Скрыть или упорядочить вкладки профиля
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Выберите вкладки, которые нужно скрыть над видео профиля, например Репосты или Понравившиеся видео, а стрелками расставьте остальные в нужном порядке. Одна вкладка остаётся всегда. Перезапустите TikTok, чтобы это применить.
+Hide Add bio	Скрыть «Добавить описание»
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Скрывает подсказку «Добавить описание», которую TikTok показывает в вашем профиле, пока в нём нет описания. Добавить его по-прежнему можно в разделе «Изменить профиль».

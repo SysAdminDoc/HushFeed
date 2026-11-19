@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +20,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 /**
  * Hides the tabs you pick from the strip over a profile's videos: Videos, Private, Reposts,
  * Favorites, Liked, Shop and the rest. The strip always keeps one tab, and with Videos gone the
- * profile opens on the first tab left, which TikTok's pager already copes with (#399).
+ * profile opens on the first tab left, which TikTok's pager already copes with (#399). The tabs
+ * that stay can also be put in an order of your own (#466).
  *
  * <p>TikTok's profile pager asks for the tab types it is about to lay out, a list of numbers, and
  * builds one tab for each. The numbers are TikTok's own and can move between builds, so they are
@@ -76,10 +78,11 @@ public final class ProfileTabs {
         try {
             if (types == null || types.isEmpty()) return types;
             Set<String> hidden = hiddenNames();
-            if (hidden.isEmpty()) return types;
+            List<String> order = order(Settings.PROFILE_TAB_ORDER.get());
+            if (hidden.isEmpty() && order.isEmpty()) return types;
             Map<Integer, String> names = tabNames;
             if (names == null) tabNames = names = parseTabNames(tabNamesNative());
-            return filter(types, names, hidden);
+            return arrange(filter(types, names, hidden), names, order);
         } catch (Throwable error) {
             Logger.printException(() -> "Profile tabs: could not filter the tabs", error);
             return types;
@@ -115,6 +118,71 @@ public final class ProfileTabs {
         // ArrayList otherwise, since the pager swaps entries in the list it gets.
         if (kept.isEmpty() || kept.size() == types.size()) return types;
         return kept;
+    }
+
+    /**
+     * Puts the tabs in the saved order (#466). Only tabs the order names move, and they move
+     * among the places those tabs held, so a tab it doesn't name keeps its spot. A new list when
+     * anything moved, for the same reason {@link #filter(List, Map, Set)} hands one back.
+     */
+    static List<?> arrange(List<?> types, Map<?, ?> names, List<String> order) {
+        if (types == null || names == null || order.isEmpty()) return types;
+        List<Integer> places = new ArrayList<>();
+        List<Object> named = new ArrayList<>();
+        for (int index = 0; index < types.size(); index++) {
+            if (rank(names.get(types.get(index)), order) < 0) continue;
+            places.add(index);
+            named.add(types.get(index));
+        }
+        List<Object> sorted = new ArrayList<>(named);
+        // Stable, so the two Shop tabs, or a drama's three, keep TikTok's order between them.
+        sorted.sort(Comparator.comparingInt((Object type) -> rank(names.get(type), order)));
+        if (sorted.equals(named)) return types;
+        List<Object> arranged = new ArrayList<>(types);
+        for (int index = 0; index < places.size(); index++) {
+            arranged.set(places.get(index), sorted.get(index));
+        }
+        Logger.printDebug(() -> "Profile tabs: " + types + " arranged as " + arranged);
+        return arranged;
+    }
+
+    /** Where a tab's row sits in the saved order, or -1 when the order doesn't name it. */
+    private static int rank(Object name, List<String> order) {
+        if (!(name instanceof String)) return -1;
+        for (Row row : ROWS) {
+            if (row.names.contains(name)) return order.indexOf(row.key);
+        }
+        return -1;
+    }
+
+    /** The row keys in a saved order, each once, without any the checklist no longer offers. */
+    public static List<String> order(String stored) {
+        List<String> keys = new ArrayList<>();
+        if (stored == null) return keys;
+        for (String token : stored.split("[,\\n]")) {
+            String key = canonical(token);
+            if (!keys.contains(key) && isRow(key)) keys.add(key);
+        }
+        return keys;
+    }
+
+    /**
+     * Every row's key in the order the checklist shows them: the saved order first, then any
+     * row it doesn't name, in the list's own order.
+     */
+    public static List<String> shownOrder(String stored) {
+        List<String> keys = order(stored);
+        for (Row row : ROWS) {
+            if (!keys.contains(row.key)) keys.add(row.key);
+        }
+        return keys;
+    }
+
+    private static boolean isRow(String key) {
+        for (Row row : ROWS) {
+            if (row.key.equals(key)) return true;
+        }
+        return false;
     }
 
     /** TikTok's names for the tabs the picks hide. Paused, the default, so none. */

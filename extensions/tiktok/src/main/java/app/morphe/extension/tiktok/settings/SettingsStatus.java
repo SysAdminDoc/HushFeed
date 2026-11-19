@@ -881,6 +881,13 @@ public class SettingsStatus {
         profileThoughtsEnabled = true;
     }
 
+    /** Hide profile shortcuts found where your profile's header shows its Add bio prompt, and hooked it. */
+    public static boolean addBioEnabled = false;
+
+    public static void enableAddBio() {
+        addBioEnabled = true;
+    }
+
     /** Hide profile shortcuts found TikTok's two Thoughts gates on this build and put the switch in front. */
     public static boolean thoughtsSwitchEnabled = false;
 

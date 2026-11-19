@@ -368,6 +368,15 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                         Settings.HIDE_PROFILE_THOUGHTS
                 ));
             }
+            if (SettingsStatus.addBioEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide Add bio",
+                        "Hide the Add bio prompt TikTok shows on your own profile while it has no bio. "
+                                + "You can still add one from Edit profile.",
+                        Settings.HIDE_ADD_BIO
+                ));
+            }
             if (SettingsStatus.thoughtsSwitchEnabled) {
                 addPreference(new TogglePreference(
                         context,

@@ -216,9 +216,7 @@ Forget the video @%2$s has seen.	انس الفيديو الذي شاهده @%2$s
 Got it	فهمت
 Hide profile shortcuts	إخفاء اختصارات الملف الشخصي
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	إخفاء علامات تبويب الملف الشخصي
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	اختر علامات التبويب التي تريد إخفاءها من الشريط فوق فيديوهات الملف الشخصي، مثل إعادات النشر أو الفيديوهات التي أعجبتك. تبقى علامة تبويب واحدة دائمًا. أعد تشغيل TikTok لتطبيق هذا.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	الفيديوهات الخاصة
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3285,3 +3283,7 @@ Keep suggestions on profiles	إبقاء الاقتراحات في الملفات
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	يبقى صف الحسابات المقترحة أسفل زر المتابعة في الملف الشخصي ظاهرًا، لتجد حسابات مشابهة بعد أن تتابع شخصًا.
 Sort pinned videos with the rest	رتّب الفيديوهات المثبتة مع البقية
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	تأخذ الفيديوهات المثبتة مكانها في الترتيب بدلًا من البقاء في الأعلى، فيضعها خيار الأحدث أولا في تاريخ نشرها.
+Hide or reorder profile tabs	إخفاء علامات تبويب الملف الشخصي أو إعادة ترتيبها
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	اختر علامات التبويب التي تريد إخفاءها من الشريط فوق فيديوهات الملف الشخصي، مثل إعادات النشر أو الفيديوهات التي أعجبتك، واستخدم الأسهم لترتيب البقية كما تريد. تبقى علامة تبويب واحدة دائمًا. أعد تشغيل TikTok لتطبيق هذا.
+Hide Add bio	إخفاء إضافة نبذة
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	إخفاء مطالبة إضافة نبذة التي يعرضها TikTok في ملفك الشخصي ما دام بلا نبذة. يمكنك إضافة نبذة من تعديل الملف الشخصي.

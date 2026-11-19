@@ -160,9 +160,7 @@ Forget the video @%2$s has seen.	Dimentica il video visto da @%2$s.
 Got it	Capito
 Hide profile shortcuts	Nascondi le scorciatoie del profilo
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	Nascondi le schede del profilo
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Scegli le schede da nascondere nella fascia sopra i video di un profilo, come Repost o Video con Mi piace. Una scheda resta sempre. Riavvia TikTok per applicare la modifica.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Video privati
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3038,3 +3036,7 @@ Keep suggestions on profiles	Mantieni i suggerimenti sui profili
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	La riga Account suggeriti sotto il pulsante Segui di un profilo resta visibile, così trovi account simili dopo aver seguito qualcuno.
 Sort pinned videos with the rest	Ordina i video in evidenza con gli altri
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	I video in evidenza prendono il loro posto nell'ordine invece di restare in cima, così Prima i più recenti li mette alla data in cui sono stati pubblicati.
+Hide or reorder profile tabs	Nascondi o riordina le schede del profilo
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Scegli le schede da nascondere nella fascia sopra i video di un profilo, come Repost o Video con Mi piace, e usa le frecce per mettere le altre nel tuo ordine. Una scheda resta sempre. Riavvia TikTok per applicare la modifica.
+Hide Add bio	Nascondi Aggiungi bio
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Nascondi l'invito Aggiungi bio che TikTok mostra sul tuo profilo finché non ha una bio. Puoi comunque aggiungerne una da Modifica profilo.

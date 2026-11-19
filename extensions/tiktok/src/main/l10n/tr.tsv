@@ -157,9 +157,7 @@ Forget the video @%2$s has seen.	@%2$s hesabının gördüğü videoyu unut.
 Got it	Anladım
 Hide profile shortcuts	Profil kısayollarını gizle
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
-Hide profile tabs	Profil sekmelerini gizle
 # context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Bir profilin videolarının üstündeki şeritte gizlenecek sekmeleri seç, örneğin Yeniden gönderilenler veya Beğenilen videolar. Bir sekme her zaman kalır. Bunu uygulamak için TikTok'u yeniden başlat.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Gizli videolar
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -3038,3 +3036,7 @@ Keep suggestions on profiles	Profillerde önerileri koru
 The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.	Bir profilin Takip et düğmesinin altındaki Önerilen hesaplar satırı görünmeye devam eder, böylece birini takip ettikten sonra benzer hesaplar bulabilirsin.
 Sort pinned videos with the rest	Sabitlenen videoları diğerleriyle sırala
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Sabitlenen videolar en üstte kalmak yerine sıradaki yerini alır, böylece Önce en yeni onları paylaşıldıkları tarihe koyar.
+Hide or reorder profile tabs	Profil sekmelerini gizle veya yeniden sırala
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Bir profilin videolarının üstündeki şeritte gizlenecek sekmeleri seç, örneğin Yeniden gönderilenler veya Beğenilen videolar, kalanları da oklarla istediğin sıraya koy. Bir sekme her zaman kalır. Bunu uygulamak için TikTok'u yeniden başlat.
+Hide Add bio	Biyografi ekle'yi gizle
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Profilinde biyografi yokken TikTok'un gösterdiği Biyografi ekle istemini gizle. Biyografiyi yine Profili düzenle bölümünden ekleyebilirsin.

@@ -67,6 +67,7 @@
       "video_length_on_grid",
       "hide_grid_view_count",
       "profile_grid_sort",
+      "sort_pinned_with_rest",
       "liked_grid_sort",
       "favorites_grid_sort",
       "collection_grid_sort",
@@ -447,7 +448,9 @@
       "hidden_profile_shortcuts",
       "profile_shortcut_picks",
       "profile_tab_picks",
+      "profile_tab_order",
       "hide_profile_thoughts",
+      "hide_add_bio",
       "enable_thoughts"
     ],
     "Hide read receipts": [
@@ -459,7 +462,8 @@
       "discover_search_bar_only"
     ],
     "Hide suggested accounts": [
-      "hide_inbox_suggested_accounts"
+      "hide_inbox_suggested_accounts",
+      "keep_profile_suggested_accounts"
     ],
     "Hide the launcher shortcuts": [
       "hide_launcher_shortcuts"
@@ -2215,6 +2219,12 @@
       "type": "string",
       "default": ""
     },
+    "hide_add_bio": {
+      "field": "HIDE_ADD_BIO",
+      "key": "hide_add_bio",
+      "type": "boolean",
+      "default": false
+    },
     "hide_ai_cast": {
       "field": "HIDE_AI_CAST",
       "key": "hide_ai_cast",
@@ -3201,6 +3211,12 @@
       "type": "boolean",
       "default": false
     },
+    "keep_profile_suggested_accounts": {
+      "field": "KEEP_PROFILE_SUGGESTED_ACCOUNTS",
+      "key": "keep_profile_suggested_accounts",
+      "type": "boolean",
+      "default": false
+    },
     "keep_pulled_sounds": {
       "field": "KEEP_PULLED_SOUNDS",
       "key": "keep_pulled_sounds",
@@ -3881,6 +3897,12 @@
       "type": "boolean",
       "default": false
     },
+    "profile_tab_order": {
+      "field": "PROFILE_TAB_ORDER",
+      "key": "profile_tab_order",
+      "type": "string",
+      "default": ""
+    },
     "profile_tab_picks": {
       "field": "PROFILE_TAB_PICKS",
       "key": "profile_tab_picks",
@@ -4458,6 +4480,12 @@
     "skip_update_checks": {
       "field": "SKIP_UPDATE_CHECKS",
       "key": "skip_update_checks",
+      "type": "boolean",
+      "default": false
+    },
+    "sort_pinned_with_rest": {
+      "field": "SORT_PINNED_WITH_REST",
+      "key": "sort_pinned_with_rest",
       "type": "boolean",
       "default": false
     },

@@ -791,8 +791,6 @@ Hide picture comments,Ẩn bình luận bằng hình ảnh
 Hide playlist videos,Ẩn video trong danh sách phát
 "Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.",Ẩn các bài đăng có biểu tượng khóa (chỉ dành riêng cho người đăng ký kênh của nhà sáng tạo) trên bảng tin và trên trang cá nhân.
 Hide profile shortcuts,Ẩn lối tắt trang cá nhân
-Hide profile tabs,Ẩn thẻ trang cá nhân
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.","Chọn các thẻ cần ẩn khỏi dải phía trên video của trang cá nhân, chẳng hạn Đăng lại hoặc Video đã thích. Luôn giữ lại một thẻ. Khởi động lại TikTok để áp dụng."
 Private videos,Video riêng tư
 Reposts,Đăng lại
 Favorites,Yêu thích
@@ -2883,3 +2881,7 @@ Keep suggestions on profiles,Giữ gợi ý trên hồ sơ
 "The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.","Hàng Tài khoản được đề xuất dưới nút Theo dõi của hồ sơ vẫn hiển thị, để bạn tìm các tài khoản tương tự sau khi theo dõi ai đó."
 Sort pinned videos with the rest,Sắp xếp video đã ghim cùng các video khác
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.","Video đã ghim nằm đúng chỗ của nó trong thứ tự thay vì ở trên cùng, nên Mới nhất trước đặt chúng theo ngày đăng."
+Hide or reorder profile tabs,Ẩn hoặc sắp xếp lại thẻ trang cá nhân
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.","Chọn các thẻ cần ẩn khỏi dải phía trên video của trang cá nhân, chẳng hạn Đăng lại hoặc Video đã thích, và dùng các mũi tên để xếp các thẻ còn lại theo thứ tự của bạn. Luôn giữ lại một thẻ. Khởi động lại TikTok để áp dụng."
+Hide Add bio,Ẩn Thêm tiểu sử
+Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,Ẩn lời nhắc Thêm tiểu sử mà TikTok hiển thị trên trang cá nhân của bạn khi chưa có tiểu sử. Bạn vẫn có thể thêm tiểu sử trong Sửa hồ sơ.

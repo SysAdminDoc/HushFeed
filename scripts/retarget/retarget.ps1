@@ -88,13 +88,21 @@ $Java = Resolve-Java -Explicit $Java
 $DesktopJar = Resolve-DesktopCli -Explicit $DesktopJar -Root $root -Required
 $old = Get-ApkManifestFacts -Apk $oldApk -Aapt2 $Aapt2
 $new = Get-ApkManifestFacts -Apk $newApk -Aapt2 $Aapt2
+foreach ($facts in @(@($oldApk, $old), @($newApk, $new))) {
+    # swap.py would read an empty code as "every 1 in the tree".
+    if (-not ($facts[1].versionName -match '^\d+(\.\d+)+$') -or -not ($facts[1].versionCode -match '^\d+$')) {
+        throw "Couldn't read a version name and code from $($facts[0]) (got '$($facts[1].versionName)', '$($facts[1].versionCode)')."
+    }
+}
+if ($ReuseTrace -and $Seeds) { throw '-Seeds only feeds the tracer; drop -ReuseTrace to trace again with them.' }
 if ($old.package -ne $new.package) { throw "The fixtures are different apps: $($old.package) and $($new.package)." }
 if ($old.versionName -eq $new.versionName) { throw "Both fixtures are $($old.versionName)." }
 Write-Host "[retarget] $($old.package) $($old.versionName) ($($old.versionCode)) -> $($new.versionName) ($($new.versionCode))"
 
 $compat = Join-Path $root 'patches/src/main/kotlin/app/morphe/patches/shared/compat/AppCompatibilities.kt'
-if (-not (Select-String -LiteralPath $compat -SimpleMatch $old.versionName -Quiet)) {
-    Write-Warning "AppCompatibilities.kt doesn't name $($old.versionName); the pass only moves lines that name no other build."
+if (-not (Select-String -LiteralPath $compat -SimpleMatch "`"$($old.versionName)`"" -Quiet)) {
+    # The names in the tree are the declared build's, so a trace from any other pair renames them wrong.
+    throw "AppCompatibilities.kt doesn't declare $($old.versionName). Point -OldFixture (or HUSHFEED_FIXTURE_DIR) at the declared build's folder."
 }
 $dirty = @(& git.exe -C $root status --porcelain --untracked-files=no)
 if ($LASTEXITCODE -ne 0) { throw "git status failed in $root" }
@@ -122,10 +130,22 @@ if ($Seeds) {
     [IO.File]::WriteAllText($seedFile, '')
 }
 
+# Which two APKs and seeds a trace came from, so -ReuseTrace can't pick up another pair's.
+$stampFile = Join-Path $WorkDir 'propagate.stamp'
+$stamp = @(
+    "old $($old.versionName) $($old.versionCode) $((Get-FileHash -LiteralPath $oldApk -Algorithm SHA256).Hash)",
+    "new $($new.versionName) $($new.versionCode) $((Get-FileHash -LiteralPath $newApk -Algorithm SHA256).Hash)",
+    "seeds $((Get-FileHash -LiteralPath $seedFile -Algorithm SHA256).Hash)"
+) -join "`n"
 if ($ReuseTrace) {
     if (-not (Test-Path -LiteralPath $propagate -PathType Leaf)) { throw "-ReuseTrace: no propagate.tsv in $WorkDir" }
+    $traced = if (Test-Path -LiteralPath $stampFile -PathType Leaf) { [IO.File]::ReadAllText($stampFile) } else { '' }
+    if ($traced -ne $stamp) {
+        throw "-ReuseTrace: $propagate came from other APKs or seeds (see $stampFile). Run without -ReuseTrace."
+    }
     Write-Host "[retarget] reusing $propagate"
 } else {
+    if (Test-Path -LiteralPath $stampFile) { Remove-Item -LiteralPath $stampFile -Force }
     Write-Host "[retarget] tracing (about $Heap of memory, Idle priority)"
     $tracerArguments = @("-Xmx$Heap", '-cp', "`"$DesktopJar`"", "`"$(Join-Path $PSScriptRoot 'Propagate.java')`"",
         "`"$oldApk`"", "`"$newApk`"", "`"$seedFile`"", "`"$owners`"", "`"$propagate`"")
@@ -135,6 +155,7 @@ if ($ReuseTrace) {
     try { $tracer.PriorityClass = 'Idle' } catch { Write-Warning "Could not lower the tracer's priority: $($_.Exception.Message)" }
     $tracer.WaitForExit()
     if ($tracer.ExitCode -ne 0) { throw "The tracer exited $($tracer.ExitCode); see propagate.err in $WorkDir" }
+    [IO.File]::WriteAllText($stampFile, $stamp)
     Get-Content -LiteralPath (Join-Path $WorkDir 'propagate.out') | Select-Object -Last 2 | ForEach-Object { Write-Host "  $_" }
 }
 

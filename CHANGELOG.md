@@ -28,6 +28,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * With `Keep the middle unstretched` on, a video's cover picture keeps the same size as its video. When TikTok played a video on a layer of its own, the cover could still take the whole screen, so it showed at the wrong size and flickered as the video replaced it. Once that happens the video and its cover are both cropped and stretched evenly, and the diagnostic report says so (#468).
+* Searching the settings for `SIM country preset`, or just "preset", finds that row now. It used to find nothing.
 * With `Auto-advance videos` and `Keep playing in the background` both on, a creator's videos keep coming after you start one from their profile and leave the app. TikTok used to play that first video and stop. `Auto-advance session limit` counts these too, and screen-time holds stop them the same way (D292).
 * A copy made with Morphe's `Clone app` can log in with the default selection now. `Run beside the store app` is part of Simple mode, and it does nothing on a copy that keeps TikTok's own package name. Without it, TikTok's servers wouldn't give the renamed copy a device ID, so every login said you'd hit the maximum number of attempts (#455, #284).
 * The date and length on profile grids don't get cut in half anymore. The label's bar now grows when it needs a third line (#449, #462).

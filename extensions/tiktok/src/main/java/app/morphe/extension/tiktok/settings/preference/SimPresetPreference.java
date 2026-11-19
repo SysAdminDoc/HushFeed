@@ -37,6 +37,12 @@ import app.morphe.extension.tiktok.spoof.sim.SimPresets;
 
 @SuppressWarnings("deprecation")
 public class SimPresetPreference extends Preference {
+    /**
+     * Search indexes only rows with a key, so without one "SIM country preset" and "preset"
+     * found nothing and the only way to the presets was knowing which page they sat on.
+     */
+    static final String KEY = "action_sim_preset";
+
     private final List<SimPreset> visiblePresets = new ArrayList<>();
 
     /**
@@ -59,6 +65,8 @@ public class SimPresetPreference extends Preference {
         this.countryIsoPreference = countryIsoPreference;
         this.mccMncPreference = mccMncPreference;
         this.operatorNamePreference = operatorNamePreference;
+        setKey(KEY);
+        setPersistent(false);
         setTitle("SIM country preset");
         refreshSummary();
     }

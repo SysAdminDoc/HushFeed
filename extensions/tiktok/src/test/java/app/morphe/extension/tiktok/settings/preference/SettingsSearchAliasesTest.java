@@ -80,6 +80,13 @@ public class SettingsSearchAliasesTest {
         assertFinds(search, "save photos", "Download original photos");
     }
 
+    /** The preset row had no key, and search skips keyless rows, so its own title found nothing. */
+    @Test public void theSimPresetRowIsFoundByItsTitle() throws Exception {
+        TikTokPreferenceFragment search = attachSearch();
+        assertFinds(search, "SIM country preset", "SIM country preset");
+        assertFinds(search, "preset", "SIM country preset");
+    }
+
     @Test public void anUnselectedChoiceFindsItsRowOnceAndOpensTheChoices() throws Exception {
         TikTokPreferenceFragment search = attachSearch();
         String label = "Save the frame on screen as a photo";

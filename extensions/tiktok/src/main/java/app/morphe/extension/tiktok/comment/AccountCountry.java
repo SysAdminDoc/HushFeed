@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,15 +33,11 @@ import java.util.concurrent.RejectedExecutionException;
  * Asks TikTok which country an account is based in (#417), from the comment menu's Show account
  * country row and a profile share sheet's Account country button.
  *
- * <p>A comment's account often comes without its country. The profile route TikTok's own profile
- * page asks on 47.9.1, {@code /tiktok/user/profile/other/v1} with scene 201 and the account's
- * sec_uid, goes first: a {@code region} or {@code account_region} in the account's own part of
- * that reply wins. Its model declares neither, but Gson drops what a model leaves out, so the raw
- * reply is read (a reader on #417 saw the country on the mobile routes). The profile reply
- * TikTok's assistant card reads, {@code /aweme/v1/user/profile/other/}, comes next, but on 47.7
- * that reply leaves both out for anyone but the viewer (66 user keys and no country on @tiktok,
- * 2026-11-14). So the account's newest videos from {@code /aweme/v1/aweme/post/} come last, and
- * the country most of them were
+ * <p>A comment's account often comes without its country. The profile reply TikTok's own
+ * assistant card reads, {@code /aweme/v1/user/profile/other/}, is asked first and its
+ * {@code region} or {@code account_region} wins, but on 47.7 that reply leaves both out for
+ * anyone but the viewer (66 user keys and no country on @tiktok, 2026-11-14). So the account's
+ * newest videos from {@code /aweme/v1/aweme/post/} come next, and the country most of them were
  * posted from is the answer, worded as where the videos were posted from rather than where the
  * account is based. A private account's videos stay hidden, so it gets no country. The request
  * goes out through TikTok's own
@@ -60,12 +55,6 @@ public final class AccountCountry {
     private static final String NETWORK_API = "com.bytedance.ttnet.INetworkApi";
     private static final String TYPED_INPUT = "com.bytedance.retrofit2.mime.TypedInput";
     static final String PATH = "/aweme/v1/user/profile/other/";
-    /** The route 47.9.1's profile page reads another account from ({@code getOtherUserInfo}). */
-    static final String PROFILE_PATH = "/tiktok/user/profile/other/v1";
-    /** {@code OTHER_PLATFORM}'s scene id, which that page sends for another account. */
-    static final String PROFILE_SCENE = "201";
-    /** How deep the profile reply is searched; its components nest a few levels. */
-    private static final int PROFILE_DEPTH = 12;
     /** The account's own videos, newest first, as its profile grid asks for them. */
     static final String POSTS_PATH = "/aweme/v1/aweme/post/";
     /** How many of the newest videos are read for where they were posted from. */
@@ -162,110 +151,16 @@ public final class AccountCountry {
     }
 
     /**
-     * The profile page's reply first, then the older profile record. TikTok often leaves
-     * another account's country out of both, so then the account's newest videos say where they
-     * were posted from.
+     * The profile record first. TikTok often leaves another account's country out of it, so
+     * then the account's newest videos say where they were posted from.
      */
     private static Answer find(String uid, String secUid) throws Exception {
-        Answer profile = profile(uid, secUid);
-        if (profile.outcome == Outcome.FOUND) return profile;
         Answer account = parse(fetch(PATH, query(uid, secUid)));
         if (account.outcome == Outcome.FOUND) return account;
         Map<String, String> posts = query(uid, secUid);
         posts.put("max_cursor", "0");
         posts.put("count", String.valueOf(POSTS));
         return either(account, parsePosts(fetch(POSTS_PATH, posts), uid));
-    }
-
-    /**
-     * The profile page's answer. Its page asks with the sec_uid alone, so without one there's
-     * nothing to ask, and a refusal here only moves the lookup on to the older routes.
-     */
-    private static Answer profile(String uid, String secUid) {
-        if (secUid == null || secUid.isEmpty()) return failed();
-        Map<String, String> query = new LinkedHashMap<>();
-        query.put("scene_id", PROFILE_SCENE);
-        query.put("sec_user_id", secUid);
-        query.put("from", "0");
-        try {
-            return parseProfile(fetch(PROFILE_PATH, query), uid, secUid);
-        } catch (Exception refused) {
-            Logger.printInfo(() -> "Account country profile route refused: " + refused);
-            return failed();
-        }
-    }
-
-    /**
-     * The country from the profile page's reply. Only the account's own parts count: the
-     * {@code common} and {@code legacy} blocks, and any record anywhere whose uid or sec_uid is
-     * the account's. A header or tab can hold other people, so a region next to someone else's
-     * uid, or loose in a component, is passed over. Every country-like key the reply holds goes
-     * to the debug log, so a report says where TikTok put it when nothing counted.
-     */
-    static Answer parseProfile(String body, String uid, String secUid) {
-        if (body == null || body.isEmpty()) return failed();
-        try {
-            JSONObject root = new JSONObject(body);
-            int status = root.optInt("status_code", 0);
-            if (status != 0) {
-                Logger.printInfo(() -> "Account country profile reply refused with status " + status);
-                return failed();
-            }
-            List<String> seen = new ArrayList<>();
-            String code = ownCountry(root, "", false, uid, secUid, seen, 0);
-            Logger.printDebug(() -> "Account country profile reply keys: " + seen);
-            return code == null ? new Answer(Outcome.NONE, null) : new Answer(Outcome.FOUND, code);
-        } catch (Exception unreadable) {
-            Logger.printInfo(() -> "Account country profile reply was not readable: " + unreadable.getMessage());
-            return failed();
-        }
-    }
-
-    private static String ownCountry(Object node, String path, boolean own, String uid, String secUid,
-                                     List<String> seen, int depth) {
-        if (depth > PROFILE_DEPTH) return null;
-        if (node instanceof JSONArray) {
-            JSONArray array = (JSONArray) node;
-            String found = null;
-            for (int i = 0; i < array.length(); i++) {
-                String code = ownCountry(array.opt(i), path + "[" + i + "]", own, uid, secUid, seen, depth + 1);
-                if (found == null) found = code;
-            }
-            return found;
-        }
-        if (!(node instanceof JSONObject)) return null;
-        JSONObject object = (JSONObject) node;
-        boolean theirs = own || isAccount(object, uid, secUid);
-        String found = null;
-        for (String key : new String[]{"region", "account_region"}) {
-            String code = twoLetters(object.optString(key, null));
-            if (code != null && theirs && found == null) found = code;
-        }
-        Iterator<String> keys = object.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            if ("log_pb".equals(key)) continue;
-            String at = path.isEmpty() ? key : path + "." + key;
-            Object value = object.opt(key);
-            String lower = key.toLowerCase(Locale.ROOT);
-            if ((lower.contains("region") || lower.contains("country")) && !(value instanceof JSONObject)
-                    && !(value instanceof JSONArray) && seen.size() < 24) {
-                String text = String.valueOf(value);
-                seen.add(at + "=" + (text.length() > 12 ? text.substring(0, 12) + "..." : text));
-            }
-            boolean ownBlock = theirs || depth == 0 && ("common".equals(key) || "legacy".equals(key));
-            String code = ownCountry(value, at, ownBlock, uid, secUid, seen, depth + 1);
-            if (found == null) found = code;
-        }
-        return found;
-    }
-
-    /** Whether a record names the account: its uid or its sec_uid is the one looked up. */
-    private static boolean isAccount(JSONObject object, String uid, String secUid) {
-        String recordUid = object.optString("uid", "");
-        if (uid != null && !uid.isEmpty() && uid.equals(recordUid)) return true;
-        String recordSecUid = object.optString("sec_uid", "");
-        return secUid != null && !secUid.isEmpty() && secUid.equals(recordSecUid);
     }
 
     /** The profile's country, else the videos' one; no country when either reply had none. */

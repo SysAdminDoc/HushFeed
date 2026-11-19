@@ -129,6 +129,51 @@ public class ImageLoadsTest {
         assertEquals("no reason given", ImageLoads.kind(null));
     }
 
+    /** Stands in for 47.9.1's network failure, an obfuscated exception with a status line. */
+    static class HttpFailure extends Exception {
+        HttpFailure(String message) {
+            super(message);
+        }
+    }
+
+    private static HttpFailure status(String path, String url) {
+        return new HttpFailure("statusCode: 403 " + path + ", traceCode: , url: " + url
+            + ", requestHeaders: {\"oec-cs-sdk-version\":\"v10.03.03-ov-android\",\"x-tt-token\":\"TOKENVALUE\"}");
+    }
+
+    /**
+     * #415's report: every one of 317 failures was a 403, but each cover's own path made its own
+     * kind, four of them filled the host, and 191 more read "other failures".
+     */
+    @Test public void oneStatusFromOneHostIsOneKindWhateverTheImage() {
+        String host = "https://p16-common-sign.tiktokcdn.com";
+        ImageLoads.failed(new FetchState(SG), status(
+            "/tos-alisg-i-vo4twfpge7-sg/bfbb88bd2ccd49cfafb1b9746fc05111~tplv-vo4twfpge7-blurred-cover:200:400:1:q100.webp",
+            host + "/tos-alisg-i-vo4twfpge7-sg/bfbb.webp?x-expires=1763337600&x-signature=SECRETSIG"));
+        ImageLoads.failed(new FetchState(SG), status(
+            "/tos-maliva-i-photomode-us/a7c277947ff94be493350d374bd997bd~tplv-photomode-sr-vqe4:1440:0:1080:0:q80.heic",
+            host + "/tos-maliva-i-photomode-us/a7c2.heic?x-signature=SECRETSIG"));
+        ImageLoads.failed(new FetchState(SG), status("/aweme/200x200/tos-alisg-v-2774/d1880cc7bdb646f690e05b42e872d62f.jpeg",
+            host + "/aweme/200x200/d188.jpeg"));
+        ImageLoads.failed(new FetchState(SG), status("/tiktok-obj/share_platform_imo_circle.png~tplv-tiktokx-origin.image",
+            host + "/tiktok-obj/share_platform_imo_circle.png"));
+        ImageLoads.failed(new FetchState(SG), status("/tos-alisg-avt-0068/79ea917e7342b656762033c0af7b51c8~tplv-tiktokx-cropcenter-q:100:100:q70.heic",
+            host + "/tos-alisg-avt-0068/79ea.heic"));
+        ImageLoads.failed(new FetchState(SG), status("/image/refresh/", "https://api19-va.tiktokv.com/image/refresh/?aid=1233"));
+
+        List<String> lines = ImageLoads.sectionForTests().lines();
+        assertEquals(List.of(
+            "Since the app started: 0 image fetches, 6 failed",
+            "p16-sign-sg.tiktokcdn.com: 0 fetched, 6 failed",
+            "p16-sign-sg.tiktokcdn.com, HttpFailure: statusCode: 403 (path), traceCode: , url: p16-common-sign.tiktokcdn.com,"
+                + " requestHeaders: [oec-cs-sdk-version x-tt-token]: 5 times",
+            "p16-sign-sg.tiktokcdn.com, HttpFailure: statusCode: 403 /image/refresh/, traceCode: , url: api19-va.tiktokv.com,"
+                + " requestHeaders: [oec-cs-sdk-version x-tt-token]: 1 time"), lines);
+        for (String line : lines) {
+            assertFalse(line, line.contains("TOKENVALUE") || line.contains("SECRETSIG") || line.contains("v10.03"));
+        }
+    }
+
     @Test public void aLongFailureIsCutShort() {
         StringBuilder message = new StringBuilder();
         for (int i = 0; i < 400; i++) message.append('x');

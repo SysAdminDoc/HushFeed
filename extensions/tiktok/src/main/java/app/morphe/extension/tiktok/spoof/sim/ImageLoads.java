@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
@@ -47,6 +48,13 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
     private static final Pattern URL = compiled(
         "(?i)\\b[a-z][a-z0-9+.-]*://([^/\\s?#:,;)\\}\\]\"']+)[^\\s,;)\\}\\]\"']*");
     private static final Pattern SPACES = compiled("\\s+");
+    /** A path with no host in front, as TikTok's network stack writes its status line. */
+    private static final Pattern PATH = compiled("(?<!\\S)/[^\\s,;)\\}\\]\"']*");
+    /** A path that names an endpoint rather than one object: lowercase words only. */
+    private static final Pattern ROUTE = compiled("(?:/[a-z_-]+)+/?");
+    private static final Pattern HEADER_NAME = compiled("\"([^\"]+)\"\\s*:");
+    private static final String HEADERS = "requestHeaders: {";
+    static final String OBJECT_PATH = "(path)";
     /** Guarded by itself. */
     private static final Map<String, Host> HOSTS = new LinkedHashMap<>();
     private static volatile boolean installed;
@@ -158,14 +166,49 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
         return kind.length() <= MESSAGE_LIMIT ? kind.toString() : kind.substring(0, MESSAGE_LIMIT - 3) + "...";
     }
 
+    /**
+     * 47.9.1's network stack writes {@code statusCode: 403 /tos-.../abc~tplv-...webp, traceCode: ,
+     * url: <url>, requestHeaders: {...}}. Each image's own path made its own kind, so four
+     * covers filled a host's kinds and the other 191 failures said nothing (#415). An object's
+     * path becomes {@link #OBJECT_PATH} while an endpoint like {@code /image/refresh/} stays, and
+     * of the headers only the names stay, since a value may be a token.
+     */
     private static String describe(Throwable failure) {
         String name = failure.getClass().getSimpleName();
         if (name.isEmpty()) name = failure.getClass().getName();
         String message = failure.getMessage();
         // A message that can't be cut down to its hosts stays out, since it may hold a signed URL.
-        if (message == null || URL == null || SPACES == null) return name;
-        message = SPACES.matcher(URL.matcher(message).replaceAll("$1")).replaceAll(" ").trim();
+        if (message == null || URL == null || SPACES == null || PATH == null || ROUTE == null
+                || HEADER_NAME == null) return name;
+        message = paths(headerNames(URL.matcher(message).replaceAll("$1")));
+        message = SPACES.matcher(message).replaceAll(" ").trim();
         return message.isEmpty() ? name : name + ": " + message;
+    }
+
+    private static String headerNames(String message) {
+        int at = message.indexOf(HEADERS);
+        if (at < 0) return message;
+        int open = at + HEADERS.length() - 1;
+        int close = message.indexOf('}', open);
+        Matcher header = HEADER_NAME.matcher(close < 0 ? message.substring(open) : message.substring(open, close + 1));
+        StringBuilder names = new StringBuilder();
+        while (header.find()) {
+            if (names.length() > 0) names.append(' ');
+            names.append(header.group(1));
+        }
+        return message.substring(0, at) + "requestHeaders: [" + names + "]"
+            + (close < 0 ? "" : message.substring(close + 1));
+    }
+
+    private static String paths(String message) {
+        Matcher path = PATH.matcher(message);
+        StringBuffer out = new StringBuffer();
+        while (path.find()) {
+            String kept = ROUTE.matcher(path.group()).matches() ? path.group() : OBJECT_PATH;
+            path.appendReplacement(out, Matcher.quoteReplacement(kept));
+        }
+        path.appendTail(out);
+        return out.toString();
     }
 
     @Override

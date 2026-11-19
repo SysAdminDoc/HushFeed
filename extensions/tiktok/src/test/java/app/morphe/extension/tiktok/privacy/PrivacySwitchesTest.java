@@ -670,6 +670,61 @@ public class PrivacySwitchesTest {
         assertTrue("the next video after the pause is held back again", WatchHistoryRecording.shouldSkip());
     }
 
+    @Test public void theDiagnosticReportSaysWhatHappenedToEachViewReport() {
+        WatchHistoryRecording.resetForTests();
+        SettingsStatus.watchHistoryEnabled = true;
+        assertFalse("no batch size line before a report read one",
+                WatchHistoryRecording.Report.INSTANCE.lines().toString().contains("TikTok sends"));
+        WatchHistoryRecording.noteBatchSize(1);
+        assertTrue(WatchHistoryRecording.Report.INSTANCE.lines().contains("TikTok sends each report on its own"));
+        for (int i = 0; i < 3; i++) {
+            WatchHistoryRecording.noteReport();
+            WatchHistoryRecording.noteBatchSize(2);
+        }
+        WatchHistoryRecording.noteSentAlone();
+        // An empty list after each queued video sends nothing, and the main thread hands a full
+        // one to a worker without sending it: only the send that went out counts.
+        WatchHistoryRecording.noteBatch(List.of());
+        WatchHistoryRecording.noteBatch(List.of("first", "second"));
+        WatchHistoryRecording.noteBatch(List.of("first", "second"));
+        WatchHistoryRecording.noteBatchSent();
+        WatchHistoryRecording.noteBatch(List.of("third"));
+        WatchHistoryRecording.noteBatchFailed(new java.io.IOException(
+                "timed out on /aweme/v1/aweme/stats/?device_id=1234&iid=5678\nat a stack line"));
+        assertEquals(List.of(
+                "Keep videos out of Watch history: off",
+                "View reports since TikTok started: 3",
+                "TikTok sends For You's reports 2 at a time",
+                "Sent one at a time: 1",
+                "Sent together: 2 in 1 send",
+                "Held back by the switch: 0",
+                "Sends that failed: 1",
+                "Last failure: IOException: timed out on /aweme/v1/aweme/stats/"),
+                WatchHistoryRecording.Report.INSTANCE.lines());
+
+        Settings.STOP_WATCH_HISTORY.save(true);
+        assertTrue(WatchHistoryRecording.shouldSkip());
+        assertTrue(WatchHistoryRecording.shouldSkip());
+        List<String> on = WatchHistoryRecording.Report.INSTANCE.lines();
+        assertEquals("Keep videos out of Watch history: on", on.get(0));
+        assertTrue(on.toString(), on.contains("Held back by the switch: 2"));
+        PausedProcess.set(true);
+        try {
+            assertEquals("Hushfeed is paused, so TikTok sends every view report",
+                    WatchHistoryRecording.Report.INSTANCE.lines().get(1));
+        } finally {
+            PausedProcess.set(false);
+        }
+        WatchHistoryRecording.resetForTests();
+    }
+
+    @Test public void aFailedSendKeepsOnlyTheStartOfItsMessage() {
+        assertEquals("unknown", WatchHistoryRecording.describe(null));
+        assertEquals("IllegalStateException", WatchHistoryRecording.describe(new IllegalStateException()));
+        String kept = WatchHistoryRecording.describe(new RuntimeException("x".repeat(500)));
+        assertEquals("RuntimeException: " + "x".repeat(WatchHistoryRecording.MAX_FAILURE) + "...", kept);
+    }
+
     @Test public void theWatchHistorySwitchAloneOpensThePrivacyPageUnderTracking() {
         SettingsStatus.watchHistoryEnabled = true;
         assertTrue(app.morphe.extension.tiktok.settings.preference.categories.PrivacyPreferenceCategory.isAvailable());

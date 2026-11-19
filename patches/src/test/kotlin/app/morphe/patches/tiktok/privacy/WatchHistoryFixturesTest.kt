@@ -50,6 +50,36 @@ class WatchHistoryFixturesTest {
             assertTrue("$version: every other AwemeStatsApi method only builds data: ${others.map { it.name }}",
                 others.all(::onlyBuildsData))
 
+            // The diagnostic report's counts (#448): each sender waits for its request once, and the
+            // batch send's one catch is the one around that wait.
+            for (method in reports + flushes) {
+                val instructions = method.implementation!!.instructions.toList()
+                val sent = method.afterSent()
+                assertTrue("$version ${method.name}: a wait for the request", sent != null)
+                assertEquals("$version ${method.name}: one wait", 1, instructions.count {
+                    it.getReference<MethodReference>()?.let { r ->
+                        r.definingClass == "Ljava/util/concurrent/Future;" && r.name == "get"
+                    } == true
+                })
+                assertTrue("$version ${method.name}: the count lands before the method ends",
+                    sent!! < instructions.size)
+            }
+            val report = reports.single()
+            val (sizeAt, sizeRegister) = report.afterBatchSizeRead()!!
+            val sizeCall = report.implementation!!.instructions.toList()[sizeAt - 2]
+                .getReference<MethodReference>()!!
+            assertEquals("$version: the batch size is an int read", "I", sizeCall.returnType)
+            assertTrue("$version: the size is read before the report decides", sizeAt < report.afterSent()!!)
+            assertTrue("$version: the size sits in a local, not a parameter",
+                sizeRegister < report.implementation!!.registerCount - 1)
+            val flush = flushes.single()
+            val (caughtAt, _) = flush.caught()!!
+            val sentAt = flush.afterSent()!!
+            assertTrue("$version: the catch follows the wait", caughtAt >= sentAt)
+            assertEquals("$version: the catch hands the error to TikTok's checker",
+                "doCheck", flush.implementation!!.instructions.toList()[caughtAt + 1]
+                    .getReference<MethodReference>()?.name)
+
             for (method in reports + flushes) {
                 assertTrue("$version ${method.name}: TikTok already leaves it early",
                     method.implementation!!.instructions.count { it.opcode == Opcode.RETURN_VOID } > 1)

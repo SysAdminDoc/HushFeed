@@ -5366,8 +5366,8 @@ final class L10nTranslationsAr {
                 "انقر للبدء، ثم مرر حتى تظهر مشكلة الخلاصة وعد إلى هنا لحفظها. لا يحتوي الملف على أي أوصاف أو أسماء، وتظهر الفيديوهات والمنشئون فقط كرموز قصيرة. اقرأه قبل مشاركته.");
         table.put("Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.",
                 "اضغط، ثم انتقل إلى الشاشة التي تريد إخفاء ما فيها. بعد %1$d ثانية يسجل Hushfeed كيفية بناء تلك الشاشة، دون أي نص منها، لتقرير التشخيص.");
-        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.",
-                "النقر على ملصق أرسله لك شخص ما في محادثة يفتح صندوقا يحتوي على حفظ الوسائط. أوقف هذا الخيار لتجاوزه.");
+        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.",
+                "النقر على ملصق أرسله لك شخص ما في محادثة يفتح صندوقا يحتوي على حفظ الوسائط. والضغط المطوّل على أي ملصق في محادثة يضع حفظ الوسائط في قائمته أيضًا. أوقف هذا الخيار لتجاوز الاثنين.");
         table.put("Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.",
                 "النقر على «المزيد» أسفل الفيديو يفتح تعليقاته مع ظهور التسمية الكاملة في الأعلى بدلا من عرض التسمية فوق الفيديو. النقر على التسمية نفسها يفعل الشيء نفسه. تحتفظ منشورات الصور بصفحة TikTok الخاصة بها لهذا الغرض.");
         table.put("Technical details",

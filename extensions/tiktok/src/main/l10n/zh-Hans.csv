@@ -238,7 +238,7 @@ And one more save,还有一个保存
 "Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.",Android 停止告诉 TikTok VPN 已打开，并且 VPN 的隧道被排除在网络列表之外。 TikTok 仍然可以看到 VPN 的 IP 地址。如果你需要检查 VPN 的功能，请保留此选项.
 Animated sticker format,动画贴纸格式
 Save box for chat stickers,聊天贴纸的保存框
-Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.,点按聊天中别人发来的贴纸会打开一个带有保存媒体的框。关闭此项即可跳过.
+Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.,点按聊天中别人发来的贴纸会打开一个带有保存媒体的框。在聊天中长按任意贴纸，它的菜单里也会出现保存媒体。关闭此项即可同时跳过两者.
 "Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load.",动画贴纸和 GIF 在显示时解码每一帧，而不是前面的几帧，因此它们使用的内存较少。适用于下一个加载的内容.
 App,应用程序
 App AB,应用程序AB

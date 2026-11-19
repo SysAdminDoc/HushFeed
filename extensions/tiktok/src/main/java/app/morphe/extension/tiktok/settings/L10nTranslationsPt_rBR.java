@@ -4926,8 +4926,8 @@ final class L10nTranslationsPt_rBR {
                 "Toque para começar, role até o problema do feed aparecer e volte aqui para salvar. O arquivo não traz legendas nem nomes, e vídeos e criadores aparecem só como códigos curtos. Leia o arquivo antes de compartilhar.");
         table.put("Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.",
                 "Toque aqui e vá até a tela com o que você quer ocultar. Depois de %1$d segundos, o Hushfeed grava como essa tela é montada, sem nenhum texto dela, para o relatório de diagnóstico.");
-        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.",
-                "Tocar em um sticker que alguém te mandou no chat abre uma janela com Salvar a mídia. Desative isto para pular.");
+        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.",
+                "Tocar em um sticker que alguém te mandou no chat abre uma janela com Salvar a mídia. Segurar qualquer sticker no chat também coloca Salvar a mídia no menu dele. Desative isto para pular os dois.");
         table.put("Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.",
                 "Tocar em mais abaixo de um vídeo abre os comentários com a legenda inteira no topo em vez de espalhá-la sobre o vídeo. Tocar na própria legenda faz o mesmo. Posts de fotos mantêm a página do próprio TikTok para isso.");
         table.put("Technical details",

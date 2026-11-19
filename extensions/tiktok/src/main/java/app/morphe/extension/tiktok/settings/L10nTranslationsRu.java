@@ -5256,8 +5256,8 @@ final class L10nTranslationsRu {
                 "Нажмите, чтобы начать, листайте, пока не появится проблема в ленте, и вернитесь сюда, чтобы сохранить запись. В файле нет субтитров и имён, а видео и авторы указаны только короткими кодами. Прочитайте файл, прежде чем делиться им.");
         table.put("Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.",
                 "Нажмите, затем перейдите к экрану с тем, что нужно скрыть. Через %1$d секунд Hushfeed запишет, как устроен этот экран, без какого-либо его текста, для диагностического отчёта.");
-        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.",
-                "Если нажать на стикер, который вам прислали в чате, откроется окно с кнопкой сохранения. Выключите, чтобы его пропускать.");
+        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.",
+                "Если нажать на стикер, который вам прислали в чате, откроется окно с кнопкой сохранения. Если удерживать любой стикер в чате, пункт сохранения появится и в его меню. Выключите, чтобы пропускать и то, и другое.");
         table.put("Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.",
                 "Нажатие «Ещё» под видео открывает его комментарии с полной подписью сверху, вместо того чтобы растягивать подпись поверх видео. Нажатие на саму подпись делает то же самое. Для фотопубликаций сохраняется собственная страница TikTok.");
         table.put("Technical details",

@@ -4926,8 +4926,8 @@ final class L10nTranslationsZh_Hans {
                 "点击开始，然后滚动直到出现信息流问题，然后返回此处保存。该文件没有标题或名称，视频和创建者仅显示为短代码。在分享之前先阅读它.");
         table.put("Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.",
                 "点击，然后转到包含你想要隐藏的内容的屏幕。 %1$d 秒后，Hushfeed 记录该屏幕的构建方式（不包含任何文本）以用于诊断报告.");
-        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.",
-                "点按聊天中别人发来的贴纸会打开一个带有保存媒体的框。关闭此项即可跳过.");
+        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.",
+                "点按聊天中别人发来的贴纸会打开一个带有保存媒体的框。在聊天中长按任意贴纸，它的菜单里也会出现保存媒体。关闭此项即可同时跳过两者.");
         table.put("Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.",
                 "点击视频下方的“更多”会打开评论，整个标题位于顶部，而不是将标题散布在视频上。点击标题本身也能起到同样的作用。为此，照片帖子保留 TikTok 自己的页面.");
         table.put("Technical details",

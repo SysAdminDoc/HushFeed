@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Show the picture before saving`, under `Save a profile picture on a long press`, opens a held profile picture full screen at full size first. Save under it saves the picture, and a tap anywhere else closes it. It starts off (#467).
 * `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
 * `Sort pinned videos with the rest` lets a profile's sort put pinned videos in the order with everything else, so Newest first shows them at the date they were posted instead of at the top. It starts off (#466).

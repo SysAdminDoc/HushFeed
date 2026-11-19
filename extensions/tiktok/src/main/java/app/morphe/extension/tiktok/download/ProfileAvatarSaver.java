@@ -58,8 +58,19 @@ public final class ProfileAvatarSaver {
     /** Called by the native avatar gesture with the component that owns the current profile. */
     public static boolean onAvatarLongPress(Object owner, View avatar) {
         if (!enabled()) return false;
-        save(avatar, ownerProfile(owner));
+        hold(avatar, ownerProfile(owner));
         return true;
+    }
+
+    /** A hold saves the picture, or shows it full screen first with its own Save button (#467). */
+    static void hold(View avatar, Object user) {
+        if (!Settings.PROFILE_PICTURE_VIEWER.get()) {
+            save(avatar, user);
+            return;
+        }
+        if (avatar == null || avatar.getContext() == null) return;
+        List<String> urls = checkedUrls(avatar, user);
+        if (urls != null) ProfilePictureViewer.show(avatar, user, urls);
     }
 
     static final String USER_CLASS = "com.ss.android.ugc.aweme.profile.model.User";
@@ -156,7 +167,7 @@ public final class ProfileAvatarSaver {
             TAKEN.put(view, Boolean.TRUE);
             view.setOnLongClickListener(anchor -> {
                 if (!enabled()) return false;
-                save(anchor, profileUser);
+                hold(anchor, profileUser);
                 return true;
             });
         } catch (RuntimeException exception) {
@@ -248,19 +259,26 @@ public final class ProfileAvatarSaver {
         return DownloadFilenameFormatter.formatProfilePictureName(handle);
     }
 
-    static void save(View avatar, Object user) {
-        if (avatar == null) return;
-        Context context = avatar.getContext();
-        if (context == null) return;
+    /** The picture's addresses once the profile checks out, or null after saying why it doesn't. */
+    private static List<String> checkedUrls(View avatar, Object user) {
         if (user == null || !matchesProfileOnScreen(avatar, user)) {
             Utils.showToastShort(L10n.t("Open the profile again and try once more"));
-            return;
+            return null;
         }
         List<String> urls = avatarUrls(user);
         if (urls.isEmpty()) {
             Utils.showToastShort(L10n.t("This profile picture isn't available to save"));
-            return;
+            return null;
         }
+        return urls;
+    }
+
+    static void save(View avatar, Object user) {
+        if (avatar == null) return;
+        Context context = avatar.getContext();
+        if (context == null) return;
+        List<String> urls = checkedUrls(avatar, user);
+        if (urls == null) return;
         final List<String> urlSnapshot = List.copyOf(urls);
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)

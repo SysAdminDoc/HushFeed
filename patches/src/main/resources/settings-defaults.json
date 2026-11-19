@@ -37,6 +37,7 @@
       "ytdlnis_download_type",
       "ytdlnis_background",
       "save_profile_picture",
+      "profile_picture_viewer",
       "save_story",
       "save_story_from_share",
       "save_story_pick",
@@ -3876,6 +3877,12 @@
     "profile_hold_opens_local_watch_history": {
       "field": "PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY",
       "key": "profile_hold_opens_local_watch_history",
+      "type": "boolean",
+      "default": false
+    },
+    "profile_picture_viewer": {
+      "field": "PROFILE_PICTURE_VIEWER",
+      "key": "profile_picture_viewer",
       "type": "boolean",
       "default": false
     },

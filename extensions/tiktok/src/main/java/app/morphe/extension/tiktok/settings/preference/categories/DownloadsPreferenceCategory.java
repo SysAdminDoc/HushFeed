@@ -269,6 +269,10 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(context, "Save a profile picture on a long press",
                     "Press and hold a profile picture to save the full size original to your photo destination.",
                     Settings.SAVE_PROFILE_PICTURE));
+            addPreference(new TogglePreference(context, "Show the picture before saving",
+                    "With the long press save on, holding a profile picture opens it full screen at full size, "
+                            + "with a Save button under it.",
+                    Settings.PROFILE_PICTURE_VIEWER));
             addPreference(new TogglePreference(context, "Save a story on a long press",
                     "Press and hold a story to save it. Stories have no save button of their own, "
                             + "and holding one is how TikTok pauses it, so this takes that gesture over.",

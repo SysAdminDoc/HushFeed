@@ -227,6 +227,9 @@ public class Settings extends BaseSettings {
     /** Hushfeed's own Save media box after a received chat sticker's tap (#274). */
     public static final BooleanSetting DM_STICKER_SAVE_BOX = new BooleanSetting("dm_sticker_save_box", TRUE);
     public static final BooleanSetting SAVE_PROFILE_PICTURE = new BooleanSetting("save_profile_picture", FALSE);
+    /** Holding a profile picture shows it full screen with a Save button instead of saving it at once (#467). */
+    public static final BooleanSetting PROFILE_PICTURE_VIEWER = new BooleanSetting("profile_picture_viewer", FALSE,
+            false, Setting.parent(SAVE_PROFILE_PICTURE));
     public static final BooleanSetting SAVE_STORY = new BooleanSetting("save_story", FALSE);
     public static final BooleanSetting SAVE_STORY_FROM_SHARE = new BooleanSetting("save_story_from_share", FALSE);
     /** A story save asks which of the person's stories to keep, with the one on screen checked (#393). */

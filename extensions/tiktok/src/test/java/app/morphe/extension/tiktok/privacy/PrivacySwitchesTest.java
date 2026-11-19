@@ -682,6 +682,7 @@ public class PrivacySwitchesTest {
             WatchHistoryRecording.noteBatchSize(2);
         }
         WatchHistoryRecording.noteSentAlone();
+        WatchHistoryRecording.noteHeldByTikTok();
         // An empty list after each queued video sends nothing, and the main thread hands a full
         // one to a worker without sending it: only the send that went out counts.
         WatchHistoryRecording.noteBatch(List.of());
@@ -697,6 +698,7 @@ public class PrivacySwitchesTest {
                 "TikTok sends For You's reports 2 at a time",
                 "Sent one at a time: 1",
                 "Sent together: 2 in 1 send",
+                "Dropped by TikTok's own request limit: 1",
                 "Held back by the switch: 0",
                 "Sends that failed: 1",
                 "Last failure: IOException: timed out on /aweme/v1/aweme/stats/"),

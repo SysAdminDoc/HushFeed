@@ -72,6 +72,13 @@ class WatchHistoryFixturesTest {
             assertTrue("$version: the size is read before the report decides", sizeAt < report.afterSent()!!)
             assertTrue("$version: the size sits in a local, not a parameter",
                 sizeRegister < report.implementation!!.registerCount - 1)
+            val heldAt = report.whereTikTokHoldsBack()
+            assertTrue("$version: TikTok's own request limit is asked first", heldAt != null)
+            val limit = report.implementation!!.instructions.toList()[heldAt!! - 3]
+                .getReference<MethodReference>()!!
+            assertEquals("$version: the limit check is asked of its own instance",
+                limit.definingClass, limit.parameterTypes.single().toString())
+            assertTrue("$version: the limit is asked before the batch size", heldAt < sizeAt)
             val flush = flushes.single()
             val (caughtAt, _) = flush.caught()!!
             val sentAt = flush.afterSent()!!

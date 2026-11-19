@@ -37,6 +37,7 @@ public final class WatchHistoryRecording {
 
     private static final AtomicInteger REPORTS = new AtomicInteger();
     private static final AtomicInteger HELD = new AtomicInteger();
+    private static final AtomicInteger HELD_BY_TIKTOK = new AtomicInteger();
     private static final AtomicInteger SENT_ALONE = new AtomicInteger();
     private static final AtomicInteger BATCHES = new AtomicInteger();
     private static final AtomicInteger BATCHED = new AtomicInteger();
@@ -74,6 +75,15 @@ public final class WatchHistoryRecording {
      */
     public static void noteBatchSize(int size) {
         batchSize = size;
+    }
+
+    /**
+     * TikTok's own request limit stopped that report before it was sent or queued. The server
+     * can tell the app to back off, and a report made then is dropped, not kept for later.
+     */
+    public static void noteHeldByTikTok() {
+        HELD_BY_TIKTOK.incrementAndGet();
+        Logger.printDebug(() -> "Watch history: TikTok's request limit dropped a view report");
     }
 
     /** That report went out on its own, after TikTok waited for the answer. */
@@ -160,6 +170,7 @@ public final class WatchHistoryRecording {
             lines.add("Sent one at a time: " + SENT_ALONE.get());
             lines.add("Sent together: " + BATCHED.get() + " in " + BATCHES.get()
                     + (BATCHES.get() == 1 ? " send" : " sends"));
+            lines.add("Dropped by TikTok's own request limit: " + HELD_BY_TIKTOK.get());
             lines.add("Held back by the switch: " + HELD.get());
             int failed = FAILED.get();
             lines.add("Sends that failed: " + failed);
@@ -172,6 +183,7 @@ public final class WatchHistoryRecording {
     static void resetForTests() {
         REPORTS.set(0);
         HELD.set(0);
+        HELD_BY_TIKTOK.set(0);
         SENT_ALONE.set(0);
         BATCHES.set(0);
         BATCHED.set(0);

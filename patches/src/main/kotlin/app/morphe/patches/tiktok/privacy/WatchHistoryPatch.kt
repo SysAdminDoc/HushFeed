@@ -101,6 +101,27 @@ internal fun Method.afterBatchSizeRead(): Pair<Int, Int>? {
     return call + 2 to (result as OneRegisterInstruction).registerA
 }
 
+/**
+ * Where the view report stops for TikTok's own request limit (ApiSpringLimitHelper, `09RE` on
+ * 47.9.1): just past the branch on the first static check that takes an object and answers a
+ * boolean, whose fall-through ends the method within three instructions. Null on a build laid
+ * out some other way.
+ */
+internal fun Method.whereTikTokHoldsBack(): Int? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    val check = instructions.indexOfFirst { instruction ->
+        instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let { r ->
+            r.returnType == "Z" && r.parameterTypes.size == 1 && r.parameterTypes.single().startsWith("L")
+        } == true
+    }
+    if (check < 0) return null
+    if (instructions.getOrNull(check + 1)?.opcode != Opcode.MOVE_RESULT) return null
+    if (instructions.getOrNull(check + 2)?.opcode != Opcode.IF_EQZ) return null
+    val held = check + 3
+    val returns = (held until minOf(held + 3, instructions.size)).any { instructions[it].opcode == Opcode.RETURN_VOID }
+    return if (returns) held else null
+}
+
 /** The batch send's catch, which TikTok hands to its own checker: the index and its register. */
 internal fun Method.caught(): Pair<Int, Int>? {
     val instructions = implementation?.instructions?.toList() ?: return null
@@ -149,6 +170,7 @@ val watchHistoryPatch = bytecodePatch(
             report.afterBatchSizeRead()?.let { (at, register) ->
                 at to "invoke-static {v$register}, $EXTENSION->noteBatchSize(I)V"
             },
+            report.whereTikTokHoldsBack()?.let { it to "invoke-static {}, $EXTENSION->noteHeldByTikTok()V" },
         )
         reportWrites.sortedByDescending { it.first }.forEach { (at, smali) -> report.addInstruction(at, smali) }
         val batchWrites = listOfNotNull(

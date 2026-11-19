@@ -33,7 +33,7 @@ Every Hushfeed release, newest first.
 * `Play original audio` also covers videos TikTok dubs with a whole second copy of the video, which is how some mini dramas get theirs. Saving one of those with the switch on keeps the original sound too (#463, #444).
 * The note on the `White on black`, `Black on white` and `Material You` app icons, and on themed icons, has clean round edges now. TikTok's own note has dents that its colored echoes normally cover.
 * `Keep captions in Clear display` shows a video's first caption right away, sits near TikTok's own caption spot when it hasn't seen one yet, and stays above the progress bar (#456).
-* The country and date line doesn't get cut off anymore when you open a long caption (#457).
+* The country and date line doesn't get cut off anymore when you open a long caption, and the caption above it keeps every line after you open or close it with more and less (#457).
 * `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
 
 ### Build

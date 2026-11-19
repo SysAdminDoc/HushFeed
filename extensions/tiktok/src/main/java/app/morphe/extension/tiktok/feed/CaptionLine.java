@@ -32,10 +32,12 @@ import java.util.WeakHashMap;
  * caption, "United States · 2d ago".
  *
  * <p>The caption is {@code desc}, in TikTok's generated caption layout (47.9.1's
- * common_feed_layout_video_desc): a vertical LinearLayout holding the caption block, a
- * LinearLayout subclass of TikTok's own with {@code desc} inside it. The line goes in the
- * nearest plain vertical LinearLayout above the caption, right after the child that holds it,
- * so TikTok's caption block, which opens and closes on "more", is left as it was.
+ * common_feed_layout_video_desc), which sits in the cell's info column under the creator's row.
+ * The line goes in that column, the nearest vertical LinearLayout above the caption that also
+ * holds the creator's name, right after the child that holds the caption. Nothing inside the
+ * caption's own frame is touched: opening or closing the caption on "more" sets that frame to a
+ * fixed height TikTok works out from the caption's text alone, so a line in there was squeezed
+ * thin, or squeezed the caption, whichever gave way (#457).
  *
  * <p>The date is the row's own post time text, so it reads the way the row would have, Always
  * show publish date's exact time and Mark saved videos' check included. The row's post time is
@@ -61,14 +63,6 @@ public final class CaptionLine {
     /** Post times emptied here, with the text each had then, so only those get it back. */
     private static final Map<TextView, CharSequence> HIDDEN = new WeakHashMap<>();
 
-    /**
-     * Caption blocks giving up room to the line. Measured first, an opened long caption takes
-     * nearly the whole column and leaves the line too short to read (#457). With a weight on the
-     * block, what comes after it is measured at full height and only the block shrinks when they
-     * don't all fit.
-     */
-    private static final Set<View> YIELDING = Collections.newSetFromMap(new WeakHashMap<>());
-
     private CaptionLine() {
     }
 
@@ -92,7 +86,6 @@ public final class CaptionLine {
     static boolean show(TextView name, View root, String country) {
         if (name == null) {
             hideOthers(null);
-            giveRoom(null);
             return false;
         }
         TextView postTime = postTimeBeside(name);
@@ -101,7 +94,7 @@ public final class CaptionLine {
         View holder = caption;
         if (caption != null && shownUpTo(caption, root)) {
             for (ViewParent parent = caption.getParent(); parent instanceof View; parent = parent.getParent()) {
-                if (isColumn(parent)) {
+                if (isColumn(parent) && holds((View) parent, name)) {
                     host = (LinearLayout) parent;
                     break;
                 }
@@ -109,8 +102,7 @@ public final class CaptionLine {
                 holder = (View) parent;
             }
         }
-        boolean underCaption = host != null;
-        if (!underCaption) {
+        if (host == null) {
             holder = rowOf(name, postTime, root);
             host = holder == null ? null : (LinearLayout) holder.getParent();
         }
@@ -119,7 +111,6 @@ public final class CaptionLine {
         if (host == null || text == null) {
             putBack(postTime);
             hideOthers(null);
-            giveRoom(null);
             return false;
         }
 
@@ -136,14 +127,12 @@ public final class CaptionLine {
             line.setVisibility(View.VISIBLE);
         }
         hideOthers(line);
-        giveRoom(underCaption ? holder : null);
         return true;
     }
 
     /**
      * The creator's whole row, post time included, as the child of the vertical LinearLayout
-     * above it. That column is one of TikTok's own subclasses, and nothing in the row is measured
-     * against it the way the caption's block is, so any vertical one will do.
+     * above it: the same info column a line under the caption goes in.
      */
     private static View rowOf(TextView name, TextView postTime, View root) {
         if (postTime == null) return null;
@@ -188,7 +177,6 @@ public final class CaptionLine {
             }
         }
         LINES.clear();
-        giveRoom(null);
         for (TextView postTime : new ArrayList<>(HIDDEN.keySet())) {
             putBack(postTime);
         }
@@ -278,9 +266,9 @@ public final class CaptionLine {
         return scope == null ? null : scope.findViewById(captionViewId);
     }
 
-    /** A plain vertical LinearLayout, not one of TikTok's own subclasses. */
+    /** A vertical LinearLayout; 47.9.1's info column is one of TikTok's own subclasses. */
     private static boolean isColumn(ViewParent parent) {
-        return parent.getClass() == LinearLayout.class
+        return parent instanceof LinearLayout
                 && ((LinearLayout) parent).getOrientation() == LinearLayout.VERTICAL;
     }
 
@@ -339,30 +327,6 @@ public final class CaptionLine {
                 line.setVisibility(View.GONE);
             }
         }
-    }
-
-    /** Makes {@code block} the one caption block yielding, and hands every other its weight back. */
-    private static void giveRoom(View block) {
-        for (View other : new ArrayList<>(YIELDING)) {
-            if (other != block) {
-                YIELDING.remove(other);
-                reweigh(other, 1, 0);
-            }
-        }
-        if (block != null && !YIELDING.contains(block) && reweigh(block, 0, 1)) {
-            YIELDING.add(block);
-        }
-    }
-
-    private static boolean reweigh(View view, float from, float to) {
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        if (!(params instanceof LinearLayout.LayoutParams)
-                || ((LinearLayout.LayoutParams) params).weight != from) {
-            return false;
-        }
-        ((LinearLayout.LayoutParams) params).weight = to;
-        view.requestLayout();
-        return true;
     }
 
     /** Gives a post time emptied here its text back, unless TikTok has written it since. */

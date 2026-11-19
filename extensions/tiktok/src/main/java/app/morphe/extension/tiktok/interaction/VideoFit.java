@@ -940,6 +940,9 @@ public final class VideoFit {
             } else if (middle && mode() == Mode.KEEP_MIDDLE && !KeepMiddle.videoInWindow) {
                 lines.add("TikTok still plays videos on a layer of their own, so they're cropped and "
                         + "stretched until TikTok restarts");
+            } else if (middle && mode() == Mode.KEEP_MIDDLE && KeepMiddle.ownLayerSeen) {
+                lines.add("TikTok played a video on a layer of its own after the restart, so videos "
+                        + "and their covers are cropped and stretched");
             }
             // Counted per check, and the feed checks twice for each video it shows.
             lines.add("Fit checks since TikTok started: " + RESIZED.get() + " resized the video, "

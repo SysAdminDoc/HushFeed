@@ -200,12 +200,46 @@ public class KeepMiddleTest {
             VideoFitTest.Result video = (VideoFitTest.Result) VideoFit.fitted(surface,
                     new VideoFitTest.Result(1080, 1920, 0f, 0f, null));
             assertEquals(VideoFit.blendWidth(1080, 1920, 1080, 2136), video.getWidth());
-            assertFalse(KeepMiddle.videoInWindow);
+            assertTrue(KeepMiddle.ownLayerSeen);
             VideoFitTest.Result shown = (VideoFitTest.Result) VideoFit.fitted(cover,
                     new VideoFitTest.Result(1080, 1920, 0f, 0f, null));
             assertEquals(video.getWidth(), shown.getWidth());
             assertFalse(KeepMiddle.warped(cover));
             assertEquals(java.util.List.of(VideoFitTest.Scale.FIT_XY), cover.scales);
+        }
+    }
+
+    /**
+     * TikTok reads the player view key again for later players (#468). On the S22 that put the
+     * next cover back at the window's size with the shader while its video stayed cropped and
+     * stretched on its own layer, so the cover showed at the wrong size and flickered.
+     */
+    @Test public void aLaterKeyReadKeepsTheCoverWithItsVideo() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout container = new FrameLayout(activity);
+            SurfaceView surface = new SurfaceView(activity);
+            VideoFitTest.CoverView cover = new VideoFitTest.CoverView(activity);
+            container.addView(surface);
+            container.addView(cover);
+            container.layout(0, 0, 1080, 2136);
+            surface.setLayoutParams(new FrameLayout.LayoutParams(1080, 1920));
+            cover.setLayoutParams(new FrameLayout.LayoutParams(1080, 1920));
+            Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(true);
+            VideoFit.videoSurfaceGate(KeepMiddle.SURFACE_VIEW_GATE, 1);
+
+            VideoFitTest.Result video = (VideoFitTest.Result) VideoFit.fitted(surface,
+                    new VideoFitTest.Result(1080, 1920, 0f, 0f, null));
+            // The next player asks again, and the switch still answers 0.
+            assertEquals(0, VideoFit.videoSurfaceGate(KeepMiddle.SURFACE_VIEW_GATE, 1));
+            VideoFitTest.Result shown = (VideoFitTest.Result) VideoFit.fitted(cover,
+                    new VideoFitTest.Result(1080, 1920, 0f, 0f, null));
+            assertEquals("the cover took a size its video doesn't have", video.getWidth(), shown.getWidth());
+            assertEquals(video.getHeight(), shown.getHeight());
+            assertFalse("the cover was drawn with the shader over a video that isn't", KeepMiddle.warped(cover));
+            assertTrue(VideoFit.Report.INSTANCE.lines().contains("TikTok played a video on a layer of its "
+                    + "own after the restart, so videos and their covers are cropped and stretched"));
         }
     }
 

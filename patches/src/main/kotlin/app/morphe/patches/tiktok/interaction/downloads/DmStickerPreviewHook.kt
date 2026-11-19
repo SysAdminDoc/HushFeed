@@ -6,21 +6,32 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 
 internal const val DM_STICKER_HANDLER = "Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/gif/DefaultStickerClickHandler;"
 internal const val DM_STICKER_TEMPLATE = "Lcom/ss/android/ugc/aweme/im/message/template/card/StickerTemplate;"
@@ -106,4 +117,302 @@ internal fun hookDmStickerPreview() {
         throw PatchException("Downloads: the DM sticker preview service is no longer empty")
     }
     mutableClassDefBy(handler).findMutableMethodOf(anchor.method).addDmStickerPreviewHook(anchor.previewCall)
+}
+
+// ---- Save media in the long-press menu of a sticker message (#470) ---------------------------
+
+private const val DM_MENU_OBJECT = "Ljava/lang/Object;"
+private const val DM_MENU_STRING = "Ljava/lang/String;"
+private const val DM_MENU_ENUM = "Ljava/lang/Enum;"
+private const val DM_MENU_LIST = "Ljava/util/List;"
+private const val DM_MENU_FUNCTION0 = "Lkotlin/jvm/functions/Function0;"
+private const val DM_MENU_FUNCTION1 = "Lkotlin/jvm/functions/Function1;"
+private const val DM_MENU_UNIT = "Lkotlin/Unit;"
+/** The sticker shop row's own name. TikTok names its menu rows in English on every build. */
+internal const val DM_MENU_STORE = "Store"
+private const val DM_MENU_STORE_ACTION = "STICKER_STORE"
+/** TikTok's own sticker Save. The added row takes its action so the menu sorts it in right after. */
+internal const val DM_MENU_ROW_ACTION = "FAV_STICKER"
+/** The action TikTok's menu closes itself on. */
+internal const val DM_MENU_DISMISS = "DISMISS"
+internal const val DM_MENU_STYLE = "PRIMARY"
+
+/**
+ * The rows lambda of a sticker message's long-press menu: it takes the list being built, adds
+ * TikTok's own rows (the sticker shop row among them) and answers Unit.
+ */
+internal object DmStickerMenuRowsFingerprint : Fingerprint(
+    name = "invoke",
+    returnType = DM_MENU_OBJECT,
+    parameters = listOf(DM_MENU_OBJECT),
+    strings = listOf(DM_MENU_STORE),
+    custom = { method, classDef -> dmStickerStoreRow(method, classDef) != null },
+)
+
+/** The sticker shop row: the action enum it names and the static factory that builds the row. */
+internal data class DmStickerStoreRow(val name: Int, val action: String, val factory: MethodReference)
+
+/**
+ * The lambda's sticker shop row, read by shape: one "Store" literal, the shop action read from
+ * its own enum, then the first static factory taking a name and an enum, whose row goes straight
+ * into the list. Null for anything else.
+ */
+internal fun dmStickerStoreRow(method: Method, classDef: ClassDef): DmStickerStoreRow? {
+    if (AccessFlags.STATIC.isSet(method.accessFlags) || method.name != "invoke" || method.returnType != DM_MENU_OBJECT
+        || method.parameterTypes.map { it.toString() } != listOf(DM_MENU_OBJECT)) return null
+    if (DM_MENU_FUNCTION1 !in classDef.interfaces.map { it.toString() }) return null
+    if (classDef.fields.count { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == DM_STICKER_TEMPLATE } != 1) return null
+    val code = method.implementation?.instructions?.toList() ?: return null
+    val names = code.withIndex().filter { (_, it) -> it.getReference<StringReference>()?.string == DM_MENU_STORE }
+    val name = names.singleOrNull()?.index ?: return null
+    val nameRegister = (code[name] as? OneRegisterInstruction)?.registerA ?: return null
+    val action = code.getOrNull(name + 1)?.takeIf { it.opcode == Opcode.SGET_OBJECT }
+        ?.getReference<FieldReference>()?.takeIf { it.name == DM_MENU_STORE_ACTION && it.type == it.definingClass } ?: return null
+    val call = (name + 2 until code.size).firstOrNull { index ->
+        val opcode = code[index].opcode
+        (opcode == Opcode.INVOKE_STATIC || opcode == Opcode.INVOKE_STATIC_RANGE) && code[index].getReference<MethodReference>()
+            ?.parameterTypes?.map { it.toString() }?.take(2) == listOf(DM_MENU_STRING, DM_MENU_ENUM)
+    } ?: return null
+    val first = when (val invoke = code[call]) {
+        is RegisterRangeInstruction -> invoke.startRegister
+        is FiveRegisterInstruction -> invoke.registerC
+        else -> return null
+    }
+    if (first != nameRegister || code.getOrNull(call + 1)?.opcode != Opcode.MOVE_RESULT_OBJECT) return null
+    val add = code.getOrNull(call + 2)?.getReference<MethodReference>() ?: return null
+    if (code[call + 2].opcode != Opcode.INVOKE_INTERFACE || add.definingClass != DM_MENU_LIST || add.name != "add") return null
+    return DmStickerStoreRow(name, action.type, code[call].getReference<MethodReference>()!!)
+}
+
+/**
+ * Everything the hook and the three bridges need, each piece read from the rows lambda and the
+ * classes it reaches.
+ *
+ * @property returnIndex the lambda's one return, right after it loads Unit.
+ * @property scratch two locals that are dead at the return.
+ * @property template the lambda's StickerTemplate field.
+ * @property builder the lambda's menu field, the one its rows close the menu through.
+ * @property dismiss the menu's close call, taking an action and a callback.
+ * @property row the menu row's constructor, with [rowParameters].
+ */
+internal data class DmStickerMenu(
+    val returnIndex: Int,
+    val scratch: List<Int>,
+    val template: String,
+    val builder: String,
+    val builderType: String,
+    val dismiss: String,
+    val action: String,
+    val unit: String,
+    val row: String,
+    val rowParameters: List<String>,
+    val icon: String,
+    val title: String,
+    val style: String,
+    val size: String,
+)
+
+/** Resolves [DmStickerMenu] from the rows lambda, or says which piece changed shape. */
+internal fun dmStickerMenu(rows: Method, owner: ClassDef, classOf: (String) -> ClassDef?): DmStickerMenu {
+    fun refuse(what: String): Nothing = throw PatchException("Downloads: the DM sticker menu $what")
+    val store = dmStickerStoreRow(rows, owner) ?: refuse("rows lost their sticker shop row")
+    val body = rows.implementation ?: refuse("rows have no code")
+    val code = body.instructions.toList()
+    val returnIndex = code.lastIndex
+    if (code.count { it.opcode == Opcode.RETURN_OBJECT } != 1 || code[returnIndex].opcode != Opcode.RETURN_OBJECT) {
+        refuse("rows no longer end in their one return")
+    }
+    val returned = (code[returnIndex] as OneRegisterInstruction).registerA
+    val unit = code[returnIndex - 1].takeIf { it.opcode == Opcode.SGET_OBJECT && (it as OneRegisterInstruction).registerA == returned }
+        ?.getReference<FieldReference>()?.takeIf { it.definingClass == DM_MENU_UNIT && it.type == DM_MENU_UNIT }
+        ?: refuse("rows no longer answer Unit")
+    val registers = body.registerCount
+    if (registers > 16) refuse("rows use $registers registers, past v15")
+    val self = registers - 2
+    val list = registers - 1
+    val cast = code[0]
+    if (cast.opcode != Opcode.CHECK_CAST || (cast as OneRegisterInstruction).registerA != list
+        || cast.getReference<TypeReference>()?.type != DM_MENU_LIST) refuse("rows no longer cast their list first")
+    for (index in 1..returnIndex) {
+        val instruction = code[index]
+        val written = (instruction as? OneRegisterInstruction)?.registerA ?: continue
+        val wide = instruction.opcode.setsWideRegister()
+        if (instruction.opcode.setsRegister() && (written == self || written == list || (wide && written + 1 >= self))) {
+            refuse("rows write over their lambda or list at $index")
+        }
+    }
+    val scratch = (0 until self).filter { it != returned }.take(2)
+    if (scratch.size != 2) refuse("rows have no two spare locals")
+    val addresses = code.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    val at = addresses[returnIndex]
+    if (body.tryBlocks.any { at >= it.startCodeAddress && at < it.startCodeAddress + it.codeUnitCount }) {
+        refuse("return sits inside a try block")
+    }
+
+    val template = owner.fields.single { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == DM_STICKER_TEMPLATE }
+    val closers = owner.fields.filter { !AccessFlags.STATIC.isSet(it.accessFlags) }.mapNotNull { field ->
+        val menu = classOf(field.type) ?: return@mapNotNull null
+        if (!AccessFlags.INTERFACE.isSet(menu.accessFlags) || !AccessFlags.PUBLIC.isSet(menu.accessFlags)) return@mapNotNull null
+        val close = menu.methods.filter {
+            it.returnType == "V" && it.parameterTypes.map { type -> type.toString() } == listOf(store.action, DM_MENU_FUNCTION0)
+        }
+        close.singleOrNull()?.let { field to it }
+    }
+    val (builder, dismiss) = closers.singleOrNull() ?: refuse("has ${closers.size} menus that close on an action")
+
+    val action = classOf(store.action)
+    if (action == null || !AccessFlags.ENUM.isSet(action.accessFlags) || !AccessFlags.PUBLIC.isSet(action.accessFlags)
+        || listOf(DM_MENU_ROW_ACTION, DM_MENU_DISMISS).any { constant -> !action.hasPublicConstant(constant) }) {
+        refuse("actions lost $DM_MENU_ROW_ACTION or $DM_MENU_DISMISS")
+    }
+
+    val rowClass = classOf(store.factory.returnType)
+    val init = rowClass?.methods?.singleOrNull { it.name == "<init>" && it.parameterTypes.size == 8 }
+    val rowParameters = init?.parameterTypes?.map { it.toString() }.orEmpty()
+    if (rowClass == null || init == null || !AccessFlags.PUBLIC.isSet(rowClass.accessFlags) || !AccessFlags.PUBLIC.isSet(init.accessFlags)
+        || rowParameters[0] != DM_MENU_STRING || rowParameters[1] != DM_MENU_ENUM || rowParameters[6] != "Z"
+        || rowParameters[7] != DM_MENU_FUNCTION1) refuse("row lost its public constructor")
+    val (iconType, titleType, styleType, sizeType) = rowParameters.subList(2, 6)
+
+    // The factory makes the row's pieces itself, so the icon and title kinds it news up are TikTok's own.
+    val made = classOf(store.factory.definingClass)?.methods?.toList().orEmpty().flatMap { method ->
+        method.implementation?.instructions?.filter { it.opcode == Opcode.NEW_INSTANCE }
+            ?.mapNotNull { it.getReference<TypeReference>()?.type }.orEmpty()
+    }.distinct().mapNotNull(classOf)
+    fun piece(kind: String, parameter: String) = made.filter { candidate ->
+        kind in candidate.interfaces.map { it.toString() } && AccessFlags.PUBLIC.isSet(candidate.accessFlags) && candidate.hasPublicInit(parameter)
+    }.singleOrNull()?.type ?: refuse("row lost its $parameter $kind piece")
+    val icon = piece(iconType, "I")
+    val title = piece(titleType, DM_MENU_STRING)
+
+    val style = classOf(styleType)
+    if (style == null || !AccessFlags.ENUM.isSet(style.accessFlags) || !AccessFlags.PUBLIC.isSet(style.accessFlags)
+        || !style.hasPublicConstant(DM_MENU_STYLE)) refuse("row styles lost $DM_MENU_STYLE")
+    val size = classOf(sizeType)
+    if (size == null || !AccessFlags.PUBLIC.isSet(size.accessFlags) || !size.hasPublicInit(null)) refuse("row size lost its public constructor")
+
+    return DmStickerMenu(
+        returnIndex = returnIndex,
+        scratch = scratch,
+        template = "${template.definingClass}->${template.name}:${template.type}",
+        builder = "${builder.definingClass}->${builder.name}:${builder.type}",
+        builderType = builder.type,
+        dismiss = "${dismiss.definingClass}->${dismiss.name}(${dismiss.parameterTypes.joinToString("")})V",
+        action = store.action,
+        unit = "${unit.definingClass}->${unit.name}:${unit.type}",
+        row = store.factory.returnType,
+        rowParameters = rowParameters,
+        icon = icon,
+        title = title,
+        style = styleType,
+        size = sizeType,
+    )
+}
+
+private fun ClassDef.hasPublicConstant(name: String) = fields.any {
+    it.name == name && it.type == type && AccessFlags.STATIC.isSet(it.accessFlags) && AccessFlags.PUBLIC.isSet(it.accessFlags)
+}
+
+/** A public constructor taking [parameter] alone, or nothing when it's null. */
+private fun ClassDef.hasPublicInit(parameter: String?) = methods.any {
+    it.name == "<init>" && AccessFlags.PUBLIC.isSet(it.accessFlags)
+        && it.parameterTypes.map { type -> type.toString() } == listOfNotNull(parameter)
+}
+
+private fun dmMenuBridge(name: String, parameters: List<String>, returnType: String, locals: Int, accessFlags: Int, smali: String) =
+    MutableMethod(
+        ImmutableMethod(
+            SAVER, name, parameters.map { ImmutableMethodParameter(it, null, null) }, returnType, accessFlags,
+            null, null, ImmutableMethodImplementation(locals + parameters.size, emptyList(), null, null),
+        ),
+    ).apply { addInstructions(0, smali) }
+
+/** The bodies StickerGallerySaver's three menu stubs get, each building what TikTok's own rows build. */
+internal fun dmStickerMenuBridges(
+    menu: DmStickerMenu,
+    flagsFor: (String) -> Int = { AccessFlags.STATIC.value },
+): List<MutableMethod> = listOf(
+    dmMenuBridge(
+        "dmStickerMenuRow", listOf(DM_MENU_STRING, DM_MENU_STRING, "I", DM_MENU_OBJECT), DM_MENU_OBJECT, 9,
+        flagsFor("dmStickerMenuRow"),
+        // The shop row's own build with a text title: the factory's PRIMARY style, its default size
+        // and no second flag. The click is the extension's Function1, cast here for the constructor.
+        """
+            new-instance v0, ${menu.row}
+            move-object v1, p0
+            sget-object v2, ${menu.action}->$DM_MENU_ROW_ACTION:${menu.action}
+            new-instance v3, ${menu.icon}
+            invoke-direct { v3, p2 }, ${menu.icon}-><init>(I)V
+            new-instance v4, ${menu.title}
+            invoke-direct { v4, p1 }, ${menu.title}-><init>(Ljava/lang/String;)V
+            sget-object v5, ${menu.style}->$DM_MENU_STYLE:${menu.style}
+            new-instance v6, ${menu.size}
+            invoke-direct { v6 }, ${menu.size}-><init>()V
+            const/4 v7, 0x0
+            move-object v8, p3
+            check-cast v8, $DM_MENU_FUNCTION1
+            invoke-direct/range { v0 .. v8 }, ${menu.row}-><init>(${menu.rowParameters.joinToString("")})V
+            return-object v0
+        """,
+    ),
+    dmMenuBridge(
+        "dmStickerMenuDone", emptyList(), DM_MENU_OBJECT, 1, flagsFor("dmStickerMenuDone"),
+        """
+            sget-object v0, ${menu.unit}
+            return-object v0
+        """,
+    ),
+    dmMenuBridge(
+        "dismissDmStickerMenu", listOf(DM_MENU_OBJECT), "V", 2, flagsFor("dismissDmStickerMenu"),
+        // TikTok's own rows close the menu with no callback after the close.
+        """
+            check-cast p0, ${menu.builderType}
+            sget-object v0, ${menu.action}->$DM_MENU_DISMISS:${menu.action}
+            const/4 v1, 0x0
+            invoke-interface { p0, v0, v1 }, ${menu.dismiss}
+            return-void
+        """,
+    ),
+)
+
+/** Puts the menu bridges in place of StickerGallerySaver's stubs, each keeping its stub's flags as R8 left them. */
+internal fun MutableClass.swapDmStickerMenuStubs(menu: DmStickerMenu) {
+    val stubs = dmStickerMenuBridges(menu).associate { shape ->
+        val stub = methods.singleOrNull {
+            it.name == shape.name && it.returnType == shape.returnType &&
+                it.parameterTypes.map { type -> type.toString() } == shape.parameterTypes.map { type -> type.toString() }
+        } ?: throw PatchException("Downloads: StickerGallerySaver has no ${shape.name} stub")
+        if (!AccessFlags.STATIC.isSet(stub.accessFlags)) {
+            throw PatchException("Downloads: the ${shape.name} stub isn't static")
+        }
+        shape.name to stub
+    }
+    for (bridge in dmStickerMenuBridges(menu) { name -> stubs.getValue(name).accessFlags }) {
+        methods.remove(stubs.getValue(bridge.name))
+        methods.add(bridge)
+    }
+}
+
+/**
+ * Hands the finished rows, the template and the menu to the extension right before the lambda
+ * returns. Straight-line code into two locals that are dead there, so TikTok's rows stay as they
+ * were (#264), and at the return's label, so a branch onto it reaches the hook too.
+ */
+internal fun MutableMethod.addDmStickerMenuHook(menu: DmStickerMenu) {
+    val (template, builder) = menu.scratch
+    addInstructionsAtControlFlowLabel(
+        menu.returnIndex,
+        """
+            iget-object v$template, p0, ${menu.template}
+            iget-object v$builder, p0, ${menu.builder}
+            invoke-static { p1, v$template, v$builder }, $SAVER->addDmStickerSaveRow(Ljava/util/List;Ljava/lang/Object;Ljava/lang/Object;)V
+        """,
+    )
+}
+
+internal fun hookDmStickerMenu() {
+    val rows = DmStickerMenuRowsFingerprint.method
+    val menu = dmStickerMenu(rows, DmStickerMenuRowsFingerprint.classDef) { classDefByOrNull(it) }
+    mutableClassDefBy(SAVER).swapDmStickerMenuStubs(menu)
+    rows.addDmStickerMenuHook(menu)
 }

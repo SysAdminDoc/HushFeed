@@ -41,6 +41,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceType;
+import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 
@@ -58,6 +60,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Proxy;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -284,6 +287,146 @@ public final class StickerGallerySaver {
         return key;
     }
 
+    // ---- the long-press row -----------------------------------------------------------------
+
+    /** The name the row carries in TikTok's menu, where its own rows are named in English too. */
+    static final String DM_MENU_ROW = "HushfeedSaveMedia";
+    /** TikTok's own download arrow. Its icons are raw resources, named the same on every build. */
+    static final String DM_MENU_ICON = "icon_arrow_down_to_line";
+    private static int dmMenuIcon;
+
+    /** The native pieces of the long-press row. The patch writes them from TikTok's rows; tests stand in. */
+    interface DmMenuRows {
+        /** The row's icon, 0 when the app has none by that name. */
+        int icon();
+
+        /** One of TikTok's own menu rows, or null on a build the patch didn't write the bridges into. */
+        Object row(String title, int icon, View.OnClickListener action) throws ReflectiveOperationException;
+
+        /** Closes TikTok's menu the way its own rows do once they're tapped. */
+        void dismiss(Object menu);
+    }
+
+    static final DmMenuRows NATIVE_DM_MENU_ROWS = new DmMenuRows() {
+        @Override
+        public int icon() {
+            int id = dmMenuIcon;
+            if (id <= 0) {
+                // Kept only once found: a lookup before TikTok hands over its context answers 0.
+                id = Math.max(0, ResourceUtils.getIdentifier(ResourceType.RAW, DM_MENU_ICON));
+                dmMenuIcon = id;
+            }
+            return id;
+        }
+
+        @Override
+        public Object row(String title, int icon, View.OnClickListener action) throws ReflectiveOperationException {
+            Object done = dmStickerMenuDone();
+            if (done == null) return null;
+            // Kotlin keeps its own names in TikTok, and the extension shares the app's class loader.
+            Class<?> function = Class.forName("kotlin.jvm.functions.Function1", false,
+                    StickerGallerySaver.class.getClassLoader());
+            return dmStickerMenuRow(DM_MENU_ROW, title, icon, dmMenuClick(function, done, action));
+        }
+
+        @Override
+        public void dismiss(Object menu) {
+            dismissDmStickerMenu(menu);
+        }
+    };
+
+    static DmMenuRows dmMenuRows = NATIVE_DM_MENU_ROWS;
+
+    /**
+     * A row click of TikTok's kind: its menu hands the tapped row's view to the function's one
+     * method and takes {@code done} back. Anything else that reaches it isn't a tap and does nothing.
+     */
+    static Object dmMenuClick(Class<?> function, Object done, View.OnClickListener action) {
+        return Proxy.newProxyInstance(function.getClassLoader(), new Class<?>[]{function}, (proxy, method, arguments) -> {
+            switch (method.getName()) {
+                case "invoke":
+                    if (arguments != null && arguments.length == 1 && arguments[0] instanceof View) {
+                        action.onClick((View) arguments[0]);
+                    }
+                    return done;
+                case "toString":
+                    return DM_MENU_ROW;
+                case "hashCode":
+                    return System.identityHashCode(proxy);
+                case "equals":
+                    return arguments != null && arguments.length == 1 && proxy == arguments[0];
+                default:
+                    throw new IllegalStateException("Unexpected sticker menu callback " + method.getName());
+            }
+        });
+    }
+
+    /**
+     * A sticker message's long-press rows, once TikTok has added its own. Save media goes on the
+     * end when the save box switch is on and the template names a sticker this can save, and
+     * TikTok sorts it in beside its own sticker Save. The menu is the builder TikTok's rows close
+     * the menu through. Only the copied source and the builder outlive this call.
+     */
+    public static void addDmStickerSaveRow(List<Object> rows, Object template, Object menu) {
+        try {
+            if (rows == null || template == null || menu == null) return;
+            // Off leaves the menu to TikTok alone, as it leaves the tap (#274).
+            if (!Settings.DM_STICKER_SAVE_BOX.get()) return;
+            StickerAsset asset = findDmStickerAsset(template);
+            if (asset == null) {
+                HookStatus.missingMember(HOOK_FAMILY, "model", "DM sticker menu", "usable sticker source");
+                return;
+            }
+            DmMenuRows pieces = dmMenuRows;
+            int icon = pieces.icon();
+            if (icon == 0) {
+                HookStatus.missingMember(HOOK_FAMILY, "resource", "DM sticker menu", DM_MENU_ICON);
+                return;
+            }
+            Object row = pieces.row(L10n.t(ACTION_LABEL), icon, clicked -> saveFromDmMenu(clicked, asset, menu));
+            if (row == null) {
+                HookStatus.missingMember(HOOK_FAMILY, "bridge", "DM sticker menu", "row");
+                return;
+            }
+            rows.add(row);
+            HookStatus.bound(HOOK_FAMILY, "DM sticker menu");
+        } catch (Throwable failure) {
+            HookStatus.threw(HOOK_FAMILY, "DM sticker menu", failure);
+        }
+    }
+
+    /** The row's tap: the menu closes the way it does for TikTok's own rows, then the full source saves. */
+    static void saveFromDmMenu(View clicked, StickerAsset asset, Object menu) {
+        try {
+            dmMenuRows.dismiss(menu);
+        } catch (RuntimeException failure) {
+            HookStatus.threw(HOOK_FAMILY, "DM sticker menu close", failure);
+        }
+        try {
+            queueStickerSave(clicked.getContext().getApplicationContext(), asset, null);
+        } catch (RuntimeException failure) {
+            HookStatus.threw(HOOK_FAMILY, "DM sticker menu save", failure);
+            Utils.showToastShort(L10n.t("The sticker couldn't be saved. Try again."));
+        }
+    }
+
+    // The three below are stubs. The Downloads patch writes each body from the rows TikTok gives a
+    // sticker message, and an unpatched build answers with nothing.
+
+    /** One of TikTok's own long-press rows, with this name, title, icon and click. */
+    static Object dmStickerMenuRow(String name, String title, int icon, Object click) {
+        return null;
+    }
+
+    /** What TikTok's row clicks answer: Kotlin's Unit. */
+    static Object dmStickerMenuDone() {
+        return null;
+    }
+
+    /** Closes the long-press menu, the way TikTok's own rows do once tapped. */
+    static void dismissDmStickerMenu(Object menu) {
+    }
+
     public static void attachSaveImageButton(View sheetView, Object sheetModel) {
         try {
             if (sheetView == null || sheetModel == null) return;
@@ -451,8 +594,13 @@ public final class StickerGallerySaver {
         // The button comes back when the job is over whichever way it ends: saved, failed,
         // cancelled while it waited, or refused by a full queue.
         WeakReference<View> anchor = new WeakReference<>(button);
+        queueStickerSave(context, asset, handBackLater(anchor));
+    }
+
+    /** Queues one sticker save and says so. {@code done} runs once the job is over, or is null. */
+    private static void queueStickerSave(Context context, StickerAsset asset, Runnable done) {
         MediaJobScheduler.Job job = MediaJobScheduler.submit(
-                "sticker", stickerJobKey(asset), stickerSaveWork(context, asset), handBackLater(anchor));
+                "sticker", stickerJobKey(asset), stickerSaveWork(context, asset), done);
         String saying = L10n.t("Saving the sticker");
         MediaJobScheduler.acknowledge(job, saying, saying);
     }

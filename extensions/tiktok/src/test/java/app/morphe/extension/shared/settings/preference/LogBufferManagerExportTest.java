@@ -133,6 +133,51 @@ public class LogBufferManagerExportTest {
         }
     }
 
+    @Test public void aQuickCopyThatDiesOfAnErrorSaysSoAndTheNextCopyWorks() throws Exception {
+        // An Error while the report is built (OutOfMemoryError, StackOverflowError) used to end
+        // the copy thread with a log line and nothing on screen.
+        Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        app.morphe.extension.shared.settings.BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        app.morphe.extension.shared.diagnostics.HookStatus.missingViewId("comments", "jlk");
+        // Sections stay registered for the sandbox's life (the app's own register once, from
+        // static code), so this one goes quiet after the test instead of being taken out.
+        java.util.concurrent.atomic.AtomicBoolean failing = new java.util.concurrent.atomic.AtomicBoolean(true);
+        LogBufferManager.registerReportSection(new LogBufferManager.ReportSection() {
+            @Override public String title() {
+                throw new StackOverflowError("fixture");
+            }
+
+            @Override public java.util.List<String> lines() {
+                return failing.get() ? java.util.Collections.singletonList("a line")
+                        : java.util.Collections.emptyList();
+            }
+        });
+        try {
+            ShadowToast.reset();
+            LogBufferManager.exportToClipboard();
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("The diagnostic report couldn't be saved. Try again.",
+                    String.valueOf(ShadowToast.getTextOfLatestToast()));
+
+            // The failed copy let go of its turn.
+            failing.set(false);
+            LogBufferManager.exportToClipboard();
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            assertTrue(clipboard.getPrimaryClip().getItemAt(0).getText().toString().contains("jlk"));
+        } finally {
+            failing.set(false);
+            app.morphe.extension.shared.diagnostics.HookStatus.clear();
+            LogBufferManager.clearLogBuffer();
+        }
+    }
+
     @Test public void anOlderAndroidSaysNothingAboutTheLastExit() {
         // The history arrived in API 30 and this bundle runs from 23, so the section has to be
         // absent rather than empty or guessed at.

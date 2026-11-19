@@ -97,6 +97,8 @@ public final class LogBufferManager {
     private static final Object CRASH_FILE_LOCK = new Object();
     private static final Object CLEAR_UNDO_LOCK = new Object();
     private static final AtomicBoolean FILE_EXPORT_RUNNING = new AtomicBoolean();
+    /** One quick copy at a time: a second tap while one builds would race it to the clipboard. */
+    private static final AtomicBoolean COPY_RUNNING = new AtomicBoolean();
     private static ClearSnapshot lastClear;
 
     /** Everything the clear row removes, kept in memory until its next tap. */
@@ -174,7 +176,9 @@ public final class LogBufferManager {
     public static void exportToClipboard() {
         // Built on a thread of its own: the report reads the saved crashes and the traces
         // Android kept with the last exits, a few MB each, and the tap shouldn't wait for that.
-        // The copy itself goes back to the main thread.
+        // The copy itself goes back to the main thread. A tap while a copy is still being built
+        // is dropped; the first one's toast follows.
+        if (!COPY_RUNNING.compareAndSet(false, true)) return;
         boolean started = Utils.runOnOwnThread("morphe-diagnostic-copy", () -> {
             try {
                 String built = buildExportText(CLIPBOARD_MAX_CHARS);
@@ -194,20 +198,26 @@ public final class LogBufferManager {
                     try {
                         Utils.setClipboard(exportText);
                         Utils.showToastShort(say(copiedMessage, "Diagnostic report copied to the clipboard."));
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         copyFailed(ex);
                     }
                 });
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
+                // An OutOfMemoryError while the report is built ends here too, with a toast
+                // instead of a silent thread death.
                 copyFailed(ex);
+            } finally {
+                // Built copies land on the main thread in the order they were built.
+                COPY_RUNNING.set(false);
             }
         });
         if (!started) {
+            COPY_RUNNING.set(false);
             Utils.showToastLong(say(couldNotStartMessage, "Couldn't start the report export. Try again shortly."));
         }
     }
 
-    private static void copyFailed(Exception ex) {
+    private static void copyFailed(Throwable ex) {
         // The exception's own text stays in the log. It can carry a path or a signed URL,
         // and a reader on a phone cannot act on it from a toast.
         Utils.showToastLong(say(exportFailedMessage, "The diagnostic report couldn't be saved. Try again."));

@@ -194,9 +194,9 @@ private fun MutableMethod.swapAfterLoad(index: Int, method: String) {
 val runBesideStoreAppPatch = bytecodePatch(
     name = "Run beside the store app",
     description = "Lets a renamed copy of TikTok, made with Morphe's Clone app patch, sign in " +
-        "while the regular TikTok stays installed. Pick it together with Clone app. Google and " +
-        "Facebook sign-in won't work in the copy, so use email or phone.",
-    default = false,
+        "while the regular TikTok stays installed. It does nothing unless Clone app renamed the " +
+        "package. If Google sign-in fails in the copy, use email or phone.",
+    default = true,
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch)

@@ -857,6 +857,15 @@
           "values": null
         },
         {
+          "key": "sort_pinned_with_rest",
+          "title": "Default: sort pinned with rest",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "liked_grid_sort",
           "title": "Default: liked grid sort",
           "description": null,
@@ -5871,8 +5880,26 @@
           "values": null
         },
         {
+          "key": "profile_tab_order",
+          "title": "Default: profile tab order",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "hide_profile_thoughts",
           "title": "Default: hide profile thoughts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_add_bio",
+          "title": "Default: hide add bio",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -6047,6 +6074,15 @@
         {
           "key": "hide_inbox_suggested_accounts",
           "title": "Default: hide inbox suggested accounts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_profile_suggested_accounts",
+          "title": "Default: keep profile suggested accounts",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -9751,9 +9787,9 @@
     },
     {
       "name": "Run beside the store app",
-      "description": "Lets a renamed copy of TikTok, made with Morphe's Clone app patch, sign in while the regular TikTok stays installed. Pick it together with Clone app. Google and Facebook sign-in won't work in the copy, so use email or phone.",
+      "description": "Lets a renamed copy of TikTok, made with Morphe's Clone app patch, sign in while the regular TikTok stays installed. It does nothing unless Clone app renamed the package. If Google sign-in fails in the copy, use email or phone.",
       "category": "Settings",
-      "use": false,
+      "use": true,
       "dependencies": [
         "Patch"
       ],

@@ -23,6 +23,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* A copy made with Morphe's `Clone app` can log in with the default selection now. `Run beside the store app` is part of Simple mode, and it does nothing on a copy that keeps TikTok's own package name. Without it, TikTok's servers wouldn't give the renamed copy a device ID, so every login said you'd hit the maximum number of attempts (#455, #284).
 * The date and length on profile grids don't get cut in half anymore. The label's bar now grows when it needs a third line (#449, #462).
 * Patching no longer stops at `Settings` when TikTok's Open Debug row can't be found. You lose only the Hushfeed row in TikTok's settings, and holding Home still opens the page (#460).
 * `Save episodes` loads a mini drama's episode list again. It used to stop at "Couldn't load the episodes" (#463).

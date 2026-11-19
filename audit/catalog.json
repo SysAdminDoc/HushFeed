@@ -14087,7 +14087,7 @@
  {
   "name": "Run beside the store app",
   "category": "Settings",
-  "default": false,
+  "default": true,
   "kind": "static",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/branding/RunBesideStoreAppPatch.kt",

@@ -12,8 +12,10 @@ import static org.robolectric.Shadows.shadowOf;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -148,6 +150,86 @@ public class LiveButtonsInMenuTest {
         int afterStop = downs;
         pass(2000);
         assertEquals("no taps after Stop", afterStop, downs);
+    }
+
+    private void touch(int action, float x, float y, long downAt) {
+        MotionEvent event = MotionEvent.obtain(downAt, SystemClock.uptimeMillis(), action, x, y, 0);
+        activity.getWindow().getCallback().dispatchTouchEvent(event);
+        event.recycle();
+    }
+
+    private static long holdMs() {
+        return ViewConfiguration.getLongPressTimeout() + LiveAutoTap.HOLD_SETTLE_MS + 50;
+    }
+
+    /** TikTok ignores a hold this soon after a like, so with taps running the hold stops them instead. */
+    @Test public void holdingTheRoomStopsTheTapsSoTheNextHoldOpensTheMenu() {
+        openRoom();
+        LiveAutoTap.menuTap();
+        pass(1000);
+        assertTrue(downs > 0);
+
+        long at = SystemClock.uptimeMillis();
+        touch(MotionEvent.ACTION_DOWN, 300, 600, at);
+        pass(holdMs());
+        assertEquals("Auto tap stopped", ShadowToast.getTextOfLatestToast());
+        assertEquals("Auto tap", LiveAutoTap.menuLabel());
+
+        touch(MotionEvent.ACTION_UP, 300, 600, at);
+        int afterHold = downs;
+        pass(2000);
+        assertEquals("no taps after the hold", afterHold, downs);
+    }
+
+    @Test public void aQuickTouchOrASwipeLeavesTheTapsRunning() {
+        openRoom();
+        LiveAutoTap.menuTap();
+        pass(500);
+
+        long at = SystemClock.uptimeMillis();
+        touch(MotionEvent.ACTION_DOWN, 300, 600, at);
+        pass(100);
+        touch(MotionEvent.ACTION_UP, 300, 600, at);
+        pass(holdMs());
+        assertEquals("a quick touch isn't a hold", "Stop tapping this LIVE", LiveAutoTap.menuLabel());
+
+        at = SystemClock.uptimeMillis();
+        touch(MotionEvent.ACTION_DOWN, 300, 600, at);
+        touch(MotionEvent.ACTION_MOVE, 300, 900, at);
+        pass(holdMs());
+        assertEquals("a finger that moved is a swipe", "Stop tapping this LIVE", LiveAutoTap.menuLabel());
+        touch(MotionEvent.ACTION_UP, 300, 900, at);
+        int before = downs;
+        pass(1500);
+        assertTrue("taps carry on after the swipe", downs > before);
+        assertEquals("Auto tap started", ShadowToast.getTextOfLatestToast());
+    }
+
+    /** When the hold did open the menu, its Stop row is there, so the hold leaves the taps alone. */
+    @Test public void aHoldThatOpenedTheMenuLeavesTheStopToItsRow() {
+        openRoom();
+        LiveAutoTap.menuTap();
+        pass(500);
+
+        long at = SystemClock.uptimeMillis();
+        touch(MotionEvent.ACTION_DOWN, 300, 600, at);
+        controller.windowFocusChanged(false);
+        pass(holdMs());
+        assertEquals("Stop tapping this LIVE", LiveAutoTap.menuLabel());
+        assertEquals("Auto tap started", ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test public void withTheChipsOnTheVideoAHoldOnlyPausesTheTaps() {
+        Settings.LIVE_BUTTONS_IN_MENU.save(false);
+        openRoom();
+        LiveAutoTap.menuTap();
+        pass(500);
+
+        long at = SystemClock.uptimeMillis();
+        touch(MotionEvent.ACTION_DOWN, 300, 600, at);
+        pass(holdMs());
+        assertEquals("Stop tapping this LIVE", LiveAutoTap.menuLabel());
+        touch(MotionEvent.ACTION_UP, 300, 600, at);
     }
 
     @Test public void tapsWaitUntilTheMenuHasClosed() {

@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
@@ -71,6 +72,8 @@ public final class LiveAutoTap {
     static final long FINGER_GRACE_MS = 400;
     /** The window losing focus this soon after a tap means the tap opened something. */
     static final long PANEL_AFTER_TAP_MS = 800;
+    /** A hold is judged this long after the system's long press, once a menu it opened has the window. */
+    static final long HOLD_SETTLE_MS = 150;
 
     public static final String[] RATE_LABELS = {"2 taps a second", "4 taps a second", "6 taps a second", "8 taps a second"};
     public static final String[] RATE_VALUES = {"2", "4", "6", "8"};
@@ -102,6 +105,12 @@ public final class LiveAutoTap {
     private static long lastFingerAt;
     private static long lastTapAt;
     private static int upGeneration;
+    // A finger held still in menu mode stops the taps (#359): TikTok won't open its LIVE menu that soon after a like.
+    private static int gesture;
+    private static boolean fingerMoved;
+    private static float downX;
+    private static float downY;
+    private static int touchSlop;
 
     /** True while the switch is on and Hushfeed isn't paused. */
     static boolean enabled() {
@@ -558,7 +567,7 @@ public final class LiveAutoTap {
         InvocationHandler watcher = (proxy, method, args) -> {
             if (watching && !injecting && args != null && args.length == 1 && args[0] instanceof MotionEvent
                     && "dispatchTouchEvent".equals(method.getName())) {
-                finger(((MotionEvent) args[0]).getActionMasked());
+                finger((MotionEvent) args[0]);
             }
             try {
                 return method.invoke(inner, args);
@@ -576,6 +585,7 @@ public final class LiveAutoTap {
         fingerDown = false;
         lastFingerAt = 0;
         lastTapAt = 0;
+        touchSlop = ViewConfiguration.get(window.getContext()).getScaledTouchSlop();
     }
 
     /** Puts the window's own callback back; one wrapped over ours since then keeps a dormant pass-through. */
@@ -590,14 +600,21 @@ public final class LiveAutoTap {
         watchProxy = null;
     }
 
-    private static void finger(int action) {
+    private static void finger(MotionEvent event) {
         long now = SystemClock.uptimeMillis();
+        int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
                 fingerDown = true;
                 // The new gesture replaces any half-sent tap: its up must not land in this one.
                 upGeneration++;
+                // Two fingers are a pinch, not the hold that opens the menu.
+                if (action == MotionEvent.ACTION_DOWN) watchHold(event);
+                else fingerMoved = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (movedPastSlop(downX, downY, event.getX(), event.getY(), touchSlop)) fingerMoved = true;
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -607,6 +624,40 @@ public final class LiveAutoTap {
                 break;
         }
         lastFingerAt = now;
+    }
+
+    private static void watchHold(MotionEvent down) {
+        downX = down.getX();
+        downY = down.getY();
+        fingerMoved = false;
+        int hold = ++gesture;
+        if (!Settings.LIVE_BUTTONS_IN_MENU.get()) return;
+        HANDLER.postDelayed(() -> holdEnds(hold), ViewConfiguration.getLongPressTimeout() + HOLD_SETTLE_MS);
+    }
+
+    static boolean movedPastSlop(float fromX, float fromY, float x, float y, int slop) {
+        float dx = x - fromX;
+        float dy = y - fromY;
+        return dx * dx + dy * dy > (float) slop * slop;
+    }
+
+    /**
+     * With the buttons in the menu, holding the room is how the menu opens, and that's where Stop is.
+     * TikTok ignores a hold that comes this soon after a like, so while taps run the hold would do
+     * nothing at all. A finger still down and still in place from that gesture stops the taps
+     * instead, and the next hold opens the menu. A menu that did open has the window, and its Stop
+     * row is left to do the job.
+     */
+    private static void holdEnds(int hold) {
+        try {
+            if (hold != gesture || !fingerDown || fingerMoved || loop == null || !inMenu()) return;
+            Window window = watchedWindow;
+            if (window == null || !window.getDecorView().hasWindowFocus()) return;
+            stop(End.STOPPED);
+            Utils.showToastShort(L10n.t("Auto tap stopped"));
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not stop LIVE auto tap from a hold", failure);
+        }
     }
 
     // ---- the chip ---------------------------------------------------------------------------

@@ -277,10 +277,10 @@ public class GridSortTest {
         assertFalse("a list that shrank", GridSort.wantsNextPage("newest", 60, 40, true));
         assertFalse("an empty grid", GridSort.wantsNextPage("newest", 0, 0, true));
         assertEquals("#180: 300 left a long profile's oldest videos out", 1000, GridSort.LOAD_CAP);
-        // The S22 on Wi-Fi (2026-11-19, @tiktok): about 33 videos a page, a page a second. A 20 s
-        // hold ran out at 618, so the cap was out of reach.
-        assertTrue("the cap fits in the hold at the S22's page rate",
-                GridSort.HOLD_LIMIT_MS >= (GridSort.LOAD_CAP / 33 + 1) * 1_050L);
+        // The S22 on Wi-Fi (2026-11-19, @tiktok): about 33 videos a page. A 20 s hold ran out at 618,
+        // and a 35 s one at 981 on a run that averaged 1.14 s a page, so allow 1.4 s a page.
+        assertTrue("the cap fits in the hold at the S22's slower page rate",
+                GridSort.HOLD_LIMIT_MS >= (GridSort.LOAD_CAP / 33 + 1) * 1_400L);
     }
 
     /** The grid's own load more listener, as the adapter's footer calls it. */

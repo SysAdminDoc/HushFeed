@@ -147,11 +147,12 @@ public final class GridSort {
     /**
      * The longest a grid stays out of sight, so a slow or dead request can't leave it hidden. 300
      * videos took 18 s on Login2. The S22 on Wi-Fi got about 33 a page and a page a second, so 20 s
-     * ran out at 618 and the cap was never reached (#180); this fits the cap with some room. A grid
-     * still loading when this runs out, or whose hold is tapped, stops loading by itself
-     * ({@link #TIMED_OUT}), so it shows its order once instead of reshuffling page by page.
+     * ran out at 618 and the cap was never reached (#180). A later run averaged 1.14 s a page, so 35 s
+     * ran out at 981, a page short; 45 s leaves room for a slower page. A grid still loading when this
+     * runs out, or whose hold is tapped, stops loading by itself ({@link #TIMED_OUT}), so it shows
+     * its order once instead of reshuffling page by page.
      */
-    static final long HOLD_LIMIT_MS = 35_000;
+    static final long HOLD_LIMIT_MS = 45_000;
     /**
      * How long a hold waits on one page. The Liked tab keeps its listener past its last video and
      * just never answers the ask, so this is what ends that hold. Pages came within 3 s on Login2.

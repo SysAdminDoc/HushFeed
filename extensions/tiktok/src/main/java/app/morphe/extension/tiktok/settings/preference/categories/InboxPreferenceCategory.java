@@ -227,6 +227,14 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS
         ));
         }
+        if (SettingsStatus.hideSuggestedAccountsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep suggestions on profiles",
+                    "The Suggested accounts row under a profile's Follow button still shows, so you can find similar accounts after you follow someone.",
+                    Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS
+            ));
+        }
         if (SettingsStatus.chatDeclutterEnabled) {
             addPreference(new SectionHeadingPreference(context, "In a chat"));
             addPreference(new TogglePreference(

@@ -46,14 +46,100 @@ public final class SuggestedAccountCells {
     private SuggestedAccountCells() {
     }
 
+    /** The profile page, the one place the cells sit in a panel of their own. */
+    static final String PROFILE = "view_profile";
+    /** The "View all" end of the header above a profile's suggestions. */
+    static final String PANEL_HEADER = "user_card_horizontal_right_widget";
+    /** How far up from the list the profile page and the panel are looked for. */
+    private static final int MAX_DEPTH = 16;
+
+    /** A view's resource entry name. The tests name their views without resources. */
+    interface Names {
+        String of(View view);
+    }
+
+    static volatile Names namesForTests;
+
     /** Called at the end of every suggestion cell's bind and its list title's, with the cell. */
     public static void onBind(Object cell) {
         try {
-            Object view = Reflect.readField(cell, "itemView");
-            if (!(view instanceof View)) return;
-            apply((View) view, Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.get());
+            Object found = Reflect.readField(cell, "itemView");
+            if (!(found instanceof View)) return;
+            View view = (View) found;
+            apply(view, Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.get());
+            // A cell is bound before it's added to its list, so where it sits is read once it's
+            // there; a post on a view that isn't attached yet runs as it attaches.
+            view.post(() -> placeOnProfile(view));
         } catch (Throwable error) {
             Logger.printException(() -> "Could not collapse a suggestion cell", error);
+        }
+    }
+
+    /**
+     * On a profile, the cells sit in a panel with a "Suggested accounts" header and a list of
+     * a fixed height, which TikTok opens after you follow someone. Collapsing the cells alone
+     * left the header over an empty box (#462), so the panel goes with them. With Keep
+     * suggestions on profiles on, the cells and the panel stay.
+     */
+    static void placeOnProfile(View cell) {
+        try {
+            View panel = profilePanel(cell);
+            if (panel == null) return;
+            boolean hide = Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.get()
+                    && !Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.get();
+            apply(cell, hide);
+            apply(panel, hide);
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not collapse a profile's suggestions", error);
+        }
+    }
+
+    /**
+     * The box a profile's suggestions sit in: the nearest view above the cell's list that holds
+     * the panel header, widened through the plain frames that hold only it. Null anywhere but a
+     * profile page, so the Inbox, the Friends tab and the feed are left to the cells.
+     */
+    static View profilePanel(View cell) {
+        if (!(cell.getParent() instanceof ViewGroup)) return null;
+        View at = (View) cell.getParent();
+        View panel = null;
+        boolean onProfile = false;
+        for (int depth = 0; depth < MAX_DEPTH && at.getParent() instanceof ViewGroup; depth++) {
+            ViewGroup up = (ViewGroup) at.getParent();
+            if (PROFILE.equals(name(up))) {
+                onProfile = true;
+                break;
+            }
+            if (panel == null && holds(up, PANEL_HEADER, 2)) panel = up;
+            at = up;
+        }
+        if (!onProfile || panel == null) return null;
+        while (panel.getParent() instanceof ViewGroup && ((ViewGroup) panel.getParent()).getChildCount() == 1
+                && !PROFILE.equals(name((View) panel.getParent()))) {
+            panel = (View) panel.getParent();
+        }
+        return panel;
+    }
+
+    /** Whether the group or a view up to {@code depth} levels into it has the entry name. */
+    private static boolean holds(ViewGroup group, String entry, int depth) {
+        for (int index = 0; index < group.getChildCount(); index++) {
+            View child = group.getChildAt(index);
+            if (entry.equals(name(child))) return true;
+            if (depth > 1 && child instanceof ViewGroup && holds((ViewGroup) child, entry, depth - 1)) return true;
+        }
+        return false;
+    }
+
+    private static String name(View view) {
+        Names forTests = namesForTests;
+        if (forTests != null) return forTests.of(view);
+        int id = view.getId();
+        if (id == View.NO_ID || (id >>> 24) == 0) return null;
+        try {
+            return view.getResources().getResourceEntryName(id);
+        } catch (RuntimeException notFound) {
+            return null;
         }
     }
 

@@ -1447,6 +1447,9 @@ public class Settings extends BaseSettings {
     // only a new bind collapses one.
     public static final BooleanSetting HIDE_INBOX_SUGGESTED_ACCOUNTS =
             new BooleanSetting("hide_inbox_suggested_accounts", FALSE, true);
+    /** A profile's own Suggested accounts panel stays while Hide suggested accounts is on (#462). */
+    public static final BooleanSetting KEEP_PROFILE_SUGGESTED_ACCOUNTS = new BooleanSetting(
+            "keep_profile_suggested_accounts", FALSE, false, Setting.parent(HIDE_INBOX_SUGGESTED_ACCOUNTS));
     public static final BooleanSetting HIDE_INBOX_MESSAGE_REQUESTS =
             new BooleanSetting("hide_inbox_message_requests", FALSE);
     public static final BooleanSetting HIDE_INBOX_CONVERSATIONS =

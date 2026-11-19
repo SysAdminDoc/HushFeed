@@ -3,8 +3,10 @@ package app.morphe.extension.tiktok.inbox;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -13,6 +15,9 @@ import android.widget.LinearLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -39,6 +44,122 @@ public class SuggestedAccountCellsTest {
 
     @After public void restoreSwitch() {
         Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(false);
+        Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(false);
+        SuggestedAccountCells.namesForTests = null;
+    }
+
+    /** A profile page as 47.9.1 lays it out around the suggestions it opens after a follow. */
+    private static final class Profile {
+        final Map<View, String> names = new HashMap<>();
+        final FrameLayout page;
+        final View buttons;
+        final FrameLayout outer;
+        final View list;
+        final View card;
+
+        Profile(Activity activity, boolean onProfile) {
+            page = new FrameLayout(activity);
+            if (onProfile) names.put(page, "view_profile");
+            LinearLayout header = new LinearLayout(activity);
+            header.setOrientation(LinearLayout.VERTICAL);
+            page.addView(header);
+            buttons = new View(activity);
+            header.addView(buttons, new LinearLayout.LayoutParams(1080, 113));
+            // Two plain frames, then the panel: its title row, and the list in its own frames.
+            outer = new FrameLayout(activity);
+            header.addView(outer, new LinearLayout.LayoutParams(1080, 669));
+            FrameLayout inner = new FrameLayout(activity);
+            outer.addView(inner);
+            LinearLayout panel = new LinearLayout(activity);
+            panel.setOrientation(LinearLayout.VERTICAL);
+            inner.addView(panel);
+            LinearLayout titleRow = new LinearLayout(activity);
+            panel.addView(titleRow);
+            View viewAll = new View(activity);
+            names.put(viewAll, "user_card_horizontal_right_widget");
+            titleRow.addView(viewAll);
+            FrameLayout listFrame = new FrameLayout(activity);
+            panel.addView(listFrame, new LinearLayout.LayoutParams(1080, 551));
+            LinearLayout cards = new LinearLayout(activity);
+            listFrame.addView(cards);
+            list = cards;
+            card = new View(activity);
+            cards.addView(card, new LinearLayout.LayoutParams(416, 551));
+            activity.setContentView(page);
+            SuggestedAccountCells.namesForTests = names::get;
+        }
+    }
+
+    private static void runPosted() {
+        shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    /**
+     * #462: with the switch on, following someone opened a "Suggested accounts" header over an
+     * empty box on their profile. The panel now goes with its cards, and nothing else on the
+     * page moves.
+     */
+    @Test public void aProfilesSuggestionPanelGoesWithItsCards() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Profile profile = new Profile(activity, true);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(new Cell(profile.card));
+            runPosted();
+
+            assertEquals("the card was left", View.GONE, profile.card.getVisibility());
+            assertEquals("the panel's box was left as a gap", View.GONE, profile.outer.getVisibility());
+            assertEquals(0, profile.outer.getLayoutParams().height);
+            assertEquals("the profile's buttons were touched", View.VISIBLE, profile.buttons.getVisibility());
+            assertEquals(113, profile.buttons.getLayoutParams().height);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(false);
+            SuggestedAccountCells.onBind(new Cell(profile.card));
+            runPosted();
+            assertEquals("the panel didn't come back", View.VISIBLE, profile.outer.getVisibility());
+            assertEquals(669, profile.outer.getLayoutParams().height);
+            assertEquals(View.VISIBLE, profile.card.getVisibility());
+        }
+    }
+
+    /** Keep suggestions on profiles leaves a profile's cards and panel while the rest stay hidden. */
+    @Test public void keepSuggestionsOnProfilesLeavesTheProfilesPanel() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Profile profile = new Profile(activity, true);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+            Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(new Cell(profile.card));
+            runPosted();
+
+            assertEquals("a kept profile card was hidden", View.VISIBLE, profile.card.getVisibility());
+            assertEquals(416, profile.card.getLayoutParams().width);
+            assertEquals(View.VISIBLE, profile.outer.getVisibility());
+            assertEquals(669, profile.outer.getLayoutParams().height);
+        }
+    }
+
+    /** Away from a profile only the cells go: the lists there have no panel of their own. */
+    @Test public void aListThatIsNotOnAProfileKeepsItsBox() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Profile elsewhere = new Profile(activity, false);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+            Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(new Cell(elsewhere.card));
+            runPosted();
+
+            assertEquals("Keep suggestions on profiles kept a card off a profile", View.GONE,
+                    elsewhere.card.getVisibility());
+            assertEquals(View.VISIBLE, elsewhere.outer.getVisibility());
+            assertEquals(669, elsewhere.outer.getLayoutParams().height);
+        }
     }
 
     /**

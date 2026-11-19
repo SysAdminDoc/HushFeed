@@ -47,10 +47,10 @@ final class VideoDownloads {
      * TikTok received ({@link QualitySelector#rawGears}).
      */
     static Object selectedGear(Object video, String quality, boolean withCaptions) {
-        Object rates = QualitySelector.rawGears(video);
-        if (!(rates instanceof List<?>)) return null;
-        if (!"auto".equals(quality)) return QualitySelector.chooseForFile(video, (List<?>) rates, quality);
-        return withCaptions ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest") : tallerThanTikToksFile(video);
+        List<Object> rates = QualitySelector.allGears(video);
+        if (rates.isEmpty()) return null;
+        if (!"auto".equals(quality)) return QualitySelector.chooseForFile(video, rates, quality);
+        return withCaptions ? QualitySelector.chooseForFile(video, rates, "highest") : tallerThanTikToksFile(video);
     }
 
     /**

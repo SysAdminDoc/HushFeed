@@ -46,10 +46,14 @@ public class DownloadPickerSourcesTest {
         public Address playAddrValue, h264PlayAddrValue, playAddrBytevc1Value;
         public Address newDownloadAddr;
         public String miscDownloadAddrs;
+        public String videoModelStr;
+        public String dashVideoModelStr;
         public boolean dash;
         SourcedVideo(Gear... gears) { bitRateList = List.of(gears); }
         public List<Gear> getRawBitRate() { return bitRateList; }
         public boolean hasDashBitrate() { return dash; }
+        public String getVideoModelStr() { return videoModelStr == null ? "" : videoModelStr; }
+        public String getDashVideoModelStr() { return dashVideoModelStr == null ? "" : dashVideoModelStr; }
     }
 
     private static final Gear G540 = new Gear("normal_540_0", 200, "https://example.com/540");
@@ -146,6 +150,31 @@ public class DownloadPickerSourcesTest {
         assertEquals(2, QualityChoice.options(video, context).size());
         assertTrue(DownloadPickerReport.sectionForTests().lines().contains(
                 "source play_addr_h264 720p H.264: left out, no usable address"));
+    }
+
+    @Test public void a1080pCleanDownloadAddressIsOfferedBeyondTheGears() {
+        SourcedVideo video = new SourcedVideo(G540);
+        video.downloadNoWatermarkAddr = frame("https://example.com/clean-1080", 1080, 1920);
+        List<String> labels = labels(QualityChoice.options(video, context));
+        assertTrue(labels.toString(), labels.stream().anyMatch(label -> label.startsWith("1080p H.264")));
+    }
+
+    @Test public void a1080pMiscDownloadAddressIsOffered() {
+        SourcedVideo video = new SourcedVideo(G540);
+        video.miscDownloadAddrs = "{\"suffix_scene\":{\"width\":1080,\"height\":1920,"
+                + "\"size\":7000,\"url_list\":[\"https://example.com/misc-1080\"]}}";
+        List<String> labels = labels(QualityChoice.options(video, context));
+        assertTrue(labels.toString(), labels.stream().anyMatch(label -> label.startsWith("1080p H.264")));
+    }
+
+    @Test public void a1080pVariantFromTheStoredVideoModelIsOffered() {
+        SourcedVideo video = new SourcedVideo(G540);
+        video.videoModelStr = "{\"dynamic_video\":{\"dynamic_video_list\":["
+                + "{\"gear_name\":\"adapt_lowest_1080_1\",\"real_bitrate\":400,"
+                + "\"size\":7000,\"vwidth\":1080,\"vheight\":1920,"
+                + "\"main_url\":\"https://example.com/model-1080\"}]}}";
+        List<String> labels = labels(QualityChoice.options(video, context));
+        assertTrue(labels.toString(), labels.stream().anyMatch(label -> label.startsWith("1080p HEVC")));
     }
 
     @Test public void theReportNamesEveryGearAndWhyItWasLeftOut() {

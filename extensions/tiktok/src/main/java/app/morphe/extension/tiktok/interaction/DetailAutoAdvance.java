@@ -25,8 +25,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 /**
  * Auto-advance for a video opened from a profile or a list (#311). TikTok builds its auto scroll
@@ -67,9 +65,13 @@ public final class DetailAutoAdvance {
     // Whether the app last left the screen with a profile page's queue on, which lets its videos start.
     static volatile boolean queueOffScreen;
     // Whether none of TikTok's screens shows, which tests stand in for.
-    static BooleanSupplier appHidden = BackgroundPlay::appHidden;
+    static Hidden appHidden = BackgroundPlay::appHidden;
     // Where the queue's videos draw while the app is off the screen, which tests stand in for.
-    static Supplier<Surface> hiddenSurface = QueueSurface::get;
+    static SurfaceSource hiddenSurface = QueueSurface::get;
+
+    // The two seams are interfaces of their own: java.util.function arrived in API 24, and the payload runs from 23.
+    interface Hidden { boolean get(); }
+    interface SurfaceSource { Surface get(); }
 
     private DetailAutoAdvance() { }
 
@@ -224,7 +226,7 @@ public final class DetailAutoAdvance {
     /** Whether the queue TikTok armed as the app left is playing off the screen right now. */
     static boolean playingOffScreen() {
         if (!queueOffScreen) return false;
-        if (!profileQueue() || !appHidden.getAsBoolean()) {
+        if (!profileQueue() || !appHidden.get()) {
             // Back on the screen, the queue's work is done until the app leaves it again.
             queueOffScreen = false;
             Logger.printDebug(() -> "Background queue back on the screen or switched off");

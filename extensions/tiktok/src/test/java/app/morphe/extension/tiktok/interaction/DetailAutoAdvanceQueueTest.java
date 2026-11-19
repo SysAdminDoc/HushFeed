@@ -18,7 +18,6 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlayScene;
 import com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlaySessionState;
-import java.util.function.Supplier;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,8 +33,8 @@ import org.robolectric.annotation.Config;
 public class DetailAutoAdvanceQueueTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    private static final java.util.function.BooleanSupplier APP_HIDDEN = DetailAutoAdvance.appHidden;
-    private static final Supplier<Surface> HIDDEN_SURFACE = DetailAutoAdvance.hiddenSurface;
+    private static final DetailAutoAdvance.Hidden APP_HIDDEN = DetailAutoAdvance.appHidden;
+    private static final DetailAutoAdvance.SurfaceSource HIDDEN_SURFACE = DetailAutoAdvance.hiddenSurface;
 
     @Before @After public void reset() {
         DetailAutoAdvance.appHidden = APP_HIDDEN;

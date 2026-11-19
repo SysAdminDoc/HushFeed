@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
 import android.net.Uri;
 
 import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -21,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 /**
@@ -77,9 +80,14 @@ public class ImageLoadsTest {
     private static final String SG = "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/abc~tplv-photomode.jpeg"
         + "?x-expires=1763337600&x-signature=SECRETSIG%3D";
 
+    private static final String SIM_OFF = "SIM spoof: off";
+    private static final String NO_STORE_REGION = "TikTok's store region: not set yet";
+
     @Before public void setUp() {
         ImageLoads.resetForTests();
         BaseSettings.DEBUG_LOG_FILTERS.resetToDefault();
+        Settings.SIM_SPOOF.resetToDefault();
+        Settings.SIM_SPOOF_ISO.resetToDefault();
     }
 
     @After public void tearDown() {
@@ -99,6 +107,8 @@ public class ImageLoadsTest {
 
         List<String> lines = ImageLoads.sectionForTests().lines();
         assertEquals(List.of(
+            SIM_OFF,
+            NO_STORE_REGION,
             "Since the app started: 4 image fetches, 4 failed",
             "p16-sign-sg.tiktokcdn.com: 3 fetched, 4 failed",
             "p16-sign-sg.tiktokcdn.com, IOException: Unexpected HTTP code Response{protocol=h2, code=403, message=,"
@@ -114,6 +124,7 @@ public class ImageLoadsTest {
         LogBufferManager.appendEvent(DiagnosticCategory.FEED_AND_NAVIGATION, "Test", "INFO", "something worth reporting");
         String report = LogBufferManager.buildExportText();
         assertTrue(report, report.contains("[" + ImageLoads.TITLE + "]\n"
+            + SIM_OFF + "\n" + NO_STORE_REGION + "\n"
             + "Since the app started: 4 image fetches, 4 failed\n"
             + "p16-sign-sg.tiktokcdn.com: 3 fetched, 4 failed\n"));
         assertTrue(report, report.contains("\np16-sign-va.tiktokcdn.com: 1 fetched, 0 failed\n"));
@@ -163,6 +174,8 @@ public class ImageLoadsTest {
 
         List<String> lines = ImageLoads.sectionForTests().lines();
         assertEquals(List.of(
+            SIM_OFF,
+            NO_STORE_REGION,
             "Since the app started: 0 image fetches, 6 failed",
             "p16-sign-sg.tiktokcdn.com: 0 fetched, 6 failed",
             "p16-sign-sg.tiktokcdn.com, HttpFailure: statusCode: 403 (path), traceCode: , url: p16-common-sign.tiktokcdn.com,"
@@ -200,8 +213,8 @@ public class ImageLoadsTest {
         }
 
         List<String> lines = ImageLoads.sectionForTests().lines();
-        assertEquals("Since the app started: 30 image fetches, 7 failed", lines.get(0));
-        assertEquals("h0.example: 1 fetched, 7 failed", lines.get(1));
+        assertEquals("Since the app started: 30 image fetches, 7 failed", lines.get(2));
+        assertEquals("h0.example: 1 fetched, 7 failed", lines.get(3));
         assertTrue(lines.toString(), lines.contains("h0.example, other failures: 3 times"));
         assertTrue(lines.toString(), lines.contains(ImageLoads.OTHER_HOSTS + ": 6 fetched, 0 failed"));
         assertFalse(lines.toString(), lines.toString().contains("h" + ImageLoads.HOST_LIMIT + ".example"));
@@ -209,5 +222,45 @@ public class ImageLoadsTest {
 
     @Test public void nothingFetchedSaysNothing() {
         assertTrue(ImageLoads.sectionForTests().lines().isEmpty());
+    }
+
+    /**
+     * #415: images and TikTok's own image refresh were refused from US-side servers for a phone
+     * in Bangladesh with the US preset on, and the report couldn't say where TikTok had placed it.
+     */
+    @Test public void theSectionSaysWhereTikTokPlacedThePhoneAndTheSimCountryShown() {
+        Settings.SIM_SPOOF.save(true);
+        Settings.SIM_SPOOF_ISO.save("bd");
+        RuntimeEnvironment.getApplication().getSharedPreferences(ImageLoads.STORE_PREFS, Context.MODE_PRIVATE).edit()
+            .putString("store_region", "us")
+            .putString("store_region_src", "uid")
+            .putString("store_idc", "useast5")
+            .putString("store_sec_uid", "MS4wLjABAAAAsecretaccount")
+            .commit();
+        ImageLoads.requested(new FetchState(SG));
+
+        List<String> lines = ImageLoads.sectionForTests().lines();
+        assertEquals("SIM spoof: on, BD", lines.get(0));
+        assertEquals("TikTok's store region: US, from the account, data center useast5", lines.get(1));
+        assertEquals("Since the app started: 1 image fetch, 0 failed", lines.get(2));
+        assertFalse(lines.toString(), lines.toString().contains("MS4wLjABAAAA"));
+    }
+
+    @Test public void anOddStoreValueIsLeftOutRatherThanCopied() {
+        RuntimeEnvironment.getApplication().getSharedPreferences(ImageLoads.STORE_PREFS, Context.MODE_PRIVATE).edit()
+            .putString("store_region", "not a country")
+            .putString("store_region_src", "did")
+            .putString("store_idc", "maliva\nrow two")
+            .commit();
+        assertEquals(List.of(SIM_OFF, "TikTok's store region: not set yet"),
+            ImageLoads.placement(RuntimeEnvironment.getApplication()));
+
+        RuntimeEnvironment.getApplication().getSharedPreferences(ImageLoads.STORE_PREFS, Context.MODE_PRIVATE).edit()
+            .putString("store_region", "bd")
+            .putString("store_idc", "")
+            .commit();
+        assertEquals(List.of(SIM_OFF, "TikTok's store region: BD, from the device"),
+            ImageLoads.placement(RuntimeEnvironment.getApplication()));
+        assertEquals(List.of(SIM_OFF), ImageLoads.placement(null));
     }
 }

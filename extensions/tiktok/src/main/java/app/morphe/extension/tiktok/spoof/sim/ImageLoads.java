@@ -4,6 +4,8 @@
  */
 package app.morphe.extension.tiktok.spoof.sim;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
 import java.lang.reflect.Method;
@@ -18,7 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
+import app.morphe.extension.tiktok.settings.Settings;
 
 /**
  * Which image hosts TikTok's network fetcher asked for, and which of those fetches failed and
@@ -40,6 +44,8 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
     static final String OTHER_HOSTS = "(other hosts)";
     static final String NO_HOST = "(no host)";
     static final String OTHER_KINDS = "other failures";
+    /** TikTok's network stack's own preferences file for the store region it was given. */
+    static final String STORE_PREFS = "ttnet_store_region";
 
     private static final ImageLoads INSTANCE = new ImageLoads();
     private static final Object NO_URI_METHOD = new Object();
@@ -216,6 +222,62 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
         return TITLE;
     }
 
+    /**
+     * Where TikTok's network stack has put this phone, and the SIM country it's being shown.
+     *
+     * <p>TikTok keeps the store region it was given in its own preferences file, with where the
+     * answer came from (the account, the device, or the phone itself) and the data center it
+     * picks servers by. In #415 the refused images and TikTok's own image refresh came from
+     * US-side servers while the phone was in Bangladesh with a US SIM preset, and nothing in the
+     * report could say whether the preset had moved the phone's store region. The account id
+     * stored beside them never goes in.
+     */
+    static List<String> placement(Context context) {
+        List<String> lines = new ArrayList<>();
+        lines.add("SIM spoof: " + (Settings.SIM_SPOOF.get()
+                ? "on, " + code(Settings.SIM_SPOOF_ISO.get()) : "off"));
+        if (context == null) return lines;
+        try {
+            SharedPreferences prefs = context.getSharedPreferences(STORE_PREFS, Context.MODE_PRIVATE);
+            String region = code(prefs.getString("store_region", ""));
+            String source = word(prefs.getString("store_region_src", ""));
+            String idc = word(prefs.getString("store_idc", ""));
+            if (region.isEmpty() && idc.isEmpty()) {
+                lines.add("TikTok's store region: not set yet");
+                return lines;
+            }
+            lines.add("TikTok's store region: " + (region.isEmpty() ? "none" : region)
+                    + (source.isEmpty() ? "" : ", " + source(source))
+                    + (idc.isEmpty() ? "" : ", data center " + idc));
+        } catch (RuntimeException unreadable) {
+            lines.add("TikTok's store region: couldn't be read");
+        }
+        return lines;
+    }
+
+    private static String source(String source) {
+        switch (source.toLowerCase(Locale.ROOT)) {
+            case "uid": return "from the account";
+            case "did": return "from the device";
+            case "local": return "worked out on the phone";
+            default: return "from " + source;
+        }
+    }
+
+    /** A country code as two capitals, or "" for anything else. */
+    private static String code(String value) {
+        if (value == null) return "";
+        String trimmed = value.trim();
+        return trimmed.matches("[A-Za-z]{2}") ? trimmed.toUpperCase(Locale.ROOT) : "";
+    }
+
+    /** A short plain word, or "" for anything longer or odder. */
+    private static String word(String value) {
+        if (value == null) return "";
+        String trimmed = value.trim();
+        return trimmed.matches("[A-Za-z0-9_-]{1,24}") ? trimmed : "";
+    }
+
     @Override
     public List<String> lines() {
         List<Map.Entry<String, Host>> hosts;
@@ -223,6 +285,10 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
         List<String> lines = new ArrayList<>();
         synchronized (HOSTS) {
             if (HOSTS.isEmpty()) return lines;
+        }
+        // Outside the lock: Fresco's fetches take it, and a first read of a preferences file waits on the disk.
+        lines.addAll(placement(Utils.getContext()));
+        synchronized (HOSTS) {
             hosts = new ArrayList<>(HOSTS.entrySet());
             Collections.sort(hosts, (a, b) -> {
                 int byFailed = Long.compare(b.getValue().failed, a.getValue().failed);

@@ -27,7 +27,7 @@ Every Hushfeed release, newest first.
 * The date and length on profile grids don't get cut in half anymore. The label's bar now grows when it needs a third line (#449, #462).
 * Patching no longer stops at `Settings` when TikTok's Open Debug row can't be found. You lose only the Hushfeed row in TikTok's settings, and holding Home still opens the page (#460).
 * `Save episodes` loads a mini drama's episode list again. It used to stop at "Couldn't load the episodes" (#463).
-* The `Save episodes` list goes past the free episodes of a drama you haven't unlocked. Those rows say they're a preview, the way they used to (#463).
+* The `Save episodes` list goes past the free episodes of a drama you haven't unlocked, and saving one of those gets the whole episode. TikTok's list sends those episodes without their video, so Hushfeed asks for each one on its own instead of stopping at "This video isn't available as a complete file" (#463).
 * When TikTok's server turns down every copy of an original photo, `Download original photos` saves the copy TikTok shows on screen instead of stopping at "None of the photos could be saved" (#464).
 * With `Hide suggested accounts` on, following someone doesn't leave an empty Suggested accounts box on their profile anymore. Turn on `Keep suggestions on profiles` if you'd rather keep that row while the other suggestions stay hidden (#462).
 * `Play original audio` also covers videos TikTok dubs with a whole second copy of the video, which is how some mini dramas get theirs. Saving one of those with the switch on keeps the original sound too (#463, #444).

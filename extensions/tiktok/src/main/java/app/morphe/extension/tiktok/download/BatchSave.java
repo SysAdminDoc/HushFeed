@@ -226,6 +226,11 @@ final class BatchSave {
         String quality = Settings.DOWNLOAD_VIDEO_QUALITY.get();
         boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
         Source source = story ? storySource(video, quality, muted) : source(video, quality, muted);
+        if (source.video.isEmpty() && !story) {
+            // A drama's episode list can send an episode without its video (#463).
+            Object whole = DramaEpisodes.whole(post, id);
+            if (whole != null) source = source(Reflect.property(whole, "getVideo", "video"), quality, muted);
+        }
         if (source.video.isEmpty()) throw new IOException("This video isn't available as a complete file");
         String name = DownloadFilenameFormatter.formatSelectedVideoName(post);
         String path = DownloadFilenameFormatter.destinationPath(post, false);

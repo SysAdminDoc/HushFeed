@@ -208,6 +208,52 @@ public class DramaEpisodesTest {
         assertEquals(1, DramaEpisodes.load(1L).size());
     }
 
+    /** A post's video with one address in its play address and one in each rendition given. */
+    private static JSONObject video(int renditions) throws Exception {
+        JSONArray rates = new JSONArray();
+        for (int i = 0; i < renditions; i++) {
+            rates.put(new JSONObject().put("play_addr", new JSONObject()
+                    .put("url_list", new JSONArray().put("https://v16m.example/" + i + ".mp4"))));
+        }
+        return new JSONObject().put("bit_rate", rates).put("play_addr", new JSONObject()
+                .put("url_list", new JSONArray().put("https://v16m.example/play.mp4")));
+    }
+
+    @Test public void anEpisodeListedWithoutItsVideoIsAskedForOnItsOwn() throws Exception {
+        Post episode = new Post(new Paid(7431100L, "Night Shift"));
+        DramaEpisodes.sourceForTests = (path, query) -> {
+            assertEquals("/aweme/v1/aweme/detail/", path);
+            asked.add(query);
+            return new JSONObject().put("status_code", 0).put("aweme_detail", new JSONObject()
+                    .put("aweme_id", query.get("aweme_id")).put("video", video(2))).toString();
+        };
+        assertEquals("post 13", DramaEpisodes.whole(episode, "13"));
+        assertEquals("13", asked.get(0).get("aweme_id"));
+        assertNull("a post that isn't a drama's isn't asked for", DramaEpisodes.whole(new Post(null), "14"));
+        assertNull(DramaEpisodes.whole(episode, ""));
+        assertEquals(1, asked.size());
+
+        DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 0)
+                .put("aweme_detail", new JSONObject().put("aweme_id", "15")
+                        .put("video", new JSONObject().put("play_addr", new JSONObject()))).toString();
+        assertNull("a reply with no video either", DramaEpisodes.whole(episode, "15"));
+        DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 2053).toString();
+        assertNull("a refusal", DramaEpisodes.whole(episode, "16"));
+        DramaEpisodes.sourceForTests = (path, query) -> {
+            throw new IOException("offline");
+        };
+        assertNull(DramaEpisodes.whole(episode, "17"));
+    }
+
+    @Test public void aPostsAddressesAreCountedAcrossItsPlayAddressAndRenditions() throws Exception {
+        assertEquals(3, DramaEpisodes.addresses(new JSONObject().put("video", video(2))));
+        assertEquals(1, DramaEpisodes.addresses(new JSONObject().put("video", video(0))));
+        assertEquals("the list's copy of an episode past the free ones", 0,
+                DramaEpisodes.addresses(new JSONObject().put("video", new JSONObject().put("cover", "x"))));
+        assertEquals(0, DramaEpisodes.addresses(new JSONObject().put("aweme_id", "1")));
+        assertEquals(0, DramaEpisodes.addresses(null));
+    }
+
     @Test public void theDramaIdAndNameComeFromThePostsPaidStruct() {
         assertEquals(7431100L, DramaEpisodes.collectionId(new Post(new Paid(7431100L, "  Night Shift "))));
         assertEquals("Night Shift", DramaEpisodes.name(new Post(new Paid(7431100L, "  Night Shift "))));

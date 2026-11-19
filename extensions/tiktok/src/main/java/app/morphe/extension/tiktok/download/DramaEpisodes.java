@@ -164,6 +164,8 @@ final class DramaEpisodes {
         if (status != 0) throw new IOException("TikTok said " + status + " " + root.optString("status_msg", ""));
         List<Episode> episodes = new ArrayList<>();
         StringBuilder leftOut = new StringBuilder();
+        StringBuilder bare = new StringBuilder();
+        JSONObject firstBare = null;
         JSONArray videos = root.optJSONArray("paid_videos");
         int rows = videos == null ? 0 : videos.length();
         for (int index = 0; index < rows; index++) {
@@ -172,12 +174,18 @@ final class DramaEpisodes {
             Episode episode = null;
             // The whole episode first, then the post as listed: a locked episode's whole-episode
             // slot can come back without a post in it (#463).
+            JSONObject used = null;
             for (String slot : POST_SLOTS) {
-                episode = episode(item.optJSONObject(slot), item, index, reader);
+                used = item.optJSONObject(slot);
+                episode = episode(used, item, index, reader);
                 if (episode != null) break;
             }
             if (episode != null) {
                 episodes.add(episode);
+                if (addresses(used) == 0) {
+                    bare.append(" #").append(episode.number);
+                    if (firstBare == null) firstBare = used;
+                }
             } else {
                 leftOut.append(" #").append(item.optInt("seq_id", index + 1)).append(' ').append(keys(item));
             }
@@ -188,6 +196,13 @@ final class DramaEpisodes {
         int kept = episodes.size();
         Logger.printDebug(() -> "Drama episodes page " + page + ": " + kept + " of " + rows + " rows"
                 + (leftOut.length() == 0 ? "" : ", left out" + leftOut));
+        if (bare.length() > 0) {
+            String first = paidFlags(firstBare);
+            Logger.printDebug(() -> "Drama episodes page " + page + " without a video:" + bare
+                    + " (first unpurchased " + root.opt("first_unpurchased_seq_id") + ", purchased "
+                    + root.optBoolean("has_purchased") + ", limited free " + root.optBoolean("is_limited_free")
+                    + ", ads " + root.opt("enable_ad") + first + ")");
+        }
         return new Page(episodes, hasNext, page, root.optInt("num_videos", 0));
     }
 
@@ -270,6 +285,63 @@ final class DramaEpisodes {
         }
         if (found == null) throw new NoSuchMethodException(type.getName() + " has no fromJson");
         return found;
+    }
+
+    /** TikTok's one-post reply, the one its player opens a shared link with. */
+    static final String DETAIL_PATH = "/aweme/v1/aweme/detail/";
+
+    /**
+     * A drama episode as TikTok plays it, for a listed one that came without a video. Past the
+     * free episodes, the list sends an episode the account can watch with an ad or for free with
+     * no address in it, though TikTok plays it (#463), so the post's own reply is asked for it.
+     * Null for any other post, and when that reply has no video either.
+     */
+    static Object whole(Object post, String id) {
+        if (id == null || id.isEmpty() || collectionId(post) == 0) return null;
+        try {
+            Map<String, String> query = new LinkedHashMap<>();
+            query.put("aweme_id", id);
+            String json = source().get(DETAIL_PATH, query);
+            if (json == null) return null;
+            JSONObject root = new JSONObject(json);
+            JSONObject detail = root.optJSONObject("aweme_detail");
+            int found = addresses(detail);
+            Logger.printDebug(() -> "Drama episode " + id + " asked for on its own: status "
+                    + root.optInt("status_code", -1) + ", " + found + " video addresses" + paidFlags(detail));
+            if (found == 0) return null;
+            return reader().post(detail.toString());
+        } catch (Exception failure) {
+            Logger.printInfo(() -> "Could not ask TikTok for drama episode " + id, failure);
+            return null;
+        }
+    }
+
+    /** How many video addresses a post's JSON carries, in its play address and its renditions. */
+    static int addresses(JSONObject post) {
+        JSONObject video = post == null ? null : post.optJSONObject("video");
+        if (video == null) return 0;
+        int count = urls(video.optJSONObject("play_addr"));
+        JSONArray rates = video.optJSONArray("bit_rate");
+        for (int i = 0; rates != null && i < rates.length(); i++) {
+            JSONObject rate = rates.optJSONObject(i);
+            if (rate != null) count += urls(rate.optJSONObject("play_addr"));
+        }
+        return count;
+    }
+
+    private static int urls(JSONObject address) {
+        JSONArray list = address == null ? null : address.optJSONArray("url_list");
+        return list == null ? 0 : list.length();
+    }
+
+    /** A post's paid flags and video fields, for the log lines about episodes without a video. */
+    private static String paidFlags(JSONObject post) {
+        if (post == null) return ", no post";
+        JSONObject paid = post.optJSONObject("paid_content_info");
+        JSONObject video = post.optJSONObject("video");
+        String info = paid == null ? "none" : paid.toString();
+        return ", paid " + (info.length() > 400 ? info.substring(0, 400) : info)
+                + ", video " + (video == null ? "none" : keys(video));
     }
 
     /** So a test starts without what an earlier one found. */

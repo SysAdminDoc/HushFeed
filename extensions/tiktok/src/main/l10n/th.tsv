@@ -2620,7 +2620,7 @@ Use this phone's own IDs	ใช้ ID จริงของโทรศัพท
 Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	ล้างข้อมูลของ TikTok หนึ่งครั้งในการเริ่มต้นครั้งถัดไป และเปลี่ยนกลับไปใช้ Android ID และ ID โฆษณาจริงของโทรศัพท์เครื่องนี้ คุณจะถูกลงชื่อออกและฉบับร่างของคุณจะหายไป
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	TikTok จะเปลี่ยนกลับไปใช้ ID ของโทรศัพท์เครื่องนี้หลังจากรีสตาร์ท แตะอีกครั้งเพื่อยกเลิก
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	ในโพสต์ที่มีรูปภาพเดียว "ดาวน์โหลดวิดีโอ" จะสร้างไฟล์ MP4 พร้อมเสียงของโพสต์โดยไม่มีโลโก้ TikTok หรือการ์ดปิดท้าย ในโพสต์ที่มีหลายรูปภาพ "ดาวน์โหลด" จะถามว่าคุณต้องการรูปภาพต้นฉบับหรือวิดีโอเดียว สตอรี่ที่เป็นรูปภาพจะบันทึกเป็นวิดีโอด้วยเช่นกัน
-How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	ระยะเวลาที่แต่ละรูปภาพจะแสดงบนหน้าจอในวิดีโอที่สร้างจากโพสต์รูปภาพ วิดีโอของสตอรี่จะเล่นตามความยาวของสตอรี่นั้น
+How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.	ระยะเวลาที่แต่ละรูปภาพจะแสดงบนหน้าจอในวิดีโอที่สร้างจากโพสต์รูปภาพ โพสต์ที่มีรูปภาพเดียวจะยาวเท่ากับเสียงของโพสต์นั้น วิดีโอของสตอรี่จะเล่นตามความยาวของสตอรี่นั้น
 Stop loading	หยุดโหลด
 Recording files deleted	ลบไฟล์บันทึกแล้ว
 Hide story views	ซ่อนการดูสตอรี่

@@ -305,7 +305,7 @@ public class SlideshowVideoTest {
         Settings.PHOTO_VIDEO_SECONDS.save(3);
         List<Integer> lengths = new java.util.concurrent.CopyOnWriteArrayList<>();
         CountDownLatch made = new CountDownLatch(1);
-        SlideshowVideo.makerForTests = (name, seconds) -> {
+        SlideshowVideo.makerForTests = (name, seconds, sounds) -> {
             lengths.add(seconds);
             made.countDown();
             throw new java.io.IOException("Nothing to draw with here");
@@ -319,6 +319,56 @@ public class SlideshowVideoTest {
         } finally {
             SlideshowVideo.makerForTests = null;
         }
+    }
+
+    /** #469: a post with just one photo stays up as long as its sound plays, not the row's seconds. */
+    @Test public void aOnePhotoPostPlaysItsWholeSoundAndSeveralPhotosKeepTheRow() throws Exception {
+        Settings.PHOTO_VIDEO_SECONDS.save(3);
+        List<String> made = new java.util.concurrent.CopyOnWriteArrayList<>();
+        java.util.concurrent.atomic.AtomicReference<CountDownLatch> next =
+                new java.util.concurrent.atomic.AtomicReference<>(new CountDownLatch(1));
+        SlideshowVideo.makerForTests = (name, seconds, sounds) -> {
+            made.add(seconds + " " + sounds.size() + " " + sounds.get(0).whole + " " + sounds.get(0).sources.isEmpty());
+            next.get().countDown();
+            throw new java.io.IOException("Nothing to draw with here");
+        };
+        try {
+            var one = withSound(post("slideshow-whole-one", List.of(photo("https://example.com/one"))));
+            assertTrue(SlideshowVideo.start(one, null));
+            assertTrue("The one-photo video never started", next.get().await(5, TimeUnit.SECONDS));
+
+            next.set(new CountDownLatch(1));
+            var two = withSound(post("slideshow-whole-two",
+                    List.of(photo("https://example.com/a"), photo("https://example.com/b"))));
+            assertTrue(SlideshowVideo.start(two, null));
+            assertTrue("The two-photo video never started", next.get().await(5, TimeUnit.SECONDS));
+
+            next.set(new CountDownLatch(1));
+            var silent = post("slideshow-whole-silent", List.of(photo("https://example.com/one")));
+            assertTrue(SlideshowVideo.start(silent, null));
+            assertTrue("The silent video never started", next.get().await(5, TimeUnit.SECONDS));
+
+            assertEquals(List.of("3 1 true false", "3 1 false false", "3 1 false true"), made);
+        } finally {
+            SlideshowVideo.makerForTests = null;
+        }
+    }
+
+    @Test public void onlyAPostWithOnePhotoAndASoundPlaysTheWholeSound() {
+        List<String> sound = List.of("https://example.com/sound");
+        assertTrue(SlideshowVideo.playsWholeSound(1, false, sound));
+        assertFalse("a story keeps a story's length", SlideshowVideo.playsWholeSound(1, true, sound));
+        assertFalse(SlideshowVideo.playsWholeSound(2, false, sound));
+        assertFalse("nothing to play", SlideshowVideo.playsWholeSound(1, false, List.of()));
+    }
+
+    @Test public void theWholeSoundRoundsUpToASecondAndStopsAtTheRowsLongest() {
+        assertEquals(30, SlideshowVideo.wholeSoundSeconds(29_400_000L));
+        assertEquals(30, SlideshowVideo.wholeSoundSeconds(30_000_000L));
+        assertEquals(31, SlideshowVideo.wholeSoundSeconds(30_000_001L));
+        assertEquals(1, SlideshowVideo.wholeSoundSeconds(1L));
+        assertEquals(1, SlideshowVideo.wholeSoundSeconds(0L));
+        assertEquals(SlideshowVideo.MAX_SECONDS_PER_PHOTO, SlideshowVideo.wholeSoundSeconds(400_000_000L));
     }
 
     @Test public void aPhotoStoryKeepsItsPhotoSaveWithTheSwitchOff() throws Exception {
@@ -462,10 +512,13 @@ public class SlideshowVideoTest {
 
     /** A photo story carries its music as the Video's play address. */
     private AdvancedDownloadsTest.PhotoPost storyWithSound(String id) {
-        var story = post(id, List.of(photo("https://example.com/one")));
-        story.video = new AdvancedDownloadsTest.VideoData(List.of());
-        story.video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/sound", 100);
-        return story;
+        return withSound(post(id, List.of(photo("https://example.com/one"))));
+    }
+
+    private static AdvancedDownloadsTest.PhotoPost withSound(AdvancedDownloadsTest.PhotoPost post) {
+        post.video = new AdvancedDownloadsTest.VideoData(List.of());
+        post.video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/sound", 100);
+        return post;
     }
 
     private static Set<String> videoIds() { return ReflectionHelpers.getStaticField(SlideshowVideo.class, "ACTIVE"); }

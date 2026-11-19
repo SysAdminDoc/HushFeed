@@ -2335,8 +2335,8 @@ final class L10nTranslationsIt {
                 "Stato dell'hook");
         table.put("How far each edge press moves the video.",
                 "Quanto sposta il video ogni pressione sul bordo.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Quanto resta sullo schermo ogni foto in un video creato da un post di foto. Il video di una storia dura quanto la storia.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Quanto resta sullo schermo ogni foto in un video creato da un post di foto. Un post con una sola foto dura quanto il suo audio. Il video di una storia dura quanto la storia.");
         table.put("How many lines of a long comment show before more.",
                 "Quante righe di un commento lungo si vedono prima di altro.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

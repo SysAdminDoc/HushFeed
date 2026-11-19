@@ -164,6 +164,7 @@ public final class SlideshowVideo {
         List<List<String>> sources = new ArrayList<>();
         for (int position : chosen) sources.add(new ArrayList<>(photos.get(position)));
         List<String> sound = soundSources(aweme);
+        boolean whole = playsWholeSound(photos.size(), story, sound);
         String name, path;
         try {
             name = DownloadFilenameFormatter.formatSelectedVideoName(aweme);
@@ -208,7 +209,7 @@ public final class SlideshowVideo {
                     Utils.showToastShort(making);
                 }
                 SaveProgress.Outcome outcome = progress.run(index -> saved[0] = make(app, sources,
-                        Collections.singletonList(new Sound(sound, sources.size())), seconds, name, path, progress, silent));
+                        Collections.singletonList(new Sound(sound, sources.size(), whole)), seconds, name, path, progress, silent));
                 if (saved[0] == null) {
                     Utils.showToastLong(outcome.stop == SaveProgress.Stop.SERVER_WAIT
                             ? SaveProgress.message(outcome, "")
@@ -235,7 +236,7 @@ public final class SlideshowVideo {
 
     /** For the tests: stands in for drawing, muxing and publishing the video. */
     interface Maker {
-        MediaFileWriter.Saved make(String name, int seconds) throws IOException;
+        MediaFileWriter.Saved make(String name, int seconds, List<Sound> sounds) throws IOException;
     }
 
     static volatile Maker makerForTests;
@@ -250,7 +251,9 @@ public final class SlideshowVideo {
         if (photos.isEmpty()) throw new IOException("The original photos aren't available");
         String name = DownloadFilenameFormatter.formatSelectedVideoName(aweme);
         String path = DownloadFilenameFormatter.destinationPath(aweme, false);
-        return make(app, photos, Collections.singletonList(new Sound(soundSources(aweme), photos.size())),
+        List<String> sound = soundSources(aweme);
+        Sound under = new Sound(sound, photos.size(), playsWholeSound(photos.size(), false, sound));
+        return make(app, photos, Collections.singletonList(under),
                 seconds(Settings.PHOTO_VIDEO_SECONDS.get()), name, path, SaveProgress.begin(1), new boolean[]{false});
     }
 
@@ -272,10 +275,17 @@ public final class SlideshowVideo {
     static final class Sound {
         final List<String> sources;
         final int photos;
+        /** The photo stays as long as the sound plays, not the row's seconds (#469). */
+        final boolean whole;
 
         Sound(List<String> sources, int photos) {
+            this(sources, photos, false);
+        }
+
+        Sound(List<String> sources, int photos, boolean whole) {
             this.sources = sources;
             this.photos = photos;
+            this.whole = whole;
         }
     }
 
@@ -318,7 +328,7 @@ public final class SlideshowVideo {
     private static MediaFileWriter.Saved make(Context app, List<List<String>> photos, List<Sound> sounds,
             int seconds, String name, String path, SaveProgress progress, boolean[] silent) throws IOException {
         Maker stand = makerForTests;
-        if (stand != null) return stand.make(name, seconds);
+        if (stand != null) return stand.make(name, seconds, sounds);
         List<File> temporary = new ArrayList<>();
         try {
             MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
@@ -329,10 +339,23 @@ public final class SlideshowVideo {
                 postStarts.add(at);
                 at += sound.photos;
             }
+            // The whole sound comes first, so the photo can be drawn for as long as it plays.
+            File whole = null;
+            if (sounds.size() == 1 && sounds.get(0).whole) {
+                try {
+                    WholeSound found = wholeSound(app, sounds.get(0).sources, temporary);
+                    whole = found.track;
+                    seconds = found.seconds;
+                } catch (MediaBudget.StopException stop) {
+                    throw stop;
+                } catch (IOException | RuntimeException unread) {
+                    Logger.printException(() -> "The one-photo video keeps Seconds per photo", unread);
+                }
+            }
             drawPhotos(app, photos, seconds, video, progress, postStarts);
             File result = video;
             try {
-                File track = soundTrack(app, sounds, seconds, temporary);
+                File track = whole != null ? whole : soundTrack(app, sounds, seconds, temporary);
                 File muxed = temp(app, temporary, ".mp4");
                 TrackMuxer.combine(video, track, muxed);
                 result = muxed;
@@ -413,6 +436,48 @@ public final class SlideshowVideo {
         File track = temp(app, temporary, ".m4a");
         SlideshowEncoder.soundTrack(fetched, track, lengthUs);
         return track;
+    }
+
+    /** A one-photo post's sound from start to end, and the seconds its photo stays to carry it. */
+    static final class WholeSound {
+        final File track;
+        final int seconds;
+
+        WholeSound(File track, int seconds) {
+            this.track = track;
+            this.seconds = seconds;
+        }
+    }
+
+    /**
+     * The sound TikTok plays under a one-photo post, cut at its own end rather than the row's
+     * seconds (#469), so it finishes instead of stopping a few seconds in. It's cut at the longest
+     * a photo can stay too, and the photo stays to the next whole second, so it never starts over.
+     */
+    private static WholeSound wholeSound(Context app, List<String> sources, List<File> temporary) throws IOException {
+        if (sources.isEmpty()) throw new IOException("The post lists no sound");
+        File fetched = temp(app, temporary, ".tmp");
+        RemoteMedia.fetch(sources, fetched, RemoteMedia.Kind.AUDIO);
+        long lengthUs = SlideshowEncoder.soundLengthUs(fetched);
+        if (lengthUs <= 0) throw new IOException("The sound's length can't be read");
+        int seconds = wholeSoundSeconds(lengthUs);
+        long cutUs = Math.min(lengthUs, durationUs(1, seconds));
+        MediaBudget.deadline().allowAtLeast(soundWorkMs(cutUs));
+        File track = temp(app, temporary, ".m4a");
+        SlideshowEncoder.soundTrack(fetched, track, cutUs);
+        Logger.printInfo(() -> "One-photo video runs with its whole sound: " + lengthUs + " us, " + seconds + " s");
+        return new WholeSound(track, seconds);
+    }
+
+    /** A post with just one photo plays its whole sound, a story keeps a story's length (#469). */
+    static boolean playsWholeSound(int photos, boolean story, List<String> sound) {
+        return !story && photos == 1 && !sound.isEmpty();
+    }
+
+    /** Seconds on screen for a sound this long: rounded up, and never past the row's longest. */
+    static int wholeSoundSeconds(long lengthUs) {
+        long rounded = (Math.max(0, lengthUs) + 999_999L) / 1_000_000L;
+        return (int) Math.max(1, Math.min(MAX_SECONDS_PER_PHOTO, rounded));
     }
 
     private static File temp(Context app, List<File> temporary, String suffix) throws IOException {

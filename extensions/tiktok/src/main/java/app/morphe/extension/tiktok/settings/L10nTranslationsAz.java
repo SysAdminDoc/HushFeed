@@ -2335,8 +2335,8 @@ final class L10nTranslationsAz {
                 "Qoşulma statusu");
         table.put("How far each edge press moves the video.",
                 "Hər kənar basışının videonu nə qədər irəli çəkdiyi.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması. Hekayənin videosu hekayənin özü qədər davam edir.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması. Tək fotolu paylaşımın videosu səsi qədər davam edir. Hekayənin videosu hekayənin özü qədər davam edir.");
         table.put("How many lines of a long comment show before more.",
                 "Uzun şərhin daha çox yazısından əvvəl neçə sətri görünür.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

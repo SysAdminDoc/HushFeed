@@ -2335,8 +2335,8 @@ final class L10nTranslationsIn {
                 "Pemeriksaan fitur");
         table.put("How far each edge press moves the video.",
                 "Seberapa jauh setiap tekanan di tepi memindahkan video.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto. Video dari Story berdurasi sama dengan Story-nya.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto. Unggahan dengan satu foto saja berdurasi sama dengan suaranya. Video dari Story berdurasi sama dengan Story-nya.");
         table.put("How many lines of a long comment show before more.",
                 "Berapa baris komentar panjang yang tampil sebelum selengkapnya.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

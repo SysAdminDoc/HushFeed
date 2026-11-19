@@ -2608,8 +2608,8 @@ final class L10nTranslationsRu {
                 "Статус перехвата");
         table.put("How far each edge press moves the video.",
                 "На сколько каждое нажатие у края сдвигает видео.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Сколько каждое фото остаётся на экране в видео из фотопубликации. Видео из истории длится столько же, сколько сама история.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Сколько каждое фото остаётся на экране в видео из фотопубликации. Публикация с одним фото длится столько же, сколько её звук. Видео из истории длится столько же, сколько сама история.");
         table.put("How many lines of a long comment show before more.",
                 "Сколько строк длинного комментария видно до «ещё».");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

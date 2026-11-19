@@ -253,7 +253,8 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "saves as a video too.", Settings.DOWNLOAD_PHOTOS_AS_VIDEO));
             addPreference(new NumberInputPreference(context, "Seconds per photo",
                     "How long each photo stays on screen in a video made from a photo post. A "
-                            + "story's video runs as long as the story does.",
+                            + "post with just one photo runs as long as its sound. A story's video "
+                            + "runs as long as the story does.",
                     Settings.PHOTO_VIDEO_SECONDS, "%1$s second", "%1$s seconds"));
         }
         if (SettingsStatus.downloadEnabled) {

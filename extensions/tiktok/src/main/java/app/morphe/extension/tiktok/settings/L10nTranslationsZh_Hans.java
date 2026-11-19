@@ -2335,8 +2335,8 @@ final class L10nTranslationsZh_Hans {
                 "挂钩状态");
         table.put("How far each edge press moves the video.",
                 "每次边缘按压会使视频移动多远.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "由照片帖子制作的视频中每张照片在屏幕上停留的时间。故事的视频时长与故事相同.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "由照片帖子制作的视频中每张照片在屏幕上停留的时间。只有一张照片的帖子，视频时长与其声音相同。故事的视频时长与故事相同.");
         table.put("How many lines of a long comment show before more.",
                 "长评论在“更多”之前显示多少行.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

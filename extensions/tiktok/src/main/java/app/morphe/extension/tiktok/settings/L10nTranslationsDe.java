@@ -2335,8 +2335,8 @@ final class L10nTranslationsDe {
                 "Funktionsprüfung");
         table.put("How far each edge press moves the video.",
                 "Wie weit ein Druck am Rand das Video bewegt.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Wie lange jedes Foto in einem Video aus einem Fotobeitrag zu sehen ist. Das Video einer Story läuft so lange wie die Story.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Wie lange jedes Foto in einem Video aus einem Fotobeitrag zu sehen ist. Ein Beitrag mit nur einem Foto läuft so lange wie sein Ton. Das Video einer Story läuft so lange wie die Story.");
         table.put("How many lines of a long comment show before more.",
                 "Wie viele Zeilen eines langen Kommentars vor mehr zu sehen sind.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

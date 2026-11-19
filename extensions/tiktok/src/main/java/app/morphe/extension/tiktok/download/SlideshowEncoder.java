@@ -381,6 +381,18 @@ final class SlideshowEncoder implements Closeable {
         }
     }
 
+    /** How long the sound in {@code source} plays, from its container, or -1 when it doesn't say. */
+    static long soundLengthUs(File source) throws IOException {
+        MediaExtractor extractor = new MediaExtractor();
+        try {
+            extractor.setDataSource(source.getAbsolutePath());
+            MediaFormat format = selectAudio(extractor);
+            return format.containsKey(MediaFormat.KEY_DURATION) ? format.getLong(MediaFormat.KEY_DURATION) : -1;
+        } finally {
+            extractor.release();
+        }
+    }
+
     private static MediaFormat selectAudio(MediaExtractor extractor) throws IOException {
         for (int i = 0; i < extractor.getTrackCount(); i++) {
             MediaFormat format = extractor.getTrackFormat(i);

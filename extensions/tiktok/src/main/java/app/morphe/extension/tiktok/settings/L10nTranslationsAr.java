@@ -2700,8 +2700,8 @@ final class L10nTranslationsAr {
                 "حالة الخطاف");
         table.put("How far each edge press moves the video.",
                 "مدى تحريك الفيديو عند الضغط على الحافة.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "مدة بقاء كل صورة على الشاشة في فيديو مصنوع من منشور صور. يعمل فيديو القصة بنفس مدة القصة.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "مدة بقاء كل صورة على الشاشة في فيديو مصنوع من منشور صور. يستمر فيديو المنشور ذي الصورة الواحدة بطول صوته. يعمل فيديو القصة بنفس مدة القصة.");
         table.put("How many lines of a long comment show before more.",
                 "عدد أسطر التعليق الطويل التي تظهر قبل المزيد.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

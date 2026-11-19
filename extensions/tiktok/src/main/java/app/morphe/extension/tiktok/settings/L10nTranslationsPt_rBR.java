@@ -2335,8 +2335,8 @@ final class L10nTranslationsPt_rBR {
                 "Verificação de recursos");
         table.put("How far each edge press moves the video.",
                 "Quanto o vídeo anda a cada toque na borda.");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "Quanto tempo cada foto fica na tela em um vídeo feito a partir de uma publicação de fotos. O vídeo de um story dura o mesmo que o story.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "Quanto tempo cada foto fica na tela em um vídeo feito a partir de uma publicação de fotos. Uma publicação com uma só foto dura o mesmo que o seu som. O vídeo de um story dura o mesmo que o story.");
         table.put("How many lines of a long comment show before more.",
                 "Quantas linhas de um comentário longo aparecem antes de mais.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

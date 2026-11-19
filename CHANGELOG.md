@@ -9,6 +9,7 @@ Every Hushfeed release, newest first.
 * `Show the picture before saving`, under `Save a profile picture on a long press`, opens a held profile picture full screen at full size first. Save under it saves the picture, and a tap anywhere else closes it. It starts off (#467).
 * `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
+* A video made from a post with just one photo runs as long as the post's sound now, up to five minutes, so the music plays to its end instead of stopping when `Seconds per photo` runs out (#469).
 * `Sort pinned videos with the rest` lets a profile's sort put pinned videos in the order with everything else, so Newest first shows them at the date they were posted instead of at the top. It starts off (#466).
 * `Hide or reorder profile tabs` (it used to be `Hide profile tabs`) now has arrows on each tab. Move Liked to the top and it's first on your profile, while the tabs you didn't touch stay where TikTok puts them. `Original order` puts TikTok's back (#466).
 * `Hide Add bio` under App takes the Add bio prompt off your own profile while it has no bio. Edit profile still lets you add one. It starts off (#466).

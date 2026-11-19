@@ -2335,8 +2335,8 @@ final class L10nTranslationsTh {
                 "สถานะ Hook");
         table.put("How far each edge press moves the video.",
                 "ระยะที่วิดีโอจะเลื่อนไปเมื่อกดที่ขอบแต่ละครั้ง");
-        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
-                "ระยะเวลาที่แต่ละรูปภาพจะแสดงบนหน้าจอในวิดีโอที่สร้างจากโพสต์รูปภาพ วิดีโอของสตอรี่จะเล่นตามความยาวของสตอรี่นั้น");
+        table.put("How long each photo stays on screen in a video made from a photo post. A post with just one photo runs as long as its sound. A story's video runs as long as the story does.",
+                "ระยะเวลาที่แต่ละรูปภาพจะแสดงบนหน้าจอในวิดีโอที่สร้างจากโพสต์รูปภาพ โพสต์ที่มีรูปภาพเดียวจะยาวเท่ากับเสียงของโพสต์นั้น วิดีโอของสตอรี่จะเล่นตามความยาวของสตอรี่นั้น");
         table.put("How many lines of a long comment show before more.",
                 "จำนวนบรรทัดของความคิดเห็นที่ยาวที่แสดงก่อนเพิ่มเติม");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",

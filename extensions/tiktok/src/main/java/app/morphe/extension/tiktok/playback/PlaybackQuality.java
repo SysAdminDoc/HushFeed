@@ -254,10 +254,10 @@ public final class PlaybackQuality {
         StringBuilder gears = new StringBuilder();
         for (Object gear : offered) {
             if (gears.length() > 0) gears.append(", ");
-            gears.append(QualitySelector.describe(gear));
+            gears.append(QualitySelector.describe(gear)).append(" at ").append(QualitySelector.bitRateOf(gear));
         }
         String line = "Playback quality " + mode + " picked " + QualitySelector.describe(selected)
-                + " of " + offered.size() + " gears from " + owner + '#' + member + ": " + gears;
+                + " at " + QualitySelector.bitRateOf(selected) + " of " + offered.size() + " gears from " + owner + '#' + member + ": " + gears;
         Logger.printInfo(() -> line);
     }
 

@@ -143,7 +143,7 @@ public class PlaybackQualityModelTest {
                 HookStatus.report().contains("playback quality: 2 found, 0 missing"));
         BaseSettings.DEBUG_LOG_FILTERS.save("all");
         String report = LogBufferManager.buildExportText();
-        assertTrue(report, report.contains("of 2 gears from SimVideoUrlModel#setBitRate: normal_1080_0 1080p, normal_360_0 360p"));
+        assertTrue(report, report.contains("of 2 gears from SimVideoUrlModel#setBitRate: normal_1080_0 1080p at 400, normal_360_0 360p at 100"));
         assertTrue(report, report.contains("of 2 gears from SimVideo#setBitRate: "));
         assertFalse(report, report.contains("of 1 gears"));
     }
@@ -187,8 +187,9 @@ public class PlaybackQualityModelTest {
         // takes ordinary events, which the default filter does.
         BaseSettings.DEBUG_LOG_FILTERS.save("all");
         String report = LogBufferManager.buildExportText();
-        String line = "Playback quality lowest picked normal_360_0 360p of 2 gears from "
-                + "Video#getBitRate: normal_1080_0 1080p, normal_360_0 360p";
+        // Each gear's rate is on the line, so an export shows what Video bitrate limit had to go on (#454).
+        String line = "Playback quality lowest picked normal_360_0 360p at 100 of 2 gears from "
+                + "Video#getBitRate: normal_1080_0 1080p at 400, normal_360_0 360p at 100";
         assertTrue(report, report.contains(line));
         // One line per distinct choice, not one per video.
         assertEquals(report, report.indexOf(line), report.lastIndexOf(line));

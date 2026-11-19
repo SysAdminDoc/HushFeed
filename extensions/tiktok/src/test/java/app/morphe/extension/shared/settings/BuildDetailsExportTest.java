@@ -107,6 +107,9 @@ public class BuildDetailsExportTest {
             }
             assertTrue(LogBufferManager.buildExportText().length() > 60_000);
             LogBufferManager.exportToClipboard();
+            // The copy is built off the main thread and lands on it.
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             ClipboardManager clipboard = (ClipboardManager) asset.context.getSystemService(Context.CLIPBOARD_SERVICE);
             String copied = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
             assertTrue(copied.contains("clipboard_note:"));

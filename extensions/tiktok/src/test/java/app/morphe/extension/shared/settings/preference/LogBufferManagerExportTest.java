@@ -117,6 +117,9 @@ public class LogBufferManagerExportTest {
             LogBufferManager.persistCrashReport(context, crash.toString());
             assertTrue(LogBufferManager.buildExportText().length() > 60_000);
             LogBufferManager.exportToClipboard();
+            // The copy is built off the main thread and lands on it.
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             android.content.ClipboardManager clipboard =
                     (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             String copied = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
@@ -412,6 +415,14 @@ public class LogBufferManagerExportTest {
         for (int exit = 0; exit < 5; exit++) {
             StringBuilder dump = new StringBuilder("\"main\" prio=5 tid=1 Native\n");
             for (int frame = 0; frame < 60; frame++) {
+                if (frame % 2 == 0) {
+                    // Redaction makes this frame longer ("cc::fd" reads as an address), so the
+                    // budget has to count the redacted line.
+                    dump.append("  native: #").append(String.format(java.util.Locale.ROOT, "%02d", frame))
+                            .append(" pc 0000000000001234  /data/app/lib/arm64/lib")
+                            .append(wide).append(".so (cc::fd+").append(frame).append(")\n");
+                    continue;
+                }
                 dump.append("  at com.ss.android.ugc.aweme.").append(wide).append(".f").append(frame)
                         .append("(A.java:").append(frame).append(")\n");
             }
@@ -435,7 +446,9 @@ public class LogBufferManagerExportTest {
         }
         assertEquals("an exit line was pushed out by the traces: " + section, 5, exitLines);
         assertTrue("the traces took " + traceChars + " characters: " + section,
-                traceChars <= LogBufferManager.EXIT_TRACE_MAX_CHARS + 60);
+                traceChars <= LogBufferManager.EXIT_TRACE_MAX_CHARS);
+        assertTrue("the redacted frames are missing: " + section,
+                section.contains("\n  native: #00 lib" + wide + ".so ([address omitted]+0)"));
         assertTrue("the cap was hit without saying so: " + section,
                 section.contains("\n  trace: cut here, the section is at its size cap"));
         assertEquals(section, section.indexOf("size cap"), section.lastIndexOf("size cap"));

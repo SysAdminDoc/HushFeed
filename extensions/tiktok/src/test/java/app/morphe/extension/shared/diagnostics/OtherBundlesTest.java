@@ -439,6 +439,9 @@ public class OtherBundlesTest {
             LogBufferManager.appendEvent(DiagnosticCategory.DOWNLOADS, "Fixture", "INFO", "phase=newest");
             assertTrue(LogBufferManager.buildExportText().length() > 60_000);
             LogBufferManager.exportToClipboard();
+            // The copy is built off the main thread and lands on it.
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             String copied = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
             assertTrue(copied, copied.contains("clipboard_note:"));

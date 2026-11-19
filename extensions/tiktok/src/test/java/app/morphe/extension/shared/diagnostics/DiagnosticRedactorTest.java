@@ -35,6 +35,20 @@ public class DiagnosticRedactorTest {
                 + " retry via /[address omitted] (port 443)", line);
     }
 
+    /**
+     * A native frame's C++ scope is no key: "Session" and "Cookie" in a class name read like a
+     * credential's, and the frame lost its symbol. A real session field next to it still goes.
+     */
+    @Test public void aNativeFramesScopeIsNoCredentialKey() {
+        String frames = "#01 libsscronet.so (net::HttpNetworkSession::GetSocketPool(int)+44)\n"
+                + "#02 libsscronet.so (net::CookieMonster::GetCookieListWithOptions(GURL const&)+88)\n"
+                + "#03 libttvideoeditor.so (ttav::VideoEncodingSession::Flush()+12)";
+
+        assertEquals(frames, DiagnosticRedactor.redact(frames));
+        assertEquals("abort: net::HttpNetworkSession::Close session: [omitted]",
+                DiagnosticRedactor.redact("abort: net::HttpNetworkSession::Close session: abc123secret"));
+    }
+
     /** A proxy or a router is the reader's own server, and no list of TikTok's hosts names it. */
     @Test public void theNameInFrontOfAnAddressAndALookupsQuotedNameGoToo() {
         String line = DiagnosticRedactor.redact("failed to connect to myproxy.lan/192.168.1.5 (port 3128);"

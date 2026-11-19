@@ -87,6 +87,8 @@ public final class LogBufferManager {
     private static final int CRASH_MAX_BYTES = 64_000;
     /** Characters of exit traces in one report: one full trace and most of a second. */
     static final int EXIT_TRACE_MAX_CHARS = 12_000;
+    /** The line that ends the traces when they reach {@link #EXIT_TRACE_MAX_CHARS}. */
+    private static final String TRACE_CUT = "\n  trace: cut here, the section is at its size cap";
     private static final String CRASH_FILE = "morphe_java_crash_report_v1.txt";
     private static final String NPTH_CRASH_FILE = "morphe_npth_crash_report_v1.txt";
 
@@ -170,28 +172,46 @@ public final class LogBufferManager {
     }
 
     public static void exportToClipboard() {
-        try {
-            String exportText = buildExportText(CLIPBOARD_MAX_CHARS);
-            if (exportText.isEmpty()) {
-                Utils.showToastShort(say(nothingToExportMessage, "No matching diagnostics found."));
-                return;
+        // Built on a thread of its own: the report reads the saved crashes and the traces
+        // Android kept with the last exits, a few MB each, and the tap shouldn't wait for that.
+        // The copy itself goes back to the main thread.
+        boolean started = Utils.runOnOwnThread("morphe-diagnostic-copy", () -> {
+            try {
+                String built = buildExportText(CLIPBOARD_MAX_CHARS);
+                if (built.isEmpty()) {
+                    Utils.showToastShort(say(nothingToExportMessage, "No matching diagnostics found."));
+                    return;
+                }
+                // Only when the sections around the events are over the limit on their own.
+                if (built.length() > CLIPBOARD_MAX_CHARS) {
+                    String head = "MORPHE DIAGNOSTIC REPORT\n"
+                            + "clipboard_note: older content omitted; use Save full report for everything\n\n";
+                    // The head counts toward the limit too.
+                    built = head + built.substring(built.length() - (CLIPBOARD_MAX_CHARS - head.length()));
+                }
+                String exportText = built;
+                Utils.runOnMainThread(() -> {
+                    try {
+                        Utils.setClipboard(exportText);
+                        Utils.showToastShort(say(copiedMessage, "Diagnostic report copied to the clipboard."));
+                    } catch (Exception ex) {
+                        copyFailed(ex);
+                    }
+                });
+            } catch (Exception ex) {
+                copyFailed(ex);
             }
-            // Only when the sections around the events are over the limit on their own.
-            if (exportText.length() > CLIPBOARD_MAX_CHARS) {
-                String head = "MORPHE DIAGNOSTIC REPORT\n"
-                        + "clipboard_note: older content omitted; use Save full report for everything\n\n";
-                // The head counts toward the limit too.
-                exportText = head + exportText.substring(
-                        exportText.length() - (CLIPBOARD_MAX_CHARS - head.length()));
-            }
-            Utils.setClipboard(exportText);
-            Utils.showToastShort(say(copiedMessage, "Diagnostic report copied to the clipboard."));
-        } catch (Exception ex) {
-            // The exception's own text stays in the log. It can carry a path or a signed URL,
-            // and a reader on a phone cannot act on it from a toast.
-            Utils.showToastLong(say(exportFailedMessage, "The diagnostic report couldn't be saved. Try again."));
-            Logger.printException(() -> "Failed to export diagnostics", ex);
+        });
+        if (!started) {
+            Utils.showToastLong(say(couldNotStartMessage, "Couldn't start the report export. Try again shortly."));
         }
+    }
+
+    private static void copyFailed(Exception ex) {
+        // The exception's own text stays in the log. It can carry a path or a signed URL,
+        // and a reader on a phone cannot act on it from a toast.
+        Utils.showToastLong(say(exportFailedMessage, "The diagnostic report couldn't be saved. Try again."));
+        Logger.printException(() -> "Failed to export diagnostics", ex);
     }
 
     public static void exportToFile() {
@@ -595,14 +615,17 @@ public final class LogBufferManager {
             boolean traceCapped = false;
             for (ApplicationExitInfo exit : exits.subList(0, Math.min(5, exits.size()))) {
                 if (lines.length() > 0) lines.append('\n');
-                lines.append("at: ").append(utcOf(exit.getTimestamp()))
+                StringBuilder header = new StringBuilder("at: ").append(utcOf(exit.getTimestamp()))
                         .append(", reason: ").append(exitReasonName(exit.getReason()))
                         .append(", status: ").append(exit.getStatus())
                         .append(", importance: ").append(exit.getImportance());
                 String description = exit.getDescription();
                 if (description != null && !description.isEmpty()) {
-                    lines.append(", description: ").append(description.replace('\n', ' '));
+                    header.append(", description: ").append(description.replace('\n', ' '));
                 }
+                // Each line is redacted as it goes in, so the trace budget counts what's shown:
+                // redaction can lengthen a line ("ab::cd" becomes "[address omitted]").
+                lines.append(DiagnosticRedactor.redact(header.toString()));
                 // A freeze or a native crash leaves no Java exception, so the stack Android kept
                 // with the record is the only one there is. Indented under its exit, within one
                 // budget for the whole section.
@@ -622,16 +645,19 @@ public final class LogBufferManager {
                             "trace: unreadable (" + unreadable.getClass().getSimpleName() + ")");
                 }
                 for (String traceLine : trace) {
-                    if (traceChars + traceLine.length() + 3 > EXIT_TRACE_MAX_CHARS) {
-                        lines.append("\n  trace: cut here, the section is at its size cap");
+                    String shown = "\n  " + DiagnosticRedactor.redact(traceLine);
+                    // Room is kept for the cut line, so the section never passes the cap.
+                    if (traceChars + shown.length() + TRACE_CUT.length() > EXIT_TRACE_MAX_CHARS) {
+                        lines.append(TRACE_CUT);
+                        traceChars += TRACE_CUT.length();
                         traceCapped = true;
                         break;
                     }
-                    lines.append("\n  ").append(traceLine);
-                    traceChars += traceLine.length() + 3;
+                    lines.append(shown);
+                    traceChars += shown.length();
                 }
             }
-            return DiagnosticRedactor.redact(lines.toString());
+            return lines.toString();
         } catch (Throwable unavailable) {
             // A build that cannot answer this is not a build that should fail to export.
             return "";

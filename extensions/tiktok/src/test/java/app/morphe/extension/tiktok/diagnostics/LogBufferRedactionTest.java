@@ -183,7 +183,7 @@ public class LogBufferRedactionTest {
         assertTrue(report, report.contains("unpaid=false"));
     }
 
-    @Test public void diagnosticClipboardContentIsMarkedSensitive() {
+    @Test public void diagnosticClipboardContentIsMarkedSensitive() throws Exception {
         LogBufferManager.appendEvent(
                 DiagnosticCategory.DOWNLOADS,
                 "RemoteMedia",
@@ -191,6 +191,9 @@ public class LogBufferRedactionTest {
                 "download complete");
 
         LogBufferManager.exportToClipboard();
+        // The copy is built off the main thread and lands on it.
+        app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
 
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = clipboard.getPrimaryClip();

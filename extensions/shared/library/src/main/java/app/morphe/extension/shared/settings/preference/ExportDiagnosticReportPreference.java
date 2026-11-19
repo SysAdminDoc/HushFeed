@@ -17,8 +17,8 @@ public class ExportDiagnosticReportPreference extends Preference {
         // framework treats it as a setting: a key with no Setting behind it is skipped.
         setKey("action_export_diagnostic_report");
         setOnPreferenceClickListener(pref -> {
-            // Reading the APK for other bundles' code takes a moment, and a quick copy is made on
-            // the main thread, which never waits for it. Starting here gives it the time the
+            // Reading the APK for other bundles' code takes a moment, and both a quick copy and a
+            // saved report wait for it on their own threads. Starting here gives it the time the
             // reader spends choosing. A report that leaves the section out never reads it.
             if (LogBufferManager.includes(
                     app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS)) {

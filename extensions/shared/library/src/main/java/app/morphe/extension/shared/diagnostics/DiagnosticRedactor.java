@@ -149,9 +149,13 @@ public final class DiagnosticRedactor {
     private static final Pattern EMAILS = Pattern.compile(EMAIL);
     private static final Pattern PHONES = Pattern.compile(PHONE);
     private static final Pattern ADDRESSES = Pattern.compile(IPV4 + "|" + IPV6);
-    /** A key and its separator. A bracketed key, as in user[nickname]=, keeps its bracket. */
+    /**
+     * A key and its separator. A bracketed key, as in user[nickname]=, keeps its bracket. A double
+     * colon is a C++ scope, as in a native frame's net::HttpNetworkSession::GetSocketPool, not a
+     * key's separator, or "Session" in the class name reads as a credential and the symbol goes.
+     */
     private static final Pattern ASSIGNMENTS = Pattern.compile(
-            "(?<![A-Za-z0-9_-])([A-Za-z0-9_-]+)(\\\\*[\"'])?\\]?[ \\t]*[=:][ \\t]*");
+            "(?<![A-Za-z0-9_-])([A-Za-z0-9_-]+)(\\\\*[\"'])?\\]?[ \\t]*(?:=|:(?!:))[ \\t]*");
     /**
      * The next field after a separator, so "Dana, Queen of Cats" is one name and "Dana, uniqueId=dq"
      * or "Dana, author.unique_id=dq" is not. Eyes are no separator, as in "Dana, Queen :) of Cats".

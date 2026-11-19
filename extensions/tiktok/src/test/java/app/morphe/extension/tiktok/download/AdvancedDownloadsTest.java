@@ -122,9 +122,12 @@ public class AdvancedDownloadsTest {
         public final Address thumbnail = new Address("https://example.com/thumb", 50);
         /** 47.0.3's live photo: the struct whose videoModel is what the flag saves as video. */
         public LivePhoto livePhotoStruct;
+        /** The copy TikTok draws on screen, which a save falls back to (#464). */
+        public Address displayImage;
         Photo(String url) { displayImageNoWatermark = new Address(url, 100); }
         Photo(Address source) { displayImageNoWatermark = source; }
         Photo live() { livePhotoStruct = new LivePhoto(); return this; }
+        Photo shown(Address copy) { displayImage = copy; return this; }
     }
     public static final class LivePhoto {
         public final Object videoModel = new Object();
@@ -379,6 +382,41 @@ public class AdvancedDownloadsTest {
         post.photoModeImageInfo.imageList = List.of(new Photo((String) null));
         assertTrue(OriginalPhotos.sources(post).isEmpty());
         assertTrue(OriginalPhotos.sources(new Object()).isEmpty());
+    }
+
+    /**
+     * #464, not reproduced here: one reporter's original photos came back 403 from every mirror
+     * while TikTok's own loads of the same photos went through, so nothing was saved. Each photo's
+     * list now ends with the copy TikTok shows, in the same save order and never twice, and a fetch
+     * against that reporter's network (every original refused, the shown copy served) lands it.
+     */
+    @Test public void aPhotoWhoseOriginalsAreRefusedIsSavedFromTheCopyTikTokShows() throws Exception {
+        String heic = "https://p16-sign.example.com/obj/abc~tplv-photomode-image.heic?x-expires=1";
+        String webp = "https://p16-sign.example.com/obj/abc~tplv-photomode-image.webp?x-expires=1";
+        String shownHeic = "https://p16-sg.example.com/obj/abc~tplv-photomode-tx.heic?x-expires=1";
+        String shownWebp = "https://p16-sg.example.com/obj/abc~tplv-photomode-tx.webp?x-expires=1";
+        Post post = new Post(List.of(
+                new Photo(new Address(null, 100).encodings(heic, webp))
+                        .shown(new Address(null, 100).encodings(shownHeic, webp, shownWebp)),
+                new Photo("https://example.com/two")));
+        assertEquals(List.of(List.of(webp, heic, shownWebp, shownHeic), List.of("https://example.com/two")),
+                OriginalPhotos.sources(post));
+
+        List<String> asked = new java.util.ArrayList<>();
+        byte[] jpeg = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0, 16, 'J', 'F', 'I', 'F', 0, 1, 1, 0, 0, 1, 0, 1};
+        MediaTransport.Client network = MediaTransportFixtures.publicClient(url -> {
+            asked.add(url.toString());
+            boolean shown = url.getHost().startsWith("p16-sg.");
+            return MediaTransportFixtures.response(url, shown ? 200 : 403, shown ? jpeg : new byte[0]);
+        });
+        File target = temporary.newFile();
+        assertEquals("jpg", RemoteMedia.fetch(OriginalPhotos.sources(post).get(0), target, RemoteMedia.Kind.IMAGE, network));
+        assertEquals("every original first, then the shown copy", List.of(webp, heic, shownWebp), asked);
+        assertEquals(jpeg.length, target.length());
+
+        // Missing originals still hand the save back to TikTok; a shown copy alone isn't enough.
+        post.photoModeImageInfo.imageList = List.of(new Photo((String) null).shown(new Address(shownWebp, 100)));
+        assertTrue(OriginalPhotos.sources(post).isEmpty());
     }
 
     /**

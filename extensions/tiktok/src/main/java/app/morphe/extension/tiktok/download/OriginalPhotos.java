@@ -536,23 +536,44 @@ public final class OriginalPhotos {
         if (!(raw instanceof List<?>)) return Collections.emptyList();
         List<List<String>> result = new ArrayList<>();
         for (Object photo : (List<?>) raw) {
-            Object model = Reflect.property(photo, "getDisplayImageNoWatermark", "displayImageNoWatermark");
-            Object urls = Reflect.property(model, "getUrlList", "urlList");
-            List<String> candidates = new ArrayList<>();
-            if (urls instanceof List<?>) {
-                for (Object url : (List<?>) urls) {
-                    if (url instanceof String && MediaTransport.hasAllowedShape((String) url)) {
-                        candidates.add((String) url);
-                    }
-                }
-            }
+            List<String> candidates = addresses(photo, "getDisplayImageNoWatermark", "displayImageNoWatermark");
             // Never silently save just part of a post whose original sources are missing.
             if (candidates.isEmpty()) return Collections.emptyList();
             int position = result.size() + 1;
             Logger.printDebug(() -> listing(position, candidates));
-            result.add(saveOrder(candidates));
+            List<String> ordered = saveOrder(candidates);
+            List<String> shown = addresses(photo, "getDisplayImage", "displayImage");
+            shown.removeAll(ordered);
+            if (!shown.isEmpty()) {
+                Logger.printDebug(() -> "Original photo " + position + " falls back to the copy TikTok shows, "
+                        + String.join(", ", encodings(shown)));
+                ordered.addAll(saveOrder(shown));
+            }
+            result.add(ordered);
         }
         return result;
+    }
+
+    /**
+     * The addresses of one of a photo's copies, {@code getter} and {@code field} naming it.
+     *
+     * <p>Every original is tried before the copy TikTok draws on screen ({@code displayImage}),
+     * which carries no watermark either. One reporter's originals came back 403 from every mirror
+     * while TikTok's own loads of the same photos went through, and the save ended with "None of
+     * the photos could be saved" (#464). With the shown copy last in line, it lands instead.
+     */
+    private static List<String> addresses(Object photo, String getter, String field) {
+        Object model = Reflect.property(photo, getter, field);
+        Object urls = Reflect.property(model, "getUrlList", "urlList");
+        List<String> found = new ArrayList<>();
+        if (urls instanceof List<?>) {
+            for (Object url : (List<?>) urls) {
+                if (url instanceof String && MediaTransport.hasAllowedShape((String) url) && !found.contains(url)) {
+                    found.add((String) url);
+                }
+            }
+        }
+        return found;
     }
 
     /**

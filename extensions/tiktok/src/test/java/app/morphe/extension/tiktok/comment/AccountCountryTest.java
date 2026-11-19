@@ -57,6 +57,38 @@ public class AccountCountryTest {
         outcome(null, AccountCountry.Outcome.FAILED);
     }
 
+    private static AccountCountry.Answer profile(String body) {
+        return AccountCountry.parseProfile(body, "200", "MS4wSEC");
+    }
+
+    /** 47.9.1's profile page reply: the account's own blocks count, other people's records don't. */
+    @Test public void theProfilePagesReplyGivesTheAccountsOwnCountryOnly() {
+        String own = "\"common\":{\"user_profile_info\":{\"uid\":\"200\",\"sec_uid\":\"MS4wSEC\"}}";
+        AccountCountry.Answer legacy = profile("{\"status_code\":0," + own + ",\"legacy\":{\"region\":\"de\"}}");
+        assertEquals(AccountCountry.Outcome.FOUND, legacy.outcome);
+        assertEquals("DE", legacy.code);
+        assertEquals("a region in the common block", "JP", profile("{\"status_code\":0,\"common\":"
+                + "{\"user_account_info\":{\"account_region\":\"JP\"}}}").code);
+        assertEquals("the account's own record in a component", "BR", profile("{\"status_code\":0,"
+                + "\"header\":{\"components\":[{\"data\":{\"sec_uid\":\"MS4wSEC\",\"region\":\"BR\"}}]}}").code);
+        assertEquals("matched by uid too", "PL", profile("{\"status_code\":0,"
+                + "\"profile_tab\":{\"user\":{\"uid\":\"200\",\"region\":\"PL\"}}}").code);
+
+        for (String body : new String[]{
+                "{\"status_code\":0," + own + "}",
+                "{\"status_code\":0,\"header\":{\"followed_by\":[{\"uid\":\"999\",\"region\":\"BR\"}]}}",
+                "{\"status_code\":0,\"nav_bar\":{\"region\":\"US\"}}",
+                "{\"status_code\":0,\"log_pb\":{\"impr_id\":\"1\",\"region\":\"US\"}," + own + "}",
+                "{\"status_code\":0,\"legacy\":{\"region\":\"Germany\"}}"}) {
+            AccountCountry.Answer answer = profile(body);
+            assertEquals(body, AccountCountry.Outcome.NONE, answer.outcome);
+            assertNull(body, answer.code);
+        }
+        for (String body : new String[]{"{\"status_code\":2053}", "<html>blocked</html>", "", null}) {
+            assertEquals(String.valueOf(body), AccountCountry.Outcome.FAILED, profile(body).outcome);
+        }
+    }
+
     private static String post(String uid, String region) {
         return "{\"aweme_id\":\"1\",\"author\":{\"uid\":\"" + uid + "\"},\"region\":\"" + region + "\"}";
     }

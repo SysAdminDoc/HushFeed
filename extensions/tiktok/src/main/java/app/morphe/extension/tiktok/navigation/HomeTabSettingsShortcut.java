@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.diagnostics.MainScreenRestarts;
 import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsReturn;
@@ -99,6 +100,9 @@ public final class HomeTabSettingsShortcut {
         if (context instanceof Activity) IdleLeave.onMainActivityCreate((Activity) context);
         // The reader's own startup message (#347), in every bundle like the lines above.
         if (context instanceof Activity) StartupMessage.onMainActivityCreate((Activity) context);
+        // And a report line when the main screen starts over in a running app, which resets the
+        // feed with no crash to show for it (#419).
+        if (context instanceof Activity) MainScreenRestarts.onMainActivityCreate((Activity) context);
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
             FRONT.add((Activity) context);

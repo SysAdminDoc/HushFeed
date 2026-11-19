@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 * `Use an imported emoji font` draws emoji in a font file you pick, separately from the text font. It's part of `Use system font` and needs Android 12 or newer (#458).
 * `Video bitrate limit` keeps a heavy video from eating your data. Anything over the limit plays a lighter version, and videos under it aren't touched (#454).
 * Double tap and Long press can mark the video on screen as not interested, with the same follow-up choices as the button. It needs the Not interested patch (#452).
+* The diagnostic report says when TikTok's main screen starts over while the app is still running, and what happened to the screen before it. That's what a feed jumping back to the top with no crash looks like (#419).
 * Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
 
 ### Bug Fixes

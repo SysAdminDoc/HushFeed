@@ -389,6 +389,8 @@ Hushfeed declares one TikTok build at a time, the newest stable one it's been ch
 
 Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.8.3, and Play can't be asked for an older one. Take the file from APKMirror (step 1 of [Install](#install) says which one) and patch that, not the installed app.
 
+Morphe Manager 2.6.0 and newer can also get the file from a download helper app you've trusted in Settings > APK download helper, and it checks that file like one you picked yourself. The package and version have to match, and on Android 11 or newer so does TikTok's signature, which Hushfeed declares. When Manager can't check the signature, it says so before you continue.
+
 APKMirror lists three 47.7.3 files. The bundle and the arm64-v8a + armeabi-v7a APK carry the same build. The APK marked arm64-v8a alone, added on November 12, has the same version code but TikTok compiled it separately, and nearly every obfuscated class and method name Hushfeed's patches look for is different in it. Hushfeed checks for that before it patches anything and stops with a message naming the file to use, since patching it would fail some patches and hook others into the wrong code.
 
 APKMirror also offers some TikTok releases as bundles, using an `.apkm` file, and 47.8.3 has one beside the APK. Morphe Manager merges a bundle into a single APK and keeps TikTok's file paths, so everything works on it, and it needs less memory for the bundle than for the APK. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.8.3 APK instead.

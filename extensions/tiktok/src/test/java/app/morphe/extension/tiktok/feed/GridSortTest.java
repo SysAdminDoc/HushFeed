@@ -265,18 +265,18 @@ public class GridSortTest {
     @Test public void theNextPageIsWantedOnlyForARealOrderOnScreenUnderTheCapWhilePagesAddVideos() {
         assertTrue(GridSort.wantsNextPage("newest", 0, 30, true));
         assertTrue(GridSort.wantsNextPage("least_liked", 30, 60, true));
-        assertTrue("one under the cap", GridSort.wantsNextPage("oldest", 270, 299, true));
+        assertTrue("one under the cap", GridSort.wantsNextPage("oldest", 970, GridSort.LOAD_CAP - 1, true));
 
         assertFalse("Original order is TikTok's own loading", GridSort.wantsNextPage("off", 0, 30, true));
         assertFalse("a choice this build doesn't know", GridSort.wantsNextPage("sideways", 0, 30, true));
         assertFalse(GridSort.wantsNextPage(null, 0, 30, true));
         assertFalse("a grid off screen doesn't load", GridSort.wantsNextPage("newest", 0, 30, false));
-        assertFalse("the cap", GridSort.wantsNextPage("newest", 270, GridSort.LOAD_CAP, true));
-        assertFalse("past the cap", GridSort.wantsNextPage("newest", 300, 330, true));
+        assertFalse("the cap", GridSort.wantsNextPage("newest", 970, GridSort.LOAD_CAP, true));
+        assertFalse("past the cap", GridSort.wantsNextPage("newest", GridSort.LOAD_CAP, GridSort.LOAD_CAP + 30, true));
         assertFalse("a page that added nothing ends the chain", GridSort.wantsNextPage("newest", 60, 60, true));
         assertFalse("a list that shrank", GridSort.wantsNextPage("newest", 60, 40, true));
         assertFalse("an empty grid", GridSort.wantsNextPage("newest", 0, 0, true));
-        assertEquals(300, GridSort.LOAD_CAP);
+        assertEquals("#180: 300 left a long profile's oldest videos out", 1000, GridSort.LOAD_CAP);
     }
 
     /** The grid's own load more listener, as the adapter's footer calls it. */
@@ -510,6 +510,36 @@ public class GridSortTest {
             }
             idle(GridSort.HOLD_LIMIT_MS - passed + 100);
             assertInSight(slow);
+        }
+    }
+
+    /** #180: a hold that runs out leaves the rest to the reader, so the grid doesn't reshuffle in sight. */
+    @Test public void aHoldThatRunsOutStopsTheGridLoadingByItself() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter slow = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(10);
+            slow.mmItems = GridSort.data(slow, model);
+            long gap = GridSort.HOLD_QUIET_MS - 1000;
+            long passed = 0;
+            while (passed + gap < GridSort.HOLD_LIMIT_MS) {
+                idle(gap);
+                passed += gap;
+                model.addAll(posts(10));
+                slow.mmItems = GridSort.page(slow, model);
+            }
+            idle(GridSort.HOLD_LIMIT_MS - passed + 100);
+            assertInSight(slow);
+
+            int asked = slow.listener.calls;
+            model.addAll(posts(10));
+            slow.mmItems = GridSort.page(slow, model);
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            assertEquals("a page after the hold ran out asks for nothing", asked, slow.listener.calls);
+
+            slow.mmItems = GridSort.data(slow, posts(10));
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            assertEquals("a fresh list loads by itself again", asked + 1, slow.listener.calls);
         }
     }
 

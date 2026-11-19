@@ -466,44 +466,77 @@ object GateCatalogGenerator {
     }
 
     /**
-     * Walks one method in order, keeping what each register holds as far as constants, boxed
-     * constants, enum constants, class constants, new instances and string arrays go. A switch's
-     * cases each start from what the registers held at the switch, which is what the Live
-     * settings provider needs: its type names and defaults are loaded once above a string switch.
-     * [onCall] sees every invoke with its arguments lined up with the parameters and may return
-     * what the call leaves for move-result.
+     * Walks one method, keeping what each register holds as far as constants, boxed constants,
+     * enum constants, class constants, new instances and string arrays go. Where ways in meet (a
+     * jump target, a switch case, the code a backward goto shares, the head of a loop) a register
+     * keeps its value only if every way in agrees on it, and a catch handler starts from what every
+     * instruction of its try block agreed on. The branches run to a fixed point first; then one
+     * walk in code order, starting each block from that point, calls [onString] and [onCall].
+     * A straight-line walk credited a read at a jump target with the fallthrough path's string
+     * (47.8.3 FullFeedFragmentPanel.F's share_guide came out as awe_share_guide_type_log), and
+     * clearing every register at a backward jump's target or a handler lost keys loaded once at
+     * the top of a method (47.9.1 `LX/1CUF;->LLJJJJ`'s ttec_anchor_live_start_api_request_config).
+     * The Live settings provider loads its type names and defaults once above a string switch, and
+     * every case keeps them. [onCall] sees every invoke with its arguments lined up with the
+     * parameters.
      */
-    internal fun track(method: Method, onString: (String) -> Unit = {}, onCall: (Call) -> Value?) {
+    internal fun track(method: Method, onString: (String) -> Unit = {}, onCall: (Call) -> Unit) {
         val implementation = method.implementation ?: return
         val instructions = implementation.instructions.toList()
-        val addresses = IntArray(instructions.size)
+        if (instructions.isEmpty()) return
+        val count = instructions.size
+        val addresses = IntArray(count)
         var address = 0
         for ((i, instruction) in instructions.withIndex()) {
             addresses[i] = address
             address += instruction.codeUnits
         }
-        val indexAt = HashMap<Int, Int>(instructions.size * 2)
+        val indexAt = HashMap<Int, Int>(count * 2)
         addresses.forEachIndexed { i, a -> indexAt[a] = i }
-        val caseOf = HashMap<Int, Int>()
+        // Where an instruction can go besides the next one.
+        val jumps = arrayOfNulls<IntArray>(count)
         for ((i, instruction) in instructions.withIndex()) {
-            if (instruction.opcode == Opcode.PACKED_SWITCH || instruction.opcode == Opcode.SPARSE_SWITCH) {
+            val opcode = instruction.opcode
+            if (opcode == Opcode.PACKED_SWITCH || opcode == Opcode.SPARSE_SWITCH) {
                 val payload = indexAt[addresses[i] + (instruction as OffsetInstruction).codeOffset]
                     ?.let { instructions[it] } as? SwitchPayload ?: continue
-                for (element in payload.switchElements) caseOf[addresses[i] + element.offset] = i
+                jumps[i] = payload.switchElements.mapNotNull { indexAt[addresses[i] + it.offset] }.toIntArray()
+            } else if (opcode in JUMPS) {
+                indexAt[addresses[i] + (instruction as OffsetInstruction).codeOffset]?.let { jumps[i] = intArrayOf(it) }
             }
         }
-        val snapshots = HashMap<Int, HashMap<Int, Value>>()
-        var registers = HashMap<Int, Value>()
-        var result: Value? = null
-        for ((i, instruction) in instructions.withIndex()) {
-            caseOf[addresses[i]]?.let { switch -> snapshots[switch]?.let { registers = HashMap(it) } }
+        // The handlers an instruction inside a try block can throw to.
+        val throwsTo = arrayOfNulls<IntArray>(count)
+        val leader = BooleanArray(count)
+        for (block in implementation.tryBlocks) {
+            val to = block.exceptionHandlers.mapNotNull { indexAt[it.handlerCodeAddress] }.toIntArray()
+            if (to.isEmpty()) continue
+            for (h in to) leader[h] = true
+            val end = block.startCodeAddress + block.codeUnitCount
+            var i = indexAt[block.startCodeAddress] ?: continue
+            while (i < count && addresses[i] < end) {
+                throwsTo[i] = throwsTo[i]?.let { (it + to).distinct().toIntArray() } ?: to
+                i++
+            }
+        }
+        leader[0] = true
+        for (i in 0 until count) {
+            jumps[i]?.forEach { leader[it] = true }
+            if ((jumps[i] != null || instructions[i].opcode in ENDS) && i + 1 < count) leader[i + 1] = true
+        }
+
+        // What a new-instance or an array instruction makes is the same object on every pass, so
+        // ways in that carry it agree.
+        val made = HashMap<Int, Value>()
+
+        fun step(k: Int, registers: HashMap<Int, Value>, report: Boolean) {
+            val instruction = instructions[k]
             val opcode = instruction.opcode
             when (opcode) {
-                Opcode.PACKED_SWITCH, Opcode.SPARSE_SWITCH -> snapshots[i] = HashMap(registers)
                 Opcode.CONST_STRING, Opcode.CONST_STRING_JUMBO -> {
                     val text = ((instruction as ReferenceInstruction).reference as StringReference).string
                     registers[(instruction as OneRegisterInstruction).registerA] = Str(text)
-                    onString(text)
+                    if (report) onString(text)
                 }
                 Opcode.CONST_4, Opcode.CONST_16, Opcode.CONST, Opcode.CONST_HIGH16 ->
                     registers[(instruction as OneRegisterInstruction).registerA] =
@@ -524,18 +557,21 @@ object GateCatalogGenerator {
                     }
                 }
                 Opcode.NEW_INSTANCE -> registers[(instruction as OneRegisterInstruction).registerA] =
-                    Instance(((instruction as ReferenceInstruction).reference as TypeReference).type)
+                    made.getOrPut(k) { Instance(((instruction as ReferenceInstruction).reference as TypeReference).type) }
                 Opcode.NEW_ARRAY -> {
                     val two = instruction as TwoRegisterInstruction
                     val type = ((instruction as ReferenceInstruction).reference as TypeReference).type
                     val size = (registers[two.registerB] as? Num)?.bits
                     if (type == "[Ljava/lang/String;" && size != null && size in 0..4096) {
-                        registers[two.registerA] = StringArray(size.toInt())
+                        val array = (made[k] as? StringArray)?.takeIf { it.items.size == size.toInt() }
+                            ?: StringArray(size.toInt()).also { made[k] = it }
+                        if (report) array.items.fill(null)
+                        registers[two.registerA] = array
                     } else {
                         registers.remove(two.registerA)
                     }
                 }
-                Opcode.APUT_OBJECT -> {
+                Opcode.APUT_OBJECT -> if (report) {
                     val three = instruction as ThreeRegisterInstruction
                     val array = registers[three.registerB] as? StringArray
                     val index = (registers[three.registerC] as? Num)?.bits?.toInt()
@@ -545,9 +581,14 @@ object GateCatalogGenerator {
                 Opcode.FILLED_NEW_ARRAY, Opcode.FILLED_NEW_ARRAY_RANGE -> {
                     val type = ((instruction as ReferenceInstruction).reference as TypeReference).type
                     val values = registersOf(instruction).map { registers[it] }
-                    result = if (type == "[Ljava/lang/String;" && values.all { it is Str }) {
-                        StringArray(values.size).also { array -> values.forEachIndexed { k, v -> array.items[k] = (v as Str).text } }
-                    } else null
+                    if (type == "[Ljava/lang/String;" && values.all { it is Str }) {
+                        val array = (made[k] as? StringArray)?.takeIf { it.items.size == values.size }
+                            ?: StringArray(values.size).also { made[k] = it }
+                        values.forEachIndexed { n, v -> array.items[n] = (v as Str).text }
+                        registers[RESULT] = array
+                    } else {
+                        registers.remove(RESULT)
+                    }
                 }
                 Opcode.MOVE, Opcode.MOVE_FROM16, Opcode.MOVE_16, Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16,
                 Opcode.MOVE_OBJECT_16, Opcode.MOVE_WIDE, Opcode.MOVE_WIDE_FROM16, Opcode.MOVE_WIDE_16 -> {
@@ -557,9 +598,8 @@ object GateCatalogGenerator {
                 }
                 Opcode.MOVE_RESULT, Opcode.MOVE_RESULT_WIDE, Opcode.MOVE_RESULT_OBJECT -> {
                     val a = (instruction as OneRegisterInstruction).registerA
-                    val value = result
+                    val value = registers.remove(RESULT)
                     if (value == null) registers.remove(a) else registers[a] = value
-                    result = null
                 }
                 else -> {
                     val reference = (instruction as? ReferenceInstruction)?.reference
@@ -567,12 +607,18 @@ object GateCatalogGenerator {
                         val raw = registersOf(instruction)
                         val args = ArrayList<Value?>()
                         var r = 0
-                        if (!opcode.name.startsWith("INVOKE_STATIC")) args += raw.getOrNull(r++)?.let { registers[it] }
+                        // Compared as opcodes: the name an opcode carries is the smali mnemonic, and a
+                        // test of it took every static call's first argument for a receiver.
+                        if (opcode != Opcode.INVOKE_STATIC && opcode != Opcode.INVOKE_STATIC_RANGE) {
+                            args += raw.getOrNull(r++)?.let { registers[it] }
+                        }
                         for (parameter in reference.parameterTypes) {
                             args += raw.getOrNull(r)?.let { registers[it] }
                             r += if (parameter.toString() == "J" || parameter.toString() == "D") 2 else 1
                         }
-                        result = onCall(Call(reference, args, opcode)) ?: boxed(reference, args)
+                        if (report) onCall(Call(reference, args, opcode))
+                        val value = boxed(reference, args)
+                        if (value == null) registers.remove(RESULT) else registers[RESULT] = value
                     } else if (opcode.setsRegister()) {
                         val a = (instruction as? OneRegisterInstruction)?.registerA
                         if (a != null) {
@@ -583,6 +629,91 @@ object GateCatalogGenerator {
                 }
             }
         }
+
+        // What the registers hold where each block starts: unset until some way in reaches it,
+        // then only what every way in so far agreed on.
+        val starts = arrayOfNulls<HashMap<Int, Value>>(count)
+        val dirty = BooleanArray(count)
+        starts[0] = HashMap()
+        dirty[0] = true
+        fun flow(to: Int, registers: Map<Int, Value>) {
+            val start = starts[to]
+            if (start == null) {
+                starts[to] = HashMap(registers)
+                dirty[to] = true
+            } else if (keepAgreed(start, registers)) {
+                dirty[to] = true
+            }
+        }
+        var moved = true
+        while (moved) {
+            moved = false
+            var i = 0
+            while (i < count) {
+                if (!leader[i] || !dirty[i]) {
+                    i++
+                    continue
+                }
+                dirty[i] = false
+                moved = true
+                val registers = HashMap(starts[i]!!)
+                var k = i
+                while (true) {
+                    throwsTo[k]?.forEach { flow(it, registers) }
+                    step(k, registers, report = false)
+                    jumps[k]?.forEach { flow(it, registers) }
+                    if (k + 1 >= count || instructions[k].opcode in ENDS) break
+                    if (leader[k + 1]) {
+                        flow(k + 1, registers)
+                        break
+                    }
+                    k++
+                }
+                i = k + 1
+            }
+        }
+
+        var registers = HashMap<Int, Value>()
+        for (k in 0 until count) {
+            if (leader[k]) registers = starts[k]?.let { HashMap(it) } ?: HashMap()
+            step(k, registers, report = true)
+        }
+    }
+
+    /** The register a call or filled-new-array leaves its value in until move-result takes it. */
+    private const val RESULT = -1
+
+    private val JUMPS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32,
+        Opcode.IF_EQ, Opcode.IF_NE, Opcode.IF_LT, Opcode.IF_GE, Opcode.IF_GT, Opcode.IF_LE,
+        Opcode.IF_EQZ, Opcode.IF_NEZ, Opcode.IF_LTZ, Opcode.IF_GEZ, Opcode.IF_GTZ, Opcode.IF_LEZ)
+
+    /** Nothing after one of these runs next unless something jumps to it. */
+    private val ENDS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32, Opcode.RETURN_VOID, Opcode.RETURN,
+        Opcode.RETURN_WIDE, Opcode.RETURN_OBJECT, Opcode.THROW,
+        Opcode.PACKED_SWITCH_PAYLOAD, Opcode.SPARSE_SWITCH_PAYLOAD, Opcode.ARRAY_PAYLOAD)
+
+    /** Drops from [into] every register [other] disagrees on; true when it dropped one. */
+    private fun keepAgreed(into: HashMap<Int, Value>, other: Map<Int, Value>): Boolean {
+        var dropped = false
+        val entries = into.entries.iterator()
+        while (entries.hasNext()) {
+            val (register, value) = entries.next()
+            val theirs = other[register]
+            if (theirs == null || !same(value, theirs)) {
+                entries.remove()
+                dropped = true
+            }
+        }
+        return dropped
+    }
+
+    private fun same(a: Value, b: Value): Boolean = a === b || when (a) {
+        is Str -> b is Str && a.text == b.text
+        is Num -> b is Num && a.bits == b.bits
+        is EnumConst -> b is EnumConst && a.owner == b.owner && a.name == b.name
+        is Boxed -> b is Boxed && a.kind == b.kind && a.json == b.json
+        is ClassConst -> b is ClassConst && a.type == b.type
+        else -> false
     }
 
     private fun registersOf(instruction: Instruction): List<Int> = when (instruction) {
@@ -668,7 +799,7 @@ object GateCatalogGenerator {
     private fun enumOrder(classDef: ClassDef?): List<String> {
         val clinit = classDef?.methods?.firstOrNull { it.name == "<clinit>" } ?: return emptyList()
         val names = mutableListOf<String>()
-        track(clinit, onString = { names += it }) { null }
+        track(clinit, onString = { names += it }) { }
         return names
     }
 

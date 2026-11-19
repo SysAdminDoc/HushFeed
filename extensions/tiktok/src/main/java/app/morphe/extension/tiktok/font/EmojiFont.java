@@ -13,6 +13,7 @@ import android.graphics.fonts.FontStyle;
 import android.graphics.text.PositionedGlyphs;
 import android.graphics.text.TextRunShaper;
 import android.os.Build;
+import androidx.annotation.RequiresApi;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -77,7 +78,11 @@ public final class EmojiFont {
                 File emoji = context == null ? null : ImportedFont.EMOJI.fontFile(context);
                 if (emoji == null) return text;
                 Stacker using = stacker;
-                if (using == null) stacker = using = new Platform();
+                if (using == null) {
+                    // Callers check active() first; this keeps Platform off older phones on its own.
+                    if (Build.VERSION.SDK_INT < MIN_SDK) return text;
+                    stacker = using = new Platform();
+                }
                 stacked = using.stack(text, importedText, emoji);
                 STACKED.put(text, stacked);
                 return stacked;
@@ -105,6 +110,7 @@ public final class EmojiFont {
     }
 
     /** Android's fallback builder. Kept apart so older phones never load what it names. */
+    @RequiresApi(MIN_SDK)
     private static final class Platform implements Stacker {
         private FontFamily emojiFamily;
         private FontFamily importedFamily;

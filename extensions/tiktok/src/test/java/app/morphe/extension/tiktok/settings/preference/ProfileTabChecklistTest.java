@@ -63,17 +63,17 @@ public class ProfileTabChecklistTest {
             ProfileTabChecklistPreference checklist = new ProfileTabChecklistPreference(owner.get());
             View root = checklist.onCreateDialogView();
 
-            assertEquals("like, videos, private, repost, favorite, shop, music, effect, series, sticker, cast",
+            assertEquals("like, videos, sticker, cast, private, repost, favorite, shop, music, effect, series",
                     shown(root));
             assertFalse("the top row can't go up", root.findViewWithTag("profile_tab_like_up").isEnabled());
-            assertFalse("the last row can't go down", root.findViewWithTag("profile_tab_cast_down").isEnabled());
+            assertFalse("the last row can't go down", root.findViewWithTag("profile_tab_series_down").isEnabled());
             assertEquals("Move up: Reposts",
                     root.findViewWithTag("profile_tab_repost_up").getContentDescription().toString());
 
             row(root, "repost").setChecked(true);
             assertTrue(root.findViewWithTag("profile_tab_repost_up").performClick());
             assertTrue(root.findViewWithTag("profile_tab_like_down").performClick());
-            assertEquals("videos, like, repost, private, favorite, shop, music, effect, series, sticker, cast",
+            assertEquals("videos, like, sticker, cast, repost, private, favorite, shop, music, effect, series",
                     shown(root));
             assertEquals(shown(root), checklist.buildOrder());
             assertTrue("a pick stays ticked when its row moves", row(root, "repost").isChecked());

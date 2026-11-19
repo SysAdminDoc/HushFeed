@@ -6,7 +6,6 @@ package app.morphe.extension.tiktok.profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,8 +19,9 @@ import app.morphe.extension.tiktok.settings.Settings;
 /**
  * Hides the tabs you pick from the strip over a profile's videos: Videos, Private, Reposts,
  * Favorites, Liked, Shop and the rest. The strip always keeps one tab, and with Videos gone the
- * profile opens on the first tab left, which TikTok's pager already copes with (#399). The tabs
- * that stay can also be put in an order of your own (#466).
+ * profile opens on the first tab left, which TikTok's pager already copes with (#399). A tab you
+ * move up or down in the checklist moves on the strip too, and the rest stay where TikTok put
+ * them (#466).
  *
  * <p>TikTok's profile pager asks for the tab types it is about to lay out, a list of numbers, and
  * builds one tab for each. The numbers are TikTok's own and can move between builds, so they are
@@ -49,8 +49,14 @@ public final class ProfileTabs {
         }
     }
 
+    /**
+     * The checklist's rows, the first seven in the order your own profile shows them on 47.9.1,
+     * so the list you reorder starts out as the strip you see.
+     */
     public static final List<Row> ROWS = List.of(
             new Row("videos", "Videos", VIDEOS),
+            new Row("sticker", "Stickers", "profile_tab_sticker_store"),
+            new Row("cast", "AI theater", "profile_tab_cast"),
             new Row("private", "Private videos", "profile_tab_private"),
             new Row("repost", "Reposts", "profile_tab_repost"),
             new Row("favorite", "Favorites", "profile_tab_favorite"),
@@ -59,9 +65,7 @@ public final class ProfileTabs {
             new Row("music", "Music", "profile_tab_music"),
             new Row("effect", "Effects", "profile_tab_effect"),
             new Row("series", "Series", "profile_tab_short_drama", "profile_tab_drama_download",
-                    "profile_tab_pine_drama_watch_history"),
-            new Row("sticker", "Stickers", "profile_tab_sticker_store"),
-            new Row("cast", "AI theater", "profile_tab_cast"));
+                    "profile_tab_pine_drama_watch_history"));
 
     private static volatile Map<Integer, String> tabNames;
 
@@ -121,36 +125,98 @@ public final class ProfileTabs {
     }
 
     /**
-     * Puts the tabs in the saved order (#466). Only tabs the order names move, and they move
-     * among the places those tabs held, so a tab it doesn't name keeps its spot. A new list when
-     * anything moved, for the same reason {@link #filter(List, Map, Set)} hands one back.
+     * Puts the tabs in the saved order (#466), moving only the rows you moved. The order is read
+     * the way the checklist shows it, every row with the ones it doesn't name after it, and the
+     * rows you left alone are the longest run of it still in {@link #ROWS} order. Their tabs keep
+     * TikTok's places, a tab with no row too. Each row you moved goes in front of the next row of
+     * your order the strip has, or after the one before it when none follows. Sorting every tab
+     * by the whole list instead moved tabs you never touched, like a creator's Shop, which TikTok
+     * puts ahead of Reposts while the checklist lists it after Liked. A new list when anything
+     * moved, for the same reason {@link #filter(List, Map, Set)} hands one back.
      */
     static List<?> arrange(List<?> types, Map<?, ?> names, List<String> order) {
         if (types == null || names == null || order.isEmpty()) return types;
-        List<Integer> places = new ArrayList<>();
-        List<Object> named = new ArrayList<>();
-        for (int index = 0; index < types.size(); index++) {
-            if (rank(names.get(types.get(index)), order) < 0) continue;
-            places.add(index);
-            named.add(types.get(index));
+        List<String> shown = complete(order);
+        Set<String> moved = moved(shown);
+        if (moved.isEmpty()) return types;
+        List<Object> arranged = new ArrayList<>(types.size());
+        Map<String, List<Object>> lifted = new HashMap<>();
+        for (Object type : types) {
+            String key = rowKey(names.get(type));
+            if (key == null || !moved.contains(key)) {
+                arranged.add(type);
+            } else {
+                // In TikTok's order, so the two Shop tabs, or a drama's three, stay as they were.
+                lifted.computeIfAbsent(key, unused -> new ArrayList<>()).add(type);
+            }
         }
-        List<Object> sorted = new ArrayList<>(named);
-        // Stable, so the two Shop tabs, or a drama's three, keep TikTok's order between them.
-        sorted.sort(Comparator.comparingInt((Object type) -> rank(names.get(type), order)));
-        if (sorted.equals(named)) return types;
-        List<Object> arranged = new ArrayList<>(types);
-        for (int index = 0; index < places.size(); index++) {
-            arranged.set(places.get(index), sorted.get(index));
+        // From the end of the order back, so the row after a moved one is already in place.
+        for (int rank = shown.size() - 1; rank >= 0; rank--) {
+            List<Object> tabs = lifted.get(shown.get(rank));
+            if (tabs != null) arranged.addAll(placeFor(arranged, names, shown, rank), tabs);
         }
+        if (arranged.equals(types)) return types;
         Logger.printDebug(() -> "Profile tabs: " + types + " arranged as " + arranged);
         return arranged;
     }
 
-    /** Where a tab's row sits in the saved order, or -1 when the order doesn't name it. */
-    private static int rank(Object name, List<String> order) {
-        if (!(name instanceof String)) return -1;
+    /**
+     * The rows of a whole order you moved: every row outside its longest run still in
+     * {@link #ROWS} order. Of two runs as long, the one that starts higher in your order stays.
+     */
+    static Set<String> moved(List<String> shown) {
+        int size = shown.size();
+        int[] place = new int[size];
+        int[] length = new int[size];
+        int[] before = new int[size];
+        int end = -1;
+        for (int at = 0; at < size; at++) {
+            place[at] = rowIndex(shown.get(at));
+            length[at] = 1;
+            before[at] = -1;
+            for (int earlier = 0; earlier < at; earlier++) {
+                if (place[earlier] < place[at] && length[earlier] + 1 > length[at]) {
+                    length[at] = length[earlier] + 1;
+                    before[at] = earlier;
+                }
+            }
+            if (end < 0 || length[at] > length[end]) end = at;
+        }
+        Set<String> moved = new HashSet<>(shown);
+        for (int at = end; at >= 0; at = before[at]) moved.remove(shown.get(at));
+        return moved;
+    }
+
+    /**
+     * Where a moved row's tabs go: in front of the first tab of the next row in the order the
+     * strip has, else after the last tab of the row before it, else at the end.
+     */
+    private static int placeFor(List<Object> arranged, Map<?, ?> names, List<String> shown, int rank) {
+        for (int next = rank + 1; next < shown.size(); next++) {
+            for (int index = 0; index < arranged.size(); index++) {
+                if (shown.get(next).equals(rowKey(names.get(arranged.get(index))))) return index;
+            }
+        }
+        for (int previous = rank - 1; previous >= 0; previous--) {
+            for (int index = arranged.size() - 1; index >= 0; index--) {
+                if (shown.get(previous).equals(rowKey(names.get(arranged.get(index))))) return index + 1;
+            }
+        }
+        return arranged.size();
+    }
+
+    /** The key of the row a tab's name belongs to, or null when no row covers it. */
+    private static String rowKey(Object name) {
+        if (!(name instanceof String)) return null;
         for (Row row : ROWS) {
-            if (row.names.contains(name)) return order.indexOf(row.key);
+            if (row.names.contains(name)) return row.key;
+        }
+        return null;
+    }
+
+    private static int rowIndex(String key) {
+        for (int index = 0; index < ROWS.size(); index++) {
+            if (ROWS.get(index).key.equals(key)) return index;
         }
         return -1;
     }
@@ -171,7 +237,11 @@ public final class ProfileTabs {
      * row it doesn't name, in the list's own order.
      */
     public static List<String> shownOrder(String stored) {
-        List<String> keys = order(stored);
+        return complete(order(stored));
+    }
+
+    private static List<String> complete(List<String> order) {
+        List<String> keys = new ArrayList<>(order);
         for (Row row : ROWS) {
             if (!keys.contains(row.key)) keys.add(row.key);
         }
@@ -179,10 +249,7 @@ public final class ProfileTabs {
     }
 
     private static boolean isRow(String key) {
-        for (Row row : ROWS) {
-            if (row.key.equals(key)) return true;
-        }
-        return false;
+        return rowIndex(key) >= 0;
     }
 
     /** TikTok's names for the tabs the picks hide. Paused, the default, so none. */

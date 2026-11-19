@@ -422,9 +422,8 @@ val settingsPatch = bytecodePatch(
         // A long press on For You, TikTok's nearest thing to a logo on the feed, opens the page
         // too. A build where it can't be found keeps everything else and leaves For You alone.
         hookForYouLongPress()
-        registerForBuildDetails("enableSettings")
 
-        // Everything below puts the Hushfeed row into TikTok's settings list by taking over the
+        // addHushfeedRowAtOpenDebug puts the Hushfeed row into TikTok's settings list by taking over the
         // Open Debug row. The page doesn't depend on it, since holding Home opens it too, so an
         // APK or patch mix without that row (#460) still gets the page and every other patch.
         if (OpenDebugCellVmDefaultStateFingerprint.methodOrNull == null) {
@@ -433,258 +432,267 @@ val settingsPatch = bytecodePatch(
                     "${packageMetadata.versionName}: the Open Debug row wasn't found. " +
                     "Holding Home still opens the page.",
             )
-            return@execute
+        } else {
+            addHushfeedRowAtOpenDebug()
         }
-
-        fun resolveOpenDebugTargets(): OpenDebugTargets {
-            val stateClass = openDebugStateClass(OpenDebugCellVmDefaultStateFingerprint.method)
-
-            val composeMatches = app.morphe.patcher.Fingerprint(
-                name = "LIZ",
-                returnType = "V",
-                parameters = listOf(stateClass, "Z", "Z", "L", "I"),
-                filters = listOf(app.morphe.patcher.fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = stateClass)),
-                custom = { method, _ -> isOpenDebugRowComposeMethod(method, stateClass) },
-            ).matchAllOrNull().orEmpty()
-
-            val composeMatch = composeMatches.singleOrNull()
-                ?: throw PatchException(
-                    "Enable Open Debug: expected one OpenDebug row compose for $stateClass, " +
-                        "found ${composeMatches.size}.",
-                )
-            return OpenDebugTargets(
-                stateClass = stateClass,
-                composeMutable = composeMatch.method,
-            )
-        }
-
-        val targets = resolveOpenDebugTargets()
-        val openDebugStateClass = targets.stateClass
-        val composeMutable = targets.composeMutable
-
-        fun clickLambdaScore(method: SmaliMethod, classType: String): Int {
-            val impl = method.implementation ?: return 0
-            var score = 0
-            for (insn in impl.instructions) {
-                val ref = (insn as? ReferenceInstruction)?.reference
-                if (insn.opcode == Opcode.IGET_OBJECT) {
-                    val field = ref as? FieldReference ?: continue
-                    if (field.definingClass == classType && field.name == "l1") score += 25
-                    if (field.definingClass == classType && field.name == "l0") score += 15
-                }
-                if (insn.opcode == Opcode.CHECK_CAST) {
-                    val type = ref as? TypeReference ?: continue
-                    if (type.type == openDebugStateClass) score += 40
-                    if (type.type == "Landroid/content/Context;") score += 10
-                }
-            }
-            return score
-        }
-
-        fun resolveClickWrapperMethod(): MutableMethod {
-            val wrapper = openDebugClickWrapper(composeMutable, openDebugStateClass)
-            val wrapperClass = wrapper.className
-
-            val matches = mutableListOf<MutableMethod>()
-            classDefByOrNull(wrapperClass)?.let { classDef ->
-                for (method in classDef.methods) {
-                    if (method.parameterTypes.size != 1 || method.parameterTypes[0] != classDef.type) continue
-                    if (method.name != wrapper.invokeName) continue
-                    val score = clickLambdaScore(method, classDef.type)
-                    if (score < 70) continue
-                    matches += mutableClassDefBy(classDef).findMutableMethodOf(method)
-                }
-            }
-
-            return matches.singleOrNull() ?: throw PatchException(
-                "Enable Open Debug: expected one OpenDebug click handler in $wrapperClass, " +
-                    "found ${matches.size}.",
-            )
-        }
-
-        fun resolveOpenDebugFunction2Method(): MutableMethod {
-            val defaultState = OpenDebugCellVmDefaultStateFingerprint.method
-            val openDebugVmClass = defaultState.definingClass
-            val lambdaClass = openDebugFunction2LambdaClass(defaultState)
-
-            val matches = mutableListOf<MutableMethod>()
-            classDefByOrNull(lambdaClass)?.let { classDef ->
-                for (method in classDef.methods) {
-                    if (!method.name.matches(Regex("invoke\\\$\\d+"))) continue
-                    if (method.returnType != "Ljava/lang/Object;") continue
-                    val parameters = method.parameterTypes
-                    if (parameters.size != 3 || parameters[0] != lambdaClass) continue
-                    val hasOpenDebugCast = method.implementation?.instructions?.any { insn ->
-                        insn.opcode == Opcode.CHECK_CAST &&
-                            ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type == openDebugVmClass
-                    } == true
-                    if (!hasOpenDebugCast) continue
-                    matches += mutableClassDefBy(classDef).findMutableMethodOf(method)
-                }
-            }
-
-            return matches.singleOrNull() ?: throw PatchException(
-                "Enable Open Debug: expected one OpenDebug Function2 lambda, found ${matches.size}.",
-            )
-        }
-
-        fun MutableMethod.openMorpheSettingsAtStart(contextRegister: String) {
-            // The body replaces the lambda outright and returns, so the parameters are fair
-            // to write over; the frame still has to hold the three registers it names. The
-            // OpenDebug lambda has no locals at all on 46.2.3, only its parameters.
-            requireRegisters("Settings", 3)
-            addInstructions(
-                0,
-                """
-                    invoke-static {}, Lapp/morphe/extension/shared/Utils;->getContext()Landroid/content/Context;
-                    move-result-object v$contextRegister
-                    if-eqz v$contextRegister, :return_unit
-                    new-instance v1, Landroid/content/Intent;
-                    const-class v2, Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;
-                    invoke-direct {v1, v$contextRegister, v2}, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-                    const/high16 v2, 0x10000000
-                    invoke-virtual { v1, v2 }, Landroid/content/Intent;->setFlags(I)Landroid/content/Intent;
-                    const-string v2, "morphe_settings"
-                    invoke-virtual { v1, v2 }, Landroid/content/Intent;->setAction(Ljava/lang/String;)Landroid/content/Intent;
-                    invoke-virtual { v$contextRegister, v1 }, Landroid/content/Context;->startActivity(Landroid/content/Intent;)V
-                    :return_unit
-                    sget-object v$contextRegister, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
-                    return-object v$contextRegister
-                """,
-            )
-        }
-
-        fun addOpenDebugToVisibleSettingsList(): Boolean {
-            val composeRowsMethod = SettingsComposeRowsFingerprint.methodOrNull ?: return false
-            val openDebugField = SupportGroupDefaultStateFingerprint.method.implementation?.instructions
-                ?.firstNotNullOfOrNull { instruction ->
-                    if (instruction.opcode != Opcode.SGET_OBJECT) return@firstNotNullOfOrNull null
-                    val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
-                        ?: return@firstNotNullOfOrNull null
-                    field.takeIf { it.name == "SECTION_HEADER" }
-                } ?: return false
-
-            val sortedListIndex = composeRowsMethod.implementation?.instructions?.indexOfLast {
-                if (it.opcode != Opcode.INVOKE_STATIC) return@indexOfLast false
-                val reference = (it as? ReferenceInstruction)?.reference as? MethodReference
-                    ?: return@indexOfLast false
-                reference.isSettingsRowsSort()
-            } ?: -1
-            if (sortedListIndex < 0) return false
-
-            val listRegister = (composeRowsMethod.getInstruction(sortedListIndex + 1) as? OneRegisterInstruction)
-                ?.registerA ?: return false
-
-            // v0 and v1 were free here on 46.2.3 and nothing said so. The list this rebuilds
-            // is 41 registers deep, and both are read by the injected code, so they have to be
-            // found rather than assumed. Both are named by plain invokes, which reach v15 and
-            // no further.
-            val registers = composeRowsMethod.getFreeRegisterProvider(
-                sortedListIndex + 2,
-                2,
-                listOf(listRegister),
-            )
-            val copyRegister = registers.getFreeRegister4Bit()
-            val valueRegister = registers.getFreeRegister4Bit()
-
-            composeRowsMethod.addInstructions(
-                sortedListIndex + 2,
-                settingsRowMoveToFrontInstructions(
-                    copyRegister,
-                    valueRegister,
-                    listRegister,
-                    openDebugField,
-                ),
-            )
-
-            return true
-        }
-
-        if (!addOpenDebugToVisibleSettingsList()) {
-            SupportGroupDefaultStateFingerprint.method.apply {
-                val sectionHeaderSgetIndex = indexOfFirstInstructionOrThrow {
-                    opcode == Opcode.SGET_OBJECT && getReference<FieldReference>()?.name == "SECTION_HEADER"
-                }
-
-                val sectionHeaderField = getInstruction<ReferenceInstruction>(sectionHeaderSgetIndex).reference as FieldReference
-                val addInstruction = getInstruction<Instruction35c>(sectionHeaderSgetIndex + 1)
-                val addReference = addInstruction.reference as MethodReference
-                val listRegister = addInstruction.registerC
-                val itemRegister = addInstruction.registerD
-                // The extension adds through java.util.List, so a TikTok-owned list type here
-                // has to fail the patch rather than the app.
-                if (addReference.definingClass !in JAVA_LIST_TYPES) {
-                    throw PatchException("Settings rows are a ${addReference.definingClass}, not a java.util list")
-                }
-
-                addInstructions(
-                    sectionHeaderSgetIndex + 2,
-                    """
-                        sget-object v$itemRegister, ${sectionHeaderField.definingClass}->OPEN_DEBUG:${sectionHeaderField.type}
-                        invoke-static { v$listRegister, v$itemRegister }, $ADD_SETTINGS_ROW_LAST_METHOD
-                    """,
-                )
-            }
-        }
-
-        val compose: SmaliMethod = composeMutable
-        val getStringInvokeIndex = compose.indexOfFirstInstructionOrThrow {
-            opcode == Opcode.INVOKE_VIRTUAL &&
-                getReference<MethodReference>()?.toString() == ANDROID_CONTEXT_GET_STRING
-        }
-        val moveResultIndex = getStringInvokeIndex + 1
-        val titleStringRegister = compose.getInstruction<OneRegisterInstruction>(moveResultIndex).registerA
-
-        composeMutable.addInstruction(moveResultIndex + 1, "const-string v$titleStringRegister, \"Hushfeed\"")
-
-        OpenDebugCellVmDefaultStateFingerprint.methodOrNull?.let { defaultState ->
-            defaultState.implementationOrPatchException("Settings")
-            val constructorReference = openDebugStateConstructor(defaultState, openDebugStateClass)
-
-            var stateConstructor: MutableMethod? = null
-            classDefByOrNull(constructorReference.definingClass)?.let { classDef ->
-                val constructor = classDef.methods.singleOrNull { method ->
-                    method.name == constructorReference.name &&
-                        method.parameterTypes == constructorReference.parameterTypes
-                } ?: return@let
-                stateConstructor = mutableClassDefBy(classDef).findMutableMethodOf(constructor)
-            }
-            val constructor = stateConstructor
-                ?: throw PatchException("Settings: OpenDebug state constructor was not found.")
-
-            // The row's icon is a Kotlin data class wrapping a resource id. Its obfuscated name
-            // changes with every build, so its generated toString label is the type anchor. The
-            // value comes from TikTok's own Ad Browser settings action, whose stable renderer says
-            // which interface method supplies the gear it puts in a TuxIconView.
-            swapOpenDebugIcon(constructor, defaultState, vectorResourceClass(), settingsIconResourceId())
-        }
-
-        val clickWrapperMethod = resolveClickWrapperMethod()
-        val openDebugClickWrapperClass = clickWrapperMethod.definingClass
-        clickWrapperMethod.apply {
-            // v0, v1 and v2 all written at index 0, and the body returns without reaching the
-            // wrapper's own code, so the parameters may be written over. The frame has to hold
-            // three registers all the same.
-            requireRegisters("Settings", 3)
-            addInstructions(
-                0,
-                """
-                    iget-object v0, p0, $openDebugClickWrapperClass->l1:Ljava/lang/Object;
-                    check-cast v0, Landroid/content/Context;
-                    new-instance v1, Landroid/content/Intent;
-                    const-class v2, Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;
-                    invoke-direct {v1, v0, v2}, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-                    const-string v2, "morphe_settings"
-                    invoke-virtual { v1, v2 }, Landroid/content/Intent;->setAction(Ljava/lang/String;)Landroid/content/Intent;
-                    const/high16 v2, 0x10000000
-                    invoke-virtual { v1, v2 }, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
-                    invoke-virtual { v0, v1 }, Landroid/content/Context;->startActivity(Landroid/content/Intent;)V
-                    sget-object v0, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
-                    return-object v0
-                """,
-            )
-        }
-
-        resolveOpenDebugFunction2Method().openMorpheSettingsAtStart("0")
+        registerForBuildDetails("enableSettings")
     }
+}
+
+/**
+ * Puts the Hushfeed row into TikTok's settings list by taking over the Open Debug row. Its own
+ * function so the Settings registration stays execute's last statement: a row that's missing
+ * skips this, and one that fails here fails the whole patch before it's registered.
+ */
+private fun addHushfeedRowAtOpenDebug() {
+    fun resolveOpenDebugTargets(): OpenDebugTargets {
+        val stateClass = openDebugStateClass(OpenDebugCellVmDefaultStateFingerprint.method)
+
+        val composeMatches = app.morphe.patcher.Fingerprint(
+            name = "LIZ",
+            returnType = "V",
+            parameters = listOf(stateClass, "Z", "Z", "L", "I"),
+            filters = listOf(app.morphe.patcher.fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = stateClass)),
+            custom = { method, _ -> isOpenDebugRowComposeMethod(method, stateClass) },
+        ).matchAllOrNull().orEmpty()
+
+        val composeMatch = composeMatches.singleOrNull()
+            ?: throw PatchException(
+                "Enable Open Debug: expected one OpenDebug row compose for $stateClass, " +
+                    "found ${composeMatches.size}.",
+            )
+        return OpenDebugTargets(
+            stateClass = stateClass,
+            composeMutable = composeMatch.method,
+        )
+    }
+
+    val targets = resolveOpenDebugTargets()
+    val openDebugStateClass = targets.stateClass
+    val composeMutable = targets.composeMutable
+
+    fun clickLambdaScore(method: SmaliMethod, classType: String): Int {
+        val impl = method.implementation ?: return 0
+        var score = 0
+        for (insn in impl.instructions) {
+            val ref = (insn as? ReferenceInstruction)?.reference
+            if (insn.opcode == Opcode.IGET_OBJECT) {
+                val field = ref as? FieldReference ?: continue
+                if (field.definingClass == classType && field.name == "l1") score += 25
+                if (field.definingClass == classType && field.name == "l0") score += 15
+            }
+            if (insn.opcode == Opcode.CHECK_CAST) {
+                val type = ref as? TypeReference ?: continue
+                if (type.type == openDebugStateClass) score += 40
+                if (type.type == "Landroid/content/Context;") score += 10
+            }
+        }
+        return score
+    }
+
+    fun resolveClickWrapperMethod(): MutableMethod {
+        val wrapper = openDebugClickWrapper(composeMutable, openDebugStateClass)
+        val wrapperClass = wrapper.className
+
+        val matches = mutableListOf<MutableMethod>()
+        classDefByOrNull(wrapperClass)?.let { classDef ->
+            for (method in classDef.methods) {
+                if (method.parameterTypes.size != 1 || method.parameterTypes[0] != classDef.type) continue
+                if (method.name != wrapper.invokeName) continue
+                val score = clickLambdaScore(method, classDef.type)
+                if (score < 70) continue
+                matches += mutableClassDefBy(classDef).findMutableMethodOf(method)
+            }
+        }
+
+        return matches.singleOrNull() ?: throw PatchException(
+            "Enable Open Debug: expected one OpenDebug click handler in $wrapperClass, " +
+                "found ${matches.size}.",
+        )
+    }
+
+    fun resolveOpenDebugFunction2Method(): MutableMethod {
+        val defaultState = OpenDebugCellVmDefaultStateFingerprint.method
+        val openDebugVmClass = defaultState.definingClass
+        val lambdaClass = openDebugFunction2LambdaClass(defaultState)
+
+        val matches = mutableListOf<MutableMethod>()
+        classDefByOrNull(lambdaClass)?.let { classDef ->
+            for (method in classDef.methods) {
+                if (!method.name.matches(Regex("invoke\\\$\\d+"))) continue
+                if (method.returnType != "Ljava/lang/Object;") continue
+                val parameters = method.parameterTypes
+                if (parameters.size != 3 || parameters[0] != lambdaClass) continue
+                val hasOpenDebugCast = method.implementation?.instructions?.any { insn ->
+                    insn.opcode == Opcode.CHECK_CAST &&
+                        ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type == openDebugVmClass
+                } == true
+                if (!hasOpenDebugCast) continue
+                matches += mutableClassDefBy(classDef).findMutableMethodOf(method)
+            }
+        }
+
+        return matches.singleOrNull() ?: throw PatchException(
+            "Enable Open Debug: expected one OpenDebug Function2 lambda, found ${matches.size}.",
+        )
+    }
+
+    fun MutableMethod.openMorpheSettingsAtStart(contextRegister: String) {
+        // The body replaces the lambda outright and returns, so the parameters are fair
+        // to write over; the frame still has to hold the three registers it names. The
+        // OpenDebug lambda has no locals at all on 46.2.3, only its parameters.
+        requireRegisters("Settings", 3)
+        addInstructions(
+            0,
+            """
+                invoke-static {}, Lapp/morphe/extension/shared/Utils;->getContext()Landroid/content/Context;
+                move-result-object v$contextRegister
+                if-eqz v$contextRegister, :return_unit
+                new-instance v1, Landroid/content/Intent;
+                const-class v2, Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;
+                invoke-direct {v1, v$contextRegister, v2}, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
+                const/high16 v2, 0x10000000
+                invoke-virtual { v1, v2 }, Landroid/content/Intent;->setFlags(I)Landroid/content/Intent;
+                const-string v2, "morphe_settings"
+                invoke-virtual { v1, v2 }, Landroid/content/Intent;->setAction(Ljava/lang/String;)Landroid/content/Intent;
+                invoke-virtual { v$contextRegister, v1 }, Landroid/content/Context;->startActivity(Landroid/content/Intent;)V
+                :return_unit
+                sget-object v$contextRegister, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
+                return-object v$contextRegister
+            """,
+        )
+    }
+
+    fun addOpenDebugToVisibleSettingsList(): Boolean {
+        val composeRowsMethod = SettingsComposeRowsFingerprint.methodOrNull ?: return false
+        val openDebugField = SupportGroupDefaultStateFingerprint.method.implementation?.instructions
+            ?.firstNotNullOfOrNull { instruction ->
+                if (instruction.opcode != Opcode.SGET_OBJECT) return@firstNotNullOfOrNull null
+                val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
+                    ?: return@firstNotNullOfOrNull null
+                field.takeIf { it.name == "SECTION_HEADER" }
+            } ?: return false
+
+        val sortedListIndex = composeRowsMethod.implementation?.instructions?.indexOfLast {
+            if (it.opcode != Opcode.INVOKE_STATIC) return@indexOfLast false
+            val reference = (it as? ReferenceInstruction)?.reference as? MethodReference
+                ?: return@indexOfLast false
+            reference.isSettingsRowsSort()
+        } ?: -1
+        if (sortedListIndex < 0) return false
+
+        val listRegister = (composeRowsMethod.getInstruction(sortedListIndex + 1) as? OneRegisterInstruction)
+            ?.registerA ?: return false
+
+        // v0 and v1 were free here on 46.2.3 and nothing said so. The list this rebuilds
+        // is 41 registers deep, and both are read by the injected code, so they have to be
+        // found rather than assumed. Both are named by plain invokes, which reach v15 and
+        // no further.
+        val registers = composeRowsMethod.getFreeRegisterProvider(
+            sortedListIndex + 2,
+            2,
+            listOf(listRegister),
+        )
+        val copyRegister = registers.getFreeRegister4Bit()
+        val valueRegister = registers.getFreeRegister4Bit()
+
+        composeRowsMethod.addInstructions(
+            sortedListIndex + 2,
+            settingsRowMoveToFrontInstructions(
+                copyRegister,
+                valueRegister,
+                listRegister,
+                openDebugField,
+            ),
+        )
+
+        return true
+    }
+
+    if (!addOpenDebugToVisibleSettingsList()) {
+        SupportGroupDefaultStateFingerprint.method.apply {
+            val sectionHeaderSgetIndex = indexOfFirstInstructionOrThrow {
+                opcode == Opcode.SGET_OBJECT && getReference<FieldReference>()?.name == "SECTION_HEADER"
+            }
+
+            val sectionHeaderField = getInstruction<ReferenceInstruction>(sectionHeaderSgetIndex).reference as FieldReference
+            val addInstruction = getInstruction<Instruction35c>(sectionHeaderSgetIndex + 1)
+            val addReference = addInstruction.reference as MethodReference
+            val listRegister = addInstruction.registerC
+            val itemRegister = addInstruction.registerD
+            // The extension adds through java.util.List, so a TikTok-owned list type here
+            // has to fail the patch rather than the app.
+            if (addReference.definingClass !in JAVA_LIST_TYPES) {
+                throw PatchException("Settings rows are a ${addReference.definingClass}, not a java.util list")
+            }
+
+            addInstructions(
+                sectionHeaderSgetIndex + 2,
+                """
+                    sget-object v$itemRegister, ${sectionHeaderField.definingClass}->OPEN_DEBUG:${sectionHeaderField.type}
+                    invoke-static { v$listRegister, v$itemRegister }, $ADD_SETTINGS_ROW_LAST_METHOD
+                """,
+            )
+        }
+    }
+
+    val compose: SmaliMethod = composeMutable
+    val getStringInvokeIndex = compose.indexOfFirstInstructionOrThrow {
+        opcode == Opcode.INVOKE_VIRTUAL &&
+            getReference<MethodReference>()?.toString() == ANDROID_CONTEXT_GET_STRING
+    }
+    val moveResultIndex = getStringInvokeIndex + 1
+    val titleStringRegister = compose.getInstruction<OneRegisterInstruction>(moveResultIndex).registerA
+
+    composeMutable.addInstruction(moveResultIndex + 1, "const-string v$titleStringRegister, \"Hushfeed\"")
+
+    OpenDebugCellVmDefaultStateFingerprint.methodOrNull?.let { defaultState ->
+        defaultState.implementationOrPatchException("Settings")
+        val constructorReference = openDebugStateConstructor(defaultState, openDebugStateClass)
+
+        var stateConstructor: MutableMethod? = null
+        classDefByOrNull(constructorReference.definingClass)?.let { classDef ->
+            val constructor = classDef.methods.singleOrNull { method ->
+                method.name == constructorReference.name &&
+                    method.parameterTypes == constructorReference.parameterTypes
+            } ?: return@let
+            stateConstructor = mutableClassDefBy(classDef).findMutableMethodOf(constructor)
+        }
+        val constructor = stateConstructor
+            ?: throw PatchException("Settings: OpenDebug state constructor was not found.")
+
+        // The row's icon is a Kotlin data class wrapping a resource id. Its obfuscated name
+        // changes with every build, so its generated toString label is the type anchor. The
+        // value comes from TikTok's own Ad Browser settings action, whose stable renderer says
+        // which interface method supplies the gear it puts in a TuxIconView.
+        swapOpenDebugIcon(constructor, defaultState, vectorResourceClass(), settingsIconResourceId())
+    }
+
+    val clickWrapperMethod = resolveClickWrapperMethod()
+    val openDebugClickWrapperClass = clickWrapperMethod.definingClass
+    clickWrapperMethod.apply {
+        // v0, v1 and v2 all written at index 0, and the body returns without reaching the
+        // wrapper's own code, so the parameters may be written over. The frame has to hold
+        // three registers all the same.
+        requireRegisters("Settings", 3)
+        addInstructions(
+            0,
+            """
+                iget-object v0, p0, $openDebugClickWrapperClass->l1:Ljava/lang/Object;
+                check-cast v0, Landroid/content/Context;
+                new-instance v1, Landroid/content/Intent;
+                const-class v2, Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;
+                invoke-direct {v1, v0, v2}, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
+                const-string v2, "morphe_settings"
+                invoke-virtual { v1, v2 }, Landroid/content/Intent;->setAction(Ljava/lang/String;)Landroid/content/Intent;
+                const/high16 v2, 0x10000000
+                invoke-virtual { v1, v2 }, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
+                invoke-virtual { v0, v1 }, Landroid/content/Context;->startActivity(Landroid/content/Intent;)V
+                sget-object v0, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
+                return-object v0
+            """,
+        )
+    }
+
+    resolveOpenDebugFunction2Method().openMorpheSettingsAtStart("0")
 }

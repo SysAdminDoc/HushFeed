@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.settings;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import app.morphe.extension.shared.settings.Setting;
@@ -94,6 +95,8 @@ public class LaunchCrashCleanupTest {
         expected.put("shared/settings/Setting.java", Arrays.asList("PREFERENCES_NAME"));
         expected.put("shared/settings/preference/AbstractPreferenceFragment.java", Arrays.asList("Setting.preferences.name"));
         expected.put("shared/settings/preference/SharedPrefCategory.java", Arrays.asList("name"));
+        // TikTok's own store-region file, only read for the image report, so it isn't Hushfeed's to keep.
+        expected.put("spoof/sim/ImageLoads.java", Arrays.asList("STORE_PREFS"));
         assertEquals("a call opens preferences that TikTok's launch-crash cleanup would delete; "
                         + "add the file's name to LaunchCrashCleanup.HUSHFEED_FILES and the call to this list",
                 expected, openersByName());
@@ -109,6 +112,8 @@ public class LaunchCrashCleanupTest {
         assertTrue(kept.contains(app.morphe.extension.tiktok.settings.preference.NewSettingDots.FILE));
         assertTrue(kept.contains(app.morphe.extension.tiktok.ghostmode.StoryReads.PREFS_NAME));
         assertTrue(kept.contains(app.morphe.extension.tiktok.playback.PictureInPicture.STATE));
+        assertFalse("TikTok's store-region file stays off Hushfeed's list",
+                kept.contains(constant(app.morphe.extension.tiktok.spoof.sim.ImageLoads.class, "STORE_PREFS")));
     }
 
     private static String constant(Class<?> owner, String name) throws ReflectiveOperationException {

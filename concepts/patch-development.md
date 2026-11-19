@@ -213,6 +213,24 @@ Treat a target update as a new reverse-engineering pass. TikTok can reuse short 
 5. Set HUSHFEED_FIXTURE_DIR to the reviewed APKs, run the patch and runtime tests, then apply the complete patch set with scripts/verify-all-patches.ps1 and the Morphe desktop CLI. Tests do not invoke the patcher, so passing tests alone is not target approval.
 6. Run the [patch audit](#patch-audit) on a phone with the full catalog applied, fix what fails, and commit the new results file next to the old one. Then update the README target details, changelog, generated catalog, and release facts as one reviewed target move.
 
+### Retarget
+
+`scripts/retarget/retarget.ps1` does the mechanical part of a target move. It renames the old build's obfuscated classes and members to the new build's, swaps the version name, code and constants, and brings `obfuscated-identities.txt` up to date. Start it from a clean tree under pwsh 7:
+
+```
+scripts/retarget/retarget.ps1 -OldFixture <old fixture folder> -NewFixture <new fixture folder>
+```
+
+Each folder holds that build's universal APK and its .apkm, and `-OldFixture` defaults to HUSHFEED_FIXTURE_DIR. The version numbers come from the APKs. The desktop jar comes from HUSHFEED_DESKTOP_JAR or `-DesktopJar`, aapt2 from the SDK, and the reports go to `-WorkDir` (a temp folder unless you name one).
+
+The tracer, `Propagate.java`, starts from the classes that keep their names plus any `-Seeds` pairs ("old new", one per line). It lines up their methods by shape and lets the references in matched bodies vote on what every obfuscated class, member and resource id became. It holds about 3.5 GB while it runs.
+
+Read the reports before you build. In `rename.txt`, `U` lines are classes the tracer couldn't pair. Find those by hand and rerun from a reset tree with `-Extra <pairs file>` (add `-ReuseTrace` to skip the tracer). `M` lines are member references it left alone. `R` lines named the old build and were moved anyway, so check that each still reads right. `swap.txt` lists its history lines (`H`, things like "47.9.1 added a field") and leaves them as they were. `git checkout -- .` undoes a whole pass.
+
+Then build the bundle and run the command the script prints last. That's `verify-all-patches.ps1`, which runs the CLI with `--continue-on-error`, so one run lists every patch the new build broke.
+
+The work folder also feeds the smaller lookups. `viewmap.py <workdir> <names file>` maps view names, `resmap.py <workdir> <name>...` maps a resource name of any type, `ownerids.py` lists the resource ids a class loads on both builds, and `optprofiles.py <repo> <new fixture folder>` checks the resource optimizer's file digests (`--write` moves the ones whose bytes changed).
+
 ## Verification layers
 
 | Check | What it proves |

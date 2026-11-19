@@ -215,6 +215,27 @@ public class GridSortTest {
         assertEquals("apecdfb", order("newest", grid()));
     }
 
+    /** The video page a cell opens swipes in the grid's order, so where pinned videos sit carries over. */
+    @Test public void sortPinnedWithRestCarriesIntoTheVideoPage() {
+        String[] played = new String[2];
+        for (int pass = 0; pass < 2; pass++) {
+            GridSort.resetForTests();
+            Settings.SORT_PINNED_WITH_REST.save(pass == 1);
+            try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+                GridAdapter adapter = gridOnScreen(controller.get());
+                GridFragment fragment = new GridFragment(adapter);
+                List<Aweme> model = grid();
+                Settings.PROFILE_GRID_SORT.save("newest");
+                adapter.mmItems = GridSort.data(adapter, model);
+                idle(0);
+                GridSort.beforeOpen(fragment);
+                played[pass] = ids(model);
+            }
+        }
+        assertEquals("pinned first on the video page", "apecdfb", played[0]);
+        assertEquals("pinned in date order on the video page", "ecdfapb", played[1]);
+    }
+
     @Test public void longestAndShortest() {
         assertEquals("apecdfb", order("longest", grid()));
         assertEquals("apfcdeb", order("shortest", grid()));

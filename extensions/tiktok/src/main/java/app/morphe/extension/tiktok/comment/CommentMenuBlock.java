@@ -77,6 +77,26 @@ public final class CommentMenuBlock {
         icon = id;
     }
 
+    /**
+     * TikTok's A/B key for its comment share revamp. At 3 a long press opens a share-style panel
+     * instead of the menu the rows go in (#417). 1 and 2 only add a share button to comments, so
+     * 2 keeps that and has TikTok fall back to the menu.
+     */
+    static final String PANEL_GATE = "comment_share_expose_revamp";
+    private static final int SHARE_PANEL = 3;
+    private static final int SHARE_BUTTON_ONLY = 2;
+
+    /**
+     * Every App AB int TikTok reads passes here. Only {@link #PANEL_GATE} at 3 is answered, and
+     * only while one of the rows is on. TikTok asks again on every long press.
+     */
+    public static int panelGate(String key, int value) {
+        if (value != SHARE_PANEL || !PANEL_GATE.equals(key)) return value;
+        if (!enabled(Kind.BLOCK) && !enabled(Kind.COUNTRY)) return value;
+        HookStatus.bound(FAMILY, "menu kept");
+        return SHARE_BUTTON_ONLY;
+    }
+
     /** The owned rows, in the order they follow Report. */
     enum Kind { BLOCK, COUNTRY }
 
@@ -104,6 +124,9 @@ public final class CommentMenuBlock {
      */
     public static List<?> items(Object panel, List<?> items) {
         if (items == null) return null;
+        // Says the menu itself came up, so a report can tell a panel the hook never sees apart
+        // from a menu that got no row.
+        HookStatus.bound(FAMILY, "menu list");
         List<Object> row = new ArrayList<>(items.size() + 1);
         try {
             restoreMovedCorners();

@@ -227,6 +227,29 @@ public class CommentMenuBlockTest {
 
     // ---- Show account country (#417) ----------------------------------------------------
 
+    /**
+     * At 3, TikTok's comment share revamp opens a share-style panel the rows never reach (#417).
+     * 2 keeps its share button and brings the menu back, but only while a row is on.
+     */
+    @Test public void theShareStylePanelGivesWayToTheMenuWhileARowIsOn() {
+        String gate = "comment_share_expose_revamp";
+        Settings.BLOCK_FROM_COMMENT_MENU.save(false);
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        assertEquals(2, CommentMenuBlock.panelGate(gate, 3));
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(false);
+        Settings.BLOCK_FROM_COMMENT_MENU.save(true);
+        assertEquals(2, CommentMenuBlock.panelGate(gate, 3));
+        for (int value : new int[]{0, 1, 2, 4}) assertEquals(value, CommentMenuBlock.panelGate(gate, value));
+        assertEquals(3, CommentMenuBlock.panelGate("comment_share_expose", 3));
+        assertEquals(3, CommentMenuBlock.panelGate(null, 3));
+
+        Settings.BLOCK_FROM_COMMENT_MENU.save(false);
+        assertEquals(3, CommentMenuBlock.panelGate(gate, 3));
+        Settings.BLOCK_FROM_COMMENT_MENU.save(true);
+        SettingsStatus.commentToolsEnabled = false;
+        assertEquals(3, CommentMenuBlock.panelGate(gate, 3));
+    }
+
     @Test public void theCountryRowGoesLastAndOnlyItClosesTheGroup() {
         Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
         CommentMenuBlock.globe = GLOBE_GLYPH;

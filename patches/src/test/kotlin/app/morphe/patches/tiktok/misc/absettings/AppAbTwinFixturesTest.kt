@@ -37,6 +37,7 @@ class AppAbTwinFixturesTest {
         "new_user_favorite_full_reversal_exp",
         "player_enable_surface_surfaceview",
         "search_player_surface_view",
+        "comment_share_expose_revamp",
         "seekbar_show_thumbnail_when_drag",
         "enable_non_personalized_search",
     )

@@ -27,6 +27,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Show account country` and `Block this commenter` show up when you hold a comment on accounts where TikTok is trying out its newer share-style comment menu. That menu never got the rows. With either switch on, TikTok opens its regular menu instead, and the share button on comments stays (#417).
 * With `Keep the middle unstretched` on, search results play in the app's window like the feed does. A search video on a layer of its own used to leave every video cropped and stretched until the next restart (#468).
 * With `Keep the middle unstretched` on, a video's cover picture keeps the same size as its video. When TikTok played a video on a layer of its own, the cover could still take the whole screen, so it showed at the wrong size and flickered as the video replaced it. Once that happens the video and its cover are both cropped and stretched evenly, and the diagnostic report says so (#468).
 * Searching the settings for `SIM country preset`, or just "preset", finds that row now. It used to find nothing.

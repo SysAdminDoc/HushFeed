@@ -9,6 +9,7 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -133,6 +134,35 @@ class AutoAdjustKeepAnchorsTest {
         val before = bare.implementation!!.instructions.toList()
         assertThrows(PatchException::class.java) { bare.keepThroughDefaultEnableCleanup("Custom offline videos limit") }
         assertEquals(before, bare.implementation!!.instructions.toList())
+    }
+
+    @Test
+    fun `a clean-up question that branches before its return is refused and left as it was`() {
+        for (branch in listOf("if-eqz v0, :answer", "goto :answer")) {
+            val branching = MutableMethod(
+                ImmutableMethod(
+                    "Lfixture/State;", "state", emptyList(), "Z",
+                    AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
+                    ImmutableMethodImplementation(2, emptyList(), null, null),
+                ),
+            ).apply {
+                addInstructionsWithLabels(
+                    0,
+                    """
+                        const/4 v0, 0x1
+                        const-string v1, "$DEFAULT_ENABLE_CLEANUP_LOG"
+                        $branch
+                        :answer
+                        return v0
+                    """,
+                )
+            }
+            val before = branching.implementation!!.instructions.map { it.opcode }
+            assertThrows(branch, PatchException::class.java) {
+                branching.keepThroughDefaultEnableCleanup("Custom offline videos limit")
+            }
+            assertEquals(branch, before, branching.implementation!!.instructions.map { it.opcode })
+        }
     }
 
     private fun taken(apk: File, fingerprint: Fingerprint): List<Pair<ClassDef, Method>> {

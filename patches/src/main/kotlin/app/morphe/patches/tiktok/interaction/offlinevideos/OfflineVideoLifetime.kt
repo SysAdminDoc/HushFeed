@@ -14,6 +14,7 @@ import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -137,7 +138,8 @@ internal fun MutableMethod.defaultEnableCleanupReturnIndex(patch: String): Int {
         .firstOrNull { instructions[it].opcode == Opcode.RETURN }
         ?: throw PatchException("$patch: no return within three instructions of the clean-up line in $definingClass->$name.")
     val between = instructions.subList(logIndex + 1, returnIndex)
-    if (between.any { it.opcode.name.startsWith("IF_") || it.opcode.name.startsWith("GOTO") || it.opcode == Opcode.THROW }) {
+    // An if, a goto or a switch is an OffsetInstruction; so is fill-array-data, which isn't a branch.
+    if (between.any { (it is OffsetInstruction && it.opcode != Opcode.FILL_ARRAY_DATA) || it.opcode == Opcode.THROW }) {
         throw PatchException("$patch: a branch sits between the clean-up line and its return in $definingClass->$name.")
     }
     return returnIndex

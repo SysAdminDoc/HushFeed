@@ -263,7 +263,7 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     new String[]{"mp4", "gif", "webp"}));
             addPreference(new TogglePreference(context, "Save box for chat stickers",
                     "Tapping a sticker someone sent you in a chat opens a box with Save media. "
-                            + "Holding any sticker in a chat puts Save media in its menu too. Turn "
+                            + "Holding one of TikTok's own stickers in a chat puts Save media in its menu too. Turn "
                             + "this off to skip both.", Settings.DM_STICKER_SAVE_BOX));
         }
         if (SettingsStatus.advancedDownloadsEnabled) {

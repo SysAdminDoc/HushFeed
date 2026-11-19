@@ -4926,8 +4926,8 @@ final class L10nTranslationsTh {
                 "แตะเพื่อเริ่มต้น จากนั้นเลื่อนดูจนกระทั่งพบปัญหาของฟีด แล้วกลับมาที่นี่เพื่อบันทึก ไฟล์นี้ไม่มีคำบรรยายหรือชื่อ ส่วนวิดีโอและครีเอเตอร์จะแสดงเป็นเพียงรหัสสั้นๆ เท่านั้น โปรดอ่านก่อนที่จะแชร์");
         table.put("Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.",
                 "แตะ จากนั้นไปยังหน้าจอที่มีสิ่งที่คุณต้องการซ่อน หลังจากผ่านไป %1$d วินาที Hushfeed จะบันทึกโครงสร้างของหน้าจอนั้นโดยไม่มีข้อความใดๆ สำหรับรายงานการวินิจฉัย");
-        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding any sticker in a chat puts Save media in its menu too. Turn this off to skip both.",
-                "การแตะสติกเกอร์ที่คนอื่นส่งให้คุณในแชทจะเปิดหน้าต่างพร้อมตัวเลือกบันทึกสื่อ และการกดค้างที่สติกเกอร์ใดก็ได้ในแชทจะเพิ่มบันทึกสื่อลงในเมนูของสติกเกอร์นั้นด้วย ปิดการทำงานนี้เพื่อข้ามทั้งสองอย่าง");
+        table.put("Tapping a sticker someone sent you in a chat opens a box with Save media. Holding one of TikTok's own stickers in a chat puts Save media in its menu too. Turn this off to skip both.",
+                "การแตะสติกเกอร์ที่คนอื่นส่งให้คุณในแชทจะเปิดหน้าต่างพร้อมตัวเลือกบันทึกสื่อ และการกดค้างที่สติกเกอร์ของ TikTok เองในแชทจะเพิ่มบันทึกสื่อลงในเมนูของสติกเกอร์นั้นด้วย ปิดการทำงานนี้เพื่อข้ามทั้งสองอย่าง");
         table.put("Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.",
                 "การแตะ 'เพิ่มเติม' ใต้วิดีโอจะเปิดความคิดเห็นพร้อมกับแสดงคำบรรยายทั้งหมดไว้ด้านบน แทนที่จะแสดงคำบรรยายบังวิดีโอ การแตะที่ตัวคำบรรยายเองก็จะให้ผลเช่นเดียวกัน โพสต์รูปภาพจะยังคงใช้หน้าเดิมของ TikTok สำหรับสิ่งนี้");
         table.put("Technical details",

@@ -133,6 +133,11 @@ public final class BackgroundPlay {
         }
     }
 
+    /** Whether none of TikTok's screens is showing. */
+    public static boolean appHidden() {
+        return hidden(host.importance());
+    }
+
     /** Whether a video that ends in the background starts again. Both switches have to be on. */
     static boolean replays() {
         return Settings.BACKGROUND_PLAY.get() && Settings.BACKGROUND_REPLAY.get();

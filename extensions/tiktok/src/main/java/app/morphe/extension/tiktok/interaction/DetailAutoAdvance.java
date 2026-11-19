@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.interaction;
 
 import android.app.Activity;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import app.morphe.extension.shared.Logger;
@@ -15,6 +16,7 @@ import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.blockauthor.VideoAuthor;
+import app.morphe.extension.tiktok.misc.BackgroundPlay;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
@@ -23,6 +25,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * Auto-advance for a video opened from a profile or a list (#311). TikTok builds its auto scroll
@@ -37,7 +41,8 @@ import java.util.WeakHashMap;
  * screen off (#292), and is turned on as TikTok's collection switch would turn it on. That
  * session moves on by itself, so the limit and the holds are applied as
  * each video there ends, and its foreground twin, which would move the page a second time, waits
- * for this class instead.
+ * for this class instead. Off the screen a video's picture has nowhere to draw, so the videos the
+ * queue moves to there draw on a surface nobody sees.
  */
 public final class DetailAutoAdvance {
     private static final String PAGER = "com.ss.android.ugc.aweme.common.widget.VerticalViewPager";
@@ -59,6 +64,12 @@ public final class DetailAutoAdvance {
     private static final Map<Activity, AutoAdvance.Control> SESSIONS = new WeakHashMap<>();
     // TikTok's background queue reports its ends off the page, so it keeps a count of its own.
     private static final Map<Object, AutoAdvance.Control> QUEUES = new WeakHashMap<>();
+    // Whether the app last left the screen with a profile page's queue on, which lets its videos start.
+    static volatile boolean queueOffScreen;
+    // Whether none of TikTok's screens shows, which tests stand in for.
+    static BooleanSupplier appHidden = BackgroundPlay::appHidden;
+    // Where the queue's videos draw while the app is off the screen, which tests stand in for.
+    static Supplier<Surface> hiddenSurface = QueueSurface::get;
 
     private DetailAutoAdvance() { }
 
@@ -150,6 +161,7 @@ public final class DetailAutoAdvance {
      */
     public static void armProfileQueue(Object session) {
         try {
+            queueOffScreen = false;
             if (session == null || !profileQueue()) return;
             Field sceneField = fieldOfType(session.getClass(), QUEUE_SCENE);
             Field stateField = fieldOfType(session.getClass(), QUEUE_STATE);
@@ -163,7 +175,13 @@ public final class DetailAutoAdvance {
             Object scope = scene.getClass().getField(QUEUE_SCOPE_ID).get(scene);
             if (!(scope instanceof String) || !((String) scope).startsWith(PROFILE_SCOPE)) return;
             Object state = stateField.get(session);
-            if (!(state instanceof Enum) || !QUEUE_OFF.equals(((Enum<?>) state).name())) return;
+            if (!(state instanceof Enum)) return;
+            String name = ((Enum<?>) state).name();
+            if (QUEUE_ACTIVE.equals(name)) {
+                queueOffScreen = true;
+                return;
+            }
+            if (!QUEUE_OFF.equals(name)) return;
             synchronized (ARMED) {
                 if (ARMED.containsKey(session)) return;
                 ARMED.put(session, Boolean.TRUE);
@@ -171,11 +189,48 @@ public final class DetailAutoAdvance {
             @SuppressWarnings({"unchecked", "rawtypes"})
             Object on = Enum.valueOf((Class) stateField.getType(), QUEUE_ACTIVE);
             stateField.set(session, on);
+            queueOffScreen = true;
             HookStatus.bound(FAMILY, "profile background queue");
             Logger.printDebug(() -> "Background queue turned on for " + scope);
         } catch (Throwable error) {
             Logger.printException(() -> "Could not turn on the background queue for a profile page", error);
         }
+    }
+
+    /**
+     * Called as TikTok's player plays a video, with its engine. A video's sound waits for its
+     * first frame to draw, and off the screen there's nothing to draw on, so the next video the
+     * profile queue moved to started its sound track and never fed it, and the queue went quiet
+     * after the one that was playing (#292 on the S22). While the queue TikTok armed as the app
+     * left plays off the screen, the engine gets a surface nobody sees that lets each frame go.
+     * Back on the screen, TikTok hands it the page's own surface again.
+     */
+    public static void playOffScreen(Object engine) {
+        try {
+            if (!playingOffScreen()) return;
+            if (engine == null) {
+                Logger.printDebug(() -> "Background queue's next video has no engine");
+                return;
+            }
+            Surface surface = hiddenSurface.get();
+            if (surface == null) return;
+            engine.getClass().getMethod("setSurface", Surface.class).invoke(engine, surface);
+            Logger.printDebug(() -> "Background queue gives its next video a surface off the screen");
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not give the background queue's next video a surface", error);
+        }
+    }
+
+    /** Whether the queue TikTok armed as the app left is playing off the screen right now. */
+    static boolean playingOffScreen() {
+        if (!queueOffScreen) return false;
+        if (!profileQueue() || !appHidden.getAsBoolean()) {
+            // Back on the screen, the queue's work is done until the app leaves it again.
+            queueOffScreen = false;
+            Logger.printDebug(() -> "Background queue back on the screen or switched off");
+            return false;
+        }
+        return true;
     }
 
     private static Field fieldOfType(Class<?> type, String typeName) {

@@ -83,6 +83,51 @@ internal object QueueModeFingerprint : Fingerprint(
  */
 internal object QueueTriggerFingerprint : Fingerprint(strings = listOf(QUEUE_SESSION_OFF, QUEUE_ARMED))
 
+internal const val RADIO_MODE = "enable_radio_mode"
+internal const val BORN_TIME = "aweme_feed_born_time"
+internal const val VIDEO_ENGINE = "Lcom/ss/ttvideoengine/TTVideoEngine;"
+
+/**
+ * TikTok's player play (02vV.LJJJI on 47.9.1): it turns the request's options into the engine's,
+ * then plays. A video's sound goes out only once its first frame is drawn, and off the screen
+ * there's nothing to draw on, so a video the queue moved to there started its sound track and
+ * never fed it (#292 on the S22). TikTok's own sound-only option didn't change that.
+ */
+internal object PlayerPlayFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("L", STRING, "Ljava/util/Map;"),
+    strings = listOf(RADIO_MODE, BORN_TIME),
+)
+
+/**
+ * The play's engine field, read just before it hands the engine the request's radio mode, or null
+ * when the play changed shape or has no register free at its top.
+ */
+internal fun Method.playEngine(): FieldReference? {
+    val code = implementation?.instructions?.toList() ?: return null
+    val radio = code.indexOfFirst {
+        (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) &&
+            it.getReference<StringReference>()?.string == RADIO_MODE
+    }
+    if (radio < 0) return null
+    val after = code.drop(radio + 1)
+    val read = after.firstOrNull { it.opcode == Opcode.IGET_OBJECT } ?: return null
+    val engine = read.getReference<FieldReference>() ?: return null
+    if (engine.definingClass != definingClass) return null
+    val set = after.firstOrNull { it.getReference<MethodReference>()?.definingClass == VIDEO_ENGINE } ?: return null
+    if ((set as? FiveRegisterInstruction)?.registerC != (read as TwoRegisterInstruction).registerA) return null
+    val parameterRegisters = 1 + parameterTypes.map(CharSequence::toString).sumOf { if (it == "J" || it == "D") 2 else 1 }
+    if (AccessFlags.STATIC.isSet(accessFlags) || implementation!!.registerCount - parameterRegisters < 1) return null
+    return engine
+}
+
+/** At the top of the play: the queue's next video off the screen gets a surface to draw on. */
+internal fun surfaceHook(engine: FieldReference) = """
+    move-object/from16 v0, p0
+    iget-object v0, v0, ${engine.definingClass}->${engine.name}:${engine.type}
+    invoke-static {v0}, $DETAIL->playOffScreen(Ljava/lang/Object;)V
+"""
+
 /** Where the trigger asks whether the page's queue session is on, and the register holding that session. */
 internal class QueueSessionCheck(val at: Int, val session: Int, val sessionType: String)
 
@@ -298,7 +343,9 @@ internal fun Method.queueModeHook(): Pair<Int, String> {
  * Auto-advance makes that move. The queue's end of a video asks the extension too, so the limit
  * and the holds stop it the way reaching its last video does. TikTok arms a queue as the app
  * leaves the screen only when its session was turned on, which its switch does for your
- * collections alone, so the trigger's check turns a profile page's session on first.
+ * collections alone, so the trigger's check turns a profile page's session on first. A video's
+ * sound waits for its picture to draw, and the queue's next videos start off the screen, so the
+ * player's play gives them a surface nobody sees while the armed queue plays unseen.
  */
 internal fun queueProfilePagesInBackground() {
     val registrar = mutableClassDefBy(SCOPED_REGISTRAR)
@@ -347,6 +394,11 @@ internal fun queueProfilePagesInBackground() {
         throw PatchException("Auto advance: ${check.sessionType} no longer holds the queue session's state.")
     }
     trigger.addInstructionsAtControlFlowLabel(check.at, queueArmHook(check))
+
+    val play = PlayerPlayFingerprint.method
+    val engine = play.playEngine()
+        ?: throw PatchException("Auto advance: TikTok's player play no longer reads its engine before \"$RADIO_MODE\".")
+    play.addInstructions(0, surfaceHook(engine))
     println("[Automatic video advance] Profile pages use the background queue: $backgroundSites starting reads, " +
-        "$foregroundSites on screen, the end of a video, the mode read and the trigger's session check.")
+        "$foregroundSites on screen, the end of a video, the mode read, the trigger's session check and the player's play.")
 }

@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
@@ -21,8 +22,8 @@ import org.junit.Test
 /**
  * What the profile page's background queue stands on (#292), held to each declared build: the
  * registrar reads TikTok's queue key, every read of that key is either moved to Hushfeed's key or
- * kept on purpose, both key wrappers and both queue hooks type-check, and the mode hook catches
- * every path into the mode's answer.
+ * kept on purpose, both key wrappers, both queue hooks and the play's off-screen surface hook
+ * type-check, and the mode hook catches every path into the mode's answer.
  */
 class ProfileBackgroundQueueAnchorsTest {
     private fun classes(apk: java.io.File): List<ClassDef> {
@@ -154,6 +155,44 @@ class ProfileBackgroundQueueAnchorsTest {
             val code = patched.implementation!!.instructions.toList()
             assertEquals("armProfileQueue", code[check.at].getReference<MethodReference>()?.name)
             assertEquals(check.sessionType, code[check.at + 1].getReference<MethodReference>()?.definingClass)
+        }
+    }
+
+    /**
+     * #292 on the S22: with the queue armed, the next video started its sound track and never fed
+     * it, since a video's sound waits for its first frame and off the screen nothing draws (TikTok's
+     * own sound-only option didn't change that). The player's play hands its engine to the hook at
+     * its top, which gives it a surface nobody sees while the queue plays off the screen.
+     */
+    @Test
+    fun `the player's play takes the off-screen surface hook`() {
+        Fixtures.forEachDeclared { apk ->
+            val plays = classes(apk).flatMap { it.methods }.filter {
+                it.returnType == "V" && it.holds(RADIO_MODE) && it.holds(BORN_TIME) &&
+                    it.parameterTypes.size == 3 &&
+                    it.parameterTypes.drop(1).map(CharSequence::toString) == listOf("Ljava/lang/String;", "Ljava/util/Map;")
+            }
+            assertEquals("plays: ${plays.map { "${it.definingClass}->${it.name}" }}", 1, plays.size)
+            val play = plays.single()
+            val engine = play.playEngine()
+            assertNotNull("the play no longer reads its engine before \"$RADIO_MODE\"", engine)
+            val original = play.implementation!!.instructions.toList()
+            assertTrue("the play never calls the engine's play()", original.any {
+                it.getReference<MethodReference>()?.let { call -> call.name == "play" && call.parameterTypes.isEmpty() } == true
+            })
+            val addresses = original.runningFold(0) { address, instruction -> address + instruction.codeUnits }
+            val intoTop = original.indices.filter {
+                val jump = original[it] as? OffsetInstruction
+                jump != null && addresses[it] + jump.codeOffset == 0
+            }
+            assertTrue("something branches onto the play's first instruction: $intoTop", intoTop.isEmpty())
+
+            val patched = MutableMethod(play)
+            patched.addInstructions(0, surfaceHook(engine!!))
+            assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(patched))
+            val code = patched.implementation!!.instructions.toList()
+            assertEquals(engine, code[1].getReference<FieldReference>())
+            assertEquals("playOffScreen", code[2].getReference<MethodReference>()?.name)
         }
     }
 

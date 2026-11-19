@@ -6,7 +6,19 @@ package app.morphe.extension.tiktok.share;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import app.morphe.extension.shared.Logger;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The share sheet actions Hushfeed builds on TikTok's native Report carrier: Block this creator
@@ -75,5 +87,78 @@ public final class OwnedShareActions {
     /** Replaced with the reviewed native Report carrier constructor by the patch. */
     static Object newAction(Activity activity, Object aweme) {
         return null;
+    }
+
+    /** A menu row model and the owned carrier it was copied from, both held weakly. */
+    private static final class MenuRow {
+        final WeakReference<Object> row;
+        final WeakReference<Object> action;
+
+        MenuRow(Object row, Object action) {
+            this.row = new WeakReference<>(row);
+            this.action = new WeakReference<>(action);
+        }
+    }
+
+    private static final List<MenuRow> MENU_ROWS = new ArrayList<>();
+
+    /**
+     * LIVE's long-press menu copies each action into a row model of its own (#359): an icon and a
+     * text resource read off the action, which for a carrier are Report's. Its row view draws only
+     * that model, so none of the carrier's hooks run there and an owned row read "Report" under
+     * Report's flag (S22, 2026-11-18). The patch calls this as each model is built, and a model
+     * copied from an owned carrier is remembered by identity for {@link #bindMenuRow}.
+     */
+    public static void menuRow(Object action, Object row) {
+        try {
+            if (row == null || !owns(action)) return;
+            synchronized (MENU_ROWS) {
+                prune();
+                MENU_ROWS.add(new MenuRow(row, action));
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not note a menu row", failure);
+        }
+    }
+
+    /**
+     * A row view finished drawing {@code row}. One copied from an owned carrier gets the carrier's own
+     * label and glyph in place of Report's; any other row keeps what TikTok drew.
+     */
+    public static void bindMenuRow(Object row, ImageView icon, TextView text) {
+        try {
+            Object action = menuAction(row);
+            if (action == null) return;
+            String label = label(action);
+            if (text != null && label != null) text.setText(label);
+            if (icon == null) return;
+            bindIcon(action, icon);
+            // A bare glyph takes the theme's text color, which needn't be this menu's. The row's
+            // own label color is, so the glyph matches the words beside it.
+            Drawable drawn = icon.getDrawable();
+            if (text != null && drawn != null && !(drawn instanceof LayerDrawable)) {
+                drawn.setColorFilter(new PorterDuffColorFilter(text.getCurrentTextColor(), PorterDuff.Mode.SRC_IN));
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not draw a menu row", failure);
+        }
+    }
+
+    static Object menuAction(Object row) {
+        if (row == null) return null;
+        synchronized (MENU_ROWS) {
+            prune();
+            for (MenuRow each : MENU_ROWS) {
+                if (each.row.get() == row) return each.action.get();
+            }
+        }
+        return null;
+    }
+
+    private static void prune() {
+        for (Iterator<MenuRow> each = MENU_ROWS.iterator(); each.hasNext();) {
+            MenuRow entry = each.next();
+            if (entry.row.get() == null || entry.action.get() == null) each.remove();
+        }
     }
 }

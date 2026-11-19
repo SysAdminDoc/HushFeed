@@ -44,6 +44,8 @@ class OwnedShareActionAnchorsTest {
         val snapshotConstructor: Method,
         val models: Map<String, ClassDef>,
         val interfaces: List<ClassDef>,
+        val menuBinds: List<Pair<Method, OwnedMenuRowBind>>,
+        val menuBuilds: List<Pair<Method, List<OwnedMenuRowBuild>>>,
     )
 
     companion object {
@@ -223,6 +225,49 @@ class OwnedShareActionAnchorsTest {
         }
     }
 
+    @Test fun `LIVE's long-press menu rows get the owned label and icon from the model built off the action`() {
+        Fixtures.forEachDeclared { apk ->
+            val found = find(apk)
+            assertEquals("one menu row bind", 1, found.menuBinds.size)
+            val (bindMethod, bind) = found.menuBinds.single()
+            assertEquals(bindMethod.parameterTypes.first().toString(), bind.model)
+            assertEquals("Lcom/bytedance/tux/icon/TuxIconView;", bind.iconField.type)
+            assertEquals(bindMethod.definingClass, bind.textField.definingClass)
+
+            val textResource = found.helper.reportTextResource(found.action.interfaces)
+            val label = found.action.methods.single { it.name == textResource && it.parameterTypes.isEmpty() }
+            assertEquals("I", label.returnType)
+            val builds = found.menuBuilds
+            assertTrue("the LIVE menu builds a row model from an action", builds.sumOf { it.second.size } >= 3)
+            for ((method, each) in builds) {
+                val code = method.implementation!!.instructions.toList()
+                for (build in each) {
+                    val read = code[build.index - 2] as FiveRegisterInstruction
+                    assertEquals(textResource, code[build.index - 2].getReference<MethodReference>()!!.name)
+                    assertEquals(build.actionRegister, read.registerC)
+                    assertEquals(build.modelRegister, (code[build.index] as FiveRegisterInstruction).registerC)
+                }
+                val hooked = MutableMethod(method).apply { noteOwnedMenuRows(each) }.implementation!!.instructions.toList()
+                val notes = hooked.indices.filter { hooked[it].getReference<MethodReference>()?.name == "menuRow" }
+                assertEquals(each.size, notes.size)
+                for (at in notes) {
+                    assertEquals("noted right after the model is built", bind.model,
+                        hooked[at - 1].getReference<MethodReference>()!!.definingClass)
+                }
+            }
+
+            val returns = bindMethod.implementation!!.instructions.count { it.opcode == Opcode.RETURN_VOID }
+            val hooked = MutableMethod(bindMethod).apply { bindOwnedMenuRow(bind) }.implementation!!.instructions.toList()
+            val draws = hooked.indices.filter { hooked[it].getReference<MethodReference>()?.name == "bindMenuRow" }
+            assertEquals("every way out draws the owned row", returns, draws.size)
+            for (at in draws) {
+                assertEquals(bind.iconField.name, hooked[at - 2].getReference<FieldReference>()!!.name)
+                assertEquals(bind.textField.name, hooked[at - 1].getReference<FieldReference>()!!.name)
+                assertEquals(Opcode.RETURN_VOID, hooked[at + 1].opcode)
+            }
+        }
+    }
+
     @Test fun `the factory binds the post and activity and every addition keeps the current finished row`() {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
@@ -295,14 +340,19 @@ class OwnedShareActionAnchorsTest {
             val snapshots = mutableListOf<Pair<ClassDef, Method>>()
             val models = mutableMapOf<String, ClassDef>()
             val superclasses = mutableMapOf<String, String?>()
+            val menuBinds = mutableListOf<Pair<Method, OwnedMenuRowBind>>()
             walk(apk) { owner ->
                 superclasses[owner.type] = owner.superclass
                 if (owner.type in setOf(POST_PACKAGE, BASE, AWEME, USER)) models[owner.type] = owner
                 for (method in owner.methods) {
                     if (NativeReportActionFingerprint.takes(method, owner)) actions += owner to method
                     if (ShareSnapshotFingerprint.takes(method, owner)) snapshots += owner to method
+                    if (OwnedMenuRowBindFingerprint.takes(method, owner)) menuBinds += method to method.ownedMenuRowBind()!!
                 }
             }
+            assertEquals("menu row binds", 1, menuBinds.size)
+            val rowModel = menuBinds.single().second.model
+            val modelBuilders = mutableListOf<Method>()
             assertEquals("native Report carriers", 1, actions.size)
             assertEquals("share snapshots", 1, snapshots.size)
             val (action, constructor) = actions.single()
@@ -319,16 +369,24 @@ class OwnedShareActionAnchorsTest {
                     it.name == helperRef.name && it.parameterTypes.map(CharSequence::toString) ==
                         helperRef.parameterTypes.map(CharSequence::toString) && it.returnType == helperRef.returnType
                 }
-                for (method in owner.methods) method.ownedShareIconBind(action, isImageView)?.let { binders += method to it }
+                for (method in owner.methods) {
+                    method.ownedShareIconBind(action, isImageView)?.let { binders += method to it }
+                    if (method.implementation?.instructions?.any {
+                            it.opcode == Opcode.INVOKE_DIRECT && it.getReference<MethodReference>()?.definingClass == rowModel
+                        } == true) modelBuilders += method
+                }
             }
             assertNotNull("native text helper", helper)
+            val textResource = helper!!.reportTextResource(action.interfaces)
+            val menuBuilds = modelBuilders.map { it to it.ownedMenuRowBuilds(rowModel, textResource, action.interfaces) }
+                .filter { it.second.isNotEmpty() }
             assertEquals("native action icon binders", 2, binders.size)
             val imageFields = binders.map { (method, bind) ->
                 method.implementation!!.instructions.toList()[bind.index - 1].getReference<FieldReference>()!!.type
             }
             val (snapshot, snapshotConstructor) = snapshots.single()
             Found(action, constructor, helper!!, binders, imageFields,
-                snapshot, snapshotConstructor, models, interfaces)
+                snapshot, snapshotConstructor, models, interfaces, menuBinds, menuBuilds)
         }
     }
 

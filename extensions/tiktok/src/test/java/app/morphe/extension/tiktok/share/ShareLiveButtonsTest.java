@@ -7,6 +7,10 @@ package app.morphe.extension.tiktok.share;
 import static org.junit.Assert.*;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
@@ -177,6 +181,45 @@ public class ShareLiveButtonsTest {
         Settings.LIVE_BUTTONS_IN_MENU.save(true);
         assertTrue(OwnedShareActions.click(record, activity, live));
         assertEquals("a retired row stays retired", 0, recordTaps);
+    }
+
+    @Test public void aLongPressMenuRowCopiedFromAButtonShowsItsOwnNameAndGlyph() {
+        List<?> finished = ShareLiveButtons.actions(new Package("live"), row());
+        Object recordRow = new Object();
+        Object tapRow = new Object();
+        OwnedShareActions.menuRow(finished.get(2), recordRow);
+        OwnedShareActions.menuRow(finished.get(3), tapRow);
+
+        ColorDrawable flag = new ColorDrawable(Color.RED);
+        ImageView icon = new ImageView(activity);
+        icon.setImageDrawable(flag);
+        TextView text = new TextView(activity);
+        text.setText("Report");
+        text.setTextColor(Color.WHITE);
+        OwnedShareActions.bindMenuRow(recordRow, icon, text);
+        assertEquals("Record", text.getText().toString());
+        assertTrue(icon.getDrawable() instanceof LiveButtonGlyphDrawable);
+
+        TextView tapText = new TextView(activity);
+        OwnedShareActions.bindMenuRow(tapRow, new ImageView(activity), tapText);
+        assertEquals("Auto tap", tapText.getText().toString());
+    }
+
+    @Test public void tikToksOwnMenuRowsKeepWhatTikTokDrew() {
+        List<?> finished = ShareLiveButtons.actions(new Package("live"), row());
+        Object reportRow = new Object();
+        OwnedShareActions.menuRow(finished.get(0), reportRow);
+        OwnedShareActions.menuRow(finished.get(2), null);
+        for (Object model : new Object[] {reportRow, new Object(), null}) {
+            ColorDrawable flag = new ColorDrawable(Color.RED);
+            ImageView icon = new ImageView(activity);
+            icon.setImageDrawable(flag);
+            TextView text = new TextView(activity);
+            text.setText("Report");
+            OwnedShareActions.bindMenuRow(model, icon, text);
+            assertEquals("Report", text.getText().toString());
+            assertSame(flag, icon.getDrawable());
+        }
     }
 
     @Test public void theRecordRowSaysASaveIsRunning() {

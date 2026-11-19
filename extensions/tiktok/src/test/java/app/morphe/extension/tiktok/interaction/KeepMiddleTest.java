@@ -127,6 +127,23 @@ public class KeepMiddleTest {
         assertTrue(KeepMiddle.videoInWindow);
     }
 
+    /**
+     * Search reads search_player_surface_view alone, and an odd answer gives its videos a
+     * SurfaceView, which left the feed cropped and stretched from then on (#468).
+     */
+    @Test public void searchVideosStayInTheWindowToo() {
+        String search = "search_player_surface_view";
+        assertEquals(1, VideoFit.videoSurfaceGate(search, 1));
+
+        Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(true);
+        assertEquals(0, VideoFit.videoSurfaceGate(search, 1));
+        assertEquals(2, VideoFit.videoSurfaceGate(search, 3));
+        assertEquals(2, VideoFit.videoSurfaceGate(search, 2));
+        assertEquals(0, VideoFit.videoSurfaceGate(search, 0));
+        // Search's key says nothing about the feed's player.
+        assertFalse(KeepMiddle.videoInWindow);
+    }
+
     @Test public void theVideoIsLaidOutAtTheWindowAndDrawnWithTheShaderOnceTikTokDrawsItInTheWindow() {
         try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
             var activity = controller.get();

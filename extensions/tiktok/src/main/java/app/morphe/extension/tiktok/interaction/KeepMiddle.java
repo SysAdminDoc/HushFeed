@@ -38,6 +38,12 @@ final class KeepMiddle {
     static final String SURFACE_VIEW_GATE = "player_enable_surface_surfaceview";
 
     /**
+     * Search's own key for its player's view, read once and kept: an odd answer puts search
+     * videos on a SurfaceView, an even one on a TextureView. Search never asks the feed's key.
+     */
+    static final String SEARCH_SURFACE_VIEW_GATE = "search_player_surface_view";
+
+    /**
      * How the picture is drawn at the screen's edge, as a share of its own scale: three quarters
      * is a third taller, the most Stretch takes before it leaves a video alone.
      */

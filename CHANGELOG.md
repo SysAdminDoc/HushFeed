@@ -27,6 +27,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Keep the middle unstretched` on, search results play in the app's window like the feed does. A search video on a layer of its own used to leave every video cropped and stretched until the next restart (#468).
 * With `Keep the middle unstretched` on, a video's cover picture keeps the same size as its video. When TikTok played a video on a layer of its own, the cover could still take the whole screen, so it showed at the wrong size and flickered as the video replaced it. Once that happens the video and its cover are both cropped and stretched evenly, and the diagnostic report says so (#468).
 * Searching the settings for `SIM country preset`, or just "preset", finds that row now. It used to find nothing.
 * With `Auto-advance videos` and `Keep playing in the background` both on, a creator's videos keep coming after you start one from their profile and leave the app. TikTok used to play that first video and stop. `Auto-advance session limit` counts these too, and screen-time holds stop them the same way (D292).

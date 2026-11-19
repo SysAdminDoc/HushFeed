@@ -122,11 +122,19 @@ public final class VideoFit {
 
     /**
      * Every App AB int TikTok reads passes here (#421). Only {@link KeepMiddle#SURFACE_VIEW_GATE}
-     * is answered, with 0 while Keep the middle is on, which has TikTok play into a TextureView
-     * the window draws and the shader reaches. Whatever answer TikTok ends up with is noted, the
-     * see-through bottom bar's own 0 included, since that hook may run after this one.
+     * and search's {@link KeepMiddle#SEARCH_SURFACE_VIEW_GATE} are answered while Keep the middle
+     * is on, so TikTok plays into a TextureView the window draws and the shader reaches. One
+     * SurfaceView anywhere leaves every video cropped and stretched until a restart (#468), so
+     * search gets its low bit taken off too. Whatever answer the feed's key ends up with is noted,
+     * the see-through bottom bar's own 0 included, since that hook may run after this one.
      */
     public static int videoSurfaceGate(String key, int value) {
+        if (KeepMiddle.SEARCH_SURFACE_VIEW_GATE.equals(key)) {
+            if ((value & 1) == 0 || !KeepMiddle.wanted()) return value;
+            Logger.printInfo(() -> "Search video drawn in the app's window to keep its middle unstretched: "
+                    + key + " came back " + value);
+            return value & ~1;
+        }
         if (!KeepMiddle.SURFACE_VIEW_GATE.equals(key)) return value;
         int answer = value;
         if (answer != 0 && KeepMiddle.wanted()) {

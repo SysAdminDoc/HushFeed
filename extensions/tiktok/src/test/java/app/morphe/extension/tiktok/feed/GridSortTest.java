@@ -277,6 +277,10 @@ public class GridSortTest {
         assertFalse("a list that shrank", GridSort.wantsNextPage("newest", 60, 40, true));
         assertFalse("an empty grid", GridSort.wantsNextPage("newest", 0, 0, true));
         assertEquals("#180: 300 left a long profile's oldest videos out", 1000, GridSort.LOAD_CAP);
+        // The S22 on Wi-Fi (2026-11-19, @tiktok): about 33 videos a page, a page a second. A 20 s
+        // hold ran out at 618, so the cap was out of reach.
+        assertTrue("the cap fits in the hold at the S22's page rate",
+                GridSort.HOLD_LIMIT_MS >= (GridSort.LOAD_CAP / 33 + 1) * 1_050L);
     }
 
     /** The grid's own load more listener, as the adapter's footer calls it. */
@@ -540,6 +544,39 @@ public class GridSortTest {
             slow.mmItems = GridSort.data(slow, posts(10));
             idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
             assertEquals("a fresh list loads by itself again", asked + 1, slow.listener.calls);
+        }
+    }
+
+    /** #180: a long profile's hold can take half a minute, so a tap shows the order it has now. */
+    @Test public void aTapOnTheHoldShowsTheOrderItHasAndLeavesTheRestToScrolling() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(30);
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            model.addAll(posts(30));
+            adapter.mmItems = GridSort.page(adapter, model);
+            assertHeld(adapter);
+            ViewGroup box = (ViewGroup) ((ViewGroup) holdOn(adapter)).getChildAt(0);
+            assertEquals("the hold says it can be tapped", "Tap to see the order now",
+                    String.valueOf(((TextView) box.getChildAt(2)).getText()));
+
+            assertTrue(holdOn(adapter).performClick());
+            idle(0);
+            assertInSight(adapter);
+            assertEquals("the pages it held for show at once", 1, adapter.refreshes);
+
+            int asked = adapter.listener.calls;
+            model.addAll(posts(30));
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            assertEquals("a page after the tap asks for nothing", asked, adapter.listener.calls);
+            assertInSight(adapter);
+
+            adapter.mmItems = GridSort.data(adapter, posts(10));
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            assertEquals("a fresh list loads by itself again", asked + 1, adapter.listener.calls);
         }
     }
 
@@ -2561,7 +2598,7 @@ public class GridSortTest {
                 assertEquals(GridSort.LABELS[i], String.valueOf(list.getEntries()[i]));
             }
             String summary = String.valueOf(row.getSummary());
-            assertTrue(summary, summary.contains("sound's page") && summary.contains("up to 300"));
+            assertTrue(summary, summary.contains("sound's page") && summary.contains("up to 1,000"));
         }
     }
 

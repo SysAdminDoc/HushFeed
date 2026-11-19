@@ -2636,9 +2636,10 @@ Least viewed first	الأقل مشاهدة أولا
 Most liked first	الأكثر إعجابا أولا
 Least liked first	الأقل إعجابا أولا
 Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.	يرتب شبكة الملف الشخصي أو شبكة أعجبني بحيث تكون الفيديوهات المثبتة أولا. أثناء تفعيل الترتيب، تستمر الشبكة بالتحميل تلقائيا حتى %1$s فيديو، بحيث يغطي الترتيب أكثر من الشاشة الأولى. زر في الزاوية العلوية للشبكة يغير الترتيب من هناك مباشرة.
+Tap to see the order now	اضغط لرؤية الترتيب الآن
 Sort loaded videos on Liked grids	رتب الفيديوهات المحملة في شبكات أعجبني
 Sort loaded videos on sound pages	رتب الفيديوهات المحملة في صفحات الأصوات
-Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.	يفرز مقاطع الفيديو في صفحة الصوت بالطريقة نفسها، ويحمّل ما يصل إلى 300 مقطعًا منها أثناء تفعيل الترتيب.
+Sorts the videos on a sound's page the same way, loading up to %1$s of them while an order is on.	يفرز مقاطع الفيديو في صفحة الصوت بالطريقة نفسها، ويحمّل ما يصل إلى %1$s مقطعًا منها أثناء تفعيل الترتيب.
 Same as profile grids	مثل شبكات الملف الشخصي
 Sort this grid	فرز هذه الشبكة
 Blur the video behind the bar	ضبابية الفيديو خلف الشريط

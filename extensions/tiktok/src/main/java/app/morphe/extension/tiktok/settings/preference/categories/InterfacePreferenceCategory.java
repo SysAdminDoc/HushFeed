@@ -439,7 +439,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                                     "Most liked first", "Least liked first"},
                             new String[]{"off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                     "least_viewed", "most_liked", "least_liked"})
-                            .withNote("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on."));
+                            .withNote(L10n.f(context, "Sorts the videos on a sound's page the same way, loading up to %1$s of them while an order is on.",
+                                    java.text.NumberFormat.getIntegerInstance().format(GridSort.LOAD_CAP))));
                 }
                 addPreference(new TogglePreference(
                         context,

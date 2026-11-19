@@ -39,7 +39,7 @@ Every Hushfeed release, newest first.
 * `Keep captions in Clear display` shows a video's first caption right away, sits near TikTok's own caption spot when it hasn't seen one yet, and stays above the progress bar (#456).
 * The country and date line doesn't get cut off anymore when you open a long caption, and the caption above it keeps every line after you open or close it with more and less (#457).
 * `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
-* A sorted profile grid loads up to 1,000 videos on its own before it sorts, up from 300, so a long profile's oldest and longest videos make it into the order. On a slow connection it stops after 20 seconds, shows the order it has, and your scrolling loads the rest. The setting's note says 1,000 now too, where it still said 300 (#180).
+* A sorted profile grid loads up to 1,000 videos on its own before it sorts, up from 300, so a long profile's oldest and longest videos make it into the order. On a long profile that takes about half a minute. Tap the loading grid to see the order it has right away, and your scrolling loads the rest. A slow connection stops after 35 seconds the same way. The notes under the profile and sound page sort settings say 1,000 now too, where they still said 300 (#180).
 
 ### Build
 

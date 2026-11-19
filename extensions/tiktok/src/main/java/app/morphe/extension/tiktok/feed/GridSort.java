@@ -146,10 +146,12 @@ public final class GridSort {
     static final String PAGE_SOURCE = "load_more_bind_footer";
     /**
      * The longest a grid stays out of sight, so a slow or dead request can't leave it hidden. 300
-     * videos took 18 s on Login2. A grid still loading when this runs out stops loading by itself
-     * ({@link #TIMED_OUT}), so a slow phone shows its order once instead of reshuffling page by page.
+     * videos took 18 s on Login2. The S22 on Wi-Fi got about 33 a page and a page a second, so 20 s
+     * ran out at 618 and the cap was never reached (#180); this fits the cap with some room. A grid
+     * still loading when this runs out, or whose hold is tapped, stops loading by itself
+     * ({@link #TIMED_OUT}), so it shows its order once instead of reshuffling page by page.
      */
-    static final long HOLD_LIMIT_MS = 20_000;
+    static final long HOLD_LIMIT_MS = 35_000;
     /**
      * How long a hold waits on one page. The Liked tab keeps its listener past its last video and
      * just never answers the ask, so this is what ends that hold. Pages came within 3 s on Login2.
@@ -180,8 +182,8 @@ public final class GridSort {
     /** Per grid, its hold while its pages load. Main thread only. */
     private static final Map<View, Hold> HOLDS = new WeakHashMap<>();
     /**
-     * Adapters whose hold ran out while pages were still coming, which leave the rest of their
-     * pages to the reader's scrolling until a fresh list. Main thread only.
+     * Adapters whose hold ran out or was tapped while pages were still coming, which leave the rest
+     * of their pages to the reader's scrolling until a fresh list. Main thread only.
      */
     private static final Map<Object, Boolean> TIMED_OUT = new WeakHashMap<>();
     /** Per frame class, whether it takes any view an overlay adds. Main thread only. */
@@ -984,6 +986,13 @@ public final class GridSort {
             count.setPaddingRelative(SettingsUi.dp(context, 8), 0, 0, 0);
             setHoldCount(count, size);
             box.addView(count);
+            TextView hint = new TextView(context);
+            hint.setTextColor(SettingsUi.OVERLAY_TEXT);
+            hint.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
+            hint.setPaddingRelative(SettingsUi.dp(context, 8), 0, 0, 0);
+            hint.setText(L10n.t(context, "Tap to see the order now"));
+            box.addView(hint);
+            cover.setOnClickListener(view -> showNow(grid));
             FrameLayout.LayoutParams boxAt = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     Gravity.TOP | Gravity.CENTER_HORIZONTAL);
@@ -1045,6 +1054,15 @@ public final class GridSort {
     }
 
     /** Brings the grid back, with the one refresh the pages it hid were owed. */
+    /** A tap on the hold: the order it has now, with the rest of the pages left to the reader's scrolling. */
+    private static void showNow(View grid) {
+        Hold hold = HOLDS.get(grid);
+        if (hold == null) return;
+        if (hold.adapter != null) TIMED_OUT.put(hold.adapter, Boolean.TRUE);
+        Logger.printDebug(() -> "Grid sort: hold tapped, showing the order it has");
+        endHold(grid);
+    }
+
     private static void endHold(View grid) {
         Hold hold = grid == null ? null : HOLDS.remove(grid);
         if (hold == null) return;

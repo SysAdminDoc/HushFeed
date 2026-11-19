@@ -2347,9 +2347,10 @@ Least viewed first,Paling sedikit ditonton dulu
 Most liked first,Paling banyak disukai dulu
 Least liked first,Paling sedikit disukai dulu
 "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.","Mengurutkan kisi profil atau Disukai, dan video yang disematkan tetap di depan. Selama urutan dipilih, kisi terus memuat sendiri hingga %1$s video, jadi urutannya mencakup lebih dari layar pertama. Tombol di sudut atas kisi mengubah urutan langsung di sana."
+Tap to see the order now,Ketuk untuk melihat urutan sekarang
 Sort loaded videos on Liked grids,Urutkan video yang dimuat di kisi Disukai
 Sort loaded videos on sound pages,Urutkan video yang dimuat di halaman suara
-"Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.","Mengurutkan video di halaman suara dengan cara yang sama, memuat hingga 300 video selama urutan dipilih."
+"Sorts the videos on a sound's page the same way, loading up to %1$s of them while an order is on.","Mengurutkan video di halaman suara dengan cara yang sama, memuat hingga %1$s video selama urutan dipilih."
 Same as profile grids,Sama seperti kisi profil
 Sort this grid,Urutkan kisi ini
 Blur the video behind the bar,Buramkan video di belakang bilah

@@ -26,6 +26,9 @@ for a in sys.argv[1:]:
             sys.exit(f"--{key}{eq}{value}: unknown option, or a missing value\n\n{__doc__}")
 if len(args) != 2 or "old" not in opts or "new" not in opts:
     sys.exit(__doc__)
+# ASCII digits only, the same check swap.py makes.
+if not all(re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", opts[key]) for key in ("old", "new")):
+    sys.exit("--old and --new take a version name like 47.9.2")
 write = "write" in opts
 tsv, repo = pathlib.Path(args[0]), pathlib.Path(args[1])
 OLD_BUILD = opts["old"]

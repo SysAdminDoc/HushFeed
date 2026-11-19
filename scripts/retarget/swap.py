@@ -25,8 +25,10 @@ for a in sys.argv[1:]:
             sys.exit(f"--{key}{eq}{value}: unknown option, or a missing value\n\n{__doc__}")
 if len(args) != 1 or not all(k in opts for k in VALUED):
     sys.exit(__doc__)
-if not re.fullmatch(r"\d+(\.\d+)+", opts["old"]) or not re.fullmatch(r"\d+(\.\d+)+", opts["new"]) \
-        or not opts["old-code"].isdigit() or not opts["new-code"].isdigit():
+# ASCII digits only: \d and isdigit() also take Arabic-Indic digits and superscripts.
+VERSION_NAME = r"[0-9]+\.[0-9]+\.[0-9]+"
+if not re.fullmatch(VERSION_NAME, opts["old"]) or not re.fullmatch(VERSION_NAME, opts["new"]) \
+        or not re.fullmatch("[0-9]+", opts["old-code"]) or not re.fullmatch("[0-9]+", opts["new-code"]):
     sys.exit("--old and --new take a version name like 47.9.2, --old-code and --new-code its digits")
 repo = pathlib.Path(args[0])
 write = "write" in opts

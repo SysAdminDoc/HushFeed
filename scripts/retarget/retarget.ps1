@@ -89,8 +89,8 @@ $DesktopJar = Resolve-DesktopCli -Explicit $DesktopJar -Root $root -Required
 $old = Get-ApkManifestFacts -Apk $oldApk -Aapt2 $Aapt2
 $new = Get-ApkManifestFacts -Apk $newApk -Aapt2 $Aapt2
 foreach ($facts in @(@($oldApk, $old), @($newApk, $new))) {
-    # swap.py would read an empty code as "every 1 in the tree".
-    if (-not ($facts[1].versionName -match '^\d+(\.\d+)+$') -or -not ($facts[1].versionCode -match '^\d+$')) {
+    # swap.py would read an empty code as "every 1 in the tree". ASCII digits, as swap.py takes them.
+    if (-not ($facts[1].versionName -match '^[0-9]+\.[0-9]+\.[0-9]+$') -or -not ($facts[1].versionCode -match '^[0-9]+$')) {
         throw "Couldn't read a version name and code from $($facts[0]) (got '$($facts[1].versionName)', '$($facts[1].versionCode)')."
     }
 }
@@ -126,7 +126,8 @@ foreach ($side in @(@($oldApk, $resOld), @($newApk, $resNew))) {
 $null = Invoke-RetargetPython -Log (Join-Path $WorkDir 'owners.log') -Script 'owners.py' -Arguments @($root, $owners)
 if ($Seeds) {
     Copy-Item -LiteralPath $Seeds -Destination $seedFile -Force
-} else {
+} elseif (-not $ReuseTrace -or -not (Test-Path -LiteralPath $seedFile -PathType Leaf)) {
+    # A reuse keeps the seeds its trace was made with, so the stamp below still matches them.
     [IO.File]::WriteAllText($seedFile, '')
 }
 

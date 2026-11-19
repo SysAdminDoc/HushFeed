@@ -50,6 +50,7 @@ Every Hushfeed release, newest first.
 ### Build
 
 * The GitHub release notes leave out the Build changes and the What was checked list now. Build changes are still listed here in the changelog.
+* The build runs on Gradle 9.9.1, which fixes the three Gradle security advisories published on November 10. The wrapper jar and the distribution checksum come from services.gradle.org.
 
 ## 0.83.0 (2026-11-17)
 

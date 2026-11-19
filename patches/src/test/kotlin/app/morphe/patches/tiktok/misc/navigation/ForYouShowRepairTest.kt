@@ -40,7 +40,7 @@ class ForYouShowRepairTest {
     private val bundleType = "Landroid/os/Bundle;"
 
     /**
-     * Home's own switch to For You and For You's show as 47.9.1 names them, the members the S22
+     * Home's own switch to For You and For You's show as 47.9.2 names them, the members the S22
      * trace proved on 47.6.3 found again by the same reads. A change in what the reads land on
      * shows here before it reaches a phone.
      */
@@ -91,7 +91,7 @@ class ForYouShowRepairTest {
             assertEquals(calls.activityOf.returnType, calls.hoxOf.parameterTypes.single().toString())
             assertTrue("$version: For You is a kind of ${calls.fragmentBase}", ancestors(app, FOR_YOU_FRAGMENT).contains(calls.fragmentBase))
             assertTrue("$version: the panel is a kind of ${calls.hintOwner}", ancestors(app, calls.panel.type).contains(calls.hintOwner))
-            if (version == "47.9.1") {
+            if (version == "47.9.2") {
                 val read = mapOf(
                     "nodeOf" to calls.nodeOf.name, "container" to calls.container.name, "current" to calls.current.name,
                     "shown" to calls.shown.name, "dispatch" to calls.dispatch.name,

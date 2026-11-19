@@ -140,7 +140,7 @@ public class ImageLoadsTest {
         assertEquals("no reason given", ImageLoads.kind(null));
     }
 
-    /** Stands in for 47.9.1's network failure, an obfuscated exception with a status line. */
+    /** Stands in for 47.9.2's network failure, an obfuscated exception with a status line. */
     static class HttpFailure extends Exception {
         HttpFailure(String message) {
             super(message);

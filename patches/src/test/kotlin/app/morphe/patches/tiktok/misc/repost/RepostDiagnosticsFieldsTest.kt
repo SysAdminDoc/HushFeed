@@ -19,7 +19,7 @@ import org.junit.Test
  * declared TikTok build. The extension cannot link against them, so a rename would only show as
  * "unknown" in a report; here it fails first.
  *
- * What it reads, and where each name comes from on 47.9.1:
+ * What it reads, and where each name comes from on 47.9.2:
  * - the parsed response (the return type of the interceptor's parseResponse lancet): field LIZIZ
  *   is the body and field LIZ the raw response it came from. 47.7.3 dropped its LIZ() code
  *   getter and renamed its success flag to LIZIZ(), which only asks the raw response, so the

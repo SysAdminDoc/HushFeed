@@ -227,7 +227,7 @@ internal object AppLogSendPackFingerprint : Fingerprint(
  * The AppLog forward send. The forward worker reads the events flagged for forwarding out of
  * its own table, deletes them, and posts each pack to the forward hosts straight through the
  * SDK's network client, never through the pack send above. On 47.0.3 it is
- * LX/08h7;->LJII(I, List, JSONObject)V. Named by its own log line, which the SDK has kept
+ * LX/08h4;->LJII(I, List, JSONObject)V. Named by its own log line, which the SDK has kept
  * across builds, and by its shape.
  */
 internal object AppLogForwardSendFingerprint : Fingerprint(
@@ -279,7 +279,7 @@ internal const val RESOLVER_LOOKUP_HOST = "whoami.akamai.net"
  * The Orbu SDK's log upload: the suspend call that builds a put-logs body and posts it to
  * proxy.telemetry.us-ashburn-1.oci.oraclecloud.com, the host #379's DNS log shows being called
  * thousands of times a day. The SDK's classes are renamed but its model classes keep their
- * names. Only this implementation builds the body (47.9.1: Lttpobfuscated/ld;->a).
+ * names. Only this implementation builds the body (47.9.2: Lttpobfuscated/ld;->a).
  */
 internal object OrbuLogSendFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
@@ -294,7 +294,7 @@ internal fun buildsOrbuLogBody(method: Method): Boolean =
 
 /**
  * The lookups of whoami.akamai.net, TikTok's way of learning which DNS resolver the phone uses.
- * Seven copies on 47.9.1, in the video and upload libraries and two renamed classes.
+ * Seven copies on 47.9.2, in the video and upload libraries and two renamed classes.
  */
 internal object ResolverLookupFingerprint : Fingerprint(strings = listOf(RESOLVER_LOOKUP_HOST))
 

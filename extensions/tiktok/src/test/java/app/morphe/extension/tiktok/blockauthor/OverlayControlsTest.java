@@ -790,7 +790,7 @@ public class OverlayControlsTest {
     /**
      * #433: Line them up over the right column stacks the shown controls above TikTok's avatar,
      * centered on its buttons, and keeps them with the column when it moves. The column is
-     * 47.9.1's on the S22: a full-width view from y 969 whose buttons sit in its last 226 px,
+     * 47.9.2's on the S22: a full-width view from y 969 whose buttons sit in its last 226 px,
      * the avatar at 932,1011 to 1057,1136. The screen is the S22's too, since only the column in
      * sight counts and a smaller window would cut it off.
      */
@@ -801,7 +801,7 @@ public class OverlayControlsTest {
         Method resolve = app.morphe.extension.tiktok.feed.VideoOverlayHider.class
                 .getDeclaredMethod("resolveForTests", String.class, int.class);
         resolve.setAccessible(true);
-        resolve.invoke(null, "47.9.1:lq1", columnId);
+        resolve.invoke(null, "47.9.2:lq1", columnId);
         try {
             FrameLayout column = new FrameLayout(root.getContext());
             column.setId(columnId);
@@ -853,7 +853,7 @@ public class OverlayControlsTest {
                     ShadowToast.getTextOfLatestToast());
             dragging.setBoolean(null, false);
         } finally {
-            resolve.invoke(null, "47.9.1:lq1", 0);
+            resolve.invoke(null, "47.9.2:lq1", 0);
         }
     }
 

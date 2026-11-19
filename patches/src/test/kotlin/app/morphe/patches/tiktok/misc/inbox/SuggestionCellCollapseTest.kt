@@ -101,7 +101,7 @@ class SuggestionCellCollapseTest {
         ImmutableMethod(
             "Lcom/ss/android/ugc/aweme/relation/usercard/impl/cell/AbsRecUserCell;",
             "onBindItemView",
-            listOf(ImmutableMethodParameter("LX/0a8G;", null, null)),
+            listOf(ImmutableMethodParameter("LX/0a9N;", null, null)),
             "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value or AccessFlags.SYNTHETIC.value,
             null,
@@ -109,7 +109,7 @@ class SuggestionCellCollapseTest {
             ImmutableMethodImplementation(
                 2,
                 listOf(
-                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0nV4;")),
+                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0nUe;")),
                     ImmutableInstruction10x(Opcode.RETURN_VOID),
                 ),
                 null,
@@ -123,7 +123,7 @@ class SuggestionCellCollapseTest {
         ImmutableMethod(
             "Lcom/ss/android/ugc/aweme/relation/usercard/impl/cell/TitleAreaCell;",
             "onBindItemView",
-            listOf(ImmutableMethodParameter("LX/05Io;", null, null)),
+            listOf(ImmutableMethodParameter("LX/05Im;", null, null)),
             "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
             null,
@@ -133,7 +133,7 @@ class SuggestionCellCollapseTest {
                 listOf(
                     // if-eqz p0 is 2 code units and the cast 2 more, so +4 is the return.
                     ImmutableInstruction21t(Opcode.IF_EQZ, 1, 4),
-                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0Mab;")),
+                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0MaY;")),
                     ImmutableInstruction10x(Opcode.RETURN_VOID),
                 ),
                 null,

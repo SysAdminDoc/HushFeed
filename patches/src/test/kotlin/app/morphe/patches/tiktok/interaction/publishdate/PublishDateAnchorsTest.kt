@@ -19,7 +19,7 @@ import org.junit.Test
  * <p>VideoAuthorInfoVM.paramSync2StateAccept turns the item's createTime into milliseconds and
  * hands it to one of nine date formatters, and they meet at one empty check. The hook goes past
  * that check's `if-nez` with the text in v0 and the check's false in v1, which holds the video the
- * hook asks the VideoItemParams parameter (v21 on 47.9.1, of 22 registers) for. 47.9.1 reads the
+ * hook asks the VideoItemParams parameter (v21 on 47.9.2, of 22 registers) for. 47.9.2 reads the
  * time a second time into v0 and v1, over the item in v1. The text is read right after the hook,
  * by the row text's append.
  */

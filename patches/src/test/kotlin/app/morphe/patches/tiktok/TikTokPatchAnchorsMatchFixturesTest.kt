@@ -720,7 +720,7 @@ class TikTokPatchAnchorsMatchFixturesTest {
      * Show engagement rate hooks the profile grid adapter's bind right after the cell's view count
      * is formatted, and hands the extension the text and the cell's Aweme. One bind per declared
      * build, the item in the register its statistics were asked of, and the text the one the
-     * cell's next setText writes (v9 and v13 on 47.8.3, v1 and v12 on 47.7.3).
+     * cell's next setText writes (v7 and v12 on 47.9.2, v9 and v13 on 47.8.3).
      */
     @Test
     fun `profile grid view count site for engagement rate resolves on every declared build`() {
@@ -732,7 +732,7 @@ class TikTokPatchAnchorsMatchFixturesTest {
             assertEquals("profile grid binds", 1, binds.size)
             val bind = binds.single()
             val site = runCatching { bind.gridCountSite() }.getOrElse { throw AssertionError(it.message, it) }
-            assertEquals("text and item registers", 9 to 13, site.textRegister to site.itemRegister)
+            assertEquals("text and item registers", 7 to 12, site.textRegister to site.itemRegister)
             val instructions = bind.implementation!!.instructions.toList()
             val result = instructions[site.insertAt - 1]
             assertEquals(Opcode.MOVE_RESULT_OBJECT, result.opcode)

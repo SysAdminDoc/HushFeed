@@ -295,7 +295,7 @@ class CommentTranslateButtonAnchorsTest {
     private fun toggleWrite(
         key: String = TOGGLE_STATE_KEY,
         static: Boolean = true,
-        parameters: List<String> = listOf("Ljava/lang/Boolean;", "LX/0o9H;"),
+        parameters: List<String> = listOf("Ljava/lang/Boolean;", "LX/0jYX;"),
         owner: String = TOGGLE_OWNER,
         opening: String = "",
     ) = method("LJIIL", parameters, "V", 4, owner = owner, static = static).apply {

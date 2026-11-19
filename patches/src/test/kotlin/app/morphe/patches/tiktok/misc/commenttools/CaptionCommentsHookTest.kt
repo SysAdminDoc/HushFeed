@@ -25,8 +25,8 @@ import org.junit.Test
  * goes on when the answer is no, and that every branch TikTok had still lands where it did.
  */
 class CaptionCommentsHookTest {
-    private val caption = "LX/078P;"
-    private val list = "LX/0Gnw;"
+    private val caption = "LX/078M;"
+    private val list = "LX/0Gnt;"
     private val aweme = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
     private val contextSource = "Lcom/ss/android/ugc/aweme/comment/model/CommentContextSource;"
 
@@ -121,7 +121,7 @@ class CaptionCommentsHookTest {
             invoke-static {v0}, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
             move-result-object v0
             :ask
-            invoke-static {v0}, LX/0Bif;->LIZ(Ljava/lang/Boolean;)Z
+            invoke-static {v0}, LX/0Bic;->LIZ(Ljava/lang/Boolean;)Z
             move-result v0
             const/4 v1, 0x0
             if-eqz v0, :leave_out

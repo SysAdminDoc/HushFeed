@@ -335,7 +335,7 @@ val feedFilterPatch = bytecodePatch(
         // The same handler fills the LIVE rows outside the feed: the Following tab's row of
         // creators who are LIVE, the Inbox's LIVE line and the feed behind it, a push's room
         // (#212). The provider (p0) names which with its request type, through the getter the
-        // handler (on 47.9.1 the provider method it calls) uses right after loading
+        // handler (on 47.9.2 the provider method it calls) uses right after loading
         // following_window_live_cell_loadmore to compare the two, so the filter gets the type as
         // well and leaves those rows to the block list. At index 0 no local holds anything yet,
         // so v1 and v2 carry the arguments into reach.
@@ -714,7 +714,7 @@ val feedFilterPatch = bytecodePatch(
         }
 
         // The view model swaps the served list in only when it holds as many tabs as TikTok's own
-        // default list, and otherwise keeps the default with every tab on it (47.9.1), so the
+        // default list, and otherwise keeps the default with every tab on it (47.9.2), so the
         // same tabs go from the default at each of its fills. The source list is filtered before
         // the clear-and-add-all, so the fallback the setup hands on is the filtered one too.
         SearchDefaultTabsFillFingerprint.method.apply {
@@ -1521,7 +1521,7 @@ private fun MutableMethod.filterChainedCacheDelivery(
     // The block used to do its work in the payload's own register, so both labels it re-enters
     // at were reached with a boolean sitting in a register the native path holds a reference in.
     // On 46.2.3 the instruction at each label writes that register before anything reads it
-    // (index 6 and index 8 of LX/0o5x;->LIZ), so nothing was actually wrong; the block no longer
+    // (index 6 and index 8 of LX/0jUJ;->LIZ), so nothing was actually wrong; the block no longer
     // depends on the host doing that. A register of its own also leaves the payload read the
     // patcher branched on exactly as the host wrote it.
     val scratchRegister = getFreeRegisterProvider(

@@ -224,7 +224,7 @@ public class GridPositionTest {
         }
     }
 
-    /** TikTok 47.9.1 holds the Favorites grid in a LinearLayout inside the tab's FrameLayout. */
+    /** TikTok 47.9.2 holds the Favorites grid in a LinearLayout inside the tab's FrameLayout. */
     @Test public void aGridInALinearLayoutGetsTheControlsInTheFrameAroundIt() {
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();

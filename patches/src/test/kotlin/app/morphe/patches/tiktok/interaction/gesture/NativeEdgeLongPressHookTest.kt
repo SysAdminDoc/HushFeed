@@ -37,17 +37,17 @@ class NativeEdgeLongPressHookTest {
                 if-nez v0, :zone_setup
                 return v6
                 :zone_setup
-                sget-object v5, LX/1MLo;->LIZ:LX/1MLo;
+                sget-object v5, LX/1IuL;->LIZ:LX/1IuL;
                 invoke-virtual { p0 }, Lcom/bytedance/assem/arch/reused/ReusedUIAssem;->LJJIJLIJ()Landroid/view/View;
                 move-result-object v0
                 invoke-virtual { v0 }, Landroid/view/View;->getWidth()I
                 move-result v4
-                invoke-static {}, LX/0DaE;->LJIIIZ()LX/0DaE;
+                invoke-static {}, LX/0DaB;->LJIIIZ()LX/0DaB;
                 move-result-object v3
                 const/16 v2, 0x7c00
                 const-string v0, "fix_6844100557_early_edge_speed_ready"
                 const/4 v1, 0x1
-                invoke-virtual { v3, v2, v0, v1, v1 }, LX/0DaE;->LIZJ(ILjava/lang/String;ZZ)Z
+                invoke-virtual { v3, v2, v0, v1, v1 }, LX/0DaB;->LIZJ(ILjava/lang/String;ZZ)Z
                 move-result v0
                 if-eqz v0, :no_context
                 invoke-virtual { p0 }, Lcom/bytedance/assem/arch/reused/ReusedUIAssem;->LJJIJLIJ()Landroid/view/View;
@@ -56,9 +56,9 @@ class NativeEdgeLongPressHookTest {
                 move-result-object v0
                 :zone
                 invoke-virtual { v5 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
-                invoke-static { p1, v4, v0 }, LX/1MLo;->LIZ(FILandroid/content/Context;)LX/0RLr;
+                invoke-static { p1, v4, v0 }, LX/1IuL;->LIZ(FILandroid/content/Context;)LX/0ROu;
                 move-result-object v2
-                sget-object v0, LX/0RLr;->INVALID_ZONE:LX/0RLr;
+                sget-object v0, LX/0ROu;->INVALID_ZONE:LX/0ROu;
                 if-ne v2, v0, :commerce
                 return v6
                 :no_context
@@ -73,7 +73,7 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :share
                 return v6
                 :share
-                invoke-static {}, LX/0Bka;->LIZ()Z
+                invoke-static {}, LX/0BkX;->LIZ()Z
                 move-result v0
                 if-nez v0, :comments
                 iget-object v0, p0, $owner->LLLFFI:LX/01xT;
@@ -86,10 +86,10 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :comments
                 return v6
                 :comments
-                invoke-static {}, LX/0Bkj;->LIZ()Z
+                invoke-static {}, LX/0Bkg;->LIZ()Z
                 move-result v0
                 if-eqz v0, :like
-                invoke-static {}, LX/0Bka;->LIZ()Z
+                invoke-static {}, LX/0BkX;->LIZ()Z
                 move-result v0
                 if-nez v0, :like
                 iget-object v0, p0, $owner->LLLFZ:LX/01xT;
@@ -102,7 +102,7 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :like
                 return v6
                 :like
-                invoke-static {}, LX/0Bka;->LIZ()Z
+                invoke-static {}, LX/0BkX;->LIZ()Z
                 move-result v0
                 if-nez v0, :favorite
                 iget-object v0, p0, $owner->LLLII:LX/01xT;
@@ -115,7 +115,7 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :favorite
                 return v6
                 :favorite
-                sget-object v0, LX/0Bgs;->LIZ:LX/01xT;
+                sget-object v0, LX/0Bgp;->LIZ:LX/01xT;
                 invoke-interface { v0 }, LX/01xT;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Ljava/lang/Number;

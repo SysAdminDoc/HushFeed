@@ -250,7 +250,7 @@ public final class LiveCommentBox {
 
     /**
      * Gives an icon's own box the fill when it's light, or with [grays] a night gray. A fill the swap
-     * knows is swapped as usual. TikTok's drawn box (X.0zD9 on 47.9.1) sets its paint's color on
+     * knows is swapped as usual. TikTok's drawn box (X.1O1s on 47.9.2) sets its paint's color on
      * every draw, so it's read where it paints, at its middle, and a match there takes the fill as a
      * filter.
      */

@@ -25,7 +25,7 @@ class WatchHistoryFixturesTest {
     @Test
     fun `each declared host has exactly one view report and one batch send`() {
         val items = mapOf(
-            "47.9.1" to "LX/09Mg;",
+            "47.9.2" to "LX/09Md;",
         )
         assertEquals(Fixtures.declaredVersions().toSet(), items.keys)
         Fixtures.forEachDeclared { apk ->
@@ -99,19 +99,19 @@ class WatchHistoryFixturesTest {
 
     @Test
     fun `a sender without its own strings, or off the stats class, is not taken`() {
-        val report = method(AWEME_STATS_API, "LX/08z6;", static = true,
+        val report = method(AWEME_STATS_API, "LX/08z3;", static = true,
             "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")
         assertTrue(isViewReport(report))
         assertFalse("the batch list is the flush's", isViewReport(
             method(AWEME_STATS_API, "Ljava/util/List;", static = true,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
         assertFalse("both strings are needed", isViewReport(
-            method(AWEME_STATS_API, "LX/08z6;", static = true, "const-string v0, \"basic_vv_batch_size\"\nreturn-void")))
+            method(AWEME_STATS_API, "LX/08z3;", static = true, "const-string v0, \"basic_vv_batch_size\"\nreturn-void")))
         assertFalse("an instance method is not the sender", isViewReport(
-            method(AWEME_STATS_API, "LX/08z6;", static = false,
+            method(AWEME_STATS_API, "LX/08z3;", static = false,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
         assertFalse("another class reading the same setting", isViewReport(
-            method("LX/0DPI;", "LX/08z6;", static = true,
+            method("LX/0DPF;", "LX/08z3;", static = true,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
 
         val flush = method(AWEME_STATS_API, "Ljava/util/List;", static = true,
@@ -119,7 +119,7 @@ class WatchHistoryFixturesTest {
         assertTrue(isViewReportFlush(flush))
         assertFalse("a void method is a sender, not a helper", onlyBuildsData(flush))
         assertFalse("the one-item report also loads it", isViewReportFlush(
-            method(AWEME_STATS_API, "LX/08z6;", static = true, "const-string v0, \"first_install_time\"\nreturn-void")))
+            method(AWEME_STATS_API, "LX/08z3;", static = true, "const-string v0, \"first_install_time\"\nreturn-void")))
     }
 
     /** The guard asks first, leaves through return-void, and the native body follows untouched. */

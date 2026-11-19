@@ -30,12 +30,12 @@ import java.util.WeakHashMap;
  */
 public final class CommentHeaderButtons {
     /**
-     * TikTok's ids, read from the 47.9.1 action bar layout: the close X (CommentPageActionBarAssem)
+     * TikTok's ids, read from the 47.9.2 action bar layout: the close X (CommentPageActionBarAssem)
      * and the expand chevron, which DefaultCommentPageContainerFragment shows only to accounts in
      * the {@code comment_panel_full_page} experiment.
      */
-    static final String CLOSE_BUTTON_ID = "47.9.1:byi";
-    static final String EXPAND_BUTTON_ID = "47.9.1:i56";
+    static final String CLOSE_BUTTON_ID = "47.9.2:byi";
+    static final String EXPAND_BUTTON_ID = "47.9.2:i56";
     /** How many of the bar's ancestors are searched for a button: bar slot, column, container. */
     private static final int DEPTH = 4;
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();

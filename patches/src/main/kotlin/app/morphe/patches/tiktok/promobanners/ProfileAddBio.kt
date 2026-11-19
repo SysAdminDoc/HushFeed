@@ -16,7 +16,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstructio
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
-/** The header component that shows "+ Add bio" on your own profile. Its real name is kept on 47.9.1. */
+/** The header component that shows "+ Add bio" on your own profile. Its real name is kept on 47.9.2. */
 internal const val PROFILE_ADD_BIO_COMPONENT =
     "Lcom/ss/android/ugc/profile/business/ur/platform/ProfileHeaderAddBioComponent;"
 

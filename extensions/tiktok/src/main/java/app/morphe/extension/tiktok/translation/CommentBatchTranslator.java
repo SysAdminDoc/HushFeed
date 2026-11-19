@@ -251,7 +251,7 @@ public final class CommentBatchTranslator {
     /**
      * Stops a translation write the row's manager has started and not yet finished (#383).
      *
-     * <p>TikTok 47.9.1 does not put an update's text in the row when it hears it: the row's writer
+     * <p>TikTok 47.9.2 does not put an update's text in the row when it hears it: the row's writer
      * fades the text out over 100 ms and writes it when the fade ends. Each bind gives the row a
      * new writer and never stops the old one's fade, so an update heard just before the row was
      * reused (a reset, or a batch result arriving as a sheet opens) wrote the old comment's text
@@ -273,7 +273,7 @@ public final class CommentBatchTranslator {
     /**
      * The manager's field holding the row's text writer, then the writer's fade field: the one
      * object the manager keeps, other than a view or a context, whose class declares a single
-     * AnimatorSet and a TextView (47.9.1: {@code X.0HVj}). Empty unless exactly one fits. Read
+     * AnimatorSet and a TextView (47.9.2: {@code X.0HVg}). Empty unless exactly one fits. Read
      * from the values, since the manager declares its writer under an interface, and an unset
      * field leaves the answer open until a later bind fills it.
      */
@@ -319,7 +319,7 @@ public final class CommentBatchTranslator {
 
     /**
      * The fields from a comment row to its translation manager: one the row declares whose type
-     * the manager fits, or one on an object the row keeps (TikTok 47.9.1 keeps the manager on the
+     * the manager fits, or one on an object the row keeps (TikTok 47.9.2 keeps the manager on the
      * row's state holder, under the manager's base type). Only types loaded with the row's own
      * classes are looked into, so no framework class is, and empty unless exactly one path fits.
      */
@@ -362,7 +362,7 @@ public final class CommentBatchTranslator {
 
     /**
      * The native translator's static lookup from a comment id to that comment's translation
-     * updates (47.9.1: {@code LIZIZ(String)}, a NextLiveData), or null unless exactly one static
+     * updates (47.9.2: {@code LIZIZ(String)}, a NextLiveData), or null unless exactly one static
      * method takes a single String and returns something an observer can be removed from.
      */
     private static Method translationUpdatesLookup(Class<?> nativeManagerClass) {

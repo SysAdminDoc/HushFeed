@@ -280,6 +280,6 @@ class AmoledSheetTokensTest {
 
     private companion object {
         /** The oval behind the comments' close X, per build: drawable names move with every build. */
-        val CLOSE_BUTTON_OVAL = mapOf("47.9.1" to "afl")
+        val CLOSE_BUTTON_OVAL = mapOf("47.9.2" to "afl")
     }
 }

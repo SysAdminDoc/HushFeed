@@ -75,7 +75,7 @@ public class NativePhotoSavesTest {
     public static final class Job {
         static final Job INSTANCE = new Job();
         static AdvancedDownloadsTest.PhotoPost post;
-        /** What the job hands its gallery copy, as 47.9.1's keeps a static map for it. */
+        /** What the job hands its gallery copy, as 47.9.2's keeps a static map for it. */
         static Map<String, Object> progress = new HashMap<>();
         static final List<String> RAN = new ArrayList<>();
         /** Set for a job that fails as it starts. */

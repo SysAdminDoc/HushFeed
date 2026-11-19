@@ -88,7 +88,7 @@ internal fun installSplashAdSwitch() {
             }
         }
 
-    // SplashSettingServiceImpl's two gates on 47.9.1: LIZIZ() (9) reads the AB key
+    // SplashSettingServiceImpl's two gates on 47.9.2: LIZIZ() (9) reads the AB key
     // cold_start_upload_topview_cid_enabled, and LIZ() (12) reads the setting
     // enable_force_skip_topview, answering true if that read throws. Its catch handler calls
     // TryCatchGuardChecker.doCheck before the logger: 47.7.3 dropped that call, 47.9.1 has it again.

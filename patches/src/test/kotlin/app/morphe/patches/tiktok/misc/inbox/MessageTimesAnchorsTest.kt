@@ -149,14 +149,14 @@ class MessageTimesAnchorsTest {
         assertNull("no message on the way", bind(writesItem = false, paddings = 1).messageRowBind { false })
     }
 
-    private val ITEM = "LX/0NBS;"
-    private val HOLDER = "LX/0NAK;"
-    private val INNER = "LX/0NAP;"
-    private val MESSAGE_TYPE = "LX/0Bzx;"
-    private val SPACING = "LX/0N3F;"
+    private val ITEM = "LX/0NBP;"
+    private val HOLDER = "LX/0NAH;"
+    private val INNER = "LX/0NAM;"
+    private val MESSAGE_TYPE = "LX/0Bzu;"
+    private val SPACING = "LX/0N3C;"
 
     /**
-     * A bind cut down to the part the reader looks at, as 47.9.1 has it, in four registers: the
+     * A bind cut down to the part the reader looks at, as 47.9.2 has it, in four registers: the
      * message read (indexes 0-3), TikTok's spacing read into v0 (4-8), the row into v1 (9-10), and
      * setPadding on the row at index 11. p1 is v3.
      */

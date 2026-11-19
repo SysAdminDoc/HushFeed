@@ -58,10 +58,10 @@ private const val PROFILE_UID = "getFromProfileUid"
 internal const val PAGE_UID = "getUid"
 private val SCOPE_READS = setOf("getVideoCollectionId", PROFILE_UID, "isOwnCollection")
 
-/** Where the player records which page owns the video it selects (09j5.LJ on 47.9.1). */
+/** Where the player records which page owns the video it selects (09j5.LJ on 47.9.2). */
 internal object QueueOwnerOnSelectFingerprint : Fingerprint(strings = listOf(OWNER_ON_SELECT))
 
-/** Where a play request checks which page asked for it (05pf.LIZ on 47.9.1). */
+/** Where a play request checks which page asked for it (05pf.LIZ on 47.9.2). */
 internal object QueueOwnerOnPlayFingerprint : Fingerprint(strings = listOf(OWNER_ON_PLAY))
 
 /** TikTok's own move to the next video on screen, on a page with a background queue. */
@@ -77,7 +77,7 @@ internal object QueueModeFingerprint : Fingerprint(
 )
 
 /**
- * TikTok's trigger as the app leaves the screen (BackgroundPlayServiceImpl.LJII on 47.9.1). On a
+ * TikTok's trigger as the app leaves the screen (BackgroundPlayServiceImpl.LJII on 47.9.2). On a
  * page with a queue key it arms that queue and skips the one-video session, but only once the
  * queue's session was turned on, which TikTok's own switch does for your collections alone.
  */
@@ -88,7 +88,7 @@ internal const val BORN_TIME = "aweme_feed_born_time"
 internal const val VIDEO_ENGINE = "Lcom/ss/ttvideoengine/TTVideoEngine;"
 
 /**
- * TikTok's player play (02vV.LJJJI on 47.9.1): it turns the request's options into the engine's,
+ * TikTok's player play (02vV.LJJJI on 47.9.2): it turns the request's options into the engine's,
  * then plays. A video's sound goes out only once its first frame is drawn, and off the screen
  * there's nothing to draw on, so a video the queue moved to there started its sound track and
  * never fed it (#292 on the S22). TikTok's own sound-only option didn't change that.
@@ -156,7 +156,7 @@ internal fun queueArmHook(check: QueueSessionCheck) =
 private fun Instruction.isStaticCall() = opcode == Opcode.INVOKE_STATIC || opcode == Opcode.INVOKE_STATIC_RANGE
 
 /**
- * TikTok's key for a page's background queue (0ACn.LJJI on 47.9.1): static, the page's
+ * TikTok's key for a page's background queue (0ACn.LJJI on 47.9.2): static, the page's
  * parameters in, and a String out made from the page's collection, profile and own-collection
  * reads. It answers only for your own collections.
  */

@@ -103,7 +103,7 @@ internal fun Method.afterBatchSizeRead(): Pair<Int, Int>? {
 
 /**
  * Where the view report stops for TikTok's own request limit (ApiSpringLimitHelper, `09RE` on
- * 47.9.1): just past the branch on the first static check that takes an object and answers a
+ * 47.9.2): just past the branch on the first static check that takes an object and answers a
  * boolean, whose fall-through ends the method within three instructions. Null on a build laid
  * out some other way.
  */

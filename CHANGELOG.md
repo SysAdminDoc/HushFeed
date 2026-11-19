@@ -24,7 +24,7 @@ Every Hushfeed release, newest first.
 * The diagnostic report says when TikTok's main screen starts over while the app is still running, and what happened to the screen before it. That's what a feed jumping back to the top with no crash looks like (#419).
 * With `Stop recording watch history` in the patch set, the diagnostic report counts TikTok's view reports, the ones Watch history is built from. It shows how many were made and how many TikTok groups into one send. Then it counts the ones sent on their own, sent together, dropped because TikTok's server told the app to slow down, held back by `Keep videos out of Watch history` or failed, with the last failure's reason (#448).
 * The diagnostic report's IMAGE LOADS section counts failed images by how they failed, not one line per picture, so a few hundred refusals from one server read as one line with a count. Request headers in a failure show their names only, never their values. The section also says which country TikTok has placed your phone in and how it decided, next to the SIM country Hushfeed is showing it, so a report can tell when the two don't match (#415).
-* Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
+* Hushfeed moves to TikTok 47.9.2, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.2 bundle or APK from APKMirror and patch it with your usual signing key.
 
 ### Bug Fixes
 

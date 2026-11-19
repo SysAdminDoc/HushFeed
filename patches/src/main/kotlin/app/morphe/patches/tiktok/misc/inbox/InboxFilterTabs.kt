@@ -60,7 +60,7 @@ internal object InboxFilterTabListFingerprint : Fingerprint(
  * The Inbox fragment's one way to the pop-up about the upgraded creator Inbox, given the account
  * and the kind of guide. It offers itself once the mode reads creator and the account hasn't seen
  * it, which the shown tabs would otherwise bring about. 47.8.3 asked a canShow method on the guide
- * for this, and 47.9.1 has no such method left to answer for it.
+ * for this, and 47.9.2 has no such method left to answer for it.
  */
 internal object ProInboxGuideShowFingerprint : Fingerprint(
     returnType = "V",

@@ -28,7 +28,7 @@ import org.junit.Test
 class PushShutoffAnchorsTest {
     @Test
     fun `every wake lock call TikTok makes is one the patch takes, on each build`() {
-        val expected = mapOf("47.9.1" to 5)
+        val expected = mapOf("47.9.2" to 5)
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)

@@ -35,7 +35,7 @@ internal object FeedEnginePlayFingerprint : Fingerprint(
 
 /**
  * The engine's setIsMute, by its log line (47.0.3 `LX/04ko;->LJI(Z)V`, 47.1.3
- * `LX/06i3;->LJII(Z)V`). The one to call is TTVideoEngine's public forwarder to it.
+ * `LX/06i0;->LJII(Z)V`). The one to call is TTVideoEngine's public forwarder to it.
  */
 internal object EngineSetIsMuteFingerprint : Fingerprint(
     returnType = "V",
@@ -61,7 +61,7 @@ internal object SimAudioFocusRequestFingerprint : Fingerprint(
  * A player session's give-up of that focus (47.0.3 `LX/03kc;->LIZ()V`, 47.1.3 `LX/03ho;`),
  * the one method with the manager's log tag that builds its checkStart callback. On 47.5.3 R8
  * inlined the give-up into the player's release(), which this then takes; [readSessionAbandon]
- * reads the session class and the block either way. 47.9.1 gives the session its own give-up
+ * reads the session class and the block either way. 47.9.2 gives the session its own give-up
  * again, public and final.
  */
 internal object SimAudioSessionAbandonFingerprint : Fingerprint(

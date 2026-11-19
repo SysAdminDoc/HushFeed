@@ -242,18 +242,18 @@ public final class CommentTools {
     }
 
     private static final String POLL_HOOK_FAMILY = "comment polls";
-    private static final String[] DISLIKE_BUTTON_IDS = {"47.9.1:k7x"};
+    private static final String[] DISLIKE_BUTTON_IDS = {"47.9.2:k7x"};
 
     /** One log line for a cell with no thumbs down, not a verdict on the build. */
     private static boolean warnedNoDislikeControl;
-    private static final String[] DISLIKE_ICON_IDS = {"47.9.1:mty"};
+    private static final String[] DISLIKE_ICON_IDS = {"47.9.2:mty"};
     private static final String[] LIKE_COUNT_IDS = {"tv_like_count"};
     /**
      * The frame holding the commenter's picture, in comments and replies alike (#352). The name
      * is placed after it, and the text and the row under it line up with the name, so with the
      * frame gone they all move over to the row's own padding.
      */
-    private static final String[] AVATAR_IDS = {"47.9.1:irc"};
+    private static final String[] AVATAR_IDS = {"47.9.2:irc"};
     /**
      * Faded enough to read as blocked, still readable. At 0.35 the comment text dropped to about
      * 3:1 on the sheet, which is below the floor for text of that size.

@@ -56,7 +56,7 @@ internal val WAKE_LOCK_CALLS = mapOf(
  * kept its name; the method did not, so it is found by the call it makes. Nothing else on
  * MessageShowHandler calls notify, and its parameters are checked below before the message
  * is read out of p1. Block suggested video notifications reroutes that call through its filter,
- * and either patch can run first, so the rerouted call counts too. Since TikTok 47.9.1 it answers
+ * and either patch can run first, so the rerouted call counts too. Since TikTok 47.9.2 it answers
  * whether it posted (LJIJJLI there), and false is its own answer when there's no notification.
  */
 internal object PushNotifyFingerprint : Fingerprint(

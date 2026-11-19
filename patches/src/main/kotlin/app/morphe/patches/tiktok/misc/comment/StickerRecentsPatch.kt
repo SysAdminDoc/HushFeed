@@ -167,7 +167,7 @@ internal fun Method.recentStickerRows(): RecentStickerRows? {
 
 /**
  * The IM sticker service's lazy getter of the sticker store, kept by name. It builds the store
- * from the store's holder, which a static provider hands out (03AM.LLLZIL on TikTok 47.9.1).
+ * from the store's holder, which a static provider hands out (03AM.LLLZIL on TikTok 47.9.2).
  */
 internal object StickerRepositoryDiFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/aweme/im/sticker/basic/provider/BasicStickerApiProviderService;",
@@ -192,7 +192,7 @@ private fun ClassDef.recentRowInvoke() = if (AccessFlags.INTERFACE.isSet(accessF
 /**
  * The holder of the add's [holder] field as the sticker service gets it: the static no-argument
  * call in [repository] whose Object is cast to the holder's class. That provider hands out the
- * process's one holder, the same one the add and the reset write. TikTok 47.9.1 strips the
+ * process's one holder, the same one the add and the reset write. TikTok 47.9.2 strips the
  * store's getRecentStickersFlow() (nothing in the app reads Recently used), so the row reads the
  * holder's flow itself. The bridges run from the extension's package, so every step must be public.
  */

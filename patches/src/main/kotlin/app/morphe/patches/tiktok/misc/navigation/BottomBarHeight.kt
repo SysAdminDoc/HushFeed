@@ -69,7 +69,7 @@ internal class NavHeightStatic(
  *
  * - the bar view, which the main page's inflater sizes from a dimension resource. That id is the
  *   first dimension the inflater reads, and the main activity's inflater reads it too. Every read
- *   of it in the app (8 on 47.9.1, one of them as whole pixels) is passed through the extension;
+ *   of it in the app (8 on 47.9.2, one of them as whole pixels) is passed through the extension;
  * - a divider and a stub in the same inflater, placed 47 and 45 dp up from the bottom;
  * - the nav height static, worked out once in a static initializer that starts on the low screen
  *   strategy getter, then stored with the extra above the 47 dp bar right after it. The video

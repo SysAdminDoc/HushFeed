@@ -40,21 +40,21 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 internal const val LOCAL_APPEARANCE = "Lapp/morphe/extension/tiktok/profile/LocalProfileAppearance;"
 internal const val LEGACY_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/userinfo/base/AccountNameInfoComponent;"
 internal const val NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/nickname/ProfileInfoNicknameProtocol;"
-internal const val NICKNAME_REPAINT = "LX/0P5a;"
+internal const val NICKNAME_REPAINT = "LX/0P5U;"
 internal const val NAVBAR_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/ProfileNavbarNickNameProtocol;"
-internal const val NAVBAR_NICKNAME_REPAINT = "LX/0P3j;"
-internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0P3k;"
+internal const val NAVBAR_NICKNAME_REPAINT = "LX/0P3b;"
+internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0P3c;"
 /** Where both navbar repaint callbacks keep their navbar, shared by the bridge and the site checks so a retarget moves both. */
 internal const val NAVBAR_REPAINT_OWNER = "LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER"
 internal const val NICKNAME_DATA = "Lcom/ss/android/ugc/profile/business/ur/platform/NickNameData;"
-internal const val ADD_NAME_VIEW = "LX/0eHU;"
-internal const val BADGE_ICON = "LX/03x4;"
-internal const val BADGE_SPAN = "LX/0GNV;"
+internal const val ADD_NAME_VIEW = "LX/0gOf;"
+internal const val BADGE_ICON = "LX/03x2;"
+internal const val BADGE_SPAN = "LX/0GNS;"
 /** Kotlin's Ref.ObjectRef, which R8 renames (47.4.3 `LX/02xT;`). */
-internal const val OBJECT_REF = "LX/060g;"
+internal const val OBJECT_REF = "LX/060e;"
 /** The host's dp-to-pixel and pixel rounding helpers the native badge icon sizes itself with. */
-internal const val DIMENSION_DP = "LX/03lb;"
-internal const val PIXEL_ROUND = "LX/04DR;"
+internal const val DIMENSION_DP = "LX/03lZ;"
+internal const val PIXEL_ROUND = "LX/04DP;"
 internal const val RESTRICTION_OWNER = "Lcom/ss/android/ugc/profile/business/pns/account/AccountAGSWarningProtocol;"
 internal const val NATIVE_BLUE_BADGE = 0x7f01026f
 internal const val APPEARANCE_SELECT = "hushfeedLocalNicknameBadge"
@@ -193,7 +193,7 @@ internal fun Method.nicknameAppearanceSite(): NicknameAppearanceSite? {
     val nullValue = code.indices.singleOrNull { index -> code[index].opcode == Opcode.MOVE_OBJECT &&
         code[index].namedRegisters() == listOf(5, 6) && index + 1 < code.size && target(code, index + 1) == join
     } ?: return null
-    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5Z;->LIZ:I" || nullValue <= capture) return null
+    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5W;->LIZ:I" || nullValue <= capture) return null
     return NicknameAppearanceSite(branch, target(code, branch)!!, render, capture)
 }
 
@@ -251,7 +251,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     } ?: return null
     val branch = code.indices.singleOrNull { at -> at < render && code[at].opcode == Opcode.IF_EQZ &&
         code[at].namedRegisters() == listOf(10) && target(code, at)?.let { to -> to > render &&
-            code[to].calls("LX/036W;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
+            code[to].calls("LX/036V;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
     } ?: return null
     if (6 in RegisterLiveness.of(this).liveInto(branch)) return null
     fun capture(owner: String) = code.indices.singleOrNull { at ->
@@ -270,7 +270,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     val boxed = code.indices.singleOrNull { at -> code[at].calls("$INTEGER->valueOf(I)$INTEGER") &&
         code.getOrNull(at + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT && code[at + 1].namedRegisters() == listOf(10)
     } ?: return null
-    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5Z;->LIZ:I" ||
+    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5W;->LIZ:I" ||
         code.indices.count { at -> code[at].opcode == Opcode.MOVE_OBJECT && code[at].namedRegisters() == listOf(10, 3) &&
             at + 1 < code.size && target(code, at + 1) == boxed + 2 } != 1 ||
         capture <= render || addCapture <= cached) return null
@@ -337,7 +337,7 @@ internal fun Method.navbarAddNameSite(): Int? {
         }
     } ?: return null
     val publication = code.indices.filter { code[it].getReference<FieldReference>()?.toString() in listOf(
-        "LX/0Nul;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLJI:$SPANNABLE", "LX/0NU1;->LIZJ:Ljava/lang/CharSequence;") }
+        "LX/0Nuf;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLJI:$SPANNABLE", "LX/0NTy;->LIZJ:Ljava/lang/CharSequence;") }
     if (publication.isEmpty() || publication.any { it <= at } ||
         code.indices.count { before -> before < at && code[before].opcode == Opcode.NEW_INSTANCE &&
             code[before].getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == SPANNABLE &&

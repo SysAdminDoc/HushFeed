@@ -1189,7 +1189,7 @@ public final class GridSort {
 
     /**
      * The FrameLayout the grid's chips, rail and loading cover float in: the grid's own parent, or
-     * the frame around the LinearLayout TikTok wraps the Favorites grid in. On 47.9.1 that layout
+     * the frame around the LinearLayout TikTok wraps the Favorites grid in. On 47.9.2 that layout
      * sits in a fragment container, which refuses any other view, inside a plain frame of the
      * same size, so a frame that vets what's added to it is passed over, as is a scroll view.
      */
@@ -1621,7 +1621,7 @@ public final class GridSort {
 
     /**
      * The video a grid item stands for: the item itself, or the one a collection folder's row
-     * wraps. Null for anything else, a header row included, which on 47.9.1 wraps an empty video
+     * wraps. Null for anything else, a header row included, which on 47.9.2 wraps an empty video
      * with no id.
      */
     static Aweme postOf(Object item) {

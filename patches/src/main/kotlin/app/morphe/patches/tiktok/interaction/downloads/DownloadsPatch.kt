@@ -246,7 +246,7 @@ val downloadsPatch = bytecodePatch(
             // x register and x then written back as a literal zero, which is only the same
             // drawing because of what this build happens to do: on 46.2.3 the host translates
             // the canvas first and passes one register holding zero as both x and y
-            // (const/4 v0 at 201, drawBitmap {v6, v3, v0, v0, v5} at 202 of LX/0iwg;->LIZ).
+            // (const/4 v0 at 201, drawBitmap {v6, v3, v0, v0, v5} at 202 of LX/0e8s;->LIZ).
             // A build that draws at a computed x would have had the watermark moved to the
             // left edge for everyone who keeps it, which is the default.
             val flagReg = findFreeRegister(
@@ -351,7 +351,7 @@ val downloadsPatch = bytecodePatch(
                 )
             }
 
-            // TikTok 47.9.1 builds the StickerItem from the coroutine's CommentStickerStruct and
+            // TikTok 47.9.2 builds the StickerItem from the coroutine's CommentStickerStruct and
             // keeps it in no register up to the binds, so each bind builds it again from p0.
             val source = stickerPreviewSource()
                 ?: throw PatchException("Downloads: the sticker preview source builds no StickerItem from its struct.")

@@ -49,7 +49,7 @@ class LiveDrawRoomPageTest {
             assertEquals("${apk.name}: the list is the second parameter", "Ljava/util/List;", handler.parameterTypes[1].toString())
 
             // Through 47.7.3 the handler compared the request type itself. 47.8.3 moved that into
-            // a method of the provider (LX/0Jur;->LJLJJL(I)V) the handler calls on p0, so the
+            // a method of the provider (LX/0Juo;->LJLJJL(I)V) the handler calls on p0, so the
             // comparison is looked for there, and the call has to be on the handler's own p0.
             val check = requestTypeCheck(apk.name, provider, handler, locals)
             val instructions = check.implementation!!.instructions.toList()

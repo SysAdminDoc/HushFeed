@@ -662,7 +662,7 @@ private const val COLLECTION_CONTENT_ASSEM =
 private const val COLLECTION_OPEN_ERROR = "onClickItemViewHolderToEnterAwemeDetail error: aweme: "
 
 /**
- * A Favorites collection folder's grid adapter's constructor (X/0wG0 on 47.9.1), the one taking
+ * A Favorites collection folder's grid adapter's constructor (X/0wG0 on 47.9.2), the one taking
  * CollectionContentAssem, a name TikTok keeps, as its second parameter. The folder draws its rows
  * through this adapter, not the profile grid's, and hands it every loaded row through addData each
  * time the folder changes.
@@ -677,7 +677,7 @@ internal object CollectionGridAdapterInitFingerprint : Fingerprint(
 )
 
 /**
- * The folder's cell click (a state lambda on 47.9.1), which builds the video page's list from the
+ * The folder's cell click (a state lambda on 47.9.2), which builds the video page's list from the
  * folder's state in TikTok's order, hands it to TikTok's video list, and opens the tapped video by
  * its id.
  */

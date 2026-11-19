@@ -216,7 +216,7 @@ val accentColorPatch = patch(
 
 /**
  * The accent tokens per build, by the name TikTok's TUX token table gives each (the method that
- * returns an attr id per token name maps "UIShapePrimary" to attr a0y on 47.9.1): its dark palette
+ * returns an attr id per token name maps "UIShapePrimary" to attr a0y on 47.9.2): its dark palette
  * literal, then its light one. The semantic attrs point at `?attr/<dark>` in the dark themes and
  * `?attr/<light>` in the light ones, and a few themes send UIShapePrimary and UITextPrimaryDisplay
  * to `?attr/e7`, a green of their own that stays. UIShapeDanger is red too and isn't listed:
@@ -224,7 +224,7 @@ val accentColorPatch = patch(
  * AccentColorPaletteTest holds each declared build's fixture to its entry here.
  */
 internal val ACCENT_TOKENS: Map<String, Map<String, Pair<String, String>>> = linkedMapOf(
-    "47.9.1" to linkedMapOf(
+    "47.9.2" to linkedMapOf(
         "UIShapePrimary" to ("ah8" to "awi"),
         "UIShapePrimary2" to ("ah9" to "awj"),
         "UIShapePrimary3" to ("ah_" to "awk"),
@@ -252,13 +252,13 @@ internal fun unreadAccentRefusal(versionName: String?): String {
 
 /**
  * Drawables with TikTok's red drawn into their pixels, per build, which the palette rewrite can't
- * reach. On 47.9.1 `btj` is the follow plus under each feed avatar (FeedAvatarDefaultAssem sets it
+ * reach. On 47.9.2 `btj` is the follow plus under each feed avatar (FeedAvatarDefaultAssem sets it
  * as an icon res, or as a TuxIcon behind a flag) and on a DM's profile card (#84). Each is a
  * palette PNG of TikTok's red, white and the blends between them, so only its palette changes.
  * AccentColorPaletteTest holds each declared build's fixture to its entry here.
  */
 internal val ACCENT_ICONS: Map<String, List<String>> = linkedMapOf(
-    "47.9.1" to listOf("btj"),
+    "47.9.2" to listOf("btj"),
 )
 
 /** The drawables to recolor on this build, or a refusal. */
@@ -272,14 +272,14 @@ internal fun missingAccentIconRefusal(name: String): String =
 /**
  * The unread badges per build: shape drawables filled with TikTok's red through a color that many
  * other views use, warnings among them, so the palette rewrite can't reach them and the color itself
- * can't change. On 47.9.1 `bv6` is the count pill the bottom bar puts on the Inbox tab (the tab
+ * can't change. On 47.9.2 `bv6` is the count pill the bottom bar puts on the Inbox tab (the tab
  * logic builds it in code and loads it through PreDrawableInflate) and `bwb` is the plain dot on a
  * tab or beside a list row. The LIVE bubble over the Inbox tab reads UIShapePrimary, so without
  * these it took the accent while the count under it stayed red (#192). AccentColorPaletteTest holds
  * each declared build's fixture to its entry here.
  */
 internal val ACCENT_BADGES: Map<String, List<String>> = linkedMapOf(
-    "47.9.1" to listOf("bv6", "bwb"),
+    "47.9.2" to listOf("bv6", "bwb"),
 )
 
 /** The badge drawables to recolor on this build, or a refusal. */

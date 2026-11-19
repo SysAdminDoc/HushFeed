@@ -378,7 +378,7 @@ Hushfeed includes the eight Kveld TikTok optimizers it didn't already have, and 
 - Version: [47.8.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-8-3-release/), on APKMirror since 2026-11-16.
 - Build: version code 2024708030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
 - SHA-256 of the APK every patch was verified against: `30acb1301f97ae7cc51c820914ee021bc02ec80b717a126f4b01520f8c8643e0` (47.8.3)
-- Next release: TikTok 47.9.1, [on APKMirror](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-9-1-release/) since 2026-11-18 (version code 2024709010), SHA-256 `aab40c29ee7686d49585be0cce5794c6514b8e9b30ba53e30f8dc48d6588dd48`.
+- Next release: TikTok 47.9.2, [on APKMirror](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-9-2-release/) since 2026-11-19 (version code 2024709020), SHA-256 `46f90fdb5d6756e33809fcce3cc56da8ad8327ec17f36060c0487a90dfdaeed8`.
 - PineDrama, TikTok's drama app, has its own patches in [HushPine](https://github.com/SysAdminDoc/HushPine).
 
 On Windows, check your download with `Get-FileHash -Algorithm SHA256 .\tiktok.apk`. On Linux or macOS it's `sha256sum tiktok.apk`.

@@ -31,7 +31,7 @@ import java.util.WeakHashMap;
  * its post time come off the creator's row and go on a line of their own right under the
  * caption, "United States · 2d ago".
  *
- * <p>The caption is {@code desc}, in TikTok's generated caption layout (47.9.1's
+ * <p>The caption is {@code desc}, in TikTok's generated caption layout (47.9.2's
  * common_feed_layout_video_desc), which sits in the cell's info column under the creator's row.
  * The line goes in that column, the nearest vertical LinearLayout above the caption that also
  * holds the creator's name, right after the child that holds the caption. Nothing inside the
@@ -266,7 +266,7 @@ public final class CaptionLine {
         return scope == null ? null : scope.findViewById(captionViewId);
     }
 
-    /** A vertical LinearLayout; 47.9.1's info column is one of TikTok's own subclasses. */
+    /** A vertical LinearLayout; 47.9.2's info column is one of TikTok's own subclasses. */
     private static boolean isColumn(ViewParent parent) {
         return parent instanceof LinearLayout
                 && ((LinearLayout) parent).getOrientation() == LinearLayout.VERTICAL;

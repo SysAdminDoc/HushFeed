@@ -51,7 +51,7 @@ private const val CONTEXT = "Landroid/content/Context;"
  * - the feed engine's player field and the player type that declares `getSourceId()`, from the
  *   first thing the engine's play() reads off itself and casts;
  * - TTVideoEngine's public setIsMute forwarder, the `(Z)V` that calls the impl logging it (on
- *   47.9.1 through the engine interface TTVideoEngine implements, by the impl's name);
+ *   47.9.2 through the engine interface TTVideoEngine implements, by the impl's name);
  * - the player session's focus request, the `()V` beside its give-up that calls the manager's
  *   request;
  * - the session's give-up: its own `()V` through 47.4.3, and on 47.5.3, where R8 inlined it into

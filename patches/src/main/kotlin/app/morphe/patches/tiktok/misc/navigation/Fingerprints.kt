@@ -79,7 +79,7 @@ private fun Method.isOnlyTabModelList(classDef: ClassDef, scene: String) =
         classDef.methods.count { it.isTabModelList(classDef, scene) } == 1
 
 /**
- * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0psF;` on
+ * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0q85;` on
  * 46.2.3, `LX/066P;` on 47.0.3), but its setters keep their names, and each is the one method of
  * that name and shape in the app. Every show of the red count (Inbox) or the dot (Profile) goes
  * through them; the callers that fetch the views themselves animate them and write no visibility.

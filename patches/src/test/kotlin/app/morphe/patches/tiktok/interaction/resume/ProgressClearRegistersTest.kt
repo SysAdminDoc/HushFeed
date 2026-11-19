@@ -32,8 +32,8 @@ import org.junit.Test
  * mid-method write.
  */
 class ProgressClearRegistersTest {
-    private val holder = "LX/12it;"
-    private val record = "LX/0Mly;"
+    private val holder = "LX/0ocy;"
+    private val record = "LX/0Mlv;"
     private val lazy = "LX/01xT;"
 
     @Test

@@ -271,7 +271,8 @@ public final class LiveUnseen {
         }
     }
 
-    private static Method twin(Class<?> type) {
+    /** The interceptor's own send, by its name, or null. */
+    static Method twin(Class<?> type) {
         for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
             for (Method method : current.getDeclaredMethods()) {
                 if (method.getName().equals(TWIN) && method.getParameterTypes().length == 1) {

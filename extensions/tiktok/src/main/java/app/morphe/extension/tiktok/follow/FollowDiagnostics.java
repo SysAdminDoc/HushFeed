@@ -555,6 +555,17 @@ public final class FollowDiagnostics {
         }
     }
 
+    /** One field a request carries, from its URL's query or its form body, or null. Never throws. */
+    public static String requestValue(Object request, String key) {
+        try {
+            String value = queryValue(requestUrl(request), key);
+            if (value != null) return decodeUrlComponent(value);
+            return formValue(encodedFormBody(requestPayloadRoot(request)), key);
+        } catch (Throwable unreadable) {
+            return null;
+        }
+    }
+
     /** The room_id in a form-encoded body, or null. */
     static String roomIdFromForm(String encodedBody) {
         return formValue(encodedBody, "room_id");

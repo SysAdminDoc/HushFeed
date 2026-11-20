@@ -177,7 +177,7 @@ public final class LocalWatchHistory {
     }
 
     /** One line, cut without splitting an emoji. */
-    static String shorten(String caption) {
+    public static String shorten(String caption) {
         if (caption == null) return "";
         String line = caption.replaceAll("\\s+", " ").trim();
         if (line.length() <= CAPTION_CHARS) return line;

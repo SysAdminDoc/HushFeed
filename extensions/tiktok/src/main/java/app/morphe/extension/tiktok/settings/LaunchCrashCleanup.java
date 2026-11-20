@@ -33,6 +33,7 @@ public final class LaunchCrashCleanup {
             app.morphe.extension.tiktok.settings.preference.NewSettingDots.FILE,
             app.morphe.extension.tiktok.ghostmode.StoryReads.PREFS_NAME,
             app.morphe.extension.tiktok.playback.PictureInPicture.STATE,
+            app.morphe.extension.tiktok.ghostmode.LocalLikes.PREFS_NAME,
     };
 
     private LaunchCrashCleanup() {

@@ -23,6 +23,9 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.addInstructionsWithLabels
+import app.morphe.patcher.util.smali.ExternalLabel
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import app.morphe.util.cloneMutable
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.singleOrPatchException
@@ -308,6 +311,107 @@ internal fun MutableMethod.holdLiveEnters(hold: LiveEnterHold) {
     )
 }
 
+internal const val LOCAL_LIKES_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/LocalLikes;"
+internal const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+
+/**
+ * Where a like kept on the phone is answered: the lancet's send, its interceptor and chain
+ * registers, the register its answer moves into, and the type the lancet hands back.
+ */
+internal class LocalLikeAnswer(val index: Int, val interceptor: Int, val chain: Int, val result: Int, val type: String)
+
+/**
+ * Finds the lancet's one send, after anything already written in front of it, and the
+ * move-result that takes its answer. A kept like's answer goes in that register and is returned
+ * the way the send's would be. Throws by name when the send is gone or doubled, takes other
+ * registers, or hands its answer back some other way, so a moved lancet fails Ghost mode.
+ */
+internal fun planLocalLikeAnswer(method: Method): LocalLikeAnswer {
+    val code = method.implementation?.instructions?.toList()
+        ?: throw PatchException("Ghost mode: TikTok's network call has no body.")
+    val sends = code.indices.filter { index ->
+        code[index].opcode == Opcode.INVOKE_VIRTUAL &&
+            code[index].getReference<MethodReference>()?.name == NETWORK_EXECUTE_CALL_TWIN
+    }
+    val index = sends.singleOrNull()
+        ?: throw PatchException("Ghost mode: expected one network send to answer likes at, found ${sends.size}.")
+    val send = code[index] as FiveRegisterInstruction
+    val moved = code.getOrNull(index + 1)
+    if (send.registerCount != 2 || moved?.opcode != Opcode.MOVE_RESULT_OBJECT) {
+        throw PatchException("Ghost mode: the network send no longer hands its answer straight back.")
+    }
+    val result = (moved as OneRegisterInstruction).registerA
+    if (result > 15 || result == send.registerC || result == send.registerD) {
+        throw PatchException("Ghost mode: the network send's answer goes in v$result, where a like's answer can't.")
+    }
+    val returned = code[index].getReference<MethodReference>()!!.returnType
+    if (returned != method.returnType) {
+        throw PatchException("Ghost mode: the network call returns ${method.returnType}, not its send's $returned.")
+    }
+    return LocalLikeAnswer(index, send.registerC, send.registerD, result, returned)
+}
+
+/**
+ * Writes the answer. The extension is asked on every path that reaches the send, inside the
+ * send's try, and a kept like's answer is returned in place of the send's. Null, for every
+ * other request, goes on to the send as before.
+ */
+internal fun MutableMethod.answerLikesLocally(plan: LocalLikeAnswer) {
+    addInstructionsAtControlFlowLabel(
+        plan.index,
+        """
+            invoke-static {v${plan.interceptor}, v${plan.chain}}, $LOCAL_LIKES_EXTENSION->answer(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object v${plan.result}
+        """,
+    )
+    val send = plan.index + 2
+    addInstructionsWithLabels(
+        send,
+        """
+            if-eqz v${plan.result}, :send
+            check-cast v${plan.result}, ${plan.type}
+            return-object v${plan.result}
+        """,
+        ExternalLabel("send", implementation!!.instructions.elementAt(send)),
+    )
+}
+
+/**
+ * TikTok's read and write of a video's like, Aweme.getUserDigg and setUserDigg, which every
+ * heart draws from and every like and unlike sets. Both keep their names on every build.
+ */
+internal fun <M : Method> planLikeState(methods: Iterable<M>): Pair<M, M> {
+    fun one(name: String, parameters: List<String>, returns: String) = methods.filter {
+        it.name == name && it.returnType == returns && it.implementation != null &&
+            it.parameterTypes.map { type -> type.toString() } == parameters
+    }.singleOrPatchException("Ghost mode: Aweme.$name")
+    val read = one("getUserDigg", emptyList(), "I")
+    if (read.implementation!!.instructions.none { it.opcode == Opcode.RETURN }) {
+        throw PatchException("Ghost mode: Aweme.getUserDigg returns no like to read.")
+    }
+    return read to one("setUserDigg", listOf("I"), "V")
+}
+
+/** Hands what getUserDigg returns to the extension, which answers liked for a video kept on the phone. */
+internal fun MutableMethod.readKeptLikes() {
+    val code = implementation!!.instructions.toList()
+    code.indices.filter { code[it].opcode == Opcode.RETURN }.sortedDescending().forEach { index ->
+        val register = (code[index] as OneRegisterInstruction).registerA
+        addInstructionsAtControlFlowLabel(
+            index,
+            """
+                invoke-static {p0, v$register}, $LOCAL_LIKES_EXTENSION->userDigg(Ljava/lang/Object;I)I
+                move-result v$register
+            """,
+        )
+    }
+}
+
+/** Hands each like and unlike TikTok sets on a video to the extension, before it's set. */
+internal fun MutableMethod.noteLikeChanges() {
+    addInstructions(0, "invoke-static {p0, p1}, $LOCAL_LIKES_EXTENSION->setUserDigg(Ljava/lang/Object;I)V")
+}
+
 /**
  * The two coroutine bodies that send TikTok's activity status report (/tiktok/v1/activity_status/
  * report, the call that lights the green dot and "Active now" for your friends). The regular
@@ -371,7 +475,8 @@ val ghostModePatch = bytecodePatch(
     name = "Ghost mode",
     description = "Stops TikTok telling people you viewed their story or profile, or that " +
         "you're typing. What TikTok already recorded stays. Each of the three has its own switch " +
-        "under it, and separate ones hide your online status and let you watch LIVEs unseen. " +
+        "under it, and separate ones hide your online status, let you watch LIVEs unseen and " +
+        "keep your likes on the phone. " +
         "Starts off. Turn it on in Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
@@ -388,6 +493,9 @@ val ghostModePatch = bytecodePatch(
             ?.let { mutableClassDefBy(it.definingClass).findMutableMethodOf(it) }
             ?: throw PatchException("Ghost mode: expected one network call to hold LIVE enters in, found ${lancets.size}.")
         val liveEnterHold = planLiveEnterHold(lancet)
+        // Checked here so nothing is written for a moved send; planned again once the hold is in.
+        planLocalLikeAnswer(lancet)
+        val (likeRead, likeWrite) = planLikeState(mutableClassDefBy(AWEME).methods)
         val roomResume = LivePlayFragmentResumeFingerprint.method
         val roomLeave = LiveRoomLeaveFingerprint.method
         val roomEnters = LiveRoomEnterFingerprint.matchAllOrNull().orEmpty().map { it.method }
@@ -472,6 +580,11 @@ val ghostModePatch = bytecodePatch(
         // viewer list, fails on the phone while it's held. Other patches hook this lancet too
         // and each finds its own anchors by name when it runs.
         lancet.holdLiveEnters(liveEnterHold)
+        // Keep likes on this phone: a like is answered at the same send while it's kept here,
+        // and a video's like reads liked for one kept here.
+        lancet.answerLikesLocally(planLocalLikeAnswer(lancet))
+        likeRead.readKeptLikes()
+        likeWrite.noteLikeChanges()
         // TikTok takes the held enter as a failed one and leaves the room for the next LIVE.
         // The page stays when the failed enter was one Ghost mode held for its room.
         roomLeave.guardAtEntry(

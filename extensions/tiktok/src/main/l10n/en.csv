@@ -152,6 +152,7 @@ A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hus
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.,A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.
 "A good place to stop, if you want one.","A good place to stop, if you want one."
 "A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.","A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends."
+"A like you give a video stays on this phone. The heart turns red, but TikTok isn't told, so the creator never sees it and it isn't on your profile. Needs Ghost mode on.","A like you give a video stays on this phone. The heart turns red, but TikTok isn't told, so the creator never sees it and it isn't on your profile. Needs Ghost mode on."
 "A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either.","A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either."
 A long comment shows its first few lines and more. Tap more to read the rest right where it is.,A long comment shows its first few lines and more. Tap more to read the rest right where it is.
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
@@ -764,6 +765,7 @@ Filter the LIVE feed,Filter the LIVE feed
 Filter the list,Filter the list
 Filter: %1$s,Filter: %1$s
 "Filters, translation and copy options","Filters, translation and copy options"
+Find and reopen the videos you liked only on this phone,Find and reopen the videos you liked only on this phone
 Find and reopen the videos you've watched on this phone,Find and reopen the videos you've watched on this phone
 Find the sound on YouTube Music,Find the sound on YouTube Music
 First caller,First caller
@@ -1180,6 +1182,7 @@ Keep captions in Clear display,Keep captions in Clear display
 Keep clear screen in the next LIVE,Keep clear screen in the next LIVE
 Keep faded controls in Clear display,Keep faded controls in Clear display
 Keep going,Keep going
+Keep likes on this phone,Keep likes on this phone
 Keep long press from quick sharing,Keep long press from quick sharing
 Keep long press from reposting,Keep long press from reposting
 Keep my own watch history,Keep my own watch history
@@ -1286,6 +1289,7 @@ Like the video,Like the video
 Liked videos,Liked videos
 Likes,Likes
 Likes aren't available for this video,Likes aren't available for this video
+Likes cleared,Likes cleared
 Likes range,Likes range
 Likes removed: %1$d,Likes removed: %1$d
 Limit background traffic,Limit background traffic
@@ -1408,6 +1412,7 @@ Music,Music
 Music disc,Music disc
 Mute feed videos,Mute feed videos
 Muted,Muted
+My likes on this phone,My likes on this phone
 My watch history,My watch history
 Name copied,Name copied
 Names to listen for,Names to listen for
@@ -2773,6 +2778,7 @@ Videos in search results show their cover and play when you open them. The feed 
 Videos posted from %1$s,Videos posted from %1$s
 Videos tagged %1$s,Videos tagged %1$s
 Videos with the sound %1$s,Videos with the sound %1$s
+Videos you like on this phone show up here,Videos you like on this phone show up here
 Videos you watch show up here,Videos you watch show up here
 Viewers,Viewers
 Views range,Views range

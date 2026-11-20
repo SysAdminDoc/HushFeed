@@ -56,6 +56,7 @@ public final class GhostMode {
     private static final String STORY_PLAY_STATS = "story play stats";
     private static final String ONLINE_STATUS = "online status";
     static final String LIVE_ENTER = "live enter";
+    static final String LOCAL_LIKE = "like";
 
     /** TikTok's aweme types for a story; getIsTikTokStory covers the rest. */
     private static final int STORY_TYPE = 40;
@@ -165,6 +166,14 @@ public final class GhostMode {
      */
     static boolean holdLiveEnter(boolean revealed) {
         return answer(LIVE_ENTER, !revealed && Settings.GHOST_MODE.get() && Settings.GHOST_HIDE_LIVE_VIEWS.get());
+    }
+
+    /**
+     * A video like, answered on the phone while Ghost mode and its Keep likes on this phone
+     * switch are on ({@link LocalLikes}), and sent otherwise.
+     */
+    static boolean keepLike(boolean on) {
+        return answer(LOCAL_LIKE, on);
     }
 
     static boolean isStory(Aweme aweme) {

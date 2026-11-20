@@ -4940,7 +4940,7 @@
     },
     {
       "name": "Ghost mode",
-      "description": "Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. Each of the three has its own switch under it, and separate ones hide your online status and let you watch LIVEs unseen. Starts off. Turn it on in Hushfeed settings > Privacy.",
+      "description": "Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. Each of the three has its own switch under it, and separate ones hide your online status, let you watch LIVEs unseen and keep your likes on the phone. Starts off. Turn it on in Hushfeed settings > Privacy.",
       "category": "Privacy",
       "use": true,
       "dependencies": [

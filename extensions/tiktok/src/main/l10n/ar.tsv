@@ -2938,6 +2938,18 @@ Remove selected comments	إزالة التعليقات المحددة
 Pick comments from your comment history to delete.	اختر من سجل تعليقاتك ما تريد حذفه.
 Removing all comments in %1$d	إزالة جميع التعليقات خلال %1$d
 Removing the picked comments in %1$d	إزالة التعليقات المختارة خلال %1$d
+Unfollow accounts that don't follow you back	إلغاء متابعة الحسابات التي لا تتابعك
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	يتحقق من متابعيك أولا ويخبرك بعدد ما وجده، ثم يلغي متابعتهم واحدا تلو الآخر. الحسابات التي تتابعك تبقى.
+Checking who you follow: %1$d	جارٍ التحقق ممن تتابعهم: %1$d
+Checking your followers: %1$d	جارٍ التحقق من متابعيك: %1$d
+Everyone you follow follows you back	كل من تتابعهم يتابعونك
+Couldn't check who follows you back. Try again.	تعذر التحقق ممن يتابعك. حاول مرة أخرى.
+Accounts to unfollow: %1$d. Starting in %2$d	حسابات لإلغاء متابعتها: %1$d. البدء خلال %2$d
+Unfollowed: %1$d	أُلغيت المتابعة: %1$d
+Done. %1$d unfollowed.	تم. أُلغيت متابعة %1$d.
+Stopped. %1$d unfollowed.	توقف. أُلغيت متابعة %1$d.
+TikTok refused. %1$d unfollowed.	رفض TikTok. أُلغيت متابعة %1$d.
+Network error. %1$d unfollowed.	خطأ في الشبكة. أُلغيت متابعة %1$d.
 Comments removed: %1$d	التعليقات المحذوفة: %1$d
 TikTok refused to list your comments	رفض TikTok عرض تعليقاتك
 Couldn't load your comments. Try again.	تعذر تحميل تعليقاتك. حاول مرة أخرى.

@@ -35,7 +35,8 @@ import app.morphe.extension.tiktok.privacy.CleanupRunner.Source;
  *
  * <p>Comments have no service of their own in the app: the comment history is a web page. Its
  * list and the comment panel's delete go out through TikTok's general request service instead,
- * made on the same client as the liked-videos list (#442).</p>
+ * made on the same client as the liked-videos list (#442). So do the unfollows for the accounts
+ * that don't follow you back, with the form a profile's Unfollow posts.</p>
  */
 public final class AccountCleanupSources {
     /** Items asked for a page, what TikTok's own lists ask for. */
@@ -54,12 +55,14 @@ public final class AccountCleanupSources {
     static final String COMMENT_DELETE = "/aweme/v1/comment/delete/";
     /** Comments asked for a page, what the comment history page asks for. */
     static final int COMMENT_PAGE = 15;
+    /** What a profile's Follow and Unfollow send. */
+    static final String FOLLOW = "/aweme/v1/commit/follow/user/";
 
     static final String UPVOTE_API = "com.ss.android.ugc.aweme.upvote.api.UpvoteApi";
     static final String STORY_API = "com.ss.android.ugc.aweme.story.api.StoryApi";
 
-    /** What a run empties. */
-    public enum Kind { REPOSTS, LIKES, FAVORITES, COMMENTS }
+    /** What a run empties. NOT_FOLLOWING_BACK unfollows the accounts a check found first. */
+    public enum Kind { REPOSTS, LIKES, FAVORITES, COMMENTS, NOT_FOLLOWING_BACK }
 
     /** The services a run talks to, so a test can stand in for TikTok's. */
     interface Services {
@@ -193,6 +196,9 @@ public final class AccountCleanupSources {
             case COMMENTS:
                 source = comments(services);
                 break;
+            case NOT_FOLLOWING_BACK:
+                // Only the accounts a check found are ever unfollowed: see unfollowFor.
+                throw new Failure(End.UNSUPPORTED, "unfollowing needs the checked accounts");
             default:
                 source = favorites(services);
                 break;
@@ -205,6 +211,13 @@ public final class AccountCleanupSources {
         String uid = SignedInUser.id();
         if (uid == null) throw new Failure(End.STOPPED, "signed out");
         return sameAccount(uid, pickedComments(services, cids));
+    }
+
+    /** The accounts a check found not following back (id to secure id), for the account signed in now. */
+    static Source unfollowFor(Map<String, String> accounts, Services services) throws Failure {
+        String uid = SignedInUser.id();
+        if (uid == null) throw new Failure(End.STOPPED, "signed out");
+        return sameAccount(uid, unfollow(services, accounts));
     }
 
     static Source sameAccount(String uid, Source source) {
@@ -383,6 +396,44 @@ public final class AccountCleanupSources {
                 deleteComment(services, cid);
             }
         };
+    }
+
+    /** The accounts to unfollow as one page that's gone once each is unfollowed. */
+    static Source unfollow(Services services, Map<String, String> accounts) {
+        Map<String, String> secUids = new LinkedHashMap<>(accounts);
+        List<String> uids = Collections.unmodifiableList(new ArrayList<>(secUids.keySet()));
+        return new Source() {
+            @Override
+            public Page fetch(long cursor) {
+                return new Page(uids, cursor, false);
+            }
+
+            @Override
+            public void remove(String uid) throws Failure {
+                unfollowOne(services, uid, secUids.get(uid));
+            }
+        };
+    }
+
+    /**
+     * Unfollows one account with the form TikTok's own Unfollow posts: the account by its secure
+     * id when there is one (its plain id otherwise), type 0, and no channel or city.
+     */
+    static void unfollowOne(Services services, String uid, String secUid) throws Failure {
+        Map<String, String> form = new LinkedHashMap<>();
+        if (secUid == null || secUid.isEmpty()) {
+            form.put("user_id", uid);
+        } else {
+            form.put("sec_user_id", secUid);
+        }
+        // 1 follows, 0 unfollows.
+        form.put("type", "0");
+        form.put("channel_id", "-1");
+        form.put("city", "");
+        JSONObject body = answered(post(services.network(), FOLLOW, form));
+        // The answer carries the follow as it stands now: still following means it didn't take.
+        int now = body.optInt("follow_status", 0);
+        if (now == 1 || now == 2) throw new Failure(End.REFUSED, "still following after unfollow");
     }
 
     /** One page of the comment history from {@code offset}, newest first. */

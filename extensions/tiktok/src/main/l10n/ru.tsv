@@ -2873,6 +2873,18 @@ Remove selected comments	Удалить выбранные комментари�
 Pick comments from your comment history to delete.	Выберите в истории комментариев те, что нужно удалить.
 Removing all comments in %1$d	Удаление всех комментариев через %1$d
 Removing the picked comments in %1$d	Удаление выбранных комментариев через %1$d
+Unfollow accounts that don't follow you back	Отписаться от тех, кто не подписан на вас
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	Сначала проверяет ваших подписчиков и сообщает, сколько нашлось, затем отписывается от них по одному. Подписки на тех, кто подписан на вас, остаются.
+Checking who you follow: %1$d	Проверка ваших подписок: %1$d
+Checking your followers: %1$d	Проверка ваших подписчиков: %1$d
+Everyone you follow follows you back	Все, на кого вы подписаны, подписаны на вас
+Couldn't check who follows you back. Try again.	Не удалось проверить, кто подписан на вас. Попробуйте ещё раз.
+Accounts to unfollow: %1$d. Starting in %2$d	Аккаунтов для отписки: %1$d. Начало через %2$d
+Unfollowed: %1$d	Отписано: %1$d
+Done. %1$d unfollowed.	Готово. Отписано: %1$d.
+Stopped. %1$d unfollowed.	Остановлено. Отписано: %1$d.
+TikTok refused. %1$d unfollowed.	TikTok отказал. Отписано: %1$d.
+Network error. %1$d unfollowed.	Ошибка сети. Отписано: %1$d.
 Comments removed: %1$d	Удалено комментариев: %1$d
 TikTok refused to list your comments	TikTok отказался показать ваши комментарии
 Couldn't load your comments. Try again.	Не удалось загрузить ваши комментарии. Попробуйте ещё раз.

@@ -2687,6 +2687,18 @@ Remove selected comments	Seçili yorumları kaldır
 Pick comments from your comment history to delete.	Yorum geçmişinden silinecek yorumları seç.
 Removing all comments in %1$d	Yorumlar kaldırılıyor: %1$d
 Removing the picked comments in %1$d	Seçili yorumlar kaldırılıyor: %1$d
+Unfollow accounts that don't follow you back	Sizi geri takip etmeyen hesapları takipten çık
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	Önce takipçilerinizi kontrol eder ve kaç tane bulduğunu söyler, sonra onları tek tek takipten çıkar. Sizi geri takip eden hesaplar kalır.
+Checking who you follow: %1$d	Takip ettikleriniz kontrol ediliyor: %1$d
+Checking your followers: %1$d	Takipçileriniz kontrol ediliyor: %1$d
+Everyone you follow follows you back	Takip ettiğiniz herkes sizi geri takip ediyor
+Couldn't check who follows you back. Try again.	Sizi kimin geri takip ettiği kontrol edilemedi. Tekrar deneyin.
+Accounts to unfollow: %1$d. Starting in %2$d	Takipten çıkılacak hesaplar: %1$d. Başlamasına %2$d
+Unfollowed: %1$d	Takipten çıkıldı: %1$d
+Done. %1$d unfollowed.	Bitti. %1$d hesap takipten çıkıldı.
+Stopped. %1$d unfollowed.	Durduruldu. %1$d hesap takipten çıkıldı.
+TikTok refused. %1$d unfollowed.	TikTok reddetti. %1$d hesap takipten çıkıldı.
+Network error. %1$d unfollowed.	Ağ hatası. %1$d hesap takipten çıkıldı.
 Comments removed: %1$d	Kaldırılan yorumlar: %1$d
 TikTok refused to list your comments	TikTok yorumlarını listelemeyi reddetti
 Couldn't load your comments. Try again.	Yorumların yüklenemedi. Tekrar dene.

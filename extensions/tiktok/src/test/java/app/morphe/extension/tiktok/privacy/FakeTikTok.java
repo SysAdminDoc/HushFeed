@@ -189,6 +189,7 @@ final class FakeTikTok {
         public Call doPost(int maxLength, String url, Map<String, String> query, Map<String, String> fields,
                 List<Object> headers, Object extraInfo) {
             account.log("doPost " + url + " " + fields);
+            if ("/aweme/v1/commit/follow/user/".equals(url)) return new Call(new RenamedResponse(account.unfollow(fields)));
             return new Call(new RenamedResponse(account.deleteComment(url, fields)));
         }
     }
@@ -310,6 +311,10 @@ final class FakeTikTok {
         final List<String> unavailable = new ArrayList<>();
         /** Your comments, newest first, as the comment history lists them. */
         final List<String> comments = new ArrayList<>();
+        /** The accounts you follow, by the id an unfollow names them with. */
+        final List<String> following = new ArrayList<>();
+        /** The follow status the unfollow answers with; 0 is the unfollow taking. */
+        volatile int followStatusAfterUnfollow;
         final List<String> requests = new ArrayList<>();
         volatile String refuse;
         volatile boolean refuseUnavailable;
@@ -333,6 +338,11 @@ final class FakeTikTok {
 
         Account withUnavailableFavorites(int count) {
             for (int index = 0; index < count; index++) unavailable.add("u" + index);
+            return this;
+        }
+
+        Account following(String... ids) {
+            for (String id : ids) following.add(id);
             return this;
         }
 
@@ -373,6 +383,14 @@ final class FakeTikTok {
                     + "\"illegal_comment_list\":[{\"cid\":\"taken-down\",\"text\":\"gone\"}],"
                     + "\"offset\":" + (offset + count) + ",\"has_more\":"
                     + (offset + count < comments.size() ? 1 : 0) + "}";
+        }
+
+        /** TikTok's unfollow: the account named by its secure id, or its plain id when it has none. */
+        String unfollow(Map<String, String> fields) {
+            if (!"0".equals(fields.get("type"))) throw new AssertionError("not an unfollow: " + fields);
+            String who = fields.containsKey("sec_user_id") ? fields.get("sec_user_id") : fields.get("user_id");
+            Status status = remove(following, who);
+            return "{\"status_code\":" + status.status_code + ",\"follow_status\":" + followStatusAfterUnfollow + "}";
         }
 
         String deleteComment(String url, Map<String, String> fields) {

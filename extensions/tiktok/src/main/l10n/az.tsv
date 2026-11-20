@@ -2687,6 +2687,18 @@ Remove selected comments	Seçilmiş şərhləri silin
 Pick comments from your comment history to delete.	Şərh tarixçənizdən silinəcək şərhləri seçin.
 Removing all comments in %1$d	Şərhlər silinir: %1$d
 Removing the picked comments in %1$d	Seçilmiş şərhlər silinir: %1$d
+Unfollow accounts that don't follow you back	Sizi izləməyən hesabları izləmədən çıxar
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	Əvvəlcə izləyicilərinizi yoxlayır və neçəsini tapdığını deyir, sonra onları bir-bir izləmədən çıxarır. Sizi izləyən hesablar qalır.
+Checking who you follow: %1$d	İzlədikləriniz yoxlanılır: %1$d
+Checking your followers: %1$d	İzləyiciləriniz yoxlanılır: %1$d
+Everyone you follow follows you back	İzlədiyiniz hər kəs sizi izləyir
+Couldn't check who follows you back. Try again.	Sizi kimin izlədiyini yoxlamaq mümkün olmadı. Yenidən cəhd edin.
+Accounts to unfollow: %1$d. Starting in %2$d	İzləmədən çıxarılacaq hesablar: %1$d. Başlanğıc: %2$d
+Unfollowed: %1$d	İzləmədən çıxarıldı: %1$d
+Done. %1$d unfollowed.	Hazırdır. %1$d hesab izləmədən çıxarıldı.
+Stopped. %1$d unfollowed.	Dayandırıldı. %1$d hesab izləmədən çıxarıldı.
+TikTok refused. %1$d unfollowed.	TikTok rədd etdi. %1$d hesab izləmədən çıxarıldı.
+Network error. %1$d unfollowed.	Şəbəkə xətası. %1$d hesab izləmədən çıxarıldı.
 Comments removed: %1$d	Silinən şərhlər: %1$d
 TikTok refused to list your comments	TikTok şərhlərinizi göstərməkdən imtina etdi
 Couldn't load your comments. Try again.	Şərhləriniz yüklənmədi. Yenidən cəhd edin.

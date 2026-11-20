@@ -22,12 +22,15 @@ import android.widget.TextView;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntConsumer;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.SignedInUser;
+import app.morphe.extension.tiktok.profile.FollowLists;
 import app.morphe.extension.tiktok.privacy.AccountCleanupSources.Kind;
 import app.morphe.extension.tiktok.privacy.CleanupRunner.End;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -323,6 +326,150 @@ public class AccountCleanupTest {
         assertEquals(1, later.size());
     }
 
+    /** A check that finds {@code found} (id to secure id), or stops when Stop came first. */
+    private static AccountCleanup.Checker finds(Map<String, String> found, List<String> heard) {
+        return (stopped, progress) -> {
+            progress.following(3);
+            progress.followers(0);
+            progress.followers(7);
+            heard.add("checked");
+            if (stopped.get()) return new FollowLists.NotFollowingBack(new LinkedHashMap<>(), FollowLists.End.STOPPED);
+            return new FollowLists.NotFollowingBack(found, FollowLists.End.DONE);
+        };
+    }
+
+    private static Map<String, String> notFollowingBack(String... idThenSecId) {
+        Map<String, String> found = new LinkedHashMap<>();
+        for (int index = 0; index < idThenSecId.length; index += 2) found.put(idThenSecId[index], idThenSecId[index + 1]);
+        return found;
+    }
+
+    @Test public void unfollowChecksFirstThenCountsDownWithHowManyAndUnfollowsOnlyThose() {
+        FakeTikTok.Account account = new FakeTikTok.Account().following("MS4wa", "2", "MS4wfriend");
+        AccountCleanup.servicesForTests = account;
+        List<String> heard = new ArrayList<>();
+        AccountCleanup.checkerForTests = finds(notFollowingBack("1", "MS4wa", "2", ""), heard);
+        List<Runnable> later = new ArrayList<>();
+        AccountCleanup.executorForTests = later::add;
+
+        AccountCleanup.startUnfollow(activity);
+        assertEquals("Checking who you follow: 0", bannerText());
+        assertEquals("Stop", bannerAction().getText().toString());
+        assertTrue(AccountCleanup.running());
+        later.remove(0).run();
+        assertEquals(List.of("checked"), heard);
+        assertEquals("nothing is unfollowed during the check", List.of(), account.requests);
+        looper.idle();
+        assertEquals("Accounts to unfollow: 2. Starting in 5", bannerText());
+        assertEquals("Cancel", bannerAction().getText().toString());
+        looper.idleFor(Duration.ofSeconds(1));
+        assertEquals("Accounts to unfollow: 2. Starting in 4", bannerText());
+        assertEquals(List.of(), account.requests);
+
+        AccountCleanup.executorForTests = Runnable::run;
+        looper.idleFor(Duration.ofSeconds(AccountCleanup.COUNTDOWN_SECONDS - 1));
+        looper.idle();
+        assertEquals("Done. 2 unfollowed.", bannerText());
+        assertFalse(AccountCleanup.running());
+        assertEquals("the account that follows you back is still followed", List.of("MS4wfriend"), account.following);
+        assertEquals(List.of(
+                "doPost /aweme/v1/commit/follow/user/ {sec_user_id=MS4wa, type=0, channel_id=-1, city=}",
+                "doPost /aweme/v1/commit/follow/user/ {user_id=2, type=0, channel_id=-1, city=}"), account.requests);
+        assertEquals("every unfollow waited, and so did the last look at the list", 3, pauses.size());
+    }
+
+    @Test public void theCheckShowsItsCountAndStopUnfollowsNobody() {
+        FakeTikTok.Account account = new FakeTikTok.Account().following("MS4wa");
+        AccountCleanup.servicesForTests = account;
+        List<Runnable> later = new ArrayList<>();
+        AccountCleanup.executorForTests = later::add;
+        List<String> heard = new ArrayList<>();
+        AccountCleanup.Checker found = finds(notFollowingBack("1", "MS4wa"), heard);
+        // The check reads the following list, is stopped, and then reads the rest.
+        AccountCleanup.checkerForTests = (stopped, progress) -> {
+            progress.following(40);
+            looper.idle();
+            assertEquals("Checking who you follow: 40", bannerText());
+            assertTrue(bannerAction().performClick());
+            assertTrue(stopped.get());
+            return found.check(stopped, progress);
+        };
+
+        AccountCleanup.startUnfollow(activity);
+        later.remove(0).run();
+        looper.idle();
+        assertEquals("Cancelled", bannerText());
+        assertFalse(AccountCleanup.running());
+        countDown();
+        assertEquals(List.of(), account.requests);
+        assertEquals(List.of("MS4wa"), account.following);
+    }
+
+    @Test public void theCheckSaysWhenThereIsNobodyToUnfollowOrItCouldntRead() {
+        AccountCleanup.servicesForTests = new FakeTikTok.Account();
+        AccountCleanup.checkerForTests = finds(new LinkedHashMap<>(), new ArrayList<>());
+        AccountCleanup.startUnfollow(activity);
+        looper.idle();
+        assertEquals("Everyone you follow follows you back", bannerText());
+        assertFalse(AccountCleanup.running());
+
+        for (FollowLists.End end : new FollowLists.End[] {FollowLists.End.FAILED, FollowLists.End.SIGNED_OUT}) {
+            AccountCleanup.checkerForTests = (stopped, progress) ->
+                    new FollowLists.NotFollowingBack(notFollowingBack("1", "MS4wa"), end);
+            AccountCleanup.startUnfollow(activity);
+            looper.idle();
+            assertEquals(end.name(), end == FollowLists.End.FAILED ? "Couldn't check who follows you back. Try again."
+                    : "Sign in to TikTok first", bannerText());
+            countDown();
+            assertFalse(AccountCleanup.running());
+        }
+    }
+
+    @Test public void aCheckOutOfSightNeverCountsDown() {
+        FakeTikTok.Account account = new FakeTikTok.Account().following("MS4wa");
+        AccountCleanup.servicesForTests = account;
+        AccountCleanup.checkerForTests = finds(notFollowingBack("1", "MS4wa"), new ArrayList<>());
+        List<Runnable> later = new ArrayList<>();
+        AccountCleanup.executorForTests = later::add;
+
+        AccountCleanup.startUnfollow(activity);
+        assertTrue(content.findViewWithTag("hushfeed_settings_action_banner").performClick());
+        later.remove(0).run();
+        countDown();
+        assertNull("put away, the check ends without a word", bannerText());
+        assertFalse(AccountCleanup.running());
+
+        AccountCleanup.startUnfollow(activity);
+        SettingsActionBanner.showNotice(activity, "Something else");
+        later.remove(0).run();
+        looper.idle();
+        assertEquals("a banner that replaced the check stopped it", "Something else", bannerText());
+        countDown();
+        assertFalse(AccountCleanup.running());
+        assertEquals(List.of(), account.requests);
+        assertEquals(List.of("MS4wa"), account.following);
+    }
+
+    @Test public void anUnfollowThatDoesntTakeStopsTheRun() {
+        FakeTikTok.Account account = new FakeTikTok.Account().following("MS4wa", "MS4wb");
+        account.followStatusAfterUnfollow = 1;
+        AccountCleanup.servicesForTests = account;
+        AccountCleanup.checkerForTests = finds(notFollowingBack("1", "MS4wa", "2", "MS4wb"), new ArrayList<>());
+        AccountCleanup.startUnfollow(activity);
+        looper.idle();
+        countDown();
+        assertEquals("TikTok refused. 0 unfollowed.", bannerText());
+        assertEquals("the run stopped at the first one", 1, account.requests.size());
+
+        account.followStatusAfterUnfollow = 0;
+        account.refuse = "MS4wb";
+        AccountCleanup.startUnfollow(activity);
+        looper.idle();
+        countDown();
+        assertEquals("TikTok refused. 1 unfollowed.", bannerText());
+        assertEquals(List.of("MS4wb"), account.following);
+    }
+
     @Test public void signedOutNothingStarts() {
         SignedInUser.idForTests = "";
         AccountCleanup.servicesForTests = new FakeTikTok.Account().withReposts(3);
@@ -380,6 +527,21 @@ public class AccountCleanupTest {
         assertEquals("Removing the picked comments in 4",
                 AccountCleanup.countdownText(activity, Kind.COMMENTS, true, 4));
         assertEquals("Comments removed: 9", AccountCleanup.progressText(activity, Kind.COMMENTS, 9));
+
+        Kind unfollow = Kind.NOT_FOLLOWING_BACK;
+        assertEquals("Unfollowed: 4", AccountCleanup.progressText(activity, unfollow, 4));
+        assertEquals("Done. 12 unfollowed.", AccountCleanup.endText(activity, unfollow, End.DONE, 12));
+        assertEquals("Stopped. 3 unfollowed.", AccountCleanup.endText(activity, unfollow, End.STOPPED, 3));
+        assertEquals("TikTok refused. 3 unfollowed.", AccountCleanup.endText(activity, unfollow, End.REFUSED, 3));
+        assertEquals("Network error. 0 unfollowed.", AccountCleanup.endText(activity, unfollow, End.NETWORK, 0));
+        assertEquals("Not available on this TikTok version",
+                AccountCleanup.endText(activity, unfollow, End.UNSUPPORTED, 0));
+        assertEquals("the other kinds keep their words", "Done. 2 removed.",
+                AccountCleanup.endText(activity, Kind.LIKES, End.DONE, 2));
+        assertEquals("Accounts to unfollow: 1. Starting in 3", AccountCleanup.unfollowCountdownText(activity, 1, 3));
+        assertEquals("Cancelled", AccountCleanup.checkEndText(activity, FollowLists.End.STOPPED));
+        assertEquals("Couldn't check who follows you back. Try again.",
+                AccountCleanup.checkEndText(activity, FollowLists.End.CAPPED));
     }
 
     @Test public void thePrivacyPageHasTheCleanupRowsOnlyWithThePatch() {
@@ -389,7 +551,7 @@ public class AccountCleanupTest {
         SettingsStatus.accountCleanupEnabled = true;
         SettingsMenuPreference privacy = privacyPage();
         List<Preference> rows = cleanupRows(privacy);
-        assertEquals(5, rows.size());
+        assertEquals(6, rows.size());
         assertEquals("Remove all reposts", rows.get(0).getTitle().toString());
         assertEquals("Removes every repost from your account one after another.", rows.get(0).getSummary().toString());
         assertEquals("Remove all likes", rows.get(1).getTitle().toString());
@@ -400,6 +562,9 @@ public class AccountCleanupTest {
         assertEquals("Deletes every comment you've posted one after another.", rows.get(3).getSummary().toString());
         assertEquals("Remove selected comments", rows.get(4).getTitle().toString());
         assertEquals("Pick comments from your comment history to delete.", rows.get(4).getSummary().toString());
+        assertEquals("Unfollow accounts that don't follow you back", rows.get(5).getTitle().toString());
+        assertEquals("Checks your followers first and says how many it found, then unfollows them one after "
+                + "another. Accounts that follow you back stay.", rows.get(5).getSummary().toString());
         int heading = indexOf(privacy, rows.get(0)) - 1;
         assertEquals("Clean up your account", privacy.getPreference(heading).getTitle().toString());
 
@@ -409,6 +574,16 @@ public class AccountCleanupTest {
         assertTrue(likes.getOnPreferenceClickListener().onPreferenceClick(likes));
         assertEquals("Removing all likes in 5", bannerText());
         assertNotNull(bannerAction());
+
+        // The unfollow row starts with the check, not the countdown.
+        AccountCleanup.resetForTests();
+        AccountCleanup.servicesForTests = new FakeTikTok.Account();
+        List<Runnable> later = new ArrayList<>();
+        AccountCleanup.executorForTests = later::add;
+        Preference unfollow = rows.get(5);
+        assertTrue(unfollow.getOnPreferenceClickListener().onPreferenceClick(unfollow));
+        assertEquals("Checking who you follow: 0", bannerText());
+        assertEquals(1, later.size());
     }
 
     @Test public void removeAllCommentsDeletesEveryCommentFromTheHistory() {
@@ -585,7 +760,7 @@ public class AccountCleanupTest {
             String key = row.getKey();
             if (key != null && (key.equals("action_remove_reposts") || key.equals("action_remove_likes")
                     || key.equals("action_clear_favorites") || key.equals("action_remove_comments")
-                    || key.equals("action_pick_comments"))) {
+                    || key.equals("action_pick_comments") || key.equals("action_unfollow_not_following_back"))) {
                 rows.add(row);
             }
         }

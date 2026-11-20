@@ -255,6 +255,63 @@ public final class FollowLists {
         }
     }
 
+    /** Who the check found that doesn't follow you back, and how the check ended. */
+    public static final class NotFollowingBack {
+        /** Each account's id with its secure id (empty when the list had none), in following-list order. */
+        public final Map<String, String> accounts;
+        /** DONE when both lists were read far enough to trust, otherwise why the check stopped. */
+        public final End end;
+
+        public NotFollowingBack(Map<String, String> accounts, End end) {
+            this.accounts = Collections.unmodifiableMap(accounts);
+            this.end = end;
+        }
+    }
+
+    /** Hears the count as the following list, then the followers list, is read. */
+    public interface CheckProgress {
+        void following(int count);
+
+        void followers(int count);
+    }
+
+    /**
+     * Reads who you follow and then your followers, and keeps the accounts that don't follow you
+     * back. The followers list is only read when the following list has someone to check.
+     */
+    public static NotFollowingBack notFollowingBack(AtomicBoolean stopped, CheckProgress progress) {
+        Result following = read(Kind.FOLLOWING, stopped, progress::following);
+        if (!complete(following.end)) return new NotFollowingBack(new LinkedHashMap<>(), following.end);
+        Map<String, String> candidates = notFollowingBack(following.accounts, Collections.emptyList());
+        if (candidates.isEmpty()) return new NotFollowingBack(candidates, End.DONE);
+        progress.followers(0);
+        Result followers = read(Kind.FOLLOWERS, stopped, progress::followers);
+        if (!complete(followers.end)) return new NotFollowingBack(new LinkedHashMap<>(), followers.end);
+        return new NotFollowingBack(notFollowingBack(following.accounts, followers.accounts), End.DONE);
+    }
+
+    /** A list read to its end, or to the cap: what was read can be trusted either way. */
+    private static boolean complete(End end) {
+        return end == End.DONE || end == End.CAPPED;
+    }
+
+    /**
+     * The accounts on your following list that the list itself marks as followed and not
+     * mutual, and that aren't on your followers list. The followers list only ever spares an
+     * account, so one that was cut short can never add anyone to unfollow.
+     */
+    static Map<String, String> notFollowingBack(List<Account> following, List<Account> followers) {
+        Set<String> fans = new HashSet<>();
+        for (Account follower : followers) fans.add(follower.uid);
+        Map<String, String> out = new LinkedHashMap<>();
+        for (Account account : following) {
+            if (account.followStatus != FollowStatus.FOLLOWING || account.followsYou()) continue;
+            if (fans.contains(account.uid)) continue;
+            out.put(account.uid, account.secUid);
+        }
+        return out;
+    }
+
     /** The first reply's top-level names and paging fields, never its accounts, for a report. */
     private static void logShape(Kind kind, String json) {
         try {

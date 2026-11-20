@@ -207,6 +207,7 @@ Account facts,Account facts
 Account facts copied,Account facts copied
 Account facts on profiles,Account facts on profiles
 Account region,Account region
+Accounts to unfollow: %1$d. Starting in %2$d,Accounts to unfollow: %1$d. Starting in %2$d
 Active,Active
 Activity,Activity
 Activity center,Activity center
@@ -431,6 +432,9 @@ Check for Hushfeed updates,Check for Hushfeed updates
 Check for already-saved videos,Check for already-saved videos
 Check for updates,Check for updates
 Check the brackets and quotes in this JSON,Check the brackets and quotes in this JSON
+Checking who you follow: %1$d,Checking who you follow: %1$d
+Checking your followers: %1$d,Checking your followers: %1$d
+"Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.","Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay."
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.
 Choose a backup file. Your current settings are kept for Undo.,Choose a backup file. Your current settings are kept for Undo.
 Choose a preset to fill the SIM details.,Choose a preset to fill the SIM details.
@@ -526,6 +530,7 @@ Couldn't add the caption. Saving without it.,Couldn't add the caption. Saving wi
 Couldn't add the older seen videos. Try again.,Couldn't add the older seen videos. Try again.
 Couldn't change the Lab settings. Try again.,Couldn't change the Lab settings. Try again.
 Couldn't change the icon. Try again.,Couldn't change the icon. Try again.
+Couldn't check who follows you back. Try again.,Couldn't check who follows you back. Try again.
 Couldn't clear seen videos. Try again.,Couldn't clear seen videos. Try again.
 Couldn't clear suggestions. Reopen Inbox to retry.,Couldn't clear suggestions. Reopen Inbox to retry.
 Couldn't confirm blocking %1$s. Check their profile.,Couldn't confirm blocking %1$s. Check their profile.
@@ -680,6 +685,7 @@ Don't start the feed on returning,Don't start the feed on returning
 Don't start the first video,Don't start the first video
 Done,Done
 Done. %1$d removed.,Done. %1$d removed.
+Done. %1$d unfollowed.,Done. %1$d unfollowed.
 Double tap,Double tap
 Double tap by corner,Double tap by corner
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.","Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save."
@@ -725,6 +731,7 @@ Entry %1$d isn't an object.,Entry %1$d isn't an object.
 Episode %1$s,Episode %1$s
 Errors,Errors
 Español,Español
+Everyone you follow follows you back,Everyone you follow follows you back
 Expand activity list,Expand activity list
 Expanded,Expanded
 Explore or Community,Explore or Community
@@ -1435,6 +1442,7 @@ Names to listen for,Names to listen for
 Nearby,Nearby
 Needs Android 13 or newer.,Needs Android 13 or newer.
 Network error. %1$d removed.,Network error. %1$d removed.
+Network error. %1$d unfollowed.,Network error. %1$d unfollowed.
 Network proxy,Network proxy
 Never from these countries,Never from these countries
 New comment emoji,New comment emoji
@@ -2346,6 +2354,7 @@ Stopped waiting for the file app. Nothing was changed.,Stopped waiting for the f
 Stopped waiting for the file app. Nothing was exported.,Stopped waiting for the file app. Nothing was exported.
 Stopped waiting for the file app. Nothing was imported.,Stopped waiting for the file app. Nothing was imported.
 Stopped. %1$d removed.,Stopped. %1$d removed.
+Stopped. %1$d unfollowed.,Stopped. %1$d unfollowed.
 Stopped. Search carries on later.,Stopped. Search carries on later.
 Stopping after this file,Stopping after this file
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.,Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.
@@ -2636,6 +2645,7 @@ TikTok refused the like: %1$s,TikTok refused the like: %1$s
 TikTok refused this request (%1$s).,TikTok refused this request (%1$s).
 TikTok refused to list your comments,TikTok refused to list your comments
 TikTok refused. %1$d removed.,TikTok refused. %1$d removed.
+TikTok refused. %1$d unfollowed.,TikTok refused. %1$d unfollowed.
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space."
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok reports additional filtered accounts. This list is incomplete.
 TikTok reports no more items in this list.,TikTok reports no more items in this list.
@@ -2745,6 +2755,8 @@ Undo forgetting saved videos,Undo forgetting saved videos
 Undo last Lab change,Undo last Lab change
 Undo last restore or reset,Undo last restore or reset
 Undoing the last change,Undoing the last change
+Unfollow accounts that don't follow you back,Unfollow accounts that don't follow you back
+Unfollowed: %1$d,Unfollowed: %1$d
 Unknown resolution,Unknown resolution
 Unlikes every video one after another.,Unlikes every video one after another.
 Unlock,Unlock

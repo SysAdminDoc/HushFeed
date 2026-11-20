@@ -23,6 +23,7 @@ public final class AccountCleanupPreference extends Preference implements Immedi
     static final String LIKES_KEY = "action_remove_likes";
     static final String FAVORITES_KEY = "action_clear_favorites";
     static final String COMMENTS_KEY = "action_remove_comments";
+    static final String UNFOLLOW_KEY = "action_unfollow_not_following_back";
 
     @Override public boolean actsOnTap() {
         return true;
@@ -47,6 +48,12 @@ public final class AccountCleanupPreference extends Preference implements Immedi
                 setTitle(L10n.t(context, "Remove all comments"));
                 setSummary(L10n.t(context, "Deletes every comment you've posted one after another."));
                 break;
+            case NOT_FOLLOWING_BACK:
+                setKey(UNFOLLOW_KEY);
+                setTitle(L10n.t(context, "Unfollow accounts that don't follow you back"));
+                setSummary(L10n.t(context, "Checks your followers first and says how many it found, then "
+                        + "unfollows them one after another. Accounts that follow you back stay."));
+                break;
             default:
                 setKey(FAVORITES_KEY);
                 setTitle(L10n.t(context, "Clear Favorites"));
@@ -54,7 +61,11 @@ public final class AccountCleanupPreference extends Preference implements Immedi
                 break;
         }
         setOnPreferenceClickListener(preference -> {
-            AccountCleanup.start(context, kind);
+            if (kind == Kind.NOT_FOLLOWING_BACK) {
+                AccountCleanup.startUnfollow(context);
+            } else {
+                AccountCleanup.start(context, kind);
+            }
             return true;
         });
     }

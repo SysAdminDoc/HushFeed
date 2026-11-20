@@ -231,6 +231,110 @@ public class FollowListsTest {
         assertEquals(FollowLists.MAX_ROWS + FollowLists.PAGE, served[0]);
     }
 
+    @Test public void onlyAccountsTheListMarksFollowedAndNotOnYourFollowersAreFound() {
+        List<Account> following = Arrays.asList(
+                new Account("1", "plain", "", "MS4w1", FollowStatus.FOLLOWING, 0),
+                new Account("2", "friend", "", "MS4w2", FollowStatus.MUTUAL, 1),
+                new Account("3", "fan", "", "MS4w3", FollowStatus.FOLLOWING, FollowStatus.FOLLOWING),
+                new Account("4", "quiet_fan", "", "MS4w4", FollowStatus.FOLLOWING, 0),
+                new Account("5", "unmarked", "", "MS4w5", 0, 0),
+                new Account("6", "no_sec", "", "", FollowStatus.FOLLOWING, 0));
+        // The followers list knows #4 follows you even though the following list didn't say so.
+        List<Account> followers = Arrays.asList(new Account("4", "quiet_fan", "", "MS4w4", 0, 1),
+                new Account("9", "stranger", "", "MS4w9", 0, 1));
+        Map<String, String> found = FollowLists.notFollowingBack(following, followers);
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("1", "MS4w1");
+        expected.put("6", "");
+        assertEquals(expected, found);
+    }
+
+    @Test public void theCheckReadsYourFollowersOnlyWhenSomeoneIsLeftToCheck() throws JSONException {
+        List<Integer> followingCounts = new ArrayList<>();
+        List<Integer> followerCounts = new ArrayList<>();
+        FollowLists.CheckProgress progress = new FollowLists.CheckProgress() {
+            @Override public void following(int count) {
+                followingCounts.add(count);
+            }
+
+            @Override public void followers(int count) {
+                followerCounts.add(count);
+            }
+        };
+        String following = new JSONObject().put("status_code", 0).put("has_more", false)
+                .put("followings", new JSONArray().put(user("1", 1, 0)).put(user("2", 2, 1)).put(user("3", 1, 0)))
+                .toString();
+        String followers = new JSONObject().put("status_code", 0).put("has_more", false)
+                .put("followers", new JSONArray().put(user("3", 0, 1)).put(user("2", 2, 1))).toString();
+        FollowLists.sourceForTests = byPath(following, followers);
+        FollowLists.gapForTests = 0;
+        try {
+            FollowLists.NotFollowingBack check = FollowLists.notFollowingBack(new AtomicBoolean(), progress);
+            assertEquals(End.DONE, check.end);
+            assertEquals(Arrays.asList("1"), new ArrayList<>(check.accounts.keySet()));
+            assertEquals("MS4w1", check.accounts.get("1"));
+            assertEquals(Arrays.asList(FollowLists.FOLLOWING_PATH, FollowLists.FOLLOWERS_PATH), paths);
+            assertEquals(Arrays.asList(3), followingCounts);
+            assertEquals(Arrays.asList(0, 2), followerCounts);
+
+            // Everyone you follow is a friend: the followers list isn't read at all.
+            paths.clear();
+            FollowLists.sourceForTests = byPath(new JSONObject().put("status_code", 0).put("has_more", false)
+                    .put("followings", new JSONArray().put(user("2", 2, 1))).toString(), null);
+            check = FollowLists.notFollowingBack(new AtomicBoolean(), progress);
+            assertEquals(End.DONE, check.end);
+            assertTrue(check.accounts.isEmpty());
+            assertEquals(Arrays.asList(FollowLists.FOLLOWING_PATH), paths);
+        } finally {
+            FollowLists.sourceForTests = null;
+            FollowLists.gapForTests = -1;
+        }
+    }
+
+    @Test public void aFollowersListThatCantBeReadFindsNobody() throws JSONException {
+        String following = new JSONObject().put("status_code", 0).put("has_more", false)
+                .put("followings", new JSONArray().put(user("1", 1, 0))).toString();
+        FollowLists.sourceForTests = byPath(following, "{\"status_code\":8}");
+        FollowLists.gapForTests = 0;
+        try {
+            FollowLists.NotFollowingBack check = FollowLists.notFollowingBack(new AtomicBoolean(), quiet());
+            assertEquals(End.FAILED, check.end);
+            assertTrue("a half-read check never offers anyone", check.accounts.isEmpty());
+
+            FollowLists.sourceForTests = byPath("{\"status_code\":2483}", null);
+            check = FollowLists.notFollowingBack(new AtomicBoolean(), quiet());
+            assertEquals(End.FAILED, check.end);
+            assertTrue(check.accounts.isEmpty());
+
+            AtomicBoolean stopped = new AtomicBoolean(true);
+            FollowLists.sourceForTests = byPath(following, following);
+            assertEquals(End.STOPPED, FollowLists.notFollowingBack(stopped, quiet()).end);
+        } finally {
+            FollowLists.sourceForTests = null;
+            FollowLists.gapForTests = -1;
+        }
+    }
+
+    private static FollowLists.CheckProgress quiet() {
+        return new FollowLists.CheckProgress() {
+            @Override public void following(int count) {
+            }
+
+            @Override public void followers(int count) {
+            }
+        };
+    }
+
+    /** Answers the following list with one reply and the followers list with another, noting each path. */
+    private FollowLists.Source byPath(String following, String followers) {
+        return (path, query) -> {
+            paths.add(path);
+            String reply = FollowLists.FOLLOWING_PATH.equals(path) ? following : followers;
+            if (reply == null) throw new AssertionError("asked for " + path);
+            return reply;
+        };
+    }
+
     @Test public void theFileHasOneQuotedRowAnAccount() {
         Account plain = new Account("1", "alice", "Alice", "MS4w1", FollowStatus.MUTUAL, 0);
         Account tricky = new Account("2", "", "=HYPERLINK(\"x\"), \"Bob\"", "", FollowStatus.FOLLOWING, 0);

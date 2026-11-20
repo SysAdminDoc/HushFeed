@@ -2690,6 +2690,18 @@ Remove selected comments	ลบความคิดเห็นที่เล�
 Pick comments from your comment history to delete.	เลือกความคิดเห็นที่จะลบจากประวัติความคิดเห็นของคุณ
 Removing all comments in %1$d	กำลังลบความคิดเห็นทั้งหมดใน %1$d
 Removing the picked comments in %1$d	กำลังลบความคิดเห็นที่เลือกใน %1$d
+Unfollow accounts that don't follow you back	เลิกติดตามบัญชีที่ไม่ได้ติดตามคุณกลับ
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	ตรวจสอบผู้ติดตามของคุณก่อนและบอกจำนวนที่พบ จากนั้นเลิกติดตามทีละบัญชี บัญชีที่ติดตามคุณกลับจะยังอยู่
+Checking who you follow: %1$d	กำลังตรวจสอบบัญชีที่คุณติดตาม: %1$d
+Checking your followers: %1$d	กำลังตรวจสอบผู้ติดตามของคุณ: %1$d
+Everyone you follow follows you back	ทุกคนที่คุณติดตามติดตามคุณกลับ
+Couldn't check who follows you back. Try again.	ตรวจสอบไม่ได้ว่าใครติดตามคุณกลับ โปรดลองอีกครั้ง
+Accounts to unfollow: %1$d. Starting in %2$d	บัญชีที่จะเลิกติดตาม: %1$d เริ่มใน %2$d
+Unfollowed: %1$d	เลิกติดตามแล้ว: %1$d
+Done. %1$d unfollowed.	เสร็จสิ้น เลิกติดตามแล้ว %1$d บัญชี
+Stopped. %1$d unfollowed.	หยุดแล้ว เลิกติดตามแล้ว %1$d บัญชี
+TikTok refused. %1$d unfollowed.	TikTok ปฏิเสธ เลิกติดตามแล้ว %1$d บัญชี
+Network error. %1$d unfollowed.	เครือข่ายผิดพลาด เลิกติดตามแล้ว %1$d บัญชี
 Comments removed: %1$d	ลบความคิดเห็นแล้ว: %1$d
 TikTok refused to list your comments	TikTok ปฏิเสธการแสดงความคิดเห็นของคุณ
 Couldn't load your comments. Try again.	โหลดความคิดเห็นของคุณไม่ได้ ลองอีกครั้ง

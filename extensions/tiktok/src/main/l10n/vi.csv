@@ -2629,6 +2629,18 @@ Remove selected comments,Xóa bình luận đã chọn
 Pick comments from your comment history to delete.,Chọn bình luận trong lịch sử bình luận để xóa.
 Removing all comments in %1$d,Xóa tất cả bình luận sau %1$d
 Removing the picked comments in %1$d,Xóa bình luận đã chọn sau %1$d
+Unfollow accounts that don't follow you back,Bỏ theo dõi tài khoản không theo dõi lại bạn
+"Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.","Kiểm tra người theo dõi của bạn trước và cho biết tìm thấy bao nhiêu, rồi bỏ theo dõi từng tài khoản một. Tài khoản theo dõi lại bạn vẫn được giữ."
+Checking who you follow: %1$d,Đang kiểm tra người bạn theo dõi: %1$d
+Checking your followers: %1$d,Đang kiểm tra người theo dõi bạn: %1$d
+Everyone you follow follows you back,Mọi người bạn theo dõi đều theo dõi lại bạn
+Couldn't check who follows you back. Try again.,Không thể kiểm tra ai theo dõi lại bạn. Hãy thử lại.
+Accounts to unfollow: %1$d. Starting in %2$d,Tài khoản sẽ bỏ theo dõi: %1$d. Bắt đầu sau %2$d
+Unfollowed: %1$d,Đã bỏ theo dõi: %1$d
+Done. %1$d unfollowed.,Xong. Đã bỏ theo dõi %1$d.
+Stopped. %1$d unfollowed.,Đã dừng. Đã bỏ theo dõi %1$d.
+TikTok refused. %1$d unfollowed.,TikTok đã từ chối. Đã bỏ theo dõi %1$d.
+Network error. %1$d unfollowed.,Lỗi mạng. Đã bỏ theo dõi %1$d.
 Comments removed: %1$d,Đã xóa bình luận: %1$d
 TikTok refused to list your comments,TikTok từ chối liệt kê bình luận của bạn
 Couldn't load your comments. Try again.,Không tải được bình luận của bạn. Hãy thử lại.

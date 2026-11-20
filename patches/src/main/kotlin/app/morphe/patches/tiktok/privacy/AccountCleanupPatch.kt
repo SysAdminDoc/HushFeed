@@ -51,11 +51,11 @@ internal const val REMOVE_UNAVAILABLE_PATH = "/aweme/v1/aweme/collect/removeinva
 @Suppress("unused")
 val accountCleanupPatch = bytecodePatch(
     name = "Account cleanup",
-    description = "Adds Remove all reposts, Remove all likes, Clear Favorites, Remove all comments " +
-        "and Remove selected comments to Hushfeed settings > Privacy. Each one takes items off your " +
-        "account one at a time through TikTok's own requests, with a pause between them, and stops " +
-        "on the first error. A switch there also lets one tap remove a video from your own Liked " +
-        "videos, Favorites or Reposts.",
+    description = "Adds Remove all reposts, Remove all likes, Clear Favorites, Remove all comments, " +
+        "Remove selected comments and Unfollow accounts that don't follow you back to Hushfeed " +
+        "settings > Privacy. Each one takes items off your account one at a time through TikTok's own " +
+        "requests, with a pause between them, and stops on the first error. A switch there also lets " +
+        "one tap remove a video from your own Liked videos, Favorites or Reposts.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

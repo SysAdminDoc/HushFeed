@@ -2690,6 +2690,18 @@ Remove selected comments	Ausgewählte Kommentare entfernen
 Pick comments from your comment history to delete.	Wähle in deinem Kommentarverlauf die Kommentare aus, die gelöscht werden sollen.
 Removing all comments in %1$d	Kommentare werden entfernt in %1$d
 Removing the picked comments in %1$d	Ausgewählte Kommentare werden entfernt in %1$d
+Unfollow accounts that don't follow you back	Konten entfolgen, die dir nicht zurückfolgen
+Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.	Prüft zuerst deine Follower und sagt, wie viele es gefunden hat, dann entfolgt es ihnen nacheinander. Konten, die dir zurückfolgen, bleiben.
+Checking who you follow: %1$d	Prüfe, wem du folgst: %1$d
+Checking your followers: %1$d	Prüfe deine Follower: %1$d
+Everyone you follow follows you back	Alle, denen du folgst, folgen dir zurück
+Couldn't check who follows you back. Try again.	Konnte nicht prüfen, wer dir zurückfolgt. Versuch es noch mal.
+Accounts to unfollow: %1$d. Starting in %2$d	Zu entfolgende Konten: %1$d. Start in %2$d
+Unfollowed: %1$d	Entfolgt: %1$d
+Done. %1$d unfollowed.	Fertig. %1$d entfolgt.
+Stopped. %1$d unfollowed.	Gestoppt. %1$d entfolgt.
+TikTok refused. %1$d unfollowed.	TikTok hat abgelehnt. %1$d entfolgt.
+Network error. %1$d unfollowed.	Netzwerkfehler. %1$d entfolgt.
 Comments removed: %1$d	Entfernte Kommentare: %1$d
 TikTok refused to list your comments	TikTok hat deine Kommentare nicht herausgegeben
 Couldn't load your comments. Try again.	Deine Kommentare konnten nicht geladen werden. Versuch es noch einmal.

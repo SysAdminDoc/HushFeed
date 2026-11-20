@@ -339,6 +339,7 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
             // Your comments, all of them or the ones picked from your history (#442).
             addPreference(new AccountCleanupPreference(context, Kind.COMMENTS));
             addPreference(new CommentPickerPreference(context));
+            addPreference(new AccountCleanupPreference(context, Kind.NOT_FOLLOWING_BACK));
         }
     }
 }

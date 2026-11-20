@@ -2629,6 +2629,18 @@ Remove selected comments,删除所选评论
 Pick comments from your comment history to delete.,从你的评论记录中挑选要删除的评论.
 Removing all comments in %1$d,%1$d 秒后删除所有评论
 Removing the picked comments in %1$d,%1$d 秒后删除所选评论
+Unfollow accounts that don't follow you back,取消关注没有回关你的账号
+"Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.",先检查你的粉丝并告诉你找到多少个，然后逐个取消关注。回关你的账号会保留.
+Checking who you follow: %1$d,正在检查你关注的人：%1$d
+Checking your followers: %1$d,正在检查你的粉丝：%1$d
+Everyone you follow follows you back,你关注的人都回关了你
+Couldn't check who follows you back. Try again.,无法检查谁回关了你。请重试.
+Accounts to unfollow: %1$d. Starting in %2$d,要取消关注的账号：%1$d。%2$d 秒后开始
+Unfollowed: %1$d,已取消关注：%1$d
+Done. %1$d unfollowed.,完成。已取消关注 %1$d 个.
+Stopped. %1$d unfollowed.,已停止。已取消关注 %1$d 个.
+TikTok refused. %1$d unfollowed.,TikTok 拒绝了。已取消关注 %1$d 个.
+Network error. %1$d unfollowed.,网络错误。已取消关注 %1$d 个.
 Comments removed: %1$d,已删除评论：%1$d
 TikTok refused to list your comments,TikTok 拒绝列出你的评论
 Couldn't load your comments. Try again.,无法加载你的评论。请重试.

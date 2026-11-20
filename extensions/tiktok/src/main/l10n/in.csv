@@ -2631,6 +2631,18 @@ Remove selected comments,Hapus komentar terpilih
 Pick comments from your comment history to delete.,Pilih komentar dari riwayat komentarmu untuk dihapus.
 Removing all comments in %1$d,Menghapus semua komentar dalam %1$d
 Removing the picked comments in %1$d,Menghapus komentar terpilih dalam %1$d
+Unfollow accounts that don't follow you back,Berhenti mengikuti akun yang tidak mengikutimu balik
+"Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.","Memeriksa pengikutmu dulu dan memberi tahu berapa yang ditemukan, lalu berhenti mengikuti mereka satu per satu. Akun yang mengikutimu balik tetap diikuti."
+Checking who you follow: %1$d,Memeriksa siapa yang kamu ikuti: %1$d
+Checking your followers: %1$d,Memeriksa pengikutmu: %1$d
+Everyone you follow follows you back,Semua yang kamu ikuti mengikutimu balik
+Couldn't check who follows you back. Try again.,Tidak bisa memeriksa siapa yang mengikutimu balik. Coba lagi.
+Accounts to unfollow: %1$d. Starting in %2$d,Akun yang akan berhenti diikuti: %1$d. Mulai dalam %2$d
+Unfollowed: %1$d,Berhenti diikuti: %1$d
+Done. %1$d unfollowed.,Selesai. %1$d berhenti diikuti.
+Stopped. %1$d unfollowed.,Dihentikan. %1$d berhenti diikuti.
+TikTok refused. %1$d unfollowed.,TikTok menolak. %1$d berhenti diikuti.
+Network error. %1$d unfollowed.,Kesalahan jaringan. %1$d berhenti diikuti.
 Comments removed: %1$d,Komentar dihapus: %1$d
 TikTok refused to list your comments,TikTok menolak menampilkan komentarmu
 Couldn't load your comments. Try again.,Tidak dapat memuat komentarmu. Coba lagi.

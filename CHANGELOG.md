@@ -30,7 +30,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
-* With `Log diagnostics` on, opening Hushfeed settings no longer shows an error about the App icon row. That row saves nothing, so it isn't a missing setting, and the false failure stays out of the report too.
+* With `Log diagnostics` on, Hushfeed settings no longer log a failure for the App icon row each time the page opens or refreshes. It stays out of the diagnostic report, and `Show failures on screen` doesn't pop an error for it anymore. That row saves nothing, so it was never a missing setting.
 * `Copy quick report` puts the report together in the background, so the settings page no longer stalls while it reads saved crashes. The other patch bundles line is filled in on the first copy too, where it used to ask you to copy again.
 * Native crash lines in the diagnostic report keep their function names. A name like `HttpNetworkSession::GetSocketPool` read as a session value and was blanked.
 * The Feature gate lab's list of TikTok settings is right where TikTok's code branches. A few entries were named after a setting loaded on another path, or showed another setting's default, and some settings read after a jump weren't listed at all.

@@ -51,6 +51,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         return SettingsStatus.foldableSplitViewEnabled
                 || SettingsStatus.amoledDarkModeEnabled
                 || SettingsStatus.systemFontEnabled
+                || SettingsStatus.smallerTextSizesEnabled
                 || SettingsStatus.turnOffHapticsEnabled
                 || SettingsStatus.screenTransitionsEnabled
                 || hasAppIconPicker()
@@ -113,6 +114,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP, "%1$s dp", "%1$s dp"));
         }
         if (SettingsStatus.amoledDarkModeEnabled || SettingsStatus.systemFontEnabled
+                || SettingsStatus.smallerTextSizesEnabled
                 || SettingsStatus.turnOffHapticsEnabled || SettingsStatus.screenTransitionsEnabled
                 || hasAppIconPicker()) {
             addPreference(new SectionHeadingPreference(context, "Appearance"));
@@ -125,6 +127,16 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "was chosen. Turn it off for TikTok's own dark grays. Light mode "
                             + "doesn't change. Restart TikTok to see the change.",
                     Settings.AMOLED_DARK_MODE
+            ));
+        }
+        if (SettingsStatus.smallerTextSizesEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Smaller text sizes",
+                    "Adds three stops below the smallest size on TikTok's own Text size slider, "
+                            + "in Settings and privacy > Accessibility. Pick one there, then "
+                            + "restart TikTok.",
+                    Settings.SMALLER_TEXT_SIZES
             ));
         }
         if (SettingsStatus.systemFontEnabled) {

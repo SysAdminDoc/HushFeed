@@ -22,9 +22,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Ask for the quality on each save: Download lists the renditions this video comes in and saves
@@ -111,6 +115,7 @@ final class QualityChoice {
         report.add("TikTok's own file: " + (own > 0 ? own + "p" : "height unknown") + ", gears listed: "
                 + ((List<?>) raw).size() + (dash ? ", separate sound track" : ""));
         reportOtherAddresses(video, report);
+        reportVideoModels(video, report);
         List<Object> gears = new ArrayList<>();
         int tallest = 0;
         for (Object gear : (List<?>) raw) {
@@ -190,6 +195,92 @@ final class QualityChoice {
         } catch (JSONException notJson) {
             report.add("address miscDownloadAddrs: not JSON, " + ((String) misc).length() + " characters");
         }
+    }
+
+    /** The video models TikTok stores beside the gears, as JSON strings (#471). */
+    private static final String[][] VIDEO_MODELS = {
+            {"getVideoModelStr", "videoModelStr"},
+            {"getDashVideoModelStr", "dashVideoModelStr"},
+    };
+    static final int MODEL_LISTS = 6;
+    static final int MODEL_RENDITIONS = 8;
+
+    /**
+     * Which renditions the stored video models list, by name and height (#471). A pull request
+     * offered these models' variants in the choice, on the idea that they hold 1080p copies the
+     * gears leave out, and no report could say whether they do: a DASH list's variants are
+     * pictures without sound, and the progressive ones may be the gears again. Names and heights
+     * only, never an address.
+     */
+    private static void reportVideoModels(Object video, List<String> report) {
+        for (String[] names : VIDEO_MODELS) {
+            Object raw = Reflect.property(video, names[0], names[1]);
+            if (!(raw instanceof String) || ((String) raw).isEmpty()) continue;
+            try {
+                // The tokener reads bare words as strings, so anything but an object or array isn't a model.
+                Object model = new JSONTokener((String) raw).nextValue();
+                if (!(model instanceof JSONObject) && !(model instanceof JSONArray)) throw new JSONException("not a model");
+                Map<String, List<String>> lists = new LinkedHashMap<>();
+                modelRenditions(model, "", "", 0, lists);
+                List<String> parts = new ArrayList<>();
+                for (Map.Entry<String, List<String>> list : lists.entrySet()) {
+                    parts.add((list.getKey().isEmpty() ? "(top)" : list.getKey()) + " " + list.getValue().size()
+                            + ": " + String.join(", ", list.getValue()));
+                }
+                report.add("model " + names[1] + ": " + (parts.isEmpty() ? "no renditions listed"
+                        : String.join("; ", parts)));
+            } catch (JSONException | RuntimeException notJson) {
+                report.add("model " + names[1] + ": not JSON, " + ((String) raw).length() + " characters");
+            }
+        }
+    }
+
+    /**
+     * Gathers every rendition in a model up to four levels down under the path of the list or
+     * object that holds it: TikTok's player models keep them in an array ({@code
+     * dynamic_video_list}) or an object of numbered entries ({@code video_list.video_1}).
+     */
+    private static void modelRenditions(Object node, String path, String parent, int depth,
+                                        Map<String, List<String>> lists) {
+        if (depth > 4) return;
+        if (node instanceof JSONArray) {
+            JSONArray array = (JSONArray) node;
+            for (int i = 0; i < array.length(); i++) modelRenditions(array.opt(i), path, path, depth + 1, lists);
+            return;
+        }
+        if (!(node instanceof JSONObject)) return;
+        JSONObject object = (JSONObject) node;
+        String rendition = rendition(object);
+        if (rendition != null) {
+            List<String> list = lists.get(parent);
+            if (list == null) {
+                if (lists.size() >= MODEL_LISTS) return;
+                list = new ArrayList<>();
+                lists.put(parent, list);
+            }
+            if (list.size() < MODEL_RENDITIONS) list.add(rendition);
+            return;
+        }
+        JSONArray keys = object.names();
+        if (keys == null) return;
+        for (int i = 0; i < keys.length(); i++) {
+            String key = keys.optString(i);
+            String child = path.isEmpty() ? key : path + "." + key;
+            modelRenditions(object.opt(key), child, path, depth + 1, lists);
+        }
+    }
+
+    /** "name 720p" for an object that describes one rendition, or null for anything else. */
+    private static String rendition(JSONObject object) {
+        int width = object.optInt("vwidth", object.optInt("width", 0));
+        int height = object.optInt("vheight", object.optInt("height", 0));
+        String definition = object.optString("definition", "");
+        if (height <= 0 && definition.isEmpty()) return null;
+        if (!object.has("gear_name") && !object.has("main_url") && !object.has("url_list")
+                && !object.has("play_addr") && definition.isEmpty()) return null;
+        int shorter = width > 0 && height > 0 ? Math.min(width, height) : Math.max(width, height);
+        String name = object.optString("gear_name", "");
+        return (name.isEmpty() ? "unnamed" : name) + " " + (shorter > 0 ? shorter + "p" : definition);
     }
 
     private static String codecName(Object gear) {

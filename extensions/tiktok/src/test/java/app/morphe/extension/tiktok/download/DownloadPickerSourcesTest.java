@@ -46,6 +46,7 @@ public class DownloadPickerSourcesTest {
         public Address playAddrValue, h264PlayAddrValue, playAddrBytevc1Value;
         public Address newDownloadAddr;
         public String miscDownloadAddrs;
+        public String videoModelStr, dashVideoModelStr;
         public boolean dash;
         SourcedVideo(Gear... gears) { bitRateList = List.of(gears); }
         public List<Gear> getRawBitRate() { return bitRateList; }
@@ -179,6 +180,30 @@ public class DownloadPickerSourcesTest {
         QualityChoice.options(video, context);
         lines = DownloadPickerReport.sectionForTests().lines();
         assertTrue(lines.toString(), lines.contains("address miscDownloadAddrs: not JSON, 8 characters"));
+    }
+
+    /**
+     * #471 put the stored video models' variants into the choice on the idea that they carry
+     * 1080p copies the gears leave out. The report now lists what each model holds, by name and
+     * height and never by address, so a real video can show whether they do.
+     */
+    @Test public void theReportListsTheStoredVideoModelsRenditionsWithoutTheirUrls() {
+        SourcedVideo video = new SourcedVideo(G540);
+        video.videoModelStr = "{\"video_id\":\"v0\",\"video_list\":{"
+                + "\"video_1\":{\"definition\":\"540p\",\"vwidth\":576,\"vheight\":1024,\"gear_name\":\"normal_540_0\","
+                + "\"main_url\":\"aHR0cHM6Ly9leGFtcGxlLmNvbS9tb2RlbA==\"},"
+                + "\"video_2\":{\"vwidth\":1080,\"vheight\":1920,\"gear_name\":\"normal_1080_0\",\"main_url\":\"x\"}},"
+                + "\"dynamic_video\":{\"dynamic_video_list\":[{\"gear_name\":\"adapt_1080_1\",\"vwidth\":1080,"
+                + "\"vheight\":1920,\"main_url\":\"x\"}],\"dynamic_audio_list\":[{\"bitrate\":64000,\"main_url\":\"x\"}]}}";
+        video.dashVideoModelStr = "<html>";
+        QualityChoice.options(video, context);
+        List<String> lines = DownloadPickerReport.sectionForTests().lines();
+        assertTrue(lines.toString(), lines.contains("model videoModelStr: video_list 2: normal_540_0 576p, "
+                + "normal_1080_0 1080p; dynamic_video.dynamic_video_list 1: adapt_1080_1 1080p"));
+        assertTrue(lines.toString(), lines.contains("model dashVideoModelStr: not JSON, 6 characters"));
+        for (String line : lines) {
+            assertFalse("no addresses in the report: " + line, line.contains("aHR0") || line.contains("example.com"));
+        }
     }
 
     @Test public void theReportKeepsOnlyTheLastVideoAndIsBounded() {

@@ -43,6 +43,15 @@
       ],
       "options": [
         {
+          "key": "inAppSwitch",
+          "title": "Switch in Hushfeed settings",
+          "description": "Adds AMOLED dark mode to Hushfeed settings > App, so you can go back to TikTok's own dark grays without patching again. Turn this off if a 32-bit Morphe Manager runs out of memory: AMOLED then stays on, and the switch is left out.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
           "key": "backgroundColor",
           "title": "Dark background color",
           "description": "Pick a color, or type a solid color code like #000000. Black lets OLED screens turn those pixels off completely.",

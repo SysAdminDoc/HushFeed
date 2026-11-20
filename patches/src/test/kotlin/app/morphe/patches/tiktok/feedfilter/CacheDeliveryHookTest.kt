@@ -1,7 +1,10 @@
 package app.morphe.patches.tiktok.feedfilter
 
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
+import com.android.tools.smali.dexlib2.immutable.ImmutableField
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
@@ -34,6 +37,29 @@ class CacheDeliveryHookTest {
     private val payloadField = ImmutableFieldReference(RESULT, "value", PAYLOAD)
     private val awemeField = ImmutableFieldReference(PAYLOAD, "aweme", AWEME)
     private val successField = ImmutableFieldReference(RESULT, "success", "Z")
+
+    /**
+     * 47.8.3 declares the payload field final, and the normalizer that nulls it is another class,
+     * so ART threw IllegalAccessError at the write on some phones seconds after launch (#472).
+     */
+    @Test
+    fun `the payload field stops being final so the normalizer can null it, and nothing else changes`() {
+        val finalPublic = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value
+        val result = MutableClass(
+            ImmutableClassDef(
+                RESULT, finalPublic, "Ljava/lang/Object;", null, null, null,
+                listOf(
+                    ImmutableField(RESULT, "value", PAYLOAD, finalPublic, null, null, null),
+                    ImmutableField(RESULT, "success", "Z", finalPublic, null, null, null),
+                ),
+                emptyList(),
+            ),
+        )
+        result.letOtherClassesWrite(payloadField)
+        assertEquals(AccessFlags.PUBLIC.value, result.fields.single { it.name == "value" }.accessFlags)
+        assertEquals(finalPublic, result.fields.single { it.name == "success" }.accessFlags)
+        assertEquals(finalPublic, result.accessFlags)
+    }
 
     @Test
     fun `the rebuilt chain turns a rejected payload into the native empty-result signal`() {

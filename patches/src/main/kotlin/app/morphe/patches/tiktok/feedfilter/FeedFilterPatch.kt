@@ -16,7 +16,9 @@ import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.util.removeFlags
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.MainActivityOnCreateFingerprint
@@ -499,6 +501,7 @@ val feedFilterPatch = bytecodePatch(
                         "Cache normalizer and CacheLoadResult toString use different result contracts",
                     )
                 }
+                mutableClassDefBy(cacheResultType).letOtherClassesWrite(cachePayloadField)
                 cacheNormalizer.filterNormalizedCacheDelivery(cachePayloadField, cachedAwemeField)
             }
             legacyCacheChain != null -> {
@@ -1456,6 +1459,16 @@ internal fun MutableMethod.filterDramaFeedOnConstruct() {
             """,
         )
     }
+}
+
+/**
+ * Lets the cache normalizer null the result's payload. The normalizer is a different class from
+ * the result, and 47.8.3 declares the payload field final, so ART threw IllegalAccessError at
+ * that write ("Final field ... cannot be written to") wherever it checked the class at run time,
+ * seconds after launch (#472).
+ */
+internal fun MutableClass.letOtherClassesWrite(field: FieldReference) {
+    fields.single { it.name == field.name && it.type == field.type }.removeFlags(AccessFlags.FINAL)
 }
 
 /**

@@ -42,7 +42,8 @@ import java.util.WeakHashMap;
  *
  * <p>With Liquid glass when held (#440) a finger that goes down on the pill also holds the lens
  * ({@link Host#hold}) until it lifts, slides or not, so the window is watched with either switch
- * on. The host learns where the finger went down, so the held lens can go to it. Only a finger
+ * on. The host learns where the finger went down, so the held lens can go to it, and where it
+ * moves along the bar after that without Slide across the tabs ({@link #HOLDING}). Only a finger
  * that turns out to be a swipe up or down, a second finger, or a failure lets go early. Holding
  * keeps nothing from TikTok.
  */
@@ -76,6 +77,8 @@ final class GlassTabSlide {
     static final int REFUSED = 3;
     /** A slide stopped by the switch going off. TikTok already had its cancel, so the rest goes nowhere. */
     static final int DROPPED = 4;
+    /** Held without Slide across the tabs: the lens follows the finger, and its touches go on to TikTok. */
+    static final int HOLDING = 5;
 
     /** The watcher in each window's callbacks, held weakly both ways so a closed window takes it along. */
     private static final WeakHashMap<Window, WeakReference<Watcher>> WATCHERS = new WeakHashMap<>();
@@ -231,8 +234,10 @@ final class GlassTabSlide {
                     return false;
                 }
                 if (!running.now()) {
-                    // Held without Slide across the tabs: the finger keeps the lens until it lifts.
-                    state = REFUSED;
+                    // Held without Slide across the tabs: the lens goes along the bar with the
+                    // finger until it lifts, and TikTok still gets every touch.
+                    state = HOLDING;
+                    host.hold(true, event.getRawX() - barLeft);
                     return false;
                 }
                 if (tabHolds && event.getEventTime() - event.getDownTime() >= ViewConfiguration.getLongPressTimeout()) {
@@ -261,6 +266,14 @@ final class GlassTabSlide {
             case DROPPED:
                 if (ends) state = IDLE;
                 return true;
+            case HOLDING:
+                if (ends || action == MotionEvent.ACTION_POINTER_DOWN || !holds.now()) {
+                    state = ends ? IDLE : REFUSED;
+                    letGo();
+                } else if (action == MotionEvent.ACTION_MOVE) {
+                    host.hold(true, event.getRawX() - barLeft);
+                }
+                return false;
             case REFUSED:
                 if (ends) {
                     state = IDLE;

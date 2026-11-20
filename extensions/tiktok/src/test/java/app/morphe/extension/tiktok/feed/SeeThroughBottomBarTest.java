@@ -856,6 +856,59 @@ public class SeeThroughBottomBarTest {
     }
 
     /**
+     * Liquid glass when held without Slide across the tabs: the held lens goes along the bar with
+     * the finger, tab to tab, every touch still goes on to TikTok, and letting go sends the lens
+     * back to the selected tab.
+     */
+    @Test
+    public void aHeldLensFollowsTheFingerAlongTheBar() {
+        Settings.GLASS_LIQUID_HOLD.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            float density = activity.getResources().getDisplayMetrics().density;
+            SeeThroughBottomBar.GlassLensBackground lens = new SeeThroughBottomBar.GlassLensBackground(density);
+            LinearLayout bar = tabBar(activity, lens);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(bar, new FrameLayout.LayoutParams(1080, 150));
+            activity.setContentView(root);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            lens.setBounds(0, 0, 1080, 150);
+            android.graphics.Canvas canvas = new android.graphics.Canvas(
+                    android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888));
+            lens.draw(canvas);
+            GlassTabSlide slide = GlassTabSlide.installedIn(activity.getWindow());
+            assertTrue("nothing watches the window for a hold", slide != null && slide.bar() == bar);
+            android.view.Window.Callback inner = (android.view.Window.Callback) java.lang.reflect.Proxy.newProxyInstance(
+                    android.view.Window.Callback.class.getClassLoader(), new Class<?>[]{android.view.Window.Callback.class},
+                    (proxy, method, args) -> method.getReturnType() == boolean.class ? Boolean.FALSE : null);
+            int[] at = new int[2];
+            bar.getLocationOnScreen(at);
+            float y = at[1] + lens.pillRect.centerY();
+            View selected = bar.getChildAt(1), first = bar.getChildAt(2), next = bar.getChildAt(3);
+            SeeThroughBottomBar.TabLens held = lens.lens();
+
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_DOWN, at[0] + middle(first), y), inner));
+            frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS + SeeThroughBottomBar.LIQUID_PRESS_MS);
+            assertEquals("the lens stayed off the finger", middle(first), held.bounds().centerX(), 2f);
+
+            assertFalse("the move was kept from TikTok",
+                    slide.onTouch(touch(android.view.MotionEvent.ACTION_MOVE, at[0] + middle(next), y), inner));
+            assertEquals(GlassTabSlide.HOLDING, slide.state());
+            frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
+            assertEquals("the lens didn't follow the finger", middle(next), held.bounds().centerX(), 2f);
+            assertEquals(1f + SeeThroughBottomBar.TAB_SWELL, next.getScaleX(), 0.01f);
+
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_UP, at[0] + middle(next), y), inner));
+            assertEquals(GlassTabSlide.IDLE, slide.state());
+            frames(lens, canvas, SeeThroughBottomBar.LIQUID_RELEASE_MS + SeeThroughBottomBar.LENS_SLIDE_MS);
+            assertEquals("the lens didn't go back to the selected tab", middle(selected), held.bounds().centerX(), 2f);
+        } finally {
+            Settings.GLASS_LIQUID_HOLD.save(false);
+        }
+    }
+
+    /**
      * Slide across the tabs: a finger down on the pill goes on to TikTok; once it moves sideways
      * past the slop TikTok gets a cancel, the lens follows the finger, and lifting it opens the tab
      * under it. A finger that goes up or down first is never a slide.

@@ -1347,9 +1347,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting GLASS_TAB_SLIDE = new BooleanSetting(
             "glass_tab_slide", FALSE, false, Setting.parent(GLASS_TAB_LENS));
     /**
-     * With Glass lens on the current tab, a finger held on the pill swells the lens, bends the
-     * blurred video under it harder and splits its light at the rim, and letting go wobbles it
-     * back (#440, GlassTabSlide watches the touch). Read on each touch and draw.
+     * With Glass lens on the current tab, a finger held on the pill brings the lens to it and
+     * swells it, bends the blurred video under it harder and splits its light at the rim, grows
+     * the tab under it and bends the tabs at its rim on Android 13 and up, and letting go wobbles
+     * it all back (#440, GlassTabSlide watches the touch). Read on each touch and draw.
      */
     public static final BooleanSetting GLASS_LIQUID_HOLD = new BooleanSetting(
             "glass_liquid_hold", FALSE, false, Setting.parent(GLASS_TAB_LENS));

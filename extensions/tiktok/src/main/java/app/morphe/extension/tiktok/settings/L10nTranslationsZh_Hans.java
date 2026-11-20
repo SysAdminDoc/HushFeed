@@ -3216,8 +3216,8 @@ final class L10nTranslationsZh_Hans {
                 "在主信息流上，玻璃透镜每经过一个选项卡就轻震一下，无论是点按后滑动还是在手指下滑动。需要当前选项卡上的玻璃透镜.");
         table.put("On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.",
                 "在主信息流上，一个凸起的玻璃气泡位于你所在的选项卡后面，并滑到你选择的下一个选项卡。适用于任何底部栏，无论是否开启液态玻璃外观.");
-        table.put("On the main feed, hold a finger on the tabs and the glass lens swells, then wobbles back when you let go. With Blur the video behind the bar on Android 13 and up, the video under it bends harder and splits into color at its edge. Needs Glass lens on the current tab.",
-                "在主信息流上，手指按住选项卡，玻璃透镜会鼓起，松开后晃动着恢复原状。在 Android 13 及以上版本开启模糊栏后面的视频时，透镜下的视频会弯曲得更明显，边缘还会分出彩色光。需要当前选项卡上的玻璃透镜.");
+        table.put("On the main feed, hold a finger on the tabs and the glass lens slides under it and swells, the tab beneath it grows, and they wobble back when you let go. On Android 13 and up the tabs bend at the lens's edge and split into color, and with Blur the video behind the bar so does the video. Needs Glass lens on the current tab.",
+                "在主信息流上，手指按住选项卡，玻璃透镜会滑到手指下并鼓起，下面的选项卡会变大，松开后它们晃动着恢复原状。在 Android 13 及以上版本，选项卡会在透镜边缘弯曲并分出彩色光，开启模糊栏后面的视频时，视频也会这样。需要当前选项卡上的玻璃透镜.");
         table.put("On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
                 "在主信息流上，手指沿选项卡滑动，透镜会跟着手指移动。松开手指就会打开那个选项卡。点按和长按照常使用。需要当前选项卡上的玻璃透镜.");
         table.put("On. Hushfeed hasn't seen TikTok send any reports since it started.",

@@ -42,8 +42,9 @@ import java.util.WeakHashMap;
  *
  * <p>With Liquid glass when held (#440) a finger that goes down on the pill also holds the lens
  * ({@link Host#hold}) until it lifts, slides or not, so the window is watched with either switch
- * on. Only a finger that turns out to be a swipe up or down, a second finger, or a failure lets
- * go early. Holding keeps nothing from TikTok.
+ * on. The host learns where the finger went down, so the held lens can go to it. Only a finger
+ * that turns out to be a swipe up or down, a second finger, or a failure lets go early. Holding
+ * keeps nothing from TikTok.
  */
 final class GlassTabSlide {
     /** What a slide needs from the glass it moves. */
@@ -54,8 +55,11 @@ final class GlassTabSlide {
         /** Puts the lens's middle at {@code x}, in the bar's own pixels, or sends it back to the selected tab for NaN. */
         void follow(float x);
 
-        /** A finger went down on the pill and holds the lens ({@code true}), or let go of it. */
-        void hold(boolean held);
+        /**
+         * A finger went down on the pill at {@code x}, in the bar's own pixels, and holds the lens
+         * ({@code true}), or let go of it ({@code x} is NaN then).
+         */
+        void hold(boolean held, float x);
     }
 
     /** Whether slides may start and go on right now; java.util.function needs API 24. */
@@ -203,7 +207,7 @@ final class GlassTabSlide {
             state = WATCHING;
             if (holds.now()) {
                 holding = true;
-                host.hold(true);
+                host.hold(true, x);
             }
             return false;
         }
@@ -285,7 +289,7 @@ final class GlassTabSlide {
     private void letGo() {
         if (!holding) return;
         holding = false;
-        host.hold(false);
+        host.hold(false, Float.NaN);
     }
 
     /** Whether the bar is attached, shown and not moved off its place by an animation. */

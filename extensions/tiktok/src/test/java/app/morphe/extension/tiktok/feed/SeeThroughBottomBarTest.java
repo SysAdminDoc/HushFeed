@@ -769,6 +769,93 @@ public class SeeThroughBottomBarTest {
     }
 
     /**
+     * Liquid glass when held (#440): the tab right under a fully held lens is 15% larger, less the
+     * further off the lens's middle it is, its own size a lens's width away, and a little smaller
+     * as the lens wobbles back past rest. The lens maps into a grown tab's own pixels, where its
+     * bend is drawn, and a lens off the tab maps to nothing.
+     */
+    @Test
+    public void theTabUnderAHeldLensGrowsAndTheLensMapsIntoIt() {
+        assertEquals(1.15f, SeeThroughBottomBar.tabGrowth(100f, 100f, 200f, 1f), 0.0001f);
+        assertEquals(1.075f, SeeThroughBottomBar.tabGrowth(200f, 100f, 200f, 1f), 0.0001f);
+        assertEquals(1f, SeeThroughBottomBar.tabGrowth(300f, 100f, 200f, 1f), 0f);
+        assertEquals("not held", 1f, SeeThroughBottomBar.tabGrowth(100f, 100f, 200f, 0f), 0f);
+        assertTrue("no dip as it wobbles back", SeeThroughBottomBar.tabGrowth(100f, 100f, 200f, -0.2f) < 1f);
+
+        View tab = new View(RuntimeEnvironment.getApplication());
+        tab.layout(216, 0, 432, 150);
+        // A phone's View pivots on its middle until told otherwise; Robolectric's reads 0.
+        tab.setPivotX(108f);
+        tab.setPivotY(75f);
+        tab.setScaleX(1.15f);
+        tab.setScaleY(1.15f);
+        android.graphics.RectF out = new android.graphics.RectF();
+        assertTrue(SeeThroughBottomBar.TabLens.inTab(tab,
+                new android.graphics.RectF(216f + 108f - 108f * 1.15f, 75f - 75f * 1.15f,
+                        216f + 108f + 108f * 1.15f, 75f + 75f * 1.15f), out));
+        assertEquals(0f, out.left, 0.01f);
+        assertEquals(0f, out.top, 0.01f);
+        assertEquals(216f, out.right, 0.01f);
+        assertEquals(150f, out.bottom, 0.01f);
+        assertFalse("a lens two tabs away", SeeThroughBottomBar.TabLens.inTab(tab,
+                new android.graphics.RectF(648f, 0f, 864f, 150f), out));
+    }
+
+    /**
+     * Liquid glass when held (#440): a finger down on a tab away from the selected one brings the
+     * lens to it, and the tab under it grows while the selected tab, far off, keeps its size.
+     * Let go, the lens slides back to the selected tab and every tab gets its own size back.
+     */
+    @Test
+    public void aHeldLensGoesToTheFingerAndGrowsTheTabUnderIt() {
+        Settings.GLASS_LIQUID_HOLD.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            float density = activity.getResources().getDisplayMetrics().density;
+            SeeThroughBottomBar.GlassLensBackground lens = new SeeThroughBottomBar.GlassLensBackground(density);
+            LinearLayout bar = tabBar(activity, lens);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(bar, new FrameLayout.LayoutParams(1080, 150));
+            activity.setContentView(root);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            lens.setBounds(0, 0, 1080, 150);
+            android.graphics.Canvas canvas = new android.graphics.Canvas(
+                    android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888));
+            lens.draw(canvas);
+            GlassTabSlide slide = GlassTabSlide.installedIn(activity.getWindow());
+            assertTrue("nothing watches the window for a hold", slide != null && slide.bar() == bar);
+            android.view.Window.Callback inner = (android.view.Window.Callback) java.lang.reflect.Proxy.newProxyInstance(
+                    android.view.Window.Callback.class.getClassLoader(), new Class<?>[]{android.view.Window.Callback.class},
+                    (proxy, method, args) -> method.getReturnType() == boolean.class ? Boolean.FALSE : null);
+            int[] at = new int[2];
+            bar.getLocationOnScreen(at);
+            float y = at[1] + lens.pillRect.centerY();
+            View selected = bar.getChildAt(1), pressed = bar.getChildAt(3);
+            SeeThroughBottomBar.TabLens held = lens.lens();
+
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_DOWN, at[0] + middle(pressed), y), inner));
+            lens.draw(canvas);
+            frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS + SeeThroughBottomBar.LIQUID_PRESS_MS);
+            assertEquals("the lens stayed off the finger", middle(pressed), held.bounds().centerX(), 2f);
+            assertEquals(1f + SeeThroughBottomBar.TAB_SWELL, pressed.getScaleX(), 0.01f);
+            assertEquals(pressed.getScaleX(), pressed.getScaleY(), 0f);
+            assertEquals("the selected tab, two tabs off, grew", 1f, selected.getScaleX(), 0f);
+
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_UP, at[0] + middle(pressed), y), inner));
+            lens.draw(canvas);
+            frames(lens, canvas, SeeThroughBottomBar.LIQUID_RELEASE_MS + SeeThroughBottomBar.LENS_SLIDE_MS);
+            assertEquals("the lens didn't go back to the selected tab", middle(selected), held.bounds().centerX(), 2f);
+            for (int i = 0; i < bar.getChildCount(); i++) {
+                assertEquals("tab " + i + " kept its growth", 1f, bar.getChildAt(i).getScaleX(), 0f);
+                assertEquals(1f, bar.getChildAt(i).getScaleY(), 0f);
+            }
+        } finally {
+            Settings.GLASS_LIQUID_HOLD.save(false);
+        }
+    }
+
+    /**
      * Slide across the tabs: a finger down on the pill goes on to TikTok; once it moves sideways
      * past the slop TikTok gets a cancel, the lens follows the finger, and lifting it opens the tab
      * under it. A finger that goes up or down first is never a slide.

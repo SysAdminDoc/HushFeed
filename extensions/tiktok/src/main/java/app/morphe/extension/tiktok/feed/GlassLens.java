@@ -21,7 +21,8 @@ import app.morphe.extension.shared.Logger;
  * blurred strip GlassVideoBlur already draws into the pill, run through a small shader into a
  * render node of its own, so nothing more is read back from the video. Held under a finger with
  * Liquid glass when held (#440), it bends harder and splits the light at its rim, red bending a
- * little less than blue, the way thick glass does. Before Android 13 there is
+ * little less than blue, the way thick glass does, and the tabs under it bend with it
+ * ({@link #tabBend}). Before Android 13 there is
  * no shader to run and the bubble has its rim and sheen alone. A failure turns the magnifier off
  * for this lens and the bubble carries on.
  */
@@ -33,6 +34,13 @@ final class GlassLens {
     static final float HELD_CENTRE = 0.06f;
     static final float HELD_RIM = 0.16f;
     static final float HELD_SPREAD = 0.05f;
+    /**
+     * How hard the tabs under a fully held lens bend at its rim, and how far their color splits:
+     * less than the video, so a label at the rim stays readable (S22, 2026-11-19: at the video's
+     * 0.30 the Inbox label stretched to half again its height).
+     */
+    static final float TAB_RIM = 0.2f;
+    static final float TAB_SPREAD = 0.04f;
 
     private static final String SHADER = ""
             + "uniform shader content;\n"
@@ -59,6 +67,36 @@ final class GlassLens {
             + "  return half4(r.r, g.g, b.b, max(g.a, max(r.a, b.a))) * inside;\n"
             + "}\n";
 
+    /**
+     * The same bend for a tab under a held lens (#440): the tab's own pixels go in, so its icon
+     * and label bend at the lens's rim the way the video beside them does, and everything outside
+     * the lens stays as it was.
+     */
+    private static final String TAB_SHADER = ""
+            + "uniform shader content;\n"
+            + "uniform float4 box;\n"
+            + "uniform float radius;\n"
+            + "uniform float rim;\n"
+            + "uniform float spread;\n"
+            + "half4 main(float2 p) {\n"
+            + "  half4 plain = content.eval(p);\n"
+            + "  float2 mid = (box.xy + box.zw) * 0.5;\n"
+            + "  float2 hs = (box.zw - box.xy) * 0.5;\n"
+            + "  float2 q = abs(p - mid) - (hs - float2(radius));\n"
+            + "  float d = length(max(q, float2(0.0))) + min(max(q.x, q.y), 0.0) - radius;\n"
+            + "  float inside = clamp(0.5 - d, 0.0, 1.0);\n"
+            + "  if (inside <= 0.0) return plain;\n"
+            + "  float depth = clamp(-d / max(1.0, min(hs.x, hs.y)), 0.0, 1.0);\n"
+            + "  float bend = (1.0 - depth) * (1.0 - depth);\n"
+            + "  float k = 1.0 - rim * bend;\n"
+            + "  float s = spread * bend;\n"
+            + "  half4 g = content.eval(mid + (p - mid) * k);\n"
+            + "  half4 r = content.eval(mid + (p - mid) * (k + s));\n"
+            + "  half4 b = content.eval(mid + (p - mid) * (k - s));\n"
+            + "  half4 bent = half4(r.r, g.g, b.b, max(g.a, max(r.a, b.a)));\n"
+            + "  return mix(plain, bent, half(inside));\n"
+            + "}\n";
+
     /** Whether this Android can run the magnifier at all. */
     static boolean supported() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
@@ -67,6 +105,30 @@ final class GlassLens {
     private RenderNode node;
     private RuntimeShader shader;
     private boolean broken;
+    private RuntimeShader tabShader;
+    private boolean tabsBroken;
+
+    /**
+     * The bend for a tab under a lens held {@code press} of the way (0 to 1), with {@code box} the
+     * lens in the tab's own pixels before its scale, and {@code radius} its corners there. Null
+     * before Android 13, for a lens not pressed in, and once the shader has failed.
+     */
+    RenderEffect tabBend(RectF box, float radius, float press) {
+        if (tabsBroken || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || press <= 0f) return null;
+        try {
+            if (tabShader == null) tabShader = new RuntimeShader(TAB_SHADER);
+            float held = Math.min(1f, press);
+            tabShader.setFloatUniform("box", box.left, box.top, box.right, box.bottom);
+            tabShader.setFloatUniform("radius", Math.max(0f, radius));
+            tabShader.setFloatUniform("rim", TAB_RIM * held);
+            tabShader.setFloatUniform("spread", TAB_SPREAD * held);
+            return RenderEffect.createRuntimeShaderEffect(tabShader, "content");
+        } catch (RuntimeException failure) {
+            tabsBroken = true;
+            Logger.printException(() -> "Could not bend the tabs under the glass lens", failure);
+            return null;
+        }
+    }
 
     /**
      * Draws the magnified video over {@code box} ({@code radius} corners), in the bar's

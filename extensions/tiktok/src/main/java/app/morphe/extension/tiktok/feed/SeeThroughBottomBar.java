@@ -595,7 +595,9 @@ final class SeeThroughBottomBar {
     /** How much larger the bubble is midway through a slide and under a finger. */
     static final float BUBBLE_SWELL = 0.08f;
     /** With Liquid glass when held, how much larger a fully held bubble is (#440). */
-    static final float LIQUID_SWELL = 0.2f;
+    static final float LIQUID_SWELL = 0.3f;
+    /** And how much larger the tab right under a fully held bubble is. */
+    static final float TAB_SWELL = 0.15f;
     /** How long a held lens takes to swell all the way, and to wobble back to rest once let go. */
     static final long LIQUID_PRESS_MS = 160, LIQUID_RELEASE_MS = 560;
     /** How long the lens takes to slide to a newly picked tab. */
@@ -664,6 +666,18 @@ final class SeeThroughBottomBar {
     }
 
     /**
+     * How large a tab whose middle is at {@code middle} is under a lens {@code width} wide on
+     * {@code lens}, pressed {@code press}: {@link #TAB_SWELL} larger right under a fully held one,
+     * less the further off its middle the tab is, its own size a lens's width away, and a little
+     * smaller while the lens wobbles back past rest.
+     */
+    static float tabGrowth(float middle, float lens, float width, float press) {
+        if (width <= 0f || press == 0f) return 1f;
+        float near = Math.max(0f, 1f - Math.abs(middle - lens) / width);
+        return 1f + TAB_SWELL * press * near;
+    }
+
+    /**
      * Where the lens's left edge goes under a finger sliding across the tabs: {@code width} wide,
      * centered on {@code finger}, kept between {@code min} and {@code max}.
      */
@@ -703,8 +717,9 @@ final class SeeThroughBottomBar {
      * drawn and a new one slides on from there when that was moments ago (S22, 2026-10-21: the
      * lens jumped between tabs with animations on). With Slide across the tabs the lens follows a
      * finger ({@link GlassTabSlide}), and with Glass haptics it ticks each time its middle passes a
-     * tab ({@link GlassBarHaptics}). With Liquid glass when held a finger on the pill swells it,
-     * the magnifier bends harder under it, and it wobbles back once let go ({@link #liquidPress}).
+     * tab ({@link GlassBarHaptics}). With Liquid glass when held a finger on the pill brings the
+     * lens to it and swells it, the magnifier bends harder under it, the tabs under it grow and on
+     * Android 13 and up bend at its rim, and it all wobbles back once let go ({@link #liquidPress}).
      */
     static final class TabLens {
         /** Where each bar's lens was last drawn, kept only as long as the bar is. */
@@ -746,6 +761,12 @@ final class SeeThroughBottomBar {
         private float pressNow, bubbleShown = 1f;
         /** Where a finger sliding across the tabs holds the lens's middle, NaN without one. */
         float dragX = Float.NaN;
+        /** Where the finger holding the lens went down, in the bar's pixels, NaN without one. */
+        private float pressX = Float.NaN;
+        /** The tabs a held lens has grown, each with the scale it had before. */
+        private final Map<View, float[]> grown = new WeakHashMap<>();
+        private final RectF lensBox = new RectF();
+        private final RectF tabBox = new RectF();
         /** The tab the lens's middle was over at the last draw, null before the first. */
         private View tickedTab;
 
@@ -775,12 +796,19 @@ final class SeeThroughBottomBar {
             if (area.isEmpty() || !selectedSpan(bar, span)
                     || !lensSpan(span, area, shownTabs(bar).size(), density, target)) {
                 drawnLeft = drawnRight = Float.NaN;
+                restoreTabs();
                 return;
             }
             float left = target.left, right = target.right;
             float inset = LENS_INSET_DP * density;
             long now = SystemClock.uptimeMillis();
             holdOverStall(now);
+            if (Float.isNaN(dragX) && !Float.isNaN(pressX) && Settings.GLASS_LIQUID_HOLD.get()) {
+                // Held (#440): the lens goes to the finger, sliding there as it would to a tab.
+                float width = right - left;
+                left = followLeft(pressX, width, area.left + inset, area.right - inset);
+                right = left + width;
+            }
             if (!Float.isNaN(dragX)) {
                 // Under a finger: on it, swollen, and no slide of its own.
                 float width = right - left;
@@ -834,7 +862,86 @@ final class SeeThroughBottomBar {
             spot.at = now;
             tick(bar, shown.centerX());
             paintBubble(canvas, bar, area, alpha, onLight);
+            liquidTabs(bar);
             if (done < 1f || bubbleNow != 1f || pressMoving(now)) owner.invalidateSelf();
+        }
+
+        /**
+         * Liquid glass when held (#440): the tabs under a held lens grow toward its middle and, on
+         * Android 13 and up, bend at its rim the way the video under it does. They follow the
+         * press as it wobbles back, then get the scale they had and lose the bend.
+         */
+        private void liquidTabs(ViewGroup bar) {
+            if (pressNow == 0f) {
+                restoreTabs();
+                return;
+            }
+            float corner = swollen(lensBox);
+            for (View tab : shownTabs(bar)) {
+                float[] before = grown.get(tab);
+                // The floating pill spreads its tabs by moving them, so the middle counts the move.
+                float scale = tabGrowth(tab.getLeft() + tab.getTranslationX() + tab.getWidth() / 2f,
+                        lensBox.centerX(), lensBox.width(), pressNow);
+                if (before == null) {
+                    if (scale == 1f) continue;
+                    before = new float[]{tab.getScaleX(), tab.getScaleY()};
+                    grown.put(tab, before);
+                }
+                tab.setScaleX(before[0] * scale);
+                tab.setScaleY(before[1] * scale);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && tab.isHardwareAccelerated()) {
+                    if (magnifier == null) magnifier = new GlassLens();
+                    tab.setRenderEffect(inTab(tab, lensBox, tabBox)
+                            ? magnifier.tabBend(tabBox, corner / Math.max(0.01f, tab.getScaleX()), pressNow)
+                            : null);
+                }
+            }
+        }
+
+        /** Puts back every tab a held lens grew or bent. */
+        private void restoreTabs() {
+            if (grown.isEmpty()) return;
+            for (Map.Entry<View, float[]> entry : grown.entrySet()) {
+                View tab = entry.getKey();
+                if (tab == null) continue;
+                tab.setScaleX(entry.getValue()[0]);
+                tab.setScaleY(entry.getValue()[1]);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) tab.setRenderEffect(null);
+            }
+            grown.clear();
+        }
+
+        /**
+         * {@code lens}, in the bar's pixels, put in {@code out} in {@code tab}'s own pixels before
+         * its move and scale, the space its bend is drawn in. False when the two don't meet.
+         */
+        static boolean inTab(View tab, RectF lens, RectF out) {
+            float scaleX = Math.max(0.01f, tab.getScaleX()), scaleY = Math.max(0.01f, tab.getScaleY());
+            float originX = tab.getLeft() + tab.getTranslationX() + tab.getPivotX();
+            float originY = tab.getTop() + tab.getTranslationY() + tab.getPivotY();
+            out.set(tab.getPivotX() + (lens.left - originX) / scaleX,
+                    tab.getPivotY() + (lens.top - originY) / scaleY,
+                    tab.getPivotX() + (lens.right - originX) / scaleX,
+                    tab.getPivotY() + (lens.bottom - originY) / scaleY);
+            return out.right > 0f && out.left < tab.getWidth() && out.bottom > 0f && out.top < tab.getHeight();
+        }
+
+        /** The bubble at {@link #shown} swollen to {@link #bubbleShown}, put in {@code out}; returns its corners. */
+        private float swollen(RectF out) {
+            float corner = cornerPx(Settings.GLASS_CORNERS.get(), true, shown.height(), density);
+            out.set(shown);
+            if (bubbleShown != 1f) {
+                float swell = (bubbleShown - 1f) / 2f;
+                out.inset(-out.width() * swell, -out.height() * swell);
+                corner *= bubbleShown;
+            }
+            return corner;
+        }
+
+        /** A finger went down on the lens at {@code x}, in the bar's pixels ({@code now} true), or let go of it. */
+        void hold(boolean now, float x) {
+            pressX = now ? x : Float.NaN;
+            hold(now);
         }
 
         /** A finger went down on the lens ({@code now} true) or let go of it. */
@@ -865,13 +972,7 @@ final class SeeThroughBottomBar {
          * lens bends harder and its tint and fill clear a little, so the bend shows through.
          */
         private void paintBubble(Canvas canvas, ViewGroup bar, Rect area, int alpha, boolean onLight) {
-            float corner = cornerPx(Settings.GLASS_CORNERS.get(), true, shown.height(), density);
-            capsule.set(shown);
-            if (bubbleShown != 1f) {
-                float swell = (bubbleShown - 1f) / 2f;
-                capsule.inset(-capsule.width() * swell, -capsule.height() * swell);
-                corner *= bubbleShown;
-            }
+            float corner = swollen(capsule);
             float clear = 1f - 0.4f * Math.max(0f, pressNow);
             RenderNode backdrop = blur == null ? null : blur.drawnBackdrop();
             // Only at full strength: a faded bar would show the magnified video solid.
@@ -960,6 +1061,7 @@ final class SeeThroughBottomBar {
                 // Off the bar, so off the screen. A listener the window kept anyway (off() can't
                 // reach one merged in from a detached observer) then leaves the memory alone.
                 drawnLeft = drawnRight = Float.NaN;
+                restoreTabs();
                 watch.off();
                 return true;
             }
@@ -1260,10 +1362,10 @@ final class SeeThroughBottomBar {
         }
 
         @Override
-        public void hold(boolean held) {
+        public void hold(boolean held, float x) {
             Drawable background = bar.getBackground();
             if (!(background instanceof LensCarrier)) return;
-            ((LensCarrier) background).lens().hold(held);
+            ((LensCarrier) background).lens().hold(held, x);
             background.invalidateSelf();
         }
     }

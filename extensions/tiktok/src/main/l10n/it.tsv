@@ -2968,6 +2968,21 @@ My likes on this phone	I miei Mi piace su questo telefono
 Find and reopen the videos you liked only on this phone	Trova e riapri i video a cui hai messo Mi piace solo su questo telefono
 Videos you like on this phone show up here	I video a cui metti Mi piace su questo telefono compaiono qui
 Likes cleared	Mi piace cancellati
+Export followers and following	Esporta follower e seguiti
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Salva gli account che ti seguono, o quelli che segui, come file CSV in Download/Hushfeed. Vengono letti più o meno alla velocità con cui si scorre l'elenco, fino a %1$s alla volta.
+A list is already being read	Si sta già leggendo un elenco
+Reading your followers (%1$s)	Lettura dei tuoi follower (%1$s)
+Reading who you follow (%1$s)	Lettura degli account che segui (%1$s)
+Couldn't read the list. Try again in a moment.	Non è stato possibile leggere l'elenco. Riprova tra un momento.
+Stopped before anyone was read	Interrotto prima di leggere qualcuno
+Nobody follows this account yet	Nessuno segue ancora questo account
+This account doesn't follow anyone yet	Questo account non segue ancora nessuno
+The file couldn't be saved. Try again.	Non è stato possibile salvare il file. Riprova.
+Saved one account to %2$s	Un account salvato in %2$s
+Saved %1$s accounts to %2$s	%1$s account salvati in %2$s
+It stopped before the end of the list, so the file is partial.	Si è fermato prima della fine dell'elenco, quindi il file è parziale.
+TikTok stopped answering before the end of the list, so the file is partial.	TikTok ha smesso di rispondere prima della fine dell'elenco, quindi il file è parziale.
+Only the first %1$s are in the file.	Nel file ci sono solo i primi %1$s.
 Save your likes from a TikTok data export	Salva i tuoi Mi piace da un'esportazione dei dati di TikTok
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Scegli l'esportazione che TikTok invia da Impostazioni e privacy > Account > Scarica i tuoi dati, in formato JSON. I video che elenca come Mi piace o preferiti vengono salvati come video scelti, fino a %1$s alla volta.
 Reading the data export	Lettura dell'esportazione dei dati

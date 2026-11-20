@@ -2968,6 +2968,21 @@ My likes on this phone	Bu telefondaki beğenilerim
 Find and reopen the videos you liked only on this phone	Yalnızca bu telefonda beğendiğin videoları bul ve yeniden aç
 Videos you like on this phone show up here	Bu telefonda beğendiğin videolar burada görünür
 Likes cleared	Beğeniler temizlendi
+Export followers and following	Takipçileri ve takip edilenleri dışa aktar
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Seni takip eden hesapları ya da senin takip ettiklerini Download/Hushfeed klasörüne CSV dosyası olarak kaydeder. Listeyi kaydırma hızına yakın bir hızla, bir seferde en fazla %1$s tane okunur.
+A list is already being read	Zaten bir liste okunuyor
+Reading your followers (%1$s)	Takipçilerin okunuyor (%1$s)
+Reading who you follow (%1$s)	Takip ettiklerin okunuyor (%1$s)
+Couldn't read the list. Try again in a moment.	Liste okunamadı. Birazdan tekrar dene.
+Stopped before anyone was read	Kimse okunmadan durduruldu
+Nobody follows this account yet	Bu hesabı henüz kimse takip etmiyor
+This account doesn't follow anyone yet	Bu hesap henüz kimseyi takip etmiyor
+The file couldn't be saved. Try again.	Dosya kaydedilemedi. Tekrar dene.
+Saved one account to %2$s	Bir hesap %2$s konumuna kaydedildi
+Saved %1$s accounts to %2$s	%1$s hesap %2$s konumuna kaydedildi
+It stopped before the end of the list, so the file is partial.	Listenin sonuna gelmeden durdu, bu yüzden dosya eksik.
+TikTok stopped answering before the end of the list, so the file is partial.	TikTok listenin sonuna gelmeden yanıt vermeyi bıraktı, bu yüzden dosya eksik.
+Only the first %1$s are in the file.	Dosyada yalnızca ilk %1$s hesap var.
 Save your likes from a TikTok data export	Beğenilerini TikTok veri dışa aktarımından kaydet
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	TikTok'un Ayarlar ve gizlilik > Hesap > Verilerini indir bölümünden gönderdiği dışa aktarımı JSON biçiminde seç. Beğenilen veya favorilere eklenen olarak listelediği videolar, seçilen videolar gibi, bir seferde en fazla %1$s tane kaydedilir.
 Reading the data export	Veri dışa aktarımı okunuyor

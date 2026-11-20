@@ -2968,6 +2968,21 @@ My likes on this phone	Bu telefondakı bəyənmələrim
 Find and reopen the videos you liked only on this phone	Yalnız bu telefonda bəyəndiyiniz videoları tapın və yenidən açın
 Videos you like on this phone show up here	Bu telefonda bəyəndiyiniz videolar burada görünür
 Likes cleared	Bəyənmələr təmizləndi
+Export followers and following	İzləyiciləri və izlədiklərinizi ixrac edin
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Sizi izləyən və ya sizin izlədiyiniz hesabları Download/Hushfeed qovluğunda CSV faylı kimi saxlayır. Onlar siyahını sürüşdürmə sürətinə yaxın sürətlə, bir dəfəyə %1$s ədədə qədər oxunur.
+A list is already being read	Artıq bir siyahı oxunur
+Reading your followers (%1$s)	İzləyiciləriniz oxunur (%1$s)
+Reading who you follow (%1$s)	İzlədikləriniz oxunur (%1$s)
+Couldn't read the list. Try again in a moment.	Siyahını oxumaq olmadı. Bir azdan yenidən cəhd edin.
+Stopped before anyone was read	Heç kim oxunmamış dayandırıldı
+Nobody follows this account yet	Bu hesabı hələ heç kim izləmir
+This account doesn't follow anyone yet	Bu hesab hələ heç kimi izləmir
+The file couldn't be saved. Try again.	Faylı saxlamaq olmadı. Yenidən cəhd edin.
+Saved one account to %2$s	Bir hesab %2$s qovluğunda saxlanıldı
+Saved %1$s accounts to %2$s	%1$s hesab %2$s qovluğunda saxlanıldı
+It stopped before the end of the list, so the file is partial.	Siyahının sonuna çatmadan dayandı, ona görə də fayl natamamdır.
+TikTok stopped answering before the end of the list, so the file is partial.	TikTok siyahının sonuna qədər cavab vermədi, ona görə də fayl natamamdır.
+Only the first %1$s are in the file.	Faylda yalnız ilk %1$s hesab var.
 Save your likes from a TikTok data export	Bəyənmələrinizi TikTok məlumat ixracından saxlayın
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	TikTok-un Ayarlar və məxfilik > Hesab > Məlumatlarınızı endirin bölməsindən göndərdiyi ixracı JSON formatında seçin. Orada bəyənilmiş və ya sevimli kimi göstərilən videolar seçilmiş videolar kimi, bir dəfəyə %1$s ədədə qədər saxlanılır.
 Reading the data export	Məlumat ixracı oxunur

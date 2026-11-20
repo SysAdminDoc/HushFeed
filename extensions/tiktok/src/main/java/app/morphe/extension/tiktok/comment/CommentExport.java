@@ -283,7 +283,8 @@ public final class CommentExport {
         return out.toString();
     }
 
-    private static StringBuilder appendField(StringBuilder out, String value) {
+    /** One CSV field; the follower list export writes its fields through here too. */
+    public static StringBuilder appendField(StringBuilder out, String value) {
         // A spreadsheet runs a cell that starts like a formula, so a comment reading
         // =HYPERLINK(...) would become a live link. A leading apostrophe keeps it text.
         if (!value.isEmpty() && "=+-@\t\r".indexOf(value.charAt(0)) >= 0) value = "'" + value;

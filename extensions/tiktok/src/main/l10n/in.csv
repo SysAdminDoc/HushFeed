@@ -2818,6 +2818,21 @@ My likes on this phone,Suka saya di ponsel ini
 Find and reopen the videos you liked only on this phone,Cari dan buka lagi video yang kamu sukai hanya di ponsel ini
 Videos you like on this phone show up here,Video yang kamu sukai di ponsel ini muncul di sini
 Likes cleared,Suka dihapus
+Export followers and following,Ekspor pengikut dan yang diikuti
+"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Menyimpan akun yang mengikuti kamu, atau yang kamu ikuti, sebagai file CSV di Download/Hushfeed. Akun dibaca kira-kira secepat menggulir daftarnya, hingga %1$s sekaligus."
+A list is already being read,Sebuah daftar sedang dibaca
+Reading your followers (%1$s),Membaca pengikut kamu (%1$s)
+Reading who you follow (%1$s),Membaca akun yang kamu ikuti (%1$s)
+Couldn't read the list. Try again in a moment.,Tidak bisa membaca daftarnya. Coba lagi sebentar lagi.
+Stopped before anyone was read,Dihentikan sebelum ada yang terbaca
+Nobody follows this account yet,Belum ada yang mengikuti akun ini
+This account doesn't follow anyone yet,Akun ini belum mengikuti siapa pun
+The file couldn't be saved. Try again.,File tidak bisa disimpan. Coba lagi.
+Saved one account to %2$s,Satu akun disimpan ke %2$s
+Saved %1$s accounts to %2$s,%1$s akun disimpan ke %2$s
+"It stopped before the end of the list, so the file is partial.","Proses berhenti sebelum akhir daftar, jadi filenya tidak lengkap."
+"TikTok stopped answering before the end of the list, so the file is partial.","TikTok berhenti menjawab sebelum akhir daftar, jadi filenya tidak lengkap."
+Only the first %1$s are in the file.,Hanya %1$s pertama yang ada di file.
 Save your likes from a TikTok data export,Simpan suka kamu dari ekspor data TikTok
 "Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Pilih ekspor yang dikirim TikTok dari Pengaturan dan privasi > Akun > Unduh data kamu, dalam format JSON. Video yang tercantum sebagai disukai atau favorit disimpan seperti video yang dipilih, hingga %1$s sekaligus."
 Reading the data export,Membaca ekspor data

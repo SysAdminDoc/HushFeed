@@ -2968,6 +2968,21 @@ My likes on this phone	Minhas curtidas neste celular
 Find and reopen the videos you liked only on this phone	Encontre e reabra os vídeos que você curtiu só neste celular
 Videos you like on this phone show up here	Os vídeos que você curte neste celular aparecem aqui
 Likes cleared	Curtidas limpas
+Export followers and following	Exportar seguidores e quem você segue
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Salva as contas que seguem você, ou as que você segue, como um arquivo CSV em Download/Hushfeed. Elas são lidas mais ou menos no ritmo de rolar a lista, até %1$s por vez.
+A list is already being read	Uma lista já está sendo lida
+Reading your followers (%1$s)	Lendo seus seguidores (%1$s)
+Reading who you follow (%1$s)	Lendo quem você segue (%1$s)
+Couldn't read the list. Try again in a moment.	Não deu para ler a lista. Tente de novo daqui a pouco.
+Stopped before anyone was read	Parou antes de ler alguém
+Nobody follows this account yet	Ninguém segue esta conta ainda
+This account doesn't follow anyone yet	Esta conta ainda não segue ninguém
+The file couldn't be saved. Try again.	Não deu para salvar o arquivo. Tente de novo.
+Saved one account to %2$s	Uma conta salva em %2$s
+Saved %1$s accounts to %2$s	%1$s contas salvas em %2$s
+It stopped before the end of the list, so the file is partial.	Parou antes do fim da lista, então o arquivo está incompleto.
+TikTok stopped answering before the end of the list, so the file is partial.	O TikTok parou de responder antes do fim da lista, então o arquivo está incompleto.
+Only the first %1$s are in the file.	Só as primeiras %1$s estão no arquivo.
 Save your likes from a TikTok data export	Salvar suas curtidas de uma exportação de dados do TikTok
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Escolha a exportação que o TikTok envia em Configurações e privacidade > Conta > Baixar seus dados, no formato JSON. Os vídeos que ela lista como curtidos ou favoritos são salvos como vídeos escolhidos, até %1$s por vez.
 Reading the data export	Lendo a exportação de dados

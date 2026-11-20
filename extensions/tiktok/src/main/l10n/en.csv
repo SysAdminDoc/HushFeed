@@ -156,6 +156,7 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 "A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.","A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends."
 "A like you give a video stays on this phone. The heart turns red, but TikTok isn't told, so the creator never sees it and it isn't on your profile. Needs Ghost mode on.","A like you give a video stays on this phone. The heart turns red, but TikTok isn't told, so the creator never sees it and it isn't on your profile. Needs Ghost mode on."
 "A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either.","A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either."
+A list is already being read,A list is already being read
 A long comment shows its first few lines and more. Tap more to read the rest right where it is.,A long comment shows its first few lines and more. Tap more to read the rest right where it is.
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
@@ -548,6 +549,7 @@ Couldn't read an interrupted change. Check your settings.,Couldn't read an inter
 Couldn't read that file. Choose it again.,Couldn't read that file. Choose it again.
 Couldn't read that file. Try again.,Couldn't read that file. Try again.
 Couldn't read that photo. Try another one.,Couldn't read that photo. Try another one.
+Couldn't read the list. Try again in a moment.,Couldn't read the list. Try again in a moment.
 Couldn't read this list. Close it and try again.,Couldn't read this list. Close it and try again.
 Couldn't rebuild search. Try again.,Couldn't rebuild search. Try again.
 Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
@@ -724,6 +726,7 @@ Export CSV,Export CSV
 Export JSON,Export JSON
 Export comments,Export comments
 Export diagnostic report,Export diagnostic report
+Export followers and following,Export followers and following
 Export loaded values,Export loaded values
 Export may be incomplete. The recordings are kept.,Export may be incomplete. The recordings are kept.
 Export recording files,Export recording files
@@ -1167,6 +1170,7 @@ Inserted cards,Inserted cards
 Instead of these settings. The list has a button that brings you back here.,Instead of these settings. The list has a button that brings you back here.
 Invisible controls button,Invisible controls button
 Invite friends,Invite friends
+"It stopped before the end of the list, so the file is partial.","It stopped before the end of the list, so the file is partial."
 "It's in %1$s, under %2$s. Tap to go there.","It's in %1$s, under %2$s. Tap to go there."
 Italiano,Italiano
 Join Amplify,Join Amplify
@@ -1492,6 +1496,7 @@ No text,No text
 No video saved. The original photos are missing.,No video saved. The original photos are missing.
 No video selected. Open a video first.,No video selected. Open a video first.
 No videos match,No videos match
+Nobody follows this account yet,Nobody follows this account yet
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.","Nobody was signed in to TikTok. Sign in, and it tries again at %1$s."
 None,None
 None of the photos could be saved. Try again.,None of the photos could be saved. Try again.
@@ -1576,6 +1581,7 @@ Only fields the Lab can check and copy safely are shown.,Only fields the Lab can
 Only from these countries,Only from these countries
 Only on the sides of the video,Only on the sides of the video
 Only tabs TikTok has loaded on this device are shown here. This doesn't force unavailable tabs to appear.,Only tabs TikTok has loaded on this device are shown here. This doesn't force unavailable tabs to appear.
+Only the first %1$s are in the file.,Only the first %1$s are in the file.
 Only the first %1$s characters of the sample were checked.,Only the first %1$s characters of the sample were checked.
 Only these caption languages,Only these caption languages
 Open,Open
@@ -1786,6 +1792,8 @@ Reading the data export,Reading the data export
 Reading the font file,Reading the font file
 Reading the seen-history file,Reading the seen-history file
 Reading watch history,Reading watch history
+Reading who you follow (%1$s),Reading who you follow (%1$s)
+Reading your followers (%1$s),Reading your followers (%1$s)
 Rebuild message search,Rebuild message search
 Rebuilding message search,Rebuilding message search
 Received message translation,Received message translation
@@ -1950,6 +1958,7 @@ Save your likes from a TikTok data export,Save your likes from a TikTok data exp
 "Save, restore, reset and undo your settings","Save, restore, reset and undo your settings"
 Saved,Saved
 Saved %1$s,Saved %1$s
+Saved %1$s accounts to %2$s,Saved %1$s accounts to %2$s
 Saved %1$s of %2$s photos before the story failed,Saved %1$s of %2$s photos before the story failed
 "Saved %1$s of %2$s, %3$s skipped","Saved %1$s of %2$s, %3$s skipped"
 "Saved %1$s of %2$s, %3$s skipped, rest cancelled","Saved %1$s of %2$s, %3$s skipped, rest cancelled"
@@ -1963,6 +1972,7 @@ Saved %1$s seen videos to the file,Saved %1$s seen videos to the file
 Saved %1$s videos,Saved %1$s videos
 Saved 1 seen video to the file,Saved 1 seen video to the file
 Saved in %1$s with %2$s of %3$s subtitles,Saved in %1$s with %2$s of %3$s subtitles
+Saved one account to %2$s,Saved one account to %2$s
 Saved one original photo,Saved one original photo
 Saved one video,Saved one video
 "Saved photos, covers, story photos and stickers that don't move are the exact files TikTok sent, not a new JPEG or PNG. Some galleries and computers can't open HEIF or WebP.","Saved photos, covers, story photos and stickers that don't move are the exact files TikTok sent, not a new JPEG or PNG. Some galleries and computers can't open HEIF or WebP."
@@ -1980,6 +1990,7 @@ Saves TikTok's latest crash report on this phone so it can go in the diagnostic 
 Saves at once,Saves at once
 Saves right now,Saves right now
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.","Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies."
+"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time."
 "Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.","Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed."
 Saves the details file in JSON format instead of plain text. Useful if another tool will read it.,Saves the details file in JSON format instead of plain text. Useful if another tool will read it.
 "Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.","Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere."
@@ -2318,6 +2329,7 @@ Stop videos at the end instead of replaying them.,Stop videos at the end instead
 Stop waiting,Stop waiting
 Stopped after dismissing %1$s suggested accounts,Stopped after dismissing %1$s suggested accounts
 Stopped after dismissing one suggested account,Stopped after dismissing one suggested account
+Stopped before anyone was read,Stopped before anyone was read
 Stopped by an unexpected error,Stopped by an unexpected error
 Stopped waiting for the file app. It hasn't said yet whether the backup was saved.,Stopped waiting for the file app. It hasn't said yet whether the backup was saved.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.,Stopped waiting for the file app. It hasn't said yet whether the export was saved.
@@ -2480,6 +2492,7 @@ The feed is open again,The feed is open again
 The feed stops when this video ends.,The feed stops when this video ends.
 "The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.","The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away."
 "The file app still has the last file. Try again once it lets go, or restart TikTok.","The file app still has the last file. Try again once it lets go, or restart TikTok."
+The file couldn't be saved. Try again.,The file couldn't be saved. Try again.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.
 The frame couldn't be read. Try again.,The frame couldn't be read. Try again.
 The frame couldn't be saved. Try again.,The frame couldn't be saved. Try again.
@@ -2544,6 +2557,7 @@ These loaded values are for a different TikTok version,These loaded values are f
 These notes are in English.,These notes are in English.
 This LIVE's stream can't be saved,This LIVE's stream can't be saved
 This account can't make stickers,This account can't make stickers
+This account doesn't follow anyone yet,This account doesn't follow anyone yet
 This catalog entry is no longer available. Refresh the Lab and try again.,This catalog entry is no longer available. Refresh the Lab and try again.
 This change couldn't be saved. Try again.,This change couldn't be saved. Try again.
 This configuration has no fields that can be copied and changed safely on this build.,This configuration has no fields that can be copied and changed safely on this build.
@@ -2623,6 +2637,7 @@ TikTok slips the videos it saved for offline viewing back into For You when it c
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok starts as a new phone after the restart. Tap again to cancel.
+"TikTok stopped answering before the end of the list, so the file is partial.","TikTok stopped answering before the end of the list, so the file is partial."
 "TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok.","TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok."
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first."
 TikTok's background play and Auto scroll,TikTok's background play and Auto scroll

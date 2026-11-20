@@ -16,6 +16,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.AppIconPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
+import app.morphe.extension.tiktok.settings.preference.FollowListExportPreference;
 import app.morphe.extension.tiktok.settings.preference.ImportedFontPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.ProfileShortcutChecklistPreference;
@@ -288,6 +289,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(context, "Hide your account warning",
                     "Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.",
                     Settings.HIDE_OWN_PROFILE_RESTRICTION_NOTICE));
+            addPreference(new FollowListExportPreference(context));
         }
         if (SettingsStatus.copyIdsEnabled) {
             addPreference(new TogglePreference(

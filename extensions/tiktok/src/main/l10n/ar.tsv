@@ -3215,6 +3215,25 @@ My likes on this phone	إعجاباتي على هذا الهاتف
 Find and reopen the videos you liked only on this phone	اعثر على الفيديوهات التي أعجبتك على هذا الهاتف فقط وأعد فتحها
 Videos you like on this phone show up here	الفيديوهات التي تعجبك على هذا الهاتف تظهر هنا
 Likes cleared	تم مسح الإعجابات
+Export followers and following	تصدير المتابِعين والمتابَعين
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	يحفظ الحسابات التي تتابعك، أو التي تتابعها، كملف CSV في Download/Hushfeed. تُقرأ بسرعة تقارب سرعة تمرير القائمة، حتى %1$s في المرة الواحدة.
+A list is already being read	تجري قراءة قائمة بالفعل
+Reading your followers (%1$s)	جارٍ قراءة متابِعيك (%1$s)
+Reading who you follow (%1$s)	جارٍ قراءة من تتابعهم (%1$s)
+Couldn't read the list. Try again in a moment.	تعذّرت قراءة القائمة. حاول مرة أخرى بعد لحظة.
+Stopped before anyone was read	توقّف قبل قراءة أي حساب
+Nobody follows this account yet	لا أحد يتابع هذا الحساب بعد
+This account doesn't follow anyone yet	هذا الحساب لا يتابع أحدًا بعد
+The file couldn't be saved. Try again.	تعذّر حفظ الملف. حاول مرة أخرى.
+Saved one account to %2$s	تم حفظ حساب واحد في %2$s
+Saved %1$s accounts to %2$s	تم حفظ %1$s حساب في %2$s
+It stopped before the end of the list, so the file is partial.	توقّف قبل نهاية القائمة، لذا الملف غير كامل.
+TikTok stopped answering before the end of the list, so the file is partial.	توقّف TikTok عن الرد قبل نهاية القائمة، لذا الملف غير كامل.
+Only the first %1$s are in the file.	الملف يضم أول %1$s فقط.
+Saved %1$s accounts to %2$s|zero	تم حفظ %1$s حساب في %2$s
+Saved %1$s accounts to %2$s|two	تم حفظ %1$s حسابين في %2$s
+Saved %1$s accounts to %2$s|few	تم حفظ %1$s حسابات في %2$s
+Saved %1$s accounts to %2$s|many	تم حفظ %1$s حسابًا في %2$s
 Save your likes from a TikTok data export	حفظ إعجاباتك من تصدير بيانات TikTok
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	اختر التصدير الذي يرسله TikTok من الإعدادات والخصوصية > الحساب > تنزيل بياناتك، بتنسيق JSON. تُحفظ الفيديوهات المدرجة فيه كمُعجَب بها أو مفضلة مثل الفيديوهات المختارة، حتى %1$s في المرة الواحدة.
 Reading the data export	جارٍ قراءة تصدير البيانات

@@ -3151,6 +3151,24 @@ My likes on this phone	Мои лайки на этом телефоне
 Find and reopen the videos you liked only on this phone	Находите и снова открывайте видео, которые вы лайкнули только на этом телефоне
 Videos you like on this phone show up here	Здесь появятся видео, которые вы лайкнули на этом телефоне
 Likes cleared	Лайки очищены
+Export followers and following	Экспорт подписчиков и подписок
+Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Сохраняет аккаунты, которые на вас подписаны, или те, на которые подписаны вы, в CSV-файл в папке Download/Hushfeed. Они читаются примерно с той скоростью, с какой листают список, до %1$s за раз.
+A list is already being read	Список уже читается
+Reading your followers (%1$s)	Читаем ваших подписчиков (%1$s)
+Reading who you follow (%1$s)	Читаем ваши подписки (%1$s)
+Couldn't read the list. Try again in a moment.	Не удалось прочитать список. Попробуйте ещё раз чуть позже.
+Stopped before anyone was read	Остановлено до того, как кто-то был прочитан
+Nobody follows this account yet	На этот аккаунт пока никто не подписан
+This account doesn't follow anyone yet	Этот аккаунт пока ни на кого не подписан
+The file couldn't be saved. Try again.	Не удалось сохранить файл. Попробуйте ещё раз.
+Saved one account to %2$s	Один аккаунт сохранён в %2$s
+Saved %1$s accounts to %2$s	Сохранено аккаунтов в %2$s: %1$s
+It stopped before the end of the list, so the file is partial.	Чтение остановлено до конца списка, поэтому файл неполный.
+TikTok stopped answering before the end of the list, so the file is partial.	TikTok перестал отвечать до конца списка, поэтому файл неполный.
+Only the first %1$s are in the file.	В файле только первые %1$s.
+Saved %1$s accounts to %2$s|one	Сохранён %1$s аккаунт в %2$s
+Saved %1$s accounts to %2$s|few	Сохранено %1$s аккаунта в %2$s
+Saved %1$s accounts to %2$s|many	Сохранено %1$s аккаунтов в %2$s
 Save your likes from a TikTok data export	Сохранить ваши лайки из экспорта данных TikTok
 Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Выберите экспорт, который TikTok присылает из раздела Настройки и конфиденциальность > Аккаунт > Скачать свои данные, в формате JSON. Видео, которые в нём отмечены как понравившиеся или избранные, сохраняются как выбранные видео, до %1$s за раз.
 Reading the data export	Читаем экспорт данных

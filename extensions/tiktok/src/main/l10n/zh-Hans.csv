@@ -2816,6 +2816,21 @@ My likes on this phone,我在这部手机上的点赞
 Find and reopen the videos you liked only on this phone,查找并重新打开你只在这部手机上点赞的视频
 Videos you like on this phone show up here,你在这部手机上点赞的视频会显示在这里
 Likes cleared,点赞已清除
+Export followers and following,导出粉丝和关注列表
+"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.",将关注你的帐户或你关注的帐户保存为 CSV 文件，存放在 Download/Hushfeed 中。读取速度大约与滑动浏览列表相当，每次最多 %1$s 个.
+A list is already being read,已经在读取一个列表
+Reading your followers (%1$s),正在读取你的粉丝 (%1$s)
+Reading who you follow (%1$s),正在读取你关注的人 (%1$s)
+Couldn't read the list. Try again in a moment.,无法读取列表。请稍后再试.
+Stopped before anyone was read,在读取到任何人之前已停止
+Nobody follows this account yet,还没有人关注这个帐户
+This account doesn't follow anyone yet,这个帐户还没有关注任何人
+The file couldn't be saved. Try again.,无法保存文件。请重试.
+Saved one account to %2$s,已将 1 个帐户保存到 %2$s
+Saved %1$s accounts to %2$s,已将 %1$s 个帐户保存到 %2$s
+"It stopped before the end of the list, so the file is partial.",在列表结束前已停止，所以文件不完整.
+"TikTok stopped answering before the end of the list, so the file is partial.",TikTok 在列表结束前停止了响应，所以文件不完整.
+Only the first %1$s are in the file.,文件中只有前 %1$s 个.
 Save your likes from a TikTok data export,从 TikTok 数据导出中保存你的点赞
 "Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.",选择 TikTok 从“设置和隐私 > 帐户 > 下载你的数据”发来的 JSON 格式导出。其中列为已点赞或已收藏的视频会像挑选的视频一样保存，每次最多 %1$s 个.
 Reading the data export,正在读取数据导出

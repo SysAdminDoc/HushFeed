@@ -2816,6 +2816,21 @@ My likes on this phone,Lượt thích của tôi trên điện thoại này
 Find and reopen the videos you liked only on this phone,Tìm và mở lại các video bạn chỉ thích trên điện thoại này
 Videos you like on this phone show up here,Các video bạn thích trên điện thoại này sẽ hiện ở đây
 Likes cleared,Đã xóa lượt thích
+Export followers and following,Xuất danh sách người theo dõi và đang theo dõi
+"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Lưu các tài khoản theo dõi bạn, hoặc các tài khoản bạn theo dõi, thành tệp CSV trong Download/Hushfeed. Chúng được đọc với tốc độ gần bằng tốc độ cuộn danh sách, tối đa %1$s tài khoản mỗi lần."
+A list is already being read,Đang đọc một danh sách rồi
+Reading your followers (%1$s),Đang đọc người theo dõi bạn (%1$s)
+Reading who you follow (%1$s),Đang đọc những người bạn theo dõi (%1$s)
+Couldn't read the list. Try again in a moment.,Không đọc được danh sách. Hãy thử lại sau giây lát.
+Stopped before anyone was read,Đã dừng trước khi đọc được ai
+Nobody follows this account yet,Chưa có ai theo dõi tài khoản này
+This account doesn't follow anyone yet,Tài khoản này chưa theo dõi ai
+The file couldn't be saved. Try again.,Không lưu được tệp. Hãy thử lại.
+Saved one account to %2$s,Đã lưu một tài khoản vào %2$s
+Saved %1$s accounts to %2$s,Đã lưu %1$s tài khoản vào %2$s
+"It stopped before the end of the list, so the file is partial.",Đã dừng trước khi hết danh sách nên tệp chưa đầy đủ.
+"TikTok stopped answering before the end of the list, so the file is partial.",TikTok ngừng phản hồi trước khi hết danh sách nên tệp chưa đầy đủ.
+Only the first %1$s are in the file.,Tệp chỉ có %1$s tài khoản đầu tiên.
 Save your likes from a TikTok data export,Lưu lượt thích của bạn từ bản xuất dữ liệu TikTok
 "Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Chọn bản xuất TikTok gửi từ Cài đặt và quyền riêng tư > Tài khoản > Tải dữ liệu của bạn xuống, ở định dạng JSON. Các video mà bản này liệt kê là đã thích hoặc yêu thích sẽ được lưu như video đã chọn, tối đa %1$s video mỗi lần."
 Reading the data export,Đang đọc bản xuất dữ liệu

@@ -1503,3 +1503,14 @@ internal object PineDramaMidInsertRequestFingerprint : Fingerprint(
     parameters = listOf(),
     strings = listOf("buildPineDramaMidInsertRequestInfo manager="),
 )
+
+/**
+ * The home top bar's Tako icon. Its onCreate calls the assem's super onCreate, then hands the
+ * icon to the top bar's registry; the class name has stayed readable since 47.7.1.
+ */
+internal object TakoTopIconCreateFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/tako/feed/topicon/TakoTopIconAssem;",
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf(),
+)

@@ -40,6 +40,17 @@ public final class TakoAiFilter {
         return enabled;
     }
 
+    /**
+     * The Tako icon in the home top bar. TakoTopIconAssem registers it from onCreate; asked right
+     * after the super call, so with the switch on the icon is never registered.
+     */
+    public static boolean shouldHideTopIcon() {
+        boolean enabled = Settings.HIDE_TAKO_AI.get();
+        HookStatus.bound(HOOK_FAMILY,
+                "top bar icon " + (enabled ? "hidden" : "left"));
+        return enabled;
+    }
+
     public static void hideBoundFeedButtonView(View view) {
         boolean enabled = Settings.HIDE_TAKO_AI.get();
         HookStatus.bound(HOOK_FAMILY,

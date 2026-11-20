@@ -642,6 +642,23 @@ val feedFilterPatch = bytecodePatch(
             "const/4 p1, 0x0",
         )
 
+        // The Tako icon in the home top bar. onCreate must still reach the assem's super call, so
+        // the switch is asked right after it and the icon is never handed to the top bar.
+        TakoTopIconCreateFingerprint.method.apply {
+            requireLocals("Feed filter", 1)
+            val afterSuper = indexOfFirstInstructionOrThrow(Opcode.INVOKE_SUPER) + 1
+            addInstructionsWithLabels(
+                afterSuper,
+                """
+                    invoke-static {}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->shouldHideTopIcon()Z
+                    move-result v0
+                    if-eqz v0, :morphe_keep_tako_top_icon
+                    return-void
+                """,
+                ExternalLabel("morphe_keep_tako_top_icon", getInstruction(afterSuper)),
+            )
+        }
+
         // The "Ask" strip under the caption is a slot component bound per video, and it is not
         // the floating button the two hooks above cover (issue #6). Asked at the top of its bind:
         // with the switch on the slot's view is hidden and the bind never fills it.

@@ -51,6 +51,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         return SettingsStatus.foldableSplitViewEnabled
                 || SettingsStatus.amoledDarkModeEnabled
                 || SettingsStatus.systemFontEnabled
+                || SettingsStatus.uiScaleEnabled
                 || SettingsStatus.turnOffHapticsEnabled
                 || SettingsStatus.screenTransitionsEnabled
                 || hasAppIconPicker()
@@ -113,6 +114,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP, "%1$s dp", "%1$s dp"));
         }
         if (SettingsStatus.amoledDarkModeEnabled || SettingsStatus.systemFontEnabled
+                || SettingsStatus.uiScaleEnabled
                 || SettingsStatus.turnOffHapticsEnabled || SettingsStatus.screenTransitionsEnabled
                 || hasAppIconPicker()) {
             addPreference(new SectionHeadingPreference(context, "Appearance"));
@@ -126,6 +128,13 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "doesn't change. Restart TikTok to see the change.",
                     Settings.AMOLED_DARK_MODE
             ));
+        }
+        if (SettingsStatus.uiScaleEnabled) {
+            addPreference(new app.morphe.extension.tiktok.settings.preference.NumberInputPreference(context,
+                    "UI size",
+                    "Makes TikTok's whole interface smaller, text and buttons alike, so more fits "
+                            + "on screen. 100 leaves it as it is. Restart TikTok to see the change.",
+                    Settings.UI_SCALE_PERCENT, "%1$s%%", "%1$s%%"));
         }
         if (SettingsStatus.systemFontEnabled) {
             addPreference(new TogglePreference(

@@ -119,8 +119,11 @@ public class AdsFilter implements IFilter {
      * showBottomLabel requires allianceItemLabelType == 1 and nonempty label text; a location
      * or an incomplete alliance object alone is not ad evidence. Read at list delivery so
      * the video is removed before the renderer runs, independently of locale or its UI gate.
+     * TikTok Lite's Aweme has no ContentModel at all (47.8.2), so there's nothing to read there
+     * and nothing to report missing (#48).
      */
     private static boolean hasLocalAllianceDisclosure(Aweme item) {
+        if (!FeedItemsFilter.tiktokFeedItemListPresent) return false;
         Object content = Reflect.required(item, "getContentModel", DISCLOSURE_HOOK_FAMILY);
         Object business = Reflect.requiredField(content, "standardBusinessModel", DISCLOSURE_HOOK_FAMILY);
         Object alliance = Reflect.required(business, "getLocalAllianceInfo", DISCLOSURE_HOOK_FAMILY);

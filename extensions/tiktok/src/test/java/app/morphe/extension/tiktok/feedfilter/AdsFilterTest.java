@@ -234,6 +234,31 @@ public class AdsFilterTest {
         assertTrue(FeedFilterCounters.report().isEmpty());
     }
 
+    /** TikTok Lite's Aweme: the anchor getter is there, ContentModel isn't (47.8.2, #48). */
+    public static class LiteVideo extends Aweme {
+        @Override public boolean isAd() { return false; }
+        @Override public boolean isSoftAd() { return false; }
+        @Override public AwemeRawAd getAwemeRawAd() { return null; }
+        @Override public boolean isWithPromotionalMusic() { return false; }
+        public String getAnchorsExtras() { return null; }
+    }
+
+    @Test public void liteReportsNoMissingDisclosureMembersWhileTikTokStillWould() {
+        try {
+            FeedItemsFilter.tiktokFeedItemListPresent = false;
+            assertFalse(filter.getFiltered(new LiteVideo()));
+            AdsFilter.evidenceFingerprint(new LiteVideo());
+            assertEquals(Collections.emptyList(), HookStatus.missing("feed ad disclosures"));
+
+            FeedItemsFilter.tiktokFeedItemListPresent = true;
+            assertFalse(filter.getFiltered(new LiteVideo()));
+            assertEquals(Collections.singletonList("method " + LiteVideo.class.getName() + "#getContentModel"),
+                    HookStatus.missing("feed ad disclosures"));
+        } finally {
+            FeedItemsFilter.tiktokFeedItemListPresent = true;
+        }
+    }
+
     @Test public void missingAnchorGetterFailsOpenAndNamesTheContract() {
         VideoWithoutAnchors video = new VideoWithoutAnchors();
 

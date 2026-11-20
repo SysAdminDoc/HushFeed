@@ -5,12 +5,13 @@
 package app.morphe.patches.tiktok.privacy
 
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
-import app.morphe.patches.tiktok.misc.extension.MainActivityOnCreateFingerprint
+import app.morphe.patches.tiktok.misc.extension.launcherOnCreate
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -53,7 +54,7 @@ val cameraMicIndicatorPatch = bytecodePatch(
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -64,7 +65,7 @@ val cameraMicIndicatorPatch = bytecodePatch(
         // are scenes inside an activity that has already resumed by then, and a mark placed on the
         // main activity instead sat hidden underneath it (the S25, 2026-09-26). A range invoke, so
         // the parameter register's number never has to fit a 4-bit operand.
-        MainActivityOnCreateFingerprint.method.addInstruction(
+        launcherOnCreate(packageMetadata.packageName).addInstruction(
             0,
             "invoke-static/range { p0 .. p0 }, $EXTENSION->install(Landroid/app/Activity;)V",
         )

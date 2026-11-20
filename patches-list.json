@@ -1,7 +1,8 @@
 {
   "version": "v0.83.0",
   "appNames": {
-    "com.zhiliaoapp.musically": "TikTok"
+    "com.zhiliaoapp.musically": "TikTok",
+    "com.zhiliaoapp.musically.go": "TikTok Lite"
   },
   "patches": [
     {
@@ -1464,6 +1465,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -1484,6 +1488,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -1513,6 +1538,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -1533,6 +1561,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -1678,6 +1727,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -1698,6 +1750,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -1726,6 +1799,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -1746,6 +1822,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -2838,6 +2935,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -2858,6 +2958,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -3500,6 +3621,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -3520,6 +3644,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -6883,6 +7028,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -6903,6 +7051,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -8302,6 +8471,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -8322,6 +8494,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -9995,6 +10188,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -10015,6 +10211,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]
@@ -11860,6 +12077,9 @@
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.9.2"
+        ],
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
         ]
       },
       "compatibility": [
@@ -11880,6 +12100,27 @@
                 "ARMEABI_V7A": 2024709020,
                 "X86": 2024709020,
                 "X86_64": 2024709020
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
               }
             }
           ]

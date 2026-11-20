@@ -24,7 +24,7 @@ val installedAppsBlockerPatch = bytecodePatch(
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

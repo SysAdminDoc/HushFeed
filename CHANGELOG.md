@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* With `Keep watching in a small window` on, a LIVE's small window now has previous and next buttons, like a video's. They move to the LIVE above or below the way a swipe does, Record (or TikTok's own button) sits between them, and the one with no LIVE its way shows dimmed (#413).
 * A save that a server turns down now shows up in the diagnostic report's new SAVE REFUSALS section. It names the server, says how it refused (like HTTP 403), and tells whether the save's link had already expired. Before, each refused address only read "url omitted" (#464).
 * The diagnostic report's DOWNLOAD PICKER section also lists what's in the video models TikTok keeps beside a video's qualities, each rendition by name and height, so a report can show whether one of them is taller than what Save offers (#471).
 * When TikTok freezes ("isn't responding") or crashes in native code, the last exits in the diagnostic report now show the stack Android kept. A freeze lists the main thread's top 40 frames, and a native crash lists its signal and the crashing thread. Android 17's memory limiter and anomaly exits are named too, where the report used to show a bare number.

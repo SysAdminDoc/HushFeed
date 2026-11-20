@@ -2919,6 +2919,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	จัดเรียงวิดีโอที่โหลดแล้วในตารางรายการโปรด
 Show the country and date under the caption	แสดงประเทศและวันที่ใต้คำบรรยาย
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	ย้ายประเทศและวันที่โพสต์ออกจากแถวของครีเอเตอร์ไปไว้ในบรรทัดของตัวเองใต้คำบรรยาย
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	LIVE ก่อนหน้า
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	LIVE ถัดไป
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	วิดีโอก่อนหน้า
 # context: picture-in-picture window button that moves TikTok's feed

@@ -2916,6 +2916,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Ordenar os vídeos carregados nas grades de Favoritos
 Show the country and date under the caption	Mostrar o país e a data abaixo da legenda
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Move o país e a data da publicação da linha do criador para uma linha própria abaixo da legenda.
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	LIVE anterior
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	Próxima LIVE
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	Vídeo anterior
 # context: picture-in-picture window button that moves TikTok's feed

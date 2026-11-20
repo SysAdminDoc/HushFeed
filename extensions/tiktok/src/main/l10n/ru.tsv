@@ -3099,6 +3099,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Сортировать загруженные видео в сетках «Избранное»
 Show the country and date under the caption	Показывать страну и дату под описанием
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Переносит страну и дату публикации из строки автора на отдельную строку под описанием.
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	Предыдущий LIVE
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	Следующий LIVE
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	Предыдущее видео
 # context: picture-in-picture window button that moves TikTok's feed

@@ -3163,6 +3163,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	رتب الفيديوهات المحملة في شبكات المفضلات
 Show the country and date under the caption	اعرض البلد والتاريخ تحت الوصف
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	ينقل البلد وتاريخ النشر من صف صانع المحتوى إلى سطر خاص بهما أسفل الوصف.
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	LIVE السابق
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	LIVE التالي
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	الفيديو السابق
 # context: picture-in-picture window button that moves TikTok's feed

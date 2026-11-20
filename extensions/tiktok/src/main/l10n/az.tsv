@@ -2916,6 +2916,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Sevimlilər şəbəkələrində yüklənmiş videoları sıralayın
 Show the country and date under the caption	Ölkəni və tarixi başlığın altında göstərin
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Ölkəni və paylaşım tarixini müəllifin sətrindən götürüb başlığın altında ayrıca sətirə köçürür.
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	Əvvəlki LIVE
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	Növbəti LIVE
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	Əvvəlki video
 # context: picture-in-picture window button that moves TikTok's feed

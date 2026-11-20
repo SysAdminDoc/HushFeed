@@ -127,6 +127,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_CAPTIONS_AVAILABLE = new BooleanSetting("keep_captions_available", FALSE, true);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
+    /** The whole interface's size in percent, applied through TikTok's own density rewrite. 100 leaves it alone. */
+    public static final IntegerSetting UI_SCALE_PERCENT =
+            new IntegerSetting("ui_scale_percent", 100, true).withRange(50, 100);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
     // Use system font's hook draws TikTok's text in the imported font file while this is on and
     // the file loads; it wins over SYSTEM_FONT. The file itself lives in TikTok's files, not here.

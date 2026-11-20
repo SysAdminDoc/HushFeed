@@ -11,6 +11,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.interaction.cleardisplay.FeedPagerPageSelectedFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -376,6 +377,8 @@ internal val forYouShowRepairPatch = bytecodePatch {
     dependsOn(sharedExtensionPatch)
 
     execute {
+        // TikTok Lite (#48) has no For You fragment to repair: its feed is its own.
+        if (isTikTokLite(packageMetadata.packageName)) return@execute
         try {
             val calls = forYouShowCalls { classDefByOrNull(it) }
             val pageSelected = FeedPagerPageSelectedFingerprint.method

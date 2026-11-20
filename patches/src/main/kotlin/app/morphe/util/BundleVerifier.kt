@@ -95,7 +95,7 @@ object BundleVerifier {
 
     /** The delivered description must name every declared host as an exact version. */
     fun requireTargetDescription(description: String?) {
-        val targets = AppCompatibilities.tiktok().flatMap { it.targets }
+        val targets = AppCompatibilities.declared().flatMap { it.targets }
             .mapNotNull { it.version }.distinct()
         val missing = targets.filter { version ->
             !Regex("(?<![\\d.])${Regex.escape(version)}(?![\\d.])")

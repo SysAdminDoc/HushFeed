@@ -5,6 +5,7 @@
 package app.morphe.patches.shared.misc.extension
 
 import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
@@ -54,7 +55,8 @@ fun sharedExtensionPatch(
 
     finalize {
         // The hooks are made in finalize to ensure that the context is hooked before any other patches.
-        hooks.forEach { hook -> hook(EXTENSION_CLASS_DESCRIPTOR) }
+        val packageName = packageMetadata.packageName
+        hooks.filter { it.appliesTo(packageName) }.forEach { hook -> hook(EXTENSION_CLASS_DESCRIPTOR) }
 
         // Modify Utils method to include the patches release version.
         MorpheUtilsPatchesVersionFingerprint.method.apply {
@@ -96,7 +98,9 @@ internal fun localBundleFile(classUrl: URL?): File {
 /**
  * Handles passing the application context to the extension code. Typically, the main activity
  * onCreate() method is hooked, but sometimes additional hooks are required if extension code
- * can be reached before the main activity is fully created.
+ * can be reached before the main activity is fully created. A hook given [packageNames] is made
+ * only in those apps, for a bundle that patches more than one app from the same code (TikTok and
+ * TikTok Lite start up through different classes); without them it is made in every app.
  */
 open class ExtensionHook(
     internal val fingerprint: Fingerprint,
@@ -104,7 +108,11 @@ open class ExtensionHook(
     private val contextRegisterResolver: (Method) -> String = { "p0" },
     private val postContextClassDescriptor: String? = null,
     private val postContextMethodName: String? = null,
+    private val packageNames: Set<String>? = null,
 ) {
+    /** Whether this hook belongs in the app with this package name. */
+    fun appliesTo(packageName: String): Boolean = packageNames == null || packageName in packageNames
+
     operator fun invoke(extensionClassDescriptor: String) {
         fingerprint.method.apply {
             val insertIndex = insertIndexResolver(this@apply)

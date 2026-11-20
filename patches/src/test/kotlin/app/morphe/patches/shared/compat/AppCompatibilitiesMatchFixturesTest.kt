@@ -33,7 +33,7 @@ class AppCompatibilitiesMatchFixturesTest {
 
     @Test
     fun `the bundle verifier rejects each omitted host and version lookalikes`() {
-        val versions = AppCompatibilities.tiktok().single().targets.map { checkNotNull(it.version) }
+        val versions = AppCompatibilities.declared().flatMap { it.targets }.map { checkNotNull(it.version) }
         BundleVerifier.requireTargetDescription("TikTok " + versions.joinToString(", "))
         for (missing in versions) {
             val others = versions.filter { it != missing }.joinToString(", ")

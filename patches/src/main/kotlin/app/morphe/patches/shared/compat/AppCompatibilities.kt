@@ -29,6 +29,22 @@ internal object AppCompatibilities {
     /** The version codes of every declared TikTok build. */
     val TIKTOK_VERSION_CODES = setOf(TIKTOK_4792_VERSION_CODE)
 
+    /** TikTok's package name. */
+    const val TIKTOK_PACKAGE = "com.zhiliaoapp.musically"
+
+    /**
+     * TikTok Lite's package name (#48). Lite is its own app, built from a thin copy of TikTok's
+     * code with its own start-up, feed and screens, so a patch is declared for it only once it
+     * has been made to work there.
+     */
+    const val TIKTOK_LITE_PACKAGE = "com.zhiliaoapp.musically.go"
+
+    /** SHA-256 of TikTok Lite's signing certificate, as `apksigner verify --print-certs` prints it. */
+    const val TIKTOK_LITE_SIGNER_SHA256 = "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+
+    /** TikTok Lite 47.8.2's version code. APKMirror carries it as one universal APK. */
+    const val TIKTOK_LITE_4782_VERSION_CODE = 470802
+
     /**
      * Targets: the TikTok global package, 47.9.2 only. Only the newest stable build is declared:
      * when a newer one is supported, the one before it is dropped in the same release, so every
@@ -37,7 +53,7 @@ internal object AppCompatibilities {
     fun tiktok(): Array<Compatibility> = arrayOf(
         Compatibility(
             name = "TikTok",
-            packageName = "com.zhiliaoapp.musically",
+            packageName = TIKTOK_PACKAGE,
             appIconColor = TIKTOK_COLOR,
             signatures = setOf(TIKTOK_SIGNER_SHA256),
             targets = listOf(
@@ -45,4 +61,21 @@ internal object AppCompatibilities {
             ),
         ),
     )
+
+    /** TikTok Lite, 47.8.2 only, under the same newest-stable-build rule as TikTok. */
+    fun tiktokLite(): Compatibility = Compatibility(
+        name = "TikTok Lite",
+        packageName = TIKTOK_LITE_PACKAGE,
+        appIconColor = TIKTOK_COLOR,
+        signatures = setOf(TIKTOK_LITE_SIGNER_SHA256),
+        targets = listOf(
+            AppTarget(version = "47.8.2", versionCode = TIKTOK_LITE_4782_VERSION_CODE),
+        ),
+    )
+
+    /** TikTok and TikTok Lite, for the patches that work in both. */
+    fun tiktokAndLite(): Array<Compatibility> = tiktok() + tiktokLite()
+
+    /** Every app the bundle declares, for the checks that cover all of them. */
+    fun declared(): List<Compatibility> = tiktok().toList() + tiktokLite()
 }

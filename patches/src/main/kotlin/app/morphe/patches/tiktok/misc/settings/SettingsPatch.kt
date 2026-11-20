@@ -359,11 +359,16 @@ val settingsPatch = bytecodePatch(
     default = true,
 ) {
     category("Settings")
-    dependsOn(sharedExtensionPatch, forYouShowRepairPatch, managerQueryPatch)
+    dependsOn(sharedExtensionPatch, forYouShowRepairPatch, managerQueryPatch, ownSettingsActivityPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
+        if (isTikTokLite(packageMetadata.packageName)) {
+            hostSettingsInOwnActivity()
+            return@execute
+        }
+
         // First, before any other write: TikTok's own crash recovery would delete what this
         // screen saves.
         keepHushfeedPreferenceFiles(

@@ -13,6 +13,7 @@ import app.morphe.extension.shared.settings.preference.LogBufferManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,8 @@ import java.util.Map;
  * <p>Every call TikTok's Retrofit fork makes runs {@code SsHttpCall.getResponseWithInterceptorChain}
  * once per attempt, from {@code execute} and from {@code enqueue} alike, and both build the call's
  * request before it runs. The patch hands this the call there; the request's host and body are
- * read off real-named getters. Video and image downloads and other companies' SDKs keep
+ * read off real-named getters, or in TikTok Lite off its URL and body fields (#48). Video and
+ * image downloads and other companies' SDKs keep
  * connections of their own and are not counted, and the section says so.
  *
  * <p>The export takes out every TikTok host name, since a whole one carries region detail. So a
@@ -63,13 +65,14 @@ public final class NetworkRequests implements LogBufferManager.ReportSection {
             }
             Object request = request(call);
             if (request == null) return;
-            String host = invokeString(request, "getHost");
-            record(host, bodyLength(request));
+            RequestReader read = reader(request.getClass());
+            String host = read.host(request);
+            record(host, read.bodyLength(request));
             if (!bound) {
                 bound = true;
                 HookStatus.bound("api requests", "SsHttpCall chain");
             }
-            if (BaseSettings.DEBUG.get() && isLogHost(host)) notePath(request, bucket(host));
+            if (BaseSettings.DEBUG.get() && isLogHost(host)) notePath(read, request, bucket(host));
         } catch (Throwable failure) {
             if (!warned) {
                 warned = true;
@@ -102,9 +105,9 @@ public final class NetworkRequests implements LogBufferManager.ReportSection {
      * cannot. The path only, never the query, and the host only as its domain and kind. Read on
      * its own so a build whose request has no path getter still counts the request.
      */
-    private static void notePath(Object request, String bucket) {
+    private static void notePath(RequestReader read, Object request, String bucket) {
         try {
-            String path = invokeString(request, "getPath");
+            String path = read.path(request);
             if (path == null) return;
             int query = path.indexOf('?');
             String shown = query >= 0 ? path.substring(0, query) : path;
@@ -208,24 +211,152 @@ public final class NetworkRequests implements LogBufferManager.ReportSection {
         return field.get(call);
     }
 
-    private static String invokeString(Object target, String getter) throws ReflectiveOperationException {
-        Method method = target.getClass().getMethod(getter);
-        method.setAccessible(true);
-        Object value = method.invoke(target);
-        return value == null ? null : value.toString();
+    private static volatile RequestReader reader;
+
+    private static RequestReader reader(Class<?> type) {
+        RequestReader current = reader;
+        if (current == null || current.type != type) {
+            current = new RequestReader(type);
+            reader = current;
+        }
+        return current;
     }
 
-    /** The body's own length, or -1 when there is none to read or it does not know. */
-    private static long bodyLength(Object request) throws ReflectiveOperationException {
-        Method getBody = request.getClass().getMethod("getBody");
-        getBody.setAccessible(true);
-        Object body = getBody.invoke(request);
-        if (body == null) return 0;
-        // The body is some implementation of TypedOutput, not always a public class.
-        Method length = body.getClass().getMethod("length");
-        length.setAccessible(true);
-        Object value = length.invoke(body);
-        return value instanceof Number ? ((Number) value).longValue() : -1;
+    /**
+     * How one request class is read. TikTok's client.Request answers getHost, getPath and getBody
+     * by name. TikTok Lite's (#48) is obfuscated, so none of those exist there: the host and path
+     * come off the URL it keeps in a String field, and the body from the field whose type has the
+     * length() TypedOutput names, which Lite keeps.
+     */
+    static final class RequestReader {
+        final Class<?> type;
+        private final Method getHost;
+        private final Method getPath;
+        private final Method getBody;
+        private final List<Field> strings = new ArrayList<>();
+        private final Field bodyField;
+        private volatile Field urlField;
+
+        RequestReader(Class<?> type) {
+            this.type = type;
+            getHost = publicGetter(type, "getHost");
+            getPath = publicGetter(type, "getPath");
+            getBody = publicGetter(type, "getBody");
+            Field body = null;
+            if (getHost == null) {
+                for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+                    for (Field field : c.getDeclaredFields()) {
+                        if (Modifier.isStatic(field.getModifiers())) continue;
+                        if (field.getType() == String.class) {
+                            field.setAccessible(true);
+                            strings.add(field);
+                        } else if (body == null && getBody == null && hasLength(field.getType())) {
+                            field.setAccessible(true);
+                            body = field;
+                        }
+                    }
+                }
+            }
+            bodyField = body;
+        }
+
+        String host(Object request) throws ReflectiveOperationException {
+            if (getHost != null) return string(getHost.invoke(request));
+            return hostOf(url(request));
+        }
+
+        /** A TikTok build with getHost but no getPath gives no path, as it always did. */
+        String path(Object request) throws ReflectiveOperationException {
+            if (getPath != null) return string(getPath.invoke(request));
+            return getHost != null ? null : pathOf(url(request));
+        }
+
+        /** The body's own length, 0 with no body, or -1 when there is none to read or it does not know. */
+        long bodyLength(Object request) throws ReflectiveOperationException {
+            Object body;
+            if (getBody != null) body = getBody.invoke(request);
+            else if (bodyField != null) body = bodyField.get(request);
+            else if (getHost == null) body = null;
+            else return -1;
+            if (body == null) return 0;
+            // The body is some implementation of TypedOutput, not always a public class.
+            Method length = body.getClass().getMethod("length");
+            length.setAccessible(true);
+            Object value = length.invoke(body);
+            return value instanceof Number ? ((Number) value).longValue() : -1;
+        }
+
+        private String url(Object request) throws IllegalAccessException {
+            Field known = urlField;
+            if (known != null) return string(known.get(request));
+            for (Field field : strings) {
+                String value = string(field.get(request));
+                if (value != null && (value.regionMatches(true, 0, "https://", 0, 8)
+                        || value.regionMatches(true, 0, "http://", 0, 7))) {
+                    urlField = field;
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        private static Method publicGetter(Class<?> type, String name) {
+            try {
+                Method method = type.getMethod(name);
+                method.setAccessible(true);
+                return method;
+            } catch (NoSuchMethodException absent) {
+                return null;
+            }
+        }
+
+        private static boolean hasLength(Class<?> type) {
+            if (type.isPrimitive() || type == String.class) return false;
+            try {
+                return type.getMethod("length").getReturnType() == long.class;
+            } catch (NoSuchMethodException absent) {
+                return false;
+            }
+        }
+
+        private static String string(Object value) {
+            return value == null ? null : value.toString();
+        }
+    }
+
+    /** The host of an absolute URL, without user or port, or null for anything else. */
+    static String hostOf(String url) {
+        int start = authorityStart(url);
+        if (start < 0) return null;
+        int end = authorityEnd(url, start);
+        String authority = url.substring(start, end);
+        authority = authority.substring(authority.lastIndexOf('@') + 1);
+        int port = authority.lastIndexOf(':');
+        if (port >= 0 && port > authority.indexOf(']')) authority = authority.substring(0, port);
+        return authority.isEmpty() ? null : authority;
+    }
+
+    /** The path of an absolute URL, its query and fragment cut off, or null for anything else. */
+    static String pathOf(String url) {
+        int start = authorityStart(url);
+        if (start < 0) return null;
+        int slash = authorityEnd(url, start);
+        if (slash >= url.length() || url.charAt(slash) != '/') return "/";
+        int end = slash;
+        while (end < url.length() && url.charAt(end) != '?' && url.charAt(end) != '#') end++;
+        return url.substring(slash, end);
+    }
+
+    private static int authorityStart(String url) {
+        if (url == null) return -1;
+        int scheme = url.indexOf("://");
+        return scheme < 0 ? -1 : scheme + 3;
+    }
+
+    private static int authorityEnd(String url, int start) {
+        int end = start;
+        while (end < url.length() && "/?#".indexOf(url.charAt(end)) < 0) end++;
+        return end;
     }
 
     /** The registered section, for a test to read. */
@@ -241,5 +372,6 @@ public final class NetworkRequests implements LogBufferManager.ReportSection {
         installed = false;
         warned = false;
         bound = false;
+        reader = null;
     }
 }

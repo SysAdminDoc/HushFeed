@@ -31,7 +31,7 @@ val changeAppNamePatch = patch(
     default = false,
 ) {
     category("Interface")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
     dependsOn(buildDetailsPatch)
     val appName by stringOption(
         key = "appName",

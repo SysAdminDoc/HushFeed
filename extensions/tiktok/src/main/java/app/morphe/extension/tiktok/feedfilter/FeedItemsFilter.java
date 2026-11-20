@@ -314,6 +314,100 @@ public final class FeedItemsFilter {
         }
     }
 
+    /**
+     * TikTok Lite's main feed (#48). Lite's FeedItemList is its own class
+     * ({@code main.homepage.fragment.data.model.FeedItemList}), holding the same Aweme items in a
+     * field also named {@code items}, and every reader of the For You response crosses its
+     * getItems() too, so the same filters run there. Fails open like {@link #filterOnRead}.
+     */
+    public static void filterLiteOnRead(Object feedItemList) {
+        try {
+            HookStatus.bound("main feed", "Lite FeedItemList.getItems");
+            if (isLiteOpenedList(feedItemList)) return;
+            List items = liteItems(feedItemList);
+            if (items == null) return;
+            filterFeedList(
+                LITE_READ_SOURCE,
+                feedItemList,
+                items,
+                container -> (container instanceof Aweme) ? (Aweme) container : null,
+                BaseSettings.DEBUG.get(),
+                true,
+                FilterPhase.RESPONSE
+            );
+        } catch (Throwable ex) {
+            HookStatus.threw("main feed", "Lite FeedItemList.getItems", ex);
+            Logger.printException(() -> "Could not filter TikTok Lite's feed while reading it", ex);
+        }
+    }
+
+    /** The counter line for Lite's feed, and how the filter knows a read came from it. */
+    static final String LITE_READ_SOURCE = "LiteFeedItemList:read";
+
+    /**
+     * Lite's lists for something the reader opened (#48): a profile's posts, or a video opened on
+     * its own from a link or a notification. They're the same FeedItemList class as For You, and
+     * hiding a video there takes away the one the reader tapped, as it did on TikTok (#135), so
+     * the patch marks them where Lite builds them and the read filter leaves them alone. Lite's
+     * FeedItemList keeps Object's equals and hashCode, so the map keys by identity.
+     */
+    private static final Map<Object, Boolean> LITE_OPENED_LISTS = new WeakHashMap<>();
+
+    public static void markLiteOpenedList(Object feedItemList) {
+        if (feedItemList == null) return;
+        synchronized (LITE_OPENED_LISTS) {
+            LITE_OPENED_LISTS.put(feedItemList, Boolean.TRUE);
+        }
+    }
+
+    static boolean isLiteOpenedList(Object feedItemList) {
+        if (feedItemList == null) return false;
+        synchronized (LITE_OPENED_LISTS) {
+            return LITE_OPENED_LISTS.containsKey(feedItemList);
+        }
+    }
+
+    /**
+     * Whether TikTok's own feed list classes are in this app. TikTok Lite (#48) has neither, and
+     * an instanceof or cast naming a class the app lacks throws NoClassDefFoundError when it runs,
+     * which stopped every Lite read. So each owner check asks here first. Not final, so a test can
+     * stand in for Lite.
+     */
+    static boolean tiktokFeedItemListPresent = classPresent("com.ss.android.ugc.aweme.feed.model.FeedItemList");
+    static boolean tiktokFollowFeedListPresent = classPresent("com.ss.android.ugc.aweme.follow.presenter.FollowFeedList");
+
+    private static boolean classPresent(String name) {
+        try {
+            Class.forName(name, false, FeedItemsFilter.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException | LinkageError absent) {
+            return false;
+        }
+    }
+
+    private static boolean isTikTokFeedItemList(Object owner) {
+        return tiktokFeedItemListPresent && owner instanceof FeedItemList;
+    }
+
+    private static boolean isTikTokFollowFeedList(Object owner) {
+        return tiktokFollowFeedListPresent && owner instanceof FollowFeedList;
+    }
+
+    private static volatile java.lang.reflect.Field liteItemsField;
+
+    /** The items list of Lite's FeedItemList, through a field looked up once. */
+    static List liteItems(Object feedItemList) throws ReflectiveOperationException {
+        if (feedItemList == null) return null;
+        java.lang.reflect.Field field = liteItemsField;
+        if (field == null || field.getDeclaringClass() != feedItemList.getClass()) {
+            field = feedItemList.getClass().getDeclaredField("items");
+            field.setAccessible(true);
+            liteItemsField = field;
+        }
+        Object items = field.get(feedItemList);
+        return items instanceof List ? (List) items : null;
+    }
+
     public static void filter(FollowFeedList followFeedList) {
         filterFollowFeedListSafely(followFeedList, true, FilterPhase.RESPONSE);
     }
@@ -1440,7 +1534,8 @@ public final class FeedItemsFilter {
     ) {
         FeedFilterCounters.sawList(source, list.size());
 
-        boolean forYou = phase == FilterPhase.RESPONSE && owner instanceof FeedItemList;
+        boolean forYou = phase == FilterPhase.RESPONSE
+            && (isTikTokFeedItemList(owner) || LITE_READ_SOURCE.equals(source));
         // Counted before any rule decides, so an export with every switch off still says what
         // caption data TikTok sent (#217).
         if (forYou) CaptionReasons.count(list, extractor);
@@ -1451,7 +1546,7 @@ public final class FeedItemsFilter {
         // videos in it are the ones they chose to watch (#135). A For You page reads the same
         // way at first: TikTok's fetch reads it before fetchFeedList hands it over, so what that
         // read keeps is not yet watched and stays open to Hide seen videos (#172).
-        boolean seenHeldBack = owner instanceof FeedItemList && !isMainFeedList((FeedItemList) owner)
+        boolean seenHeldBack = isTikTokFeedItemList(owner) && !isMainFeedList((FeedItemList) owner)
             && activeContentFilters.remove(SEEN_FILTER);
         if (seenHeldBack) SeenVideoHistory.warmUp();
         List<IFilter> activeRangeFilters = getActiveFilters(RANGE_FILTERS);
@@ -1690,11 +1785,20 @@ public final class FeedItemsFilter {
 
     private static List replaceOwnerList(Object owner, List kept) {
         List replacement = new ArrayList(kept);
-        if (owner instanceof FeedItemList) {
+        if (isTikTokFeedItemList(owner)) {
             ((FeedItemList) owner).items = replacement;
             return replacement;
         }
-        if (owner instanceof FollowFeedList) {
+        java.lang.reflect.Field lite = liteItemsField;
+        if (lite != null && lite.getDeclaringClass() == owner.getClass()) {
+            try {
+                lite.set(owner, replacement);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Could not replace TikTok Lite's feed items", ex);
+            }
+            return replacement;
+        }
+        if (isTikTokFollowFeedList(owner)) {
             Field field = followItemsField((FollowFeedList) owner);
             if (field == null) {
                 throw new IllegalStateException("FollowFeedList has no items field on this build");

@@ -46,7 +46,7 @@ val trustUserCertificatesPatch = patch(
     default = false,
 ) {
     category("Privacy")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
     dependsOn(buildDetailsPatch)
 
     execute {

@@ -6,6 +6,7 @@
 
 package app.morphe.extension.tiktok.settings;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -82,12 +83,26 @@ public class TikTokActivityHook {
         if (showSettingsRow()) rows.add(row);
     }
 
+    /**
+     * Whether the page opens in Hushfeed's own {@link HushfeedSettingsActivity} rather than in
+     * TikTok's ad personalisation screen. The Settings patch turns it on for TikTok Lite (#48),
+     * which has no such screen.
+     */
+    static boolean ownSettingsActivity() {
+        return false;
+    }
+
+    /** TikTok's ad personalisation screen, which the Settings patch hooks to show the page. */
+    public static boolean initialize(AdPersonalizationActivity base) {
+        return initialize((Activity) base);
+    }
+
     /***
      * Initialize the settings menu.
      * @param base The activity to initialize the settings menu on.
      * @return Whether the settings menu should be initialized.
      */
-    public static boolean initialize(AdPersonalizationActivity base) {
+    public static boolean initialize(Activity base) {
         Intent intent = base.getIntent();
         Bundle extras = intent.getExtras();
         if ((extras == null || !extras.getBoolean(SETTINGS_EXTRA, false)) && !SETTINGS_ACTION.equals(intent.getAction())) {
@@ -176,6 +191,10 @@ public class TikTokActivityHook {
     }
 
     public static boolean handleBackPressed(AdPersonalizationActivity activity) {
+        return handleBackPressed((Activity) activity);
+    }
+
+    public static boolean handleBackPressed(Activity activity) {
         Intent intent = activity.getIntent();
         if (intent == null
                 || (!SETTINGS_ACTION.equals(intent.getAction())
@@ -224,7 +243,8 @@ public class TikTokActivityHook {
     private static void startSettingsActivity(String section, String settingKey, String page) {
         Context appContext = Utils.getContext();
         if (appContext != null) {
-            Intent intent = new Intent(appContext, AdPersonalizationActivity.class);
+            Intent intent = new Intent(appContext,
+                    ownSettingsActivity() ? HushfeedSettingsActivity.class : AdPersonalizationActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(SETTINGS_ACTION);
             intent.putExtra(SETTINGS_EXTRA, true);

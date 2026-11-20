@@ -62,8 +62,8 @@ internal object Fixtures {
         return checkNotNull(result)
     }
 
-    /** The files in the fixture folder that [accept] takes, sorted by name. */
-    fun files(accept: (File) -> Boolean): List<File> {
+    /** The fixture folder, or a skip when the variable is unset. */
+    private fun directory(): File {
         val configured = System.getenv(VARIABLE)
         assumeTrue(
             "$VARIABLE is not set, so the TikTok fixture tests skip. Point it at the folder " +
@@ -72,9 +72,26 @@ internal object Fixtures {
         )
         val directory = File(configured!!)
         if (!directory.isDirectory) fail("$VARIABLE names $directory, which is not a folder.")
+        return directory
+    }
+
+    /** The files in the fixture folder that [accept] takes, sorted by name. */
+    fun files(accept: (File) -> Boolean): List<File> {
+        val directory = directory()
         val found = directory.listFiles()?.filter { it.isFile && accept(it) }?.sortedBy { it.name }.orEmpty()
         if (found.isEmpty()) fail("$VARIABLE names $directory, which holds none of the TikTok files this test reads.")
         return found
+    }
+
+    /**
+     * TikTok Lite's APK (#48), from the fixture folder's `lite` subfolder, which keeps it out of
+     * every test that reads the TikTok APKs beside it. A fixture folder without it fails.
+     */
+    fun liteApk(): File {
+        val folder = File(directory(), "lite")
+        val found = folder.listFiles()?.filter { it.isFile && it.extension == "apk" }.orEmpty()
+        if (found.size != 1) fail("$folder holds ${found.size} TikTok Lite APKs, not one: $found")
+        return found.single()
     }
 
     /** Every TikTok APK in the fixture folder. */

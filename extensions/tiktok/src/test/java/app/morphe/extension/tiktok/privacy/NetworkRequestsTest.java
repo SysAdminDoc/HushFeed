@@ -79,6 +79,39 @@ public class NetworkRequestsTest {
         assertEquals(List.of(HEADER, "tiktokv.com log: 1 request, 7 B sent"), NetworkRequests.sectionForTests().lines());
     }
 
+    /**
+     * TikTok Lite (#48) obfuscates its client.Request, so nothing there answers getHost, getPath
+     * or getBody by name, and every count failed. Its URL and body still sit in fields: the host
+     * and path come off the URL, and the body keeps the length() its interface names.
+     */
+    @Test public void aLiteRequestIsCountedFromItsUrlAndBodyFields() {
+        BaseSettings.DEBUG.save(true);
+        NetworkRequests.onCall(new Call(new LiteRequest("POST",
+                "https://log16-normal-useast5.tiktokv.us/service/2/app_log/?aid=1340", new Body(9))));
+        NetworkRequests.onCall(new Call(new LiteRequest("GET",
+                "https://api16-normal-useast5.tiktokv.us:443/lite/v2/feed/fyp/?count=6", null)));
+        NetworkRequests.onCall(new Call(new LiteRequest("GET", null, null)));
+        assertEquals(List.of("[Morphe NetworkRequests] log host path: tiktokv.us log /service/2/app_log/"), pathLines());
+        List<String> lines = NetworkRequests.sectionForTests().lines();
+        assertEquals(HEADER, lines.get(0));
+        assertEquals(java.util.Set.of(
+                        "tiktokv.us log: 1 request, 9 B sent",
+                        "tiktokv.us api: 1 request, 0 B sent",
+                        "unknown host: 1 request, 0 B sent"),
+                new java.util.HashSet<>(lines.subList(1, lines.size())));
+    }
+
+    @Test public void aUrlGivesUpItsHostAndPathWithoutTheQuery() {
+        assertEquals("api16-normal-useast5.tiktokv.us",
+                NetworkRequests.hostOf("https://api16-normal-useast5.tiktokv.us:443/lite/v2/feed/fyp/?count=6"));
+        assertEquals("/lite/v2/feed/fyp/", NetworkRequests.pathOf("https://api16-normal-useast5.tiktokv.us:443/lite/v2/feed/fyp/?count=6"));
+        assertEquals("log.tiktokv.com", NetworkRequests.hostOf("HTTPS://user@log.tiktokv.com?x=/y"));
+        assertEquals("/", NetworkRequests.pathOf("https://log.tiktokv.com?x=/y"));
+        assertNull(NetworkRequests.hostOf("GET"));
+        assertNull(NetworkRequests.hostOf(null));
+        assertNull(NetworkRequests.pathOf("/relative/only"));
+    }
+
     private static List<String> pathLines() {
         List<String> lines = new ArrayList<>();
         for (ShadowLog.LogItem log : ShadowLog.getLogs()) {
@@ -197,6 +230,27 @@ public class NetworkRequestsTest {
 
         public Body getBody() {
             return null;
+        }
+    }
+
+    /**
+     * TikTok Lite's client.Request as its dex has it: the method and the URL in String fields,
+     * the body typed on TypedOutput, and getters with obfuscated names only.
+     */
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private static final class LiteRequest {
+        private final String L;
+        private final String LB;
+        private final Body LC;
+
+        LiteRequest(String method, String url, Body body) {
+            this.L = method;
+            this.LB = url;
+            this.LC = body;
+        }
+
+        public String LBL() {
+            return "not the host";
         }
     }
 

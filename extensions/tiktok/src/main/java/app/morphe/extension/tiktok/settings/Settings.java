@@ -127,6 +127,11 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_CAPTIONS_AVAILABLE = new BooleanSetting("keep_captions_available", FALSE, true);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
+    /** Extra stops below the smallest size on TikTok's own Text size slider. Off by default. */
+    public static final BooleanSetting SMALLER_TEXT_SIZES = new BooleanSetting("smaller_text_sizes", FALSE, true);
+    /** Which extra stop was picked on the Text size slider: 0 for none, 1 to 3 for smaller. */
+    public static final IntegerSetting SMALLER_TEXT_SIZE_LEVEL =
+            new IntegerSetting("smaller_text_size_level", 0).withRange(0, 3);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
     // Use system font's hook draws TikTok's text in the imported font file while this is on and
     // the file loads; it wins over SYSTEM_FONT. The file itself lives in TikTok's files, not here.

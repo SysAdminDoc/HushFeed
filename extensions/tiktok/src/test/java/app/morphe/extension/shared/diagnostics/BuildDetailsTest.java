@@ -157,8 +157,9 @@ public class BuildDetailsTest {
         // A build the bundle no longer declares is no target of this one, for either app.
         assertUnknown(record.replace("47.9.2", "47.4.3").replace("2024709020", "2024704030"));
         assertUnknown(record.replace("47.9.2", "47.1.4").replace("2024709020", "2024701040"));
-        // Another package with TikTok's version and code is not declared.
+        // Another package with TikTok's version and code is not declared, TikTok Lite's included.
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
+        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.zhiliaoapp.musically.go"));
     }
 
     @Test public void registeredSwitchesStayUnknownUntilReportedAndKeepOnlyCleanSortedNames() throws Exception {

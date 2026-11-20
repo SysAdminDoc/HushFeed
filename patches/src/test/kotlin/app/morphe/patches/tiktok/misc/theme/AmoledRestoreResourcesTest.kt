@@ -33,6 +33,15 @@ class AmoledRestoreResourcesTest {
     @get:Rule val temporary = TemporaryFolder()
 
     @Test
+    fun `the switch is patched in unless its option is turned off`() {
+        // On by default, so a build patched as before keeps AMOLED dark mode in Hushfeed settings.
+        val option = amoledThemePatch.options["inAppSwitch"]
+        assertEquals(true, option.default)
+        assertEquals(false, option.required)
+        assertTrue(option.description!!.contains("32-bit"))
+    }
+
+    @Test
     fun `the restorable attributes are the surfaces and every item naming a repainted color`() {
         val styles = parse(
             """

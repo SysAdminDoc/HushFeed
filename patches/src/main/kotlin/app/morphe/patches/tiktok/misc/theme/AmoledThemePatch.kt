@@ -13,6 +13,7 @@ import app.morphe.patcher.patch.decode
 import app.morphe.patcher.patch.listApkEntries
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.colorOption
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
@@ -38,8 +39,17 @@ val amoledThemePatch = resourcePatch(
     category("Interface")
     compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(buildChoicePatch(BuildChoice.AMOLED))
+    val inAppSwitch by booleanOption(
+        key = "inAppSwitch",
+        default = true,
+        title = "Switch in Hushfeed settings",
+        description = "Adds AMOLED dark mode to Hushfeed settings > App, so you can go back to " +
+            "TikTok's own dark grays without patching again. Turn this off if a 32-bit Morphe " +
+            "Manager runs out of memory: AMOLED then stays on, and the switch is left out.",
+        required = false,
+    )
     // The switch in Hushfeed settings: the hooks that put TikTok's own grays back while it's off (#372).
-    dependsOn(amoledThemeSwitchPatch)
+    dependsOn(amoledThemeSwitchPatch { inAppSwitch != false })
     val background by colorOption(
         key = "backgroundColor",
         default = "#000000",

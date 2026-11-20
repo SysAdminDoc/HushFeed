@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * The AMOLED dark mode switch in Hushfeed settings (#372).
@@ -30,7 +31,9 @@ import app.morphe.extension.tiktok.settings.Settings;
  * constructor. The Compose cards, the comment bar and the web pages ask {@link #on()}.
  *
  * <p>The answer is read once per process, so a screen never mixes the two looks: the switch
- * takes effect at the next start. Pausing Hushfeed reads as off.
+ * takes effect at the next start. Pausing Hushfeed reads as off. A build patched without the
+ * switch (the patch's inAppSwitch option off, for 32-bit Managers) has none of those hooks and
+ * stays on.
  */
 public final class AmoledTheme {
     static final String HOOK_FAMILY = "amoled dark mode";
@@ -75,7 +78,10 @@ public final class AmoledTheme {
         if (known != null) return known;
         // Settings can't load before the app has a context; TikTok builds no screen before then.
         if (amoledColor() == 0 || Utils.getContext() == null) return false;
-        boolean restore = !Settings.AMOLED_DARK_MODE.get();
+        // Patched with the switch left out (AMOLED dark theme's inAppSwitch option off), nothing
+        // puts the grays back on the themes, so an off saved by an earlier build would leave
+        // the Compose cards and the comment bar gray on black pages. AMOLED stays on.
+        boolean restore = SettingsStatus.amoledDarkModeEnabled && !Settings.AMOLED_DARK_MODE.get();
         decided = restore;
         HookStatus.bound(HOOK_FAMILY, restore ? "TikTok's dark grays" : "AMOLED");
         return restore;

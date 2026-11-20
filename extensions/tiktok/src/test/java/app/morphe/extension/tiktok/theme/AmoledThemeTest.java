@@ -28,6 +28,7 @@ import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.live.LivePanelTheme;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,10 +62,13 @@ public class AmoledThemeTest {
     @Before public void setUp() {
         AmoledTheme.resetForTests();
         HookStatus.clear();
+        // The switch patch's registration, as a build with the default option has it.
+        SettingsStatus.amoledDarkModeEnabled = true;
     }
 
     @After public void tearDown() {
         AmoledTheme.resetForTests();
+        SettingsStatus.amoledDarkModeEnabled = false;
         PausedProcess.set(false);
         Settings.AMOLED_DARK_MODE.save(true);
         Utils.setContext(RuntimeEnvironment.getApplication());
@@ -122,6 +126,18 @@ public class AmoledThemeTest {
         int dark = background(stock);
         AmoledTheme.restore(stock);
         assertEquals(dark, background(stock));
+    }
+
+    @Test public void withTheSwitchLeftOutASavedOffIsIgnored() {
+        // Patched with the option off: no hooks put the grays back, so the parts that ask on()
+        // (Compose cards, comment bar, web pages, LIVE panel) stay with the black resources.
+        switchOff();
+        SettingsStatus.amoledDarkModeEnabled = false;
+        AmoledTheme.setForTests(MOCHA, lightRestore());
+        assertTrue(AmoledTheme.on());
+        assertFalse(AmoledTheme.restoring());
+        assertEquals(((long) MOCHA & 0xFFFFFFFFL) << 32, AmoledTheme.composeCard(0xFF1E1E1E00000000L));
+        assertEquals(MOCHA, AmoledTheme.customColor());
     }
 
     @Test public void theAnswerHoldsUntilTheNextStart() {

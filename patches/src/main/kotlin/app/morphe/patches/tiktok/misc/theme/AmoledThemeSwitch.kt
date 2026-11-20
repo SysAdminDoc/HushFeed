@@ -274,10 +274,16 @@ internal fun hookAmoledThemeSwitch(): AmoledThemeSwitchSites {
     return AmoledThemeSwitchSites(activity.originalMethod, applyStyles, setThemes, wrappers, dialogs)
 }
 
-/** The switch for AMOLED dark theme in Hushfeed settings, and the hooks it drives (#372). */
-internal val amoledThemeSwitchPatch = bytecodePatch {
+/**
+ * The switch for AMOLED dark theme in Hushfeed settings, and the hooks it drives (#372), while
+ * [active] (the patch's inAppSwitch option). Left out, it changes nothing: its hooks rebuild
+ * about 700 of TikTok's classes, the most of any Hushfeed patch, and a 32-bit Morphe Manager
+ * runs out of memory with them and every other patch (47.9.2, 2026-11-19).
+ */
+internal fun amoledThemeSwitchPatch(active: () -> Boolean) = bytecodePatch {
     dependsOn(settingsPatch, sharedExtensionPatch)
     execute {
+        if (!active()) return@execute
         hookAmoledThemeSwitch()
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,

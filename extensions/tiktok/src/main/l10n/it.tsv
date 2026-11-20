@@ -2518,6 +2518,16 @@ Leave after no touch	Esci se lo schermo non viene toccato
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Zero disattiva questa funzione. Dopo quel numero di minuti senza tocchi sullo schermo, il video si ferma e TikTok passa in background, per quando ti addormenti guardando. Qualsiasi tocco fa ripartire l'attesa.
 Left TikTok after no touch	Uscito da TikTok per inattività
 Show when an account was made	Mostra quando è stato creato un account
+Show what changed since your last visit	Mostra cosa è cambiato dall’ultima visita
+Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Sotto il @nomeutente di un profilo, mostra come sono cambiati follower, seguiti, Mi piace e video dall’ultima volta che l’hai aperto. I numeri restano solo su questo telefono.
+Since %1$s: %2$s	Da %1$s: %2$s
+No changes since %1$s	Nessuna modifica da %1$s
+%1$s, %2$s	%1$s, %2$s
+%1$s follower	%1$s follower
+%1$s followers	%1$s follower
+%1$s following	%1$s seguiti
+%1$s like	%1$s Mi piace
+%1$s likes	%1$s Mi piace
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Sotto il @nomeutente del profilo di un'altra persona, mostra il mese e l'anno in cui è stato creato l'account. Si legge dall'ID dell'account, quindi gli account molto vecchi non mostrano nulla.
 Joined %s	Iscritto da %s
 Keep unsent messages	Conserva i messaggi ritirati

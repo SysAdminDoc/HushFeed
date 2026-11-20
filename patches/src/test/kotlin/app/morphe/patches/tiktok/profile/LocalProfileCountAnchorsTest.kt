@@ -159,14 +159,37 @@ class LocalProfileCountAnchorsTest {
                 val code = bridge.implementation!!.instructions.toList()
                 val enabled = code.indexOfFirst { it.getReference<MethodReference>()?.name == "enabled" }
                 assertEquals(if (legacy) 1 else 2, enabled)
+                assertEquals(LOCAL_COUNTS, code[enabled].getReference<MethodReference>()!!.definingClass)
                 if (!legacy) assertEquals(found.formatter.toString(), code[0].getReference<MethodReference>().toString())
-                val branchIndex = enabled + 2
-                assertEquals(Opcode.IF_EQZ, code[branchIndex].opcode)
-                val branch = code[branchIndex] as OffsetInstruction
-                val fallBack = code.single { it.location.codeAddress == code[branchIndex].location.codeAddress + branch.codeOffset }
+                // Off for both switches, the newer layout goes straight to the native text too.
+                val branchIndex = enabled + if (legacy) 2 else 5
+                fun target(at: Int): com.android.tools.smali.dexlib2.iface.instruction.Instruction {
+                    assertEquals(Opcode.IF_EQZ, code[at].opcode)
+                    val branch = code[at] as OffsetInstruction
+                    return code.single { it.location.codeAddress == code[at].location.codeAddress + branch.codeOffset }
+                }
+                val fallBack = target(branchIndex)
                 assertEquals(if (legacy) Opcode.INVOKE_VIRTUAL else Opcode.RETURN_OBJECT, fallBack.opcode)
                 if (legacy) assertEquals("setText", fallBack.getReference<MethodReference>()!!.name)
                 val calls = code.mapNotNull { it.getReference<MethodReference>() }
+                val records = code.withIndex().filter { (_, it) -> it.getReference<MethodReference>()?.definingClass == PROFILE_CHANGES &&
+                    it.getReference<MethodReference>()?.name == "count" }
+                if (legacy) {
+                    // The older layout only has the formatted text, which can't be compared.
+                    assertTrue(calls.none { it.definingClass == PROFILE_CHANGES })
+                } else {
+                    assertEquals(PROFILE_CHANGES, code[enabled + 2].getReference<MethodReference>()!!.definingClass)
+                    val (at, record) = records.single()
+                    assertEquals(listOf(STRING, STRING, NUMBER), record.getReference<MethodReference>()!!.parameterTypes.map(CharSequence::toString))
+                    // The number recorded is TikTok's own, the bridge's second argument.
+                    val sent = record as FiveRegisterInstruction
+                    assertEquals(bridge.implementation!!.registerCount - bridge.numberOfParameterRegisters + 2, sent.registerE)
+                    // Local profile counts still decides alone whether the text is swapped.
+                    assertEquals(Opcode.RETURN_OBJECT, target(at + 1).opcode)
+                    assertEquals((code[enabled + 1] as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA,
+                        (code[at + 1] as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA)
+                    assertTrue(at < code.indexOfFirst { it.getReference<MethodReference>()?.name == "override" })
+                }
                 assertTrue(calls.any { it.definingClass == PROFILE_COMMON_INFO && it.name == "getUserProfileInfo" })
                 assertTrue(calls.any { it.definingClass == PROFILE_INFO && it.name == "getUid" })
                 assertEquals(1, calls.count { it.definingClass == LOCAL_COUNTS && it.name == "override" })

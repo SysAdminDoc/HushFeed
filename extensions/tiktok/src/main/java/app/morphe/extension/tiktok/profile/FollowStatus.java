@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,6 +50,8 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * <p>The same header label can also say the month the account was made ("Joined Jan 2020"). The
  * profile response doesn't send that, but the account's ID carries it in its top 32 bits, the way
  * a post ID carries its posting time.
+ *
+ * <p>A second label under that one says what changed since the last visit ({@link ProfileChanges}).
  */
 public final class FollowStatus {
     static final int FOLLOWING = 1;
@@ -58,10 +61,15 @@ public final class FollowStatus {
     static final String JOINED = "Joined %s";
     /** Marks the label views this class adds, so a rebind finds and reuses them. */
     static final String LABEL_TAG = "hushfeed_follow_status";
+    /** Marks the second header label, the one that says what changed since the last visit. */
+    static final String CHANGES_TAG = "hushfeed_profile_changes";
     private static final int MAX_CLIMB = 4;
     private static final String USER_CLASS = "com.ss.android.ugc.aweme.profile.model.User";
 
     private static final Map<Class<?>, Field> USER_FIELDS = new ConcurrentHashMap<>();
+    /** The @username a header label was last placed under, and its profile, for a late count. */
+    private static volatile WeakReference<TextView> lastHandle;
+    private static volatile String lastHandleUid;
 
     private FollowStatus() {
     }
@@ -70,10 +78,10 @@ public final class FollowStatus {
         return SettingsStatus.followStatusEnabled && Settings.SHOW_FOLLOW_STATUS.get();
     }
 
-    /** A profile header gets a label while either of its two switches is on. */
+    /** A profile header gets a label while any of its three switches is on. */
     static boolean headerEnabled() {
-        return SettingsStatus.followStatusEnabled
-                && (Settings.SHOW_FOLLOW_STATUS.get() || Settings.SHOW_JOIN_DATE.get());
+        return SettingsStatus.followStatusEnabled && (Settings.SHOW_FOLLOW_STATUS.get()
+                || Settings.SHOW_JOIN_DATE.get() || Settings.SHOW_PROFILE_CHANGES.get());
     }
 
     /**
@@ -142,12 +150,20 @@ public final class FollowStatus {
                     asInteger(Reflect.property(relation, "getFollowerStatus", "followerStatus")));
             String month = own || !Settings.SHOW_JOIN_DATE.get() ? null
                     : joinMonth(uid, System.currentTimeMillis(), Locale.getDefault(), TimeZone.getDefault());
+            if (ProfileChanges.enabled()) {
+                Object statics = Reflect.property(commonInfo, "getUserStaticsInfo", "userStaticsInfo");
+                Integer videos = asInteger(Reflect.property(statics, "getAwemeCount", "awemeCount"));
+                if (videos != null) ProfileChanges.observe(uid, ProfileChanges.Metric.VIDEOS, videos);
+            }
             TextView text = (TextView) view;
             // The item sets its text after this call returns, so read it once the bind is done.
             text.post(() -> {
                 try {
                     if (isHandle(text.getText(), username)) {
                         place(text, headerText(text.getContext(), label, month), null);
+                        lastHandle = new WeakReference<>(text);
+                        lastHandleUid = uid;
+                        place(text, ProfileChanges.line(text.getContext(), uid), null, CHANGES_TAG);
                     }
                 } catch (Throwable error) {
                     Logger.printException(() -> "Follow status: could not label the profile header", error);
@@ -155,6 +171,28 @@ public final class FollowStatus {
             });
         } catch (Throwable error) {
             Logger.printException(() -> "Follow status: could not read the profile header", error);
+        }
+    }
+
+    /**
+     * A count arrived after the header was labelled (the relation bar binds on its own), so the
+     * changes line under that profile's @username is worked out again. Never throws.
+     */
+    static void refreshChanges(String uid) {
+        try {
+            WeakReference<TextView> reference = lastHandle;
+            TextView anchor = reference == null ? null : reference.get();
+            if (anchor == null || uid == null || !uid.equals(lastHandleUid) || !anchor.isAttachedToWindow()) return;
+            anchor.post(() -> {
+                try {
+                    if (!uid.equals(lastHandleUid)) return;
+                    place(anchor, ProfileChanges.line(anchor.getContext(), uid), null, CHANGES_TAG);
+                } catch (Throwable error) {
+                    Logger.printException(() -> "Profile changes: could not update the profile header", error);
+                }
+            });
+        } catch (Throwable error) {
+            Logger.printException(() -> "Profile changes: could not reach the profile header", error);
         }
     }
 
@@ -251,7 +289,7 @@ public final class FollowStatus {
     private static TextView findText(View view, @Nullable String value, boolean handle) {
         if (value == null || value.isEmpty()) return null;
         if (view instanceof TextView) {
-            if (LABEL_TAG.equals(view.getTag())) return null;
+            if (isOurs(view)) return null;
             CharSequence text = ((TextView) view).getText();
             boolean match = handle ? isHandle(text, value) : shown(text).equals(value.trim());
             return match && view.getVisibility() == View.VISIBLE ? (TextView) view : null;
@@ -273,6 +311,15 @@ public final class FollowStatus {
      * next bind can find it again. {@code label} is already in the phone's language; null hides it.
      */
     static void place(TextView anchor, @Nullable String label, @Nullable View limit) {
+        place(anchor, label, limit, LABEL_TAG);
+    }
+
+    /**
+     * As above, for the label marked {@code tag}. The changes line only goes below the row, under
+     * the follow label when there is one, since a whole sentence beside the @username won't fit.
+     */
+    static void place(TextView anchor, @Nullable String label, @Nullable View limit, String tag) {
+        boolean changes = CHANGES_TAG.equals(tag);
         View child = anchor;
         LinearLayout row = null;
         View rowChild = null;
@@ -281,7 +328,8 @@ public final class FollowStatus {
             if (parent instanceof LinearLayout) {
                 LinearLayout layout = (LinearLayout) parent;
                 if (layout.getOrientation() == LinearLayout.VERTICAL) {
-                    show(layout, child, anchor, label, true);
+                    TextView follow = changes ? labelIn(layout, LABEL_TAG) : null;
+                    show(layout, follow != null ? follow : child, anchor, label, true, tag);
                     return;
                 }
                 if (row == null) {
@@ -293,19 +341,19 @@ public final class FollowStatus {
             child = (View) parent;
             parent = parent.getParent();
         }
-        if (row != null) show(row, rowChild, anchor, label, false);
+        if (row != null && !changes) show(row, rowChild, anchor, label, false, tag);
     }
 
     private static void show(LinearLayout layout, View after, TextView anchor, @Nullable String label,
-                             boolean below) {
-        TextView view = labelIn(layout);
+                             boolean below, String tag) {
+        TextView view = labelIn(layout, tag);
         if (label == null) {
             if (view != null) view.setVisibility(View.GONE);
             return;
         }
         if (view == null) {
             view = new TextView(anchor.getContext());
-            view.setTag(LABEL_TAG);
+            view.setTag(tag);
             view.setSingleLine(true);
             view.setEllipsize(TextUtils.TruncateAt.END);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -338,12 +386,17 @@ public final class FollowStatus {
     }
 
     @Nullable
-    private static TextView labelIn(ViewGroup layout) {
+    private static TextView labelIn(ViewGroup layout, String tag) {
         for (int index = 0; index < layout.getChildCount(); index++) {
             View child = layout.getChildAt(index);
-            if (child instanceof TextView && LABEL_TAG.equals(child.getTag())) return (TextView) child;
+            if (child instanceof TextView && tag.equals(child.getTag())) return (TextView) child;
         }
         return null;
+    }
+
+    private static boolean isOurs(View view) {
+        Object tag = view.getTag();
+        return LABEL_TAG.equals(tag) || CHANGES_TAG.equals(tag);
     }
 
     /** Hides every label of ours near a header item, as a switch turned off asks. */
@@ -357,7 +410,7 @@ public final class FollowStatus {
 
     private static void hideLabels(View root, View origin) {
         if (root instanceof TextView) {
-            if (root != origin && LABEL_TAG.equals(root.getTag())) root.setVisibility(View.GONE);
+            if (root != origin && isOurs(root)) root.setVisibility(View.GONE);
             return;
         }
         if (!(root instanceof ViewGroup)) return;

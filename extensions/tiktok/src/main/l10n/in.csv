@@ -2465,6 +2465,16 @@ Leave after no touch,Keluar jika layar tidak disentuh
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.","Nol mematikan ini. Setelah sekian menit layar tidak disentuh, video berhenti dan TikTok pindah ke latar belakang, untuk saat kamu tertidur sambil menonton. Sentuhan apa pun memulai ulang waktu tunggu."
 Left TikTok after no touch,Keluar dari TikTok karena tidak disentuh
 Show when an account was made,Tampilkan kapan akun dibuat
+Show what changed since your last visit,Tampilkan yang berubah sejak kunjungan terakhir
+"Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Di bawah @nama pengguna di profil, tampilkan perubahan pengikut, yang diikuti, suka, dan video sejak terakhir kali kamu membukanya. Angkanya hanya disimpan di ponsel ini."
+Since %1$s: %2$s,Sejak %1$s: %2$s
+No changes since %1$s,Tidak ada perubahan sejak %1$s
+"%1$s, %2$s","%1$s, %2$s"
+%1$s follower,%1$s pengikut
+%1$s followers,%1$s pengikut
+%1$s following,%1$s mengikuti
+%1$s like,%1$s suka
+%1$s likes,%1$s suka
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Di bawah @nama pengguna pada profil orang lain, tampilkan bulan dan tahun akun itu dibuat. Ini dibaca dari ID akun, jadi akun yang sangat lama tidak menampilkan apa pun."
 Joined %s,Bergabung %s
 Keep unsent messages,Simpan pesan yang ditarik

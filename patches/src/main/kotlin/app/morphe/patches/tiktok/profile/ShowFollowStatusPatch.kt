@@ -80,7 +80,8 @@ val showFollowStatusPatch = bytecodePatch(
     name = "Show follow status",
     description = "Shows on a profile whether that person follows you back, and marks " +
         "accounts in your follow lists that don't. On by default. Turn it off in Hushfeed " +
-        "settings > App. A separate switch adds the month an account was made. Optional local " +
+        "settings > App. Separate switches add the month an account was made and what changed " +
+        "on a profile since your last visit. Optional local " +
         "counts and appearance controls apply to your own profile.",
     default = true,
 ) {

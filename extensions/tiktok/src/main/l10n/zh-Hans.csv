@@ -2463,6 +2463,16 @@ Leave after no touch,无触摸时离开
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.
 Left TikTok after no touch,因无触摸已离开 TikTok
 Show when an account was made,显示账号的创建时间
+Show what changed since your last visit,显示自上次访问以来的变化
+"Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.",在个人资料的 @用户名下方，显示其粉丝、关注、获赞和视频自你上次打开以来的变化。这些数字只保存在这台手机上.
+Since %1$s: %2$s,自 %1$s 以来：%2$s
+No changes since %1$s,自 %1$s 以来没有变化
+"%1$s, %2$s",%1$s，%2$s
+%1$s follower,%1$s 粉丝
+%1$s followers,%1$s 粉丝
+%1$s following,%1$s 关注
+%1$s like,%1$s 获赞
+%1$s likes,%1$s 获赞
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.",在别人个人资料的@用户名下方显示该账号创建的年月。这是从账号 ID 中读出的，所以很老的账号不显示任何内容.
 Joined %s,%s加入
 Keep unsent messages,保留已撤回的消息

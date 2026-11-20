@@ -25,6 +25,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 
 internal const val LOCAL_COUNTS = "Lapp/morphe/extension/tiktok/profile/LocalProfileCounts;"
+internal const val PROFILE_CHANGES = "Lapp/morphe/extension/tiktok/profile/ProfileChanges;"
 internal const val RELATION_COMPONENT = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/relationinfo/base/RelationInfoBaseUIComponent;"
 internal const val RELATION_DATA = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/relationinfo/data/RelationData;"
 internal const val PROFILE_PROTOCOL = "Lcom/ss/android/ugc/profile/platform/standard/protocol/ProfilePlatformProtocol;"
@@ -149,13 +150,29 @@ internal fun profileCountBridge(owner: String, getter: Method, formatter: Method
         move-result-object v1
     """
     val finish = if (legacy) "invoke-virtual { p1, v0 }, $TEXT_VIEW->setText($TEXT)V\nreturn-void" else "return-object v0"
-    bridge.addInstructionsWithLabels(0, """
-        $original
+    // The newer layout hands over the real number, so Show what changed since your last visit
+    // keeps it first; only Local profile counts goes on to swap the text.
+    val gate = if (legacy) """
         invoke-static {}, $LOCAL_COUNTS->enabled()Z
         move-result v1
         if-eqz v1, :native_count
         ${uidRead(getter)}
         $component
+    """ else """
+        invoke-static {}, $LOCAL_COUNTS->enabled()Z
+        move-result v1
+        invoke-static {}, $PROFILE_CHANGES->enabled()Z
+        move-result v2
+        or-int/2addr v2, v1
+        if-eqz v2, :native_count
+        ${uidRead(getter)}
+        $component
+        invoke-static { v3, v4, p2 }, $PROFILE_CHANGES->count($STRING$STRING$NUMBER)V
+        if-eqz v1, :native_count
+    """
+    bridge.addInstructionsWithLabels(0, """
+        $original
+        $gate
         invoke-static { v3, v4 }, $LOCAL_COUNTS->override($STRING$STRING)$NUMBER
         move-result-object v2
         if-eqz v2, :native_count

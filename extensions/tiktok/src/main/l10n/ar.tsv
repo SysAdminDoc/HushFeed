@@ -2761,6 +2761,24 @@ Leave after no touch	المغادرة عند عدم اللمس
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	الصفر يوقف هذه الميزة. بعد هذا العدد من الدقائق دون لمس الشاشة، يتوقف الفيديو وينتقل TikTok إلى الخلفية، عندما تغفو أثناء المشاهدة. أي لمسة تعيد بدء الانتظار.
 Left TikTok after no touch	تم الخروج من TikTok بعد عدم اللمس
 Show when an account was made	إظهار تاريخ إنشاء الحساب
+Show what changed since your last visit	إظهار ما تغيّر منذ زيارتك الأخيرة
+Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	أسفل @اسم المستخدم في الملف الشخصي، يعرض كيف تغيّر عدد المتابِعين والمتابَعين والإعجابات والفيديوهات منذ آخر مرة فتحته فيها. تُحفظ الأعداد على هذا الهاتف فقط.
+Since %1$s: %2$s	منذ %1$s: %2$s
+No changes since %1$s	لا تغييرات منذ %1$s
+%1$s, %2$s	%1$s، %2$s
+%1$s follower	%1$s متابِع
+%1$s followers	%1$s متابِع
+%1$s following	المتابَعون %1$s
+%1$s like	%1$s إعجاب
+%1$s likes	%1$s إعجاب
+%1$s followers|zero	%1$s متابِع
+%1$s likes|zero	%1$s إعجاب
+%1$s followers|two	%1$s متابِعان
+%1$s likes|two	%1$s إعجابان
+%1$s followers|few	%1$s متابِعين
+%1$s likes|few	%1$s إعجابات
+%1$s followers|many	%1$s متابِعًا
+%1$s likes|many	%1$s إعجابًا
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	أسفل @username في ملف شخص آخر، اعرض الشهر والسنة اللذين أنشئ فيهما الحساب. يقرأ ذلك من معرف الحساب، لذا لا تظهر الحسابات القديمة جدا شيئا.
 Joined %s	انضم في %s
 Keep unsent messages	الاحتفاظ بالرسائل غير المرسلة

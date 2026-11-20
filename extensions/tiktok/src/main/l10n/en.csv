@@ -33,6 +33,9 @@ source,target
 %1$s dp,%1$s dp
 %1$s entries skipped.,%1$s entries skipped.
 %1$s entry skipped.,%1$s entry skipped.
+%1$s follower,%1$s follower
+%1$s followers,%1$s followers
+%1$s following,%1$s following
 "%1$s has type %2$s, but the file says %3$s.","%1$s has type %2$s, but the file says %3$s."
 "%1$s hid everything TikTok sent, %2$d times in a row. Turn it off if that's not what you wanted.","%1$s hid everything TikTok sent, %2$d times in a row. Turn it off if that's not what you wanted."
 %1$s is a kind of value the Lab can't override.,%1$s is a kind of value the Lab can't override.
@@ -50,6 +53,8 @@ source,target
 %1$s isn't installed or doesn't take links,%1$s isn't installed or doesn't take links
 %1$s items loaded,%1$s items loaded
 %1$s left,%1$s left
+%1$s like,%1$s like
+%1$s likes,%1$s likes
 %1$s line,%1$s line
 %1$s lines,%1$s lines
 %1$s millisecond,%1$s millisecond
@@ -100,6 +105,7 @@ source,target
 %1$s · declared by TikTok,%1$s · declared by TikTok
 "%1$s · declared by TikTok, with a current value","%1$s · declared by TikTok, with a current value"
 %1$s%%,%1$s%%
+"%1$s, %2$s","%1$s, %2$s"
 "%1$s, %2$s or %3$s","%1$s, %2$s or %3$s"
 "%1$s, %2$s, %3$s or %4$s","%1$s, %2$s, %3$s or %4$s"
 "%1$s, %2$s, %3$s, %4$s, %5$s","%1$s, %2$s, %3$s, %4$s, %5$s"
@@ -1448,6 +1454,7 @@ No Wi-Fi for 30 minutes. Save again on Wi-Fi.,No Wi-Fi for 30 minutes. Save agai
 No app on this phone opens that file,No app on this phone opens that file
 No app on this phone opens web links,No app on this phone opens web links
 No apps match this search,No apps match this search
+No changes since %1$s,No changes since %1$s
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","No chat with @%1$s turned up on this account. Open your chat with them once, then try again."
 No clean copy yet. Saved the watermarked one to %1$s,No clean copy yet. Saved the watermarked one to %1$s
 No cleared videos fit the current history limits,No cleared videos fit the current history limits
@@ -2188,6 +2195,7 @@ Show the whole Activity and New followers lists instead of stopping at a View al
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off. Photo slideshows get the same treatment on a squarer screen.","Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off. Photo slideshows get the same treatment on a squarer screen."
 Show translation,Show translation
 Show video length on profile grids,Show video length on profile grids
+Show what changed since your last visit,Show what changed since your last visit
 Show what is left of the budget,Show what is left of the budget
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.","Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name."
 Show when an account was made,Show when an account was made
@@ -2215,6 +2223,7 @@ Sign in to edit your own profile counts,Sign in to edit your own profile counts
 Sign in to view this list,Sign in to view this list
 Sign in without a passkey,Sign in without a passkey
 Sign up,Sign up
+Since %1$s: %2$s,Since %1$s: %2$s
 Size limit reached. Recording saved to %1$s,Size limit reached. Recording saved to %1$s
 Size of the LIVE buttons,Size of the LIVE buttons
 Size of the buttons on videos,Size of the buttons on videos
@@ -2725,6 +2734,7 @@ Unblock,Unblock
 Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s
 "Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back.","Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back."
+"Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only."
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing."
 Undid an interrupted change. Restart TikTok to apply.,Undid an interrupted change. Restart TikTok to apply.
 Undo,Undo

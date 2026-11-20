@@ -279,6 +279,11 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "account was made. It's read from the account's ID, so very old "
                             + "accounts show nothing.",
                     Settings.SHOW_JOIN_DATE));
+            addPreference(new TogglePreference(context, "Show what changed since your last visit",
+                    "Under the @username on a profile, show how its followers, following, likes "
+                            + "and videos changed since you last opened it. The counts are kept on "
+                            + "this phone only.",
+                    Settings.SHOW_PROFILE_CHANGES));
             addPreference(new TogglePreference(context, "Local profile counts",
                     "Show chosen counts on your own profile on this phone. Other people see the real counts.",
                     Settings.LOCAL_PROFILE_COUNTS));

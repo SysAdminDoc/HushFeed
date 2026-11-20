@@ -2698,6 +2698,22 @@ Leave after no touch	Выходить, если нет касаний
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Ноль отключает это. Если столько минут не касаться экрана, видео останавливается и TikTok уходит в фон, на случай если вы уснули за просмотром. Любое касание начинает ожидание заново.
 Left TikTok after no touch	TikTok свёрнут: не было касаний
 Show when an account was made	Показывать дату создания аккаунта
+Show what changed since your last visit	Показывать, что изменилось с прошлого визита
+Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Под @именем пользователя в профиле показывает, как изменились подписчики, подписки, лайки и видео с тех пор, как вы открывали его в последний раз. Числа хранятся только на этом телефоне.
+Since %1$s: %2$s	С %1$s: %2$s
+No changes since %1$s	Без изменений с %1$s
+%1$s, %2$s	%1$s, %2$s
+%1$s follower	%1$s подписчик
+%1$s followers	%1$s подписчиков
+%1$s following	подписки: %1$s
+%1$s like	%1$s лайк
+%1$s likes	%1$s лайков
+%1$s followers|one	%1$s подписчик
+%1$s likes|one	%1$s лайк
+%1$s followers|few	%1$s подписчика
+%1$s likes|few	%1$s лайка
+%1$s followers|many	%1$s подписчиков
+%1$s likes|many	%1$s лайков
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Под @именем пользователя в чужом профиле показывать месяц и год создания аккаунта. Дата берётся из ID аккаунта, поэтому у очень старых аккаунтов ничего не показывается.
 Joined %s	Создан: %s
 Keep unsent messages	Сохранять отозванные сообщения

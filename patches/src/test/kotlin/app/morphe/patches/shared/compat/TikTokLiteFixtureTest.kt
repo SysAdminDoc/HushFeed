@@ -9,6 +9,7 @@ import app.morphe.patches.tiktok.misc.extension.LITE_HOME_ACTIVITY_CLASS
 import app.morphe.patches.tiktok.misc.extension.LITE_MAIN_ACTIVITY_CLASS
 import app.morphe.patches.tiktok.misc.extension.afterSuperAttachBaseContext
 import app.morphe.patches.tiktok.misc.settings.SHORTCUT_CLEARS
+import app.morphe.patches.tiktok.misc.settings.crashReporterStartContext
 import com.android.apksig.ApkVerifier
 import com.android.apksig.apk.ApkUtils
 import com.android.apksig.util.DataSources
@@ -99,7 +100,27 @@ class TikTokLiteFixtureTest {
             "Lcom/ss/android/ugc/aweme/legoImp/task/JatoInitTask;",
             "Lcom/ss/android/ugc/aweme/legoImp/task/StoreRegionInitTask;",
             "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;",
+            "Lcom/ss/android/ugc/aweme/legoImp/task/NpthExtentTask;",
         )) assertNull("$type is in Lite, so its hook could be made there", classes[type])
+    }
+
+    @Test
+    fun `Lite starts its crash reporter from its own start-up code, which crash capture goes in after`() {
+        val starts = classes.values.flatMap { classDef ->
+            classDef.methods.mapNotNull { method ->
+                crashReporterStartContext(classDef, method)?.let { context ->
+                    "${classDef.type}->${method.name}(${method.parameterTypes.joinToString("")})" to (method to context)
+                }
+            }
+        }.toMap()
+        // Lite's own start-up task, which TikTok calls NpthTask too. Its Context comes after `this`.
+        assertEquals("$starts", "p1", starts["Lcom/ss/android/ugc/aweme/legoImpl/task/NpthTask;->run(Landroid/content/Context;)"]?.second)
+        // The reporter's own init overloads call each other, and none of them is app start-up code.
+        assertTrue("$starts", starts.keys.none { it.startsWith("Lcom/bytedance/crash/") })
+        for ((name, start) in starts) {
+            assertTrue("$name never returns, so capture has nowhere to go in",
+                start.first.implementation!!.instructions.any { it.opcode == Opcode.RETURN_VOID })
+        }
     }
 
     @Test

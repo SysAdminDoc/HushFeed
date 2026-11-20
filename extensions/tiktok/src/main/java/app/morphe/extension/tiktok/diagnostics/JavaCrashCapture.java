@@ -48,9 +48,9 @@ public final class JavaCrashCapture {
                 DiagnosticCategory.SETTINGS,
                 "JavaCrashCapture",
                 "INFO",
-                "Java crash capture installed after NpthExtent"
+                "Java crash capture installed after TikTok's crash reporter"
         );
-        Log.i("morphe:JavaCrashCapture", "Java crash capture installed after NpthExtent");
+        Log.i("morphe:JavaCrashCapture", "Java crash capture installed after TikTok's crash reporter");
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

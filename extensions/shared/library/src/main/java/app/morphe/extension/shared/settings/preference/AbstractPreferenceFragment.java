@@ -460,9 +460,11 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
 
                 if (setting != null) {
                     updatePreference(pref, setting, syncSettingValue, applySettingToPreference);
-                } else if (BaseSettings.DEBUG.savedValue() && (pref instanceof SwitchPreference
-                        || pref instanceof EditTextPreference || pref instanceof ListPreference)) {
-                    // Probably a typo in the patches preference declaration.
+                } else if (BaseSettings.DEBUG.savedValue() && pref.isPersistent()
+                        && (pref instanceof SwitchPreference || pref instanceof EditTextPreference
+                        || pref instanceof ListPreference)) {
+                    // Probably a typo in the patches preference declaration. A row that saves
+                    // nothing (the App icon list) has a key only for the settings search.
                     Logger.printException(() -> "Preference key has no setting: " + key);
                 }
             }

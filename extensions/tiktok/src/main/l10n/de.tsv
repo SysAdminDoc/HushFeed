@@ -2971,6 +2971,23 @@ My likes on this phone	Meine Likes auf diesem Handy
 Find and reopen the videos you liked only on this phone	Videos finden und wieder öffnen, die du nur auf diesem Handy gelikt hast
 Videos you like on this phone show up here	Videos, die du auf diesem Handy likest, erscheinen hier
 Likes cleared	Likes gelöscht
+Save your likes from a TikTok data export	Deine Likes aus einem TikTok-Datenexport speichern
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Wähle den Export, den TikTok unter Einstellungen und Datenschutz > Konto > Deine Daten herunterladen schickt, im JSON-Format. Die Videos, die er als gelikt oder favorisiert auflistet, werden wie ausgewählte Videos gespeichert, bis zu %1$s auf einmal.
+Reading the data export	Datenexport wird gelesen
+Liked videos (%1$s)	Gelikte Videos (%1$s)
+Favorites (%1$s)	Favoriten (%1$s)
+That export lists no liked or favorited videos	Dieser Export listet keine gelikten oder favorisierten Videos
+Couldn't start saving. Try again in a moment.	Speichern konnte nicht starten. Versuch es gleich noch mal.
+You've already saved every one of these videos here	Du hast jedes dieser Videos hier schon gespeichert
+Saving one video	Ein Video wird gespeichert
+Saving %1$s videos	%1$s Videos werden gespeichert
+One you saved before is left out	Eins, das du schon gespeichert hast, wird ausgelassen
+%1$s you saved before are left out	%1$s, die du schon gespeichert hast, werden ausgelassen
+Choose the file again after this run to save the other %1$s	Wähle die Datei nach diesem Durchlauf noch mal, um die anderen %1$s zu speichern
+That file is larger than %1$s MB. Choose the JSON file from the export.	Diese Datei ist größer als %1$s MB. Wähle die JSON-Datei aus dem Export.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Das ist kein TikTok-Datenexport im JSON-Format. Wähle user_data_tiktok.json oder die ZIP-Datei, in der sie kam.
+One isn't on TikTok anymore	Eins ist nicht mehr auf TikTok
+%1$s aren't on TikTok anymore	%1$s sind nicht mehr auf TikTok
 The host can see you	Der Host sieht dich
 Let the host see you	Den Host dich sehen lassen
 Couldn't tell which LIVE this is. Open it again.	Unklar, welches LIVE das ist. Öffne es noch einmal.

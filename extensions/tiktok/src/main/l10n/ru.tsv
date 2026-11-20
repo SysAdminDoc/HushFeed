@@ -3151,6 +3151,32 @@ My likes on this phone	Мои лайки на этом телефоне
 Find and reopen the videos you liked only on this phone	Находите и снова открывайте видео, которые вы лайкнули только на этом телефоне
 Videos you like on this phone show up here	Здесь появятся видео, которые вы лайкнули на этом телефоне
 Likes cleared	Лайки очищены
+Save your likes from a TikTok data export	Сохранить ваши лайки из экспорта данных TikTok
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Выберите экспорт, который TikTok присылает из раздела Настройки и конфиденциальность > Аккаунт > Скачать свои данные, в формате JSON. Видео, которые в нём отмечены как понравившиеся или избранные, сохраняются как выбранные видео, до %1$s за раз.
+Reading the data export	Читаем экспорт данных
+Liked videos (%1$s)	Понравившиеся видео (%1$s)
+Favorites (%1$s)	Избранное (%1$s)
+That export lists no liked or favorited videos	В этом экспорте нет понравившихся или избранных видео
+Couldn't start saving. Try again in a moment.	Не удалось начать сохранение. Попробуйте ещё раз чуть позже.
+You've already saved every one of these videos here	Вы уже сохранили здесь все эти видео
+Saving one video	Сохраняем одно видео
+Saving %1$s videos	Сохраняем %1$s видео
+One you saved before is left out	Одно уже сохранённое видео пропущено
+%1$s you saved before are left out	Пропущено уже сохранённых видео: %1$s
+Choose the file again after this run to save the other %1$s	Выберите файл снова после этого прохода, чтобы сохранить остальные %1$s
+That file is larger than %1$s MB. Choose the JSON file from the export.	Этот файл больше %1$s МБ. Выберите JSON-файл из экспорта.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Это не экспорт данных TikTok в формате JSON. Выберите user_data_tiktok.json или zip-архив, в котором он пришёл.
+One isn't on TikTok anymore	Одного видео больше нет в TikTok
+%1$s aren't on TikTok anymore	Видео, которых больше нет в TikTok: %1$s
+Saving %1$s videos|one	Сохраняем %1$s видео
+%1$s you saved before are left out|one	Пропущено уже сохранённых видео: %1$s
+%1$s aren't on TikTok anymore|one	Видео, которых больше нет в TikTok: %1$s
+Saving %1$s videos|few	Сохраняем %1$s видео
+%1$s you saved before are left out|few	Пропущено уже сохранённых видео: %1$s
+%1$s aren't on TikTok anymore|few	Видео, которых больше нет в TikTok: %1$s
+Saving %1$s videos|many	Сохраняем %1$s видео
+%1$s you saved before are left out|many	Пропущено уже сохранённых видео: %1$s
+%1$s aren't on TikTok anymore|many	Видео, которых больше нет в TikTok: %1$s
 The host can see you	Ведущий вас видит
 Let the host see you	Показаться ведущему
 Couldn't tell which LIVE this is. Open it again.	Непонятно, какой это LIVE. Откройте его снова.

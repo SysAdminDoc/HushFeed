@@ -2968,6 +2968,23 @@ My likes on this phone	Minhas curtidas neste celular
 Find and reopen the videos you liked only on this phone	Encontre e reabra os vídeos que você curtiu só neste celular
 Videos you like on this phone show up here	Os vídeos que você curte neste celular aparecem aqui
 Likes cleared	Curtidas limpas
+Save your likes from a TikTok data export	Salvar suas curtidas de uma exportação de dados do TikTok
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Escolha a exportação que o TikTok envia em Configurações e privacidade > Conta > Baixar seus dados, no formato JSON. Os vídeos que ela lista como curtidos ou favoritos são salvos como vídeos escolhidos, até %1$s por vez.
+Reading the data export	Lendo a exportação de dados
+Liked videos (%1$s)	Vídeos curtidos (%1$s)
+Favorites (%1$s)	Favoritos (%1$s)
+That export lists no liked or favorited videos	Essa exportação não lista vídeos curtidos nem favoritos
+Couldn't start saving. Try again in a moment.	Não deu para começar a salvar. Tente de novo daqui a pouco.
+You've already saved every one of these videos here	Você já salvou aqui todos estes vídeos
+Saving one video	Salvando um vídeo
+Saving %1$s videos	Salvando %1$s vídeos
+One you saved before is left out	Um que você já salvou ficou de fora
+%1$s you saved before are left out	%1$s que você já salvou ficaram de fora
+Choose the file again after this run to save the other %1$s	Escolha o arquivo de novo depois desta rodada para salvar os outros %1$s
+That file is larger than %1$s MB. Choose the JSON file from the export.	Esse arquivo tem mais de %1$s MB. Escolha o arquivo JSON da exportação.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Isso não é uma exportação de dados do TikTok em formato JSON. Escolha user_data_tiktok.json ou o zip em que ele veio.
+One isn't on TikTok anymore	Um não está mais no TikTok
+%1$s aren't on TikTok anymore	%1$s não estão mais no TikTok
 The host can see you	O anfitrião pode ver você
 Let the host see you	Deixar o anfitrião ver você
 Couldn't tell which LIVE this is. Open it again.	Não deu para saber qual LIVE é esta. Abra de novo.

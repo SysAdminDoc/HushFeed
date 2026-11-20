@@ -147,7 +147,8 @@ public final class WatchHistoryImport {
         return time > 0 && time <= nowMs ? time : null;
     }
 
-    private static String videoId(String value) {
+    /** The id in an https video link on tiktok.com or tiktokv.com, or null for any other link. */
+    public static String videoId(String value) {
         try {
             URI uri = new URI(value);
             if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getRawUserInfo() != null

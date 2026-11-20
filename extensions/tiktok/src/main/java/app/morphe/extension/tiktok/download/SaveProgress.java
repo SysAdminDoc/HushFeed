@@ -307,6 +307,18 @@ final class SaveProgress {
         cancelled.set(true);
     }
 
+    /**
+     * A file a step leaves out as an expected outcome, such as a post TikTok no longer has. It
+     * counts as skipped like any failure, but goes to the log as information: an old data export
+     * can list hundreds of deleted likes, and an error toast and stack trace for each one buried
+     * the real failures in a debug report.
+     */
+    static class Skip extends IOException {
+        Skip(String message) {
+            super(message);
+        }
+    }
+
     /** Stops after the file under way. The row says so, aloud once, until that file is done. */
     void cancel() {
         if (!cancelled.compareAndSet(false, true)) return;
@@ -362,6 +374,11 @@ final class SaveProgress {
                         }
                         if (stop != Stop.NONE) for (int rest = index; rest < total; rest++) unsaved.add(rest);
                         break;
+                    } catch (Skip expected) {
+                        int which = index + 1;
+                        Logger.printInfo(() -> "File " + which + " of " + total + " was left out: " + expected.getMessage());
+                        skipped++;
+                        unsaved.add(index);
                     } catch (IOException | RuntimeException failure) {
                         int which = index + 1;
                         Logger.printException(() -> "File " + which + " of " + total + " was not saved", failure);

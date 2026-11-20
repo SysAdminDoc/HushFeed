@@ -2816,6 +2816,23 @@ My likes on this phone,Lượt thích của tôi trên điện thoại này
 Find and reopen the videos you liked only on this phone,Tìm và mở lại các video bạn chỉ thích trên điện thoại này
 Videos you like on this phone show up here,Các video bạn thích trên điện thoại này sẽ hiện ở đây
 Likes cleared,Đã xóa lượt thích
+Save your likes from a TikTok data export,Lưu lượt thích của bạn từ bản xuất dữ liệu TikTok
+"Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Chọn bản xuất TikTok gửi từ Cài đặt và quyền riêng tư > Tài khoản > Tải dữ liệu của bạn xuống, ở định dạng JSON. Các video mà bản này liệt kê là đã thích hoặc yêu thích sẽ được lưu như video đã chọn, tối đa %1$s video mỗi lần."
+Reading the data export,Đang đọc bản xuất dữ liệu
+Liked videos (%1$s),Video đã thích (%1$s)
+Favorites (%1$s),Yêu thích (%1$s)
+That export lists no liked or favorited videos,Bản xuất đó không có video đã thích hay yêu thích nào
+Couldn't start saving. Try again in a moment.,Không thể bắt đầu lưu. Hãy thử lại sau giây lát.
+You've already saved every one of these videos here,Bạn đã lưu tất cả các video này ở đây rồi
+Saving one video,Đang lưu một video
+Saving %1$s videos,Đang lưu %1$s video
+One you saved before is left out,Bỏ qua một video bạn đã lưu trước đó
+%1$s you saved before are left out,Bỏ qua %1$s video bạn đã lưu trước đó
+Choose the file again after this run to save the other %1$s,Chọn lại tệp sau lượt này để lưu %1$s video còn lại
+That file is larger than %1$s MB. Choose the JSON file from the export.,Tệp đó lớn hơn %1$s MB. Hãy chọn tệp JSON trong bản xuất.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.,Đó không phải bản xuất dữ liệu TikTok ở định dạng JSON. Hãy chọn user_data_tiktok.json hoặc tệp zip chứa nó.
+One isn't on TikTok anymore,Một video không còn trên TikTok nữa
+%1$s aren't on TikTok anymore,%1$s video không còn trên TikTok nữa
 The host can see you,Chủ phòng thấy bạn
 Let the host see you,Cho chủ phòng thấy bạn
 Couldn't tell which LIVE this is. Open it again.,Không rõ đây là LIVE nào. Hãy mở lại.

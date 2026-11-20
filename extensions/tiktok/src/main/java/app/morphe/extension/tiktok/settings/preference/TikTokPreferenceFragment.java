@@ -334,6 +334,16 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
     }
 
+    /** Save your likes from a TikTok data export, whose picker answers the page that asked. */
+    public static void openLikesExportPicker() {
+        if (activeFragment != null && activeFragment.isAdded()) {
+            LikesExportPreference.pickFile(activeFragment);
+        } else {
+            SettingsActionBanner.showNotice(Utils.getContext(), L10n.t(
+                    "Reopen Hushfeed settings, then choose the file"));
+        }
+    }
+
     /**
      * Owes a restart for a file the next start reads rather than a setting, the way turning
      * Hushfeed back on owes one for its marker file, and says so on the page open now.
@@ -2501,6 +2511,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (SeenHistoryFilePreference.onResult(this, requestCode, resultCode, data)) return;
         if (SettingsBackupPreference.onResult(this, requestCode, resultCode, data)) return;
         if (ImportedFontPreference.onResult(this, requestCode, resultCode, data)) return;
+        if (LikesExportPreference.onResult(this, requestCode, resultCode, data)) return;
         if (requestCode != REQUEST_DOWNLOAD_PATH_FOLDER) {
             return;
         }

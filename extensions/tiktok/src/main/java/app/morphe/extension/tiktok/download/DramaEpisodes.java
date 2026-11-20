@@ -316,6 +316,26 @@ final class DramaEpisodes {
         }
     }
 
+    /**
+     * Any post by its id, from the same one-post reply, for a save that starts from an id alone
+     * (a data export's likes). Null when TikTok sends no post for it: the creator deleted it or
+     * made it private. A request that fails throws, so it isn't taken for a missing post.
+     */
+    static Object post(String id) throws Exception {
+        Map<String, String> query = new LinkedHashMap<>();
+        query.put("aweme_id", id);
+        String json = source().get(DETAIL_PATH, query);
+        if (json == null) throw new java.io.IOException("No reply for post " + id);
+        JSONObject root = new JSONObject(json);
+        int status = root.optInt("status_code", -1);
+        JSONObject detail = root.optJSONObject("aweme_detail");
+        if (detail == null) {
+            if (status != 0) throw new java.io.IOException("TikTok answered post " + id + " with status " + status);
+            return null;
+        }
+        return reader().post(detail.toString());
+    }
+
     /** How many video addresses a post's JSON carries, in its play address and its renditions. */
     static int addresses(JSONObject post) {
         JSONObject video = post == null ? null : post.optJSONObject("video");

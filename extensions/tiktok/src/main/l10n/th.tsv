@@ -2971,6 +2971,23 @@ My likes on this phone	การถูกใจของฉันบนโทร
 Find and reopen the videos you liked only on this phone	ค้นหาและเปิดวิดีโอที่คุณถูกใจเฉพาะบนโทรศัพท์เครื่องนี้อีกครั้ง
 Videos you like on this phone show up here	วิดีโอที่คุณถูกใจบนโทรศัพท์เครื่องนี้จะแสดงที่นี่
 Likes cleared	ล้างการถูกใจแล้ว
+Save your likes from a TikTok data export	บันทึกการถูกใจของคุณจากไฟล์ส่งออกข้อมูล TikTok
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	เลือกไฟล์ส่งออกที่ TikTok ส่งมาจาก การตั้งค่าและความเป็นส่วนตัว > บัญชี > ดาวน์โหลดข้อมูลของคุณ ในรูปแบบ JSON วิดีโอที่ไฟล์ระบุว่าถูกใจหรือเป็นรายการโปรดจะถูกบันทึกเหมือนวิดีโอที่เลือก ครั้งละไม่เกิน %1$s รายการ
+Reading the data export	กำลังอ่านไฟล์ส่งออกข้อมูล
+Liked videos (%1$s)	วิดีโอที่ถูกใจ (%1$s)
+Favorites (%1$s)	รายการโปรด (%1$s)
+That export lists no liked or favorited videos	ไฟล์ส่งออกนั้นไม่มีวิดีโอที่ถูกใจหรือรายการโปรด
+Couldn't start saving. Try again in a moment.	เริ่มบันทึกไม่ได้ ลองอีกครั้งในอีกสักครู่
+You've already saved every one of these videos here	คุณบันทึกวิดีโอเหล่านี้ทั้งหมดไว้ที่นี่แล้ว
+Saving one video	กำลังบันทึกวิดีโอ 1 รายการ
+Saving %1$s videos	กำลังบันทึกวิดีโอ %1$s รายการ
+One you saved before is left out	ข้ามวิดีโอ 1 รายการที่คุณบันทึกไว้แล้ว
+%1$s you saved before are left out	ข้ามวิดีโอ %1$s รายการที่คุณบันทึกไว้แล้ว
+Choose the file again after this run to save the other %1$s	เลือกไฟล์อีกครั้งหลังรอบนี้เพื่อบันทึกอีก %1$s รายการ
+That file is larger than %1$s MB. Choose the JSON file from the export.	ไฟล์นั้นใหญ่กว่า %1$s MB เลือกไฟล์ JSON จากไฟล์ส่งออก
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	นั่นไม่ใช่ไฟล์ส่งออกข้อมูล TikTok ในรูปแบบ JSON เลือก user_data_tiktok.json หรือไฟล์ zip ที่ส่งมา
+One isn't on TikTok anymore	วิดีโอ 1 รายการไม่มีใน TikTok แล้ว
+%1$s aren't on TikTok anymore	วิดีโอ %1$s รายการไม่มีใน TikTok แล้ว
 The host can see you	โฮสต์มองเห็นคุณ
 Let the host see you	ให้โฮสต์เห็นคุณ
 Couldn't tell which LIVE this is. Open it again.	ไม่รู้ว่านี่คือ LIVE ไหน เปิดอีกครั้ง

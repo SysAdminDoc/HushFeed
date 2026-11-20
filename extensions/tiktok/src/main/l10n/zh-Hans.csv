@@ -2816,6 +2816,23 @@ My likes on this phone,我在这部手机上的点赞
 Find and reopen the videos you liked only on this phone,查找并重新打开你只在这部手机上点赞的视频
 Videos you like on this phone show up here,你在这部手机上点赞的视频会显示在这里
 Likes cleared,点赞已清除
+Save your likes from a TikTok data export,从 TikTok 数据导出中保存你的点赞
+"Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.",选择 TikTok 从“设置和隐私 > 帐户 > 下载你的数据”发来的 JSON 格式导出。其中列为已点赞或已收藏的视频会像挑选的视频一样保存，每次最多 %1$s 个.
+Reading the data export,正在读取数据导出
+Liked videos (%1$s),点赞的视频 (%1$s)
+Favorites (%1$s),收藏 (%1$s)
+That export lists no liked or favorited videos,该导出中没有点赞或收藏的视频
+Couldn't start saving. Try again in a moment.,无法开始保存。请稍后再试.
+You've already saved every one of these videos here,这些视频你都已经在这里保存过了
+Saving one video,正在保存 1 个视频
+Saving %1$s videos,正在保存 %1$s 个视频
+One you saved before is left out,已跳过 1 个你之前保存过的视频
+%1$s you saved before are left out,已跳过 %1$s 个你之前保存过的视频
+Choose the file again after this run to save the other %1$s,这次保存完后再选一次该文件，即可保存其余 %1$s 个
+That file is larger than %1$s MB. Choose the JSON file from the export.,该文件大于 %1$s MB。请选择导出中的 JSON 文件.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.,这不是 JSON 格式的 TikTok 数据导出。请选择 user_data_tiktok.json 或包含它的 zip 文件.
+One isn't on TikTok anymore,有 1 个已不在 TikTok 上
+%1$s aren't on TikTok anymore,有 %1$s 个已不在 TikTok 上
 The host can see you,主播能看到你
 Let the host see you,让主播看到你
 Couldn't tell which LIVE this is. Open it again.,无法判断这是哪个 LIVE。请再打开一次.

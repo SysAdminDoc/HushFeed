@@ -26,6 +26,7 @@ source,target
 %1$s Mb/s,%1$s Mb/s
 %1$s and above,%1$s and above
 %1$s appears more than once in this file.,%1$s appears more than once in this file.
+%1$s aren't on TikTok anymore,%1$s aren't on TikTok anymore
 %1$s day,%1$s day
 %1$s days,%1$s days
 %1$s destinations must start with %2$s,%1$s destinations must start with %2$s
@@ -93,6 +94,7 @@ source,target
 %1$s watched video added.,%1$s watched video added.
 %1$s watched videos added.,%1$s watched videos added.
 %1$s were already saved,%1$s were already saved
+%1$s you saved before are left out,%1$s you saved before are left out
 %1$s · Hushfeed's list only,%1$s · Hushfeed's list only
 %1$s · current value only,%1$s · current value only
 %1$s · declared by TikTok,%1$s · declared by TikTok
@@ -427,6 +429,7 @@ Choose a backup file. Your current settings are kept for Undo.,Choose a backup f
 Choose a preset to fill the SIM details.,Choose a preset to fill the SIM details.
 Choose a subfolder under %1$s.,Choose a subfolder under %1$s.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.
+Choose the file again after this run to save the other %1$s,Choose the file again after this run to save the other %1$s
 Choose what reaches your feed,Choose what reaches your feed
 Choose which bottom tabs stay visible.,Choose which bottom tabs stay visible.
 "Choose which feed tabs stay visible. If only For You is left, its tab name is hidden.","Choose which feed tabs stay visible. If only For You is left, its tab name is hidden."
@@ -567,6 +570,7 @@ Couldn't save this override. Try again.,Couldn't save this override. Try again.
 "Couldn't save. Try again, or choose Automatic.","Couldn't save. Try again, or choose Automatic."
 Couldn't send the feedback. Try again in a moment.,Couldn't send the feedback. Try again in a moment.
 Couldn't set up a new device identity. Try again.,Couldn't set up a new device identity. Try again.
+Couldn't start saving. Try again in a moment.,Couldn't start saving. Try again in a moment.
 Couldn't start the Lab change. Try again.,Couldn't start the Lab change. Try again.
 Couldn't start the export. Try again in a moment.,Couldn't start the export. Try again in a moment.
 Couldn't start the import. Try again in a moment.,Couldn't start the import. Try again in a moment.
@@ -734,6 +738,7 @@ Fade the video controls,Fade the video controls
 Fall back to the watermarked copy,Fall back to the watermarked copy
 Family Pairing,Family Pairing
 Favorites,Favorites
+Favorites (%1$s),Favorites (%1$s)
 Favorites range,Favorites range
 Favorites removed: %1$d,Favorites removed: %1$d
 Feature Gate Lab,Feature Gate Lab
@@ -1287,6 +1292,7 @@ Like,Like
 Like or unlike the video,Like or unlike the video
 Like the video,Like the video
 Liked videos,Liked videos
+Liked videos (%1$s),Liked videos (%1$s)
 Likes,Likes
 Likes aren't available for this video,Likes aren't available for this video
 Likes cleared,Likes cleared
@@ -1551,6 +1557,7 @@ On. Hushfeed hasn't seen TikTok send any reports since it started.,On. Hushfeed 
 "Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out.","Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out."
 One area was checked and everything it needs is here.,One area was checked and everything it needs is here.
 One at a time,One at a time
+One isn't on TikTok anymore,One isn't on TikTok anymore
 "One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.","One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice."
 One minute left,One minute left
 One more save waiting,One more save waiting
@@ -1562,6 +1569,7 @@ One value per line,One value per line
 One video,One video
 One video was recorded before each account kept its own list. It hides nothing until you add it here.,One video was recorded before each account kept its own list. It hides nothing until you add it here.
 One was already saved,One was already saved
+One you saved before is left out,One you saved before is left out
 Only a watermarked copy existed. Saved to %1$s,Only a watermarked copy existed. Saved to %1$s
 Only bottom tabs TikTok has loaded on this device are shown here. This doesn't force unavailable tabs to appear.,Only bottom tabs TikTok has loaded on this device are shown here. This doesn't force unavailable tabs to appear.
 Only fields the Lab can check and copy safely are shown.,Only fields the Lab can check and copy safely are shown.
@@ -1659,6 +1667,7 @@ Pick for saving,Pick for saving
 Pick stories to save,Pick stories to save
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.
 Pick the buttons to take off the column. The rest stay where they are.,Pick the buttons to take off the column. The rest stay where they are.
+"Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time."
 "Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.","Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra."
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked."
 "Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.","Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too."
@@ -1773,6 +1782,7 @@ Read receipts hidden,Read receipts hidden
 Read receipts shown,Read receipts shown
 Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts won't be opened or unblocked.
 Reading,Reading
+Reading the data export,Reading the data export
 Reading the font file,Reading the font file
 Reading the seen-history file,Reading the seen-history file
 Reading watch history,Reading watch history
@@ -1936,6 +1946,7 @@ Save the video's cover,Save the video's cover
 Save this video,Save this video
 Save to a collection,Save to a collection
 Save videos without sound,Save videos without sound
+Save your likes from a TikTok data export,Save your likes from a TikTok data export
 "Save, restore, reset and undo your settings","Save, restore, reset and undo your settings"
 Saved,Saved
 Saved %1$s,Saved %1$s
@@ -1977,10 +1988,12 @@ Saving,Saving
 Saving %1$s of %2$s,Saving %1$s of %2$s
 Saving %1$s of %2$s: %3$s,Saving %1$s of %2$s: %3$s
 Saving %1$s original photos,Saving %1$s original photos
+Saving %1$s videos,Saving %1$s videos
 Saving %1$s. Tap Save again for the rest.,Saving %1$s. Tap Save again for the rest.
 Saving and sharing,Saving and sharing
 Saving frames needs Android 7 or newer,Saving frames needs Android 7 or newer
 Saving one original photo,Saving one original photo
+Saving one video,Saving one video
 Saving seen history,Saving seen history
 Saving settings backup,Saving settings backup
 Saving the cover,Saving the cover
@@ -2393,10 +2406,12 @@ That backup was written by a newer Hushfeed than this one. Nothing was altered.,
 That creator is already in the list,That creator is already in the list
 "That creator pattern could stall the feed, so it wasn't added: %1$s","That creator pattern could stall the feed, so it wasn't added: %1$s"
 "That creator pattern is too long, so it wasn't added: %1$s","That creator pattern is too long, so it wasn't added: %1$s"
+That export lists no liked or favorited videos,That export lists no liked or favorited videos
 That file has more than %1$s watch-history entries.,That file has more than %1$s watch-history entries.
 That file is larger than %1$s MB. Choose a seen-history file saved by Hushfeed.,That file is larger than %1$s MB. Choose a seen-history file saved by Hushfeed.
 That file is larger than %1$s MB. Choose a smaller font file.,That file is larger than %1$s MB. Choose a smaller font file.
 That file is larger than %1$s MB. Choose a smaller watch-history export.,That file is larger than %1$s MB. Choose a smaller watch-history export.
+That file is larger than %1$s MB. Choose the JSON file from the export.,That file is larger than %1$s MB. Choose the JSON file from the export.
 That file is too large to be a settings backup. Nothing was altered.,That file is too large to be a settings backup. Nothing was altered.
 That file isn't a font Android can use. Choose a .ttf or .otf file.,That file isn't a font Android can use. Choose a .ttf or .otf file.
 "That file isn't a loaded-values export, or it's larger than the Lab accepts","That file isn't a loaded-values export, or it's larger than the Lab accepts"
@@ -2409,6 +2424,7 @@ That is %1$d videos today,That is %1$d videos today
 That is one minute today,That is one minute today
 That is one video today,That is one video today
 That isn't a Hushfeed settings backup. Nothing was altered.,That isn't a Hushfeed settings backup. Nothing was altered.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.,That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.
 "That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history.","That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history."
 "That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok.","That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok."
 That list has too many entries. Keep it to %1$s or fewer.,That list has too many entries. Keep it to %1$s or fewer.
@@ -2862,6 +2878,7 @@ You can pick up to %1$s at a time,You can pick up to %1$s at a time
 You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.,You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.
 You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let that host see you. Needs Ghost mode on.,You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let that host see you. Needs Ghost mode on.
 You stay off the viewer list of stories you watch. Needs Ghost mode on.,You stay off the viewer list of stories you watch. Needs Ghost mode on.
+You've already saved every one of these videos here,You've already saved every one of these videos here
 YouTube Music didn't open. Open it yourself to search.,YouTube Music didn't open. Open it yourself to search.
 YouTube Music isn't installed,YouTube Music isn't installed
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.

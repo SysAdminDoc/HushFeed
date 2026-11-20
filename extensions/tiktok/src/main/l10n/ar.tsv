@@ -3215,6 +3215,35 @@ My likes on this phone	إعجاباتي على هذا الهاتف
 Find and reopen the videos you liked only on this phone	اعثر على الفيديوهات التي أعجبتك على هذا الهاتف فقط وأعد فتحها
 Videos you like on this phone show up here	الفيديوهات التي تعجبك على هذا الهاتف تظهر هنا
 Likes cleared	تم مسح الإعجابات
+Save your likes from a TikTok data export	حفظ إعجاباتك من تصدير بيانات TikTok
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	اختر التصدير الذي يرسله TikTok من الإعدادات والخصوصية > الحساب > تنزيل بياناتك، بتنسيق JSON. تُحفظ الفيديوهات المدرجة فيه كمُعجَب بها أو مفضلة مثل الفيديوهات المختارة، حتى %1$s في المرة الواحدة.
+Reading the data export	جارٍ قراءة تصدير البيانات
+Liked videos (%1$s)	الفيديوهات التي أعجبتك (%1$s)
+Favorites (%1$s)	المفضلة (%1$s)
+That export lists no liked or favorited videos	هذا التصدير لا يتضمن فيديوهات أعجبتك أو مفضلة
+Couldn't start saving. Try again in a moment.	تعذّر بدء الحفظ. حاول مرة أخرى بعد لحظة.
+You've already saved every one of these videos here	لقد حفظت كل هذه الفيديوهات هنا من قبل
+Saving one video	جارٍ حفظ فيديو واحد
+Saving %1$s videos	جارٍ حفظ %1$s فيديو
+One you saved before is left out	تم تخطي فيديو واحد حفظته من قبل
+%1$s you saved before are left out	تم تخطي %1$s فيديو حفظتها من قبل
+Choose the file again after this run to save the other %1$s	اختر الملف مرة أخرى بعد هذه الجولة لحفظ الـ %1$s الباقية
+That file is larger than %1$s MB. Choose the JSON file from the export.	هذا الملف أكبر من %1$s ميغابايت. اختر ملف JSON من التصدير.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	هذا ليس تصدير بيانات TikTok بتنسيق JSON. اختر user_data_tiktok.json أو ملف zip الذي وصل فيه.
+One isn't on TikTok anymore	فيديو واحد لم يعد موجودًا على TikTok
+%1$s aren't on TikTok anymore	%1$s فيديو لم تعد موجودة على TikTok
+Saving %1$s videos|zero	جارٍ حفظ %1$s فيديو
+%1$s you saved before are left out|zero	تم تخطي %1$s فيديو حفظتها من قبل
+%1$s aren't on TikTok anymore|zero	%1$s فيديو لم تعد موجودة على TikTok
+Saving %1$s videos|two	جارٍ حفظ %1$s فيديوين
+%1$s you saved before are left out|two	تم تخطي %1$s فيديوين حفظتهما من قبل
+%1$s aren't on TikTok anymore|two	%1$s فيديوان لم يعودا موجودين على TikTok
+Saving %1$s videos|few	جارٍ حفظ %1$s فيديوهات
+%1$s you saved before are left out|few	تم تخطي %1$s فيديوهات حفظتها من قبل
+%1$s aren't on TikTok anymore|few	%1$s فيديوهات لم تعد موجودة على TikTok
+Saving %1$s videos|many	جارٍ حفظ %1$s فيديو
+%1$s you saved before are left out|many	تم تخطي %1$s فيديو حفظتها من قبل
+%1$s aren't on TikTok anymore|many	%1$s فيديو لم يعد موجودًا على TikTok
 The host can see you	يمكن للمضيف رؤيتك
 Let the host see you	اسمح للمضيف برؤيتك
 Couldn't tell which LIVE this is. Open it again.	تعذّر معرفة أي LIVE هذا. افتحه مرة أخرى.

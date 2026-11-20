@@ -2968,6 +2968,23 @@ My likes on this phone	Bu telefondaki beğenilerim
 Find and reopen the videos you liked only on this phone	Yalnızca bu telefonda beğendiğin videoları bul ve yeniden aç
 Videos you like on this phone show up here	Bu telefonda beğendiğin videolar burada görünür
 Likes cleared	Beğeniler temizlendi
+Save your likes from a TikTok data export	Beğenilerini TikTok veri dışa aktarımından kaydet
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	TikTok'un Ayarlar ve gizlilik > Hesap > Verilerini indir bölümünden gönderdiği dışa aktarımı JSON biçiminde seç. Beğenilen veya favorilere eklenen olarak listelediği videolar, seçilen videolar gibi, bir seferde en fazla %1$s tane kaydedilir.
+Reading the data export	Veri dışa aktarımı okunuyor
+Liked videos (%1$s)	Beğenilen videolar (%1$s)
+Favorites (%1$s)	Favoriler (%1$s)
+That export lists no liked or favorited videos	Bu dışa aktarımda beğenilen veya favori video yok
+Couldn't start saving. Try again in a moment.	Kaydetme başlatılamadı. Birazdan tekrar dene.
+You've already saved every one of these videos here	Bu videoların hepsini burada zaten kaydettin
+Saving one video	Bir video kaydediliyor
+Saving %1$s videos	%1$s video kaydediliyor
+One you saved before is left out	Daha önce kaydettiğin bir video atlandı
+%1$s you saved before are left out	Daha önce kaydettiğin %1$s video atlandı
+Choose the file again after this run to save the other %1$s	Diğer %1$s videoyu kaydetmek için bu turdan sonra dosyayı yeniden seç
+That file is larger than %1$s MB. Choose the JSON file from the export.	Bu dosya %1$s MB'tan büyük. Dışa aktarımdaki JSON dosyasını seç.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Bu, JSON biçiminde bir TikTok veri dışa aktarımı değil. user_data_tiktok.json dosyasını ya da geldiği zip dosyasını seç.
+One isn't on TikTok anymore	Biri artık TikTok'ta yok
+%1$s aren't on TikTok anymore	%1$s tanesi artık TikTok'ta yok
 The host can see you	Sunucu seni görüyor
 Let the host see you	Sunucu seni görsün
 Couldn't tell which LIVE this is. Open it again.	Hangi LIVE olduğu anlaşılamadı. Tekrar aç.

@@ -2968,6 +2968,23 @@ My likes on this phone	I miei Mi piace su questo telefono
 Find and reopen the videos you liked only on this phone	Trova e riapri i video a cui hai messo Mi piace solo su questo telefono
 Videos you like on this phone show up here	I video a cui metti Mi piace su questo telefono compaiono qui
 Likes cleared	Mi piace cancellati
+Save your likes from a TikTok data export	Salva i tuoi Mi piace da un'esportazione dei dati di TikTok
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	Scegli l'esportazione che TikTok invia da Impostazioni e privacy > Account > Scarica i tuoi dati, in formato JSON. I video che elenca come Mi piace o preferiti vengono salvati come video scelti, fino a %1$s alla volta.
+Reading the data export	Lettura dell'esportazione dei dati
+Liked videos (%1$s)	Video che ti piacciono (%1$s)
+Favorites (%1$s)	Preferiti (%1$s)
+That export lists no liked or favorited videos	Quell'esportazione non elenca video con Mi piace né preferiti
+Couldn't start saving. Try again in a moment.	Non è stato possibile iniziare a salvare. Riprova tra un momento.
+You've already saved every one of these videos here	Hai già salvato qui ognuno di questi video
+Saving one video	Salvataggio di un video
+Saving %1$s videos	Salvataggio di %1$s video
+One you saved before is left out	Uno che avevi già salvato viene saltato
+%1$s you saved before are left out	%1$s che avevi già salvato vengono saltati
+Choose the file again after this run to save the other %1$s	Scegli di nuovo il file dopo questo giro per salvare gli altri %1$s
+That file is larger than %1$s MB. Choose the JSON file from the export.	Quel file supera %1$s MB. Scegli il file JSON dell'esportazione.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Questa non è un'esportazione dei dati di TikTok in formato JSON. Scegli user_data_tiktok.json o lo zip in cui è arrivato.
+One isn't on TikTok anymore	Uno non è più su TikTok
+%1$s aren't on TikTok anymore	%1$s non sono più su TikTok
 The host can see you	Chi conduce può vederti
 Let the host see you	Fatti vedere da chi conduce
 Couldn't tell which LIVE this is. Open it again.	Impossibile capire quale LIVE sia. Riaprila.

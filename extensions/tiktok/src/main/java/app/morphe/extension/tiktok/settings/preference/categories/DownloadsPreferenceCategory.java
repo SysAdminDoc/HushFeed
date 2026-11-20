@@ -21,6 +21,7 @@ import app.morphe.extension.tiktok.settings.preference.DownloadPathPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.ForgetSavedVideosPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
+import app.morphe.extension.tiktok.settings.preference.LikesExportPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.SavesNowPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
@@ -201,6 +202,7 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "grid. Pick up to %1$s, then tap Save to save them one after another, "
                             + "with a count and Cancel.", String.valueOf(GridPicker.MAX_PICKED)),
                     Settings.PICK_GRID_VIDEOS));
+            addPreference(new LikesExportPreference(context));
             addPreference(new TogglePreference(context, "Save details beside the video",
                     "Saves the caption, creator, link and post date in a text file next to the "
                             + "video, or one file for a photo post's original photos. On Android 10 "

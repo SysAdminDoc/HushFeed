@@ -2968,6 +2968,23 @@ My likes on this phone	Bu telefondakı bəyənmələrim
 Find and reopen the videos you liked only on this phone	Yalnız bu telefonda bəyəndiyiniz videoları tapın və yenidən açın
 Videos you like on this phone show up here	Bu telefonda bəyəndiyiniz videolar burada görünür
 Likes cleared	Bəyənmələr təmizləndi
+Save your likes from a TikTok data export	Bəyənmələrinizi TikTok məlumat ixracından saxlayın
+Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.	TikTok-un Ayarlar və məxfilik > Hesab > Məlumatlarınızı endirin bölməsindən göndərdiyi ixracı JSON formatında seçin. Orada bəyənilmiş və ya sevimli kimi göstərilən videolar seçilmiş videolar kimi, bir dəfəyə %1$s ədədə qədər saxlanılır.
+Reading the data export	Məlumat ixracı oxunur
+Liked videos (%1$s)	Bəyənilmiş videolar (%1$s)
+Favorites (%1$s)	Sevimlilər (%1$s)
+That export lists no liked or favorited videos	Bu ixracda bəyənilmiş və ya sevimli video yoxdur
+Couldn't start saving. Try again in a moment.	Saxlamağa başlamaq olmadı. Bir azdan yenidən cəhd edin.
+You've already saved every one of these videos here	Bu videoların hamısını artıq burada saxlamısınız
+Saving one video	Bir video saxlanılır
+Saving %1$s videos	%1$s video saxlanılır
+One you saved before is left out	Əvvəl saxladığınız bir video buraxıldı
+%1$s you saved before are left out	Əvvəl saxladığınız %1$s video buraxıldı
+Choose the file again after this run to save the other %1$s	Qalan %1$s videonu saxlamaq üçün bu dövrədən sonra faylı yenidən seçin
+That file is larger than %1$s MB. Choose the JSON file from the export.	Bu fayl %1$s MB-dan böyükdür. İxracdakı JSON faylını seçin.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.	Bu, JSON formatında TikTok məlumat ixracı deyil. user_data_tiktok.json faylını və ya onun gəldiyi zip faylını seçin.
+One isn't on TikTok anymore	Biri artıq TikTok-da yoxdur
+%1$s aren't on TikTok anymore	%1$s video artıq TikTok-da yoxdur
 The host can see you	Aparıcı sizi görür
 Let the host see you	Aparıcı sizi görsün
 Couldn't tell which LIVE this is. Open it again.	Bunun hansı LIVE olduğu bilinmədi. Yenidən açın.

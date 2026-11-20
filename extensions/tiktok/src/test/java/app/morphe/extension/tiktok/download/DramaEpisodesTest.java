@@ -245,6 +245,28 @@ public class DramaEpisodesTest {
         assertNull(DramaEpisodes.whole(episode, "17"));
     }
 
+    /** Any post by id, for a data export's likes: a missing post is null, a failed ask throws. */
+    @Test public void anyPostIsAskedForByIdAndAMissingOneIsTellableFromAFailedAsk() throws Exception {
+        List<Map<String, String>> asked = new ArrayList<>();
+        DramaEpisodes.sourceForTests = (path, query) -> {
+            assertEquals(DramaEpisodes.DETAIL_PATH, path);
+            asked.add(query);
+            return new JSONObject().put("status_code", 0)
+                    .put("aweme_detail", new JSONObject().put("aweme_id", query.get("aweme_id"))).toString();
+        };
+        assertEquals("a photo post has no video and still comes back", "post 21", DramaEpisodes.post("21"));
+        assertEquals("21", asked.get(0).get("aweme_id"));
+
+        DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 0)
+                .put("filter_detail", new JSONObject().put("aweme_id", "22")).toString();
+        assertNull("TikTok sent no post: deleted or private", DramaEpisodes.post("22"));
+
+        DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 2483).toString();
+        assertThrows(IOException.class, () -> DramaEpisodes.post("23"));
+        DramaEpisodes.sourceForTests = (path, query) -> null;
+        assertThrows(IOException.class, () -> DramaEpisodes.post("24"));
+    }
+
     @Test public void aPostsAddressesAreCountedAcrossItsPlayAddressAndRenditions() throws Exception {
         assertEquals(3, DramaEpisodes.addresses(new JSONObject().put("video", video(2))));
         assertEquals(1, DramaEpisodes.addresses(new JSONObject().put("video", video(0))));

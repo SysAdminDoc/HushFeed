@@ -2818,6 +2818,23 @@ My likes on this phone,Suka saya di ponsel ini
 Find and reopen the videos you liked only on this phone,Cari dan buka lagi video yang kamu sukai hanya di ponsel ini
 Videos you like on this phone show up here,Video yang kamu sukai di ponsel ini muncul di sini
 Likes cleared,Suka dihapus
+Save your likes from a TikTok data export,Simpan suka kamu dari ekspor data TikTok
+"Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Pilih ekspor yang dikirim TikTok dari Pengaturan dan privasi > Akun > Unduh data kamu, dalam format JSON. Video yang tercantum sebagai disukai atau favorit disimpan seperti video yang dipilih, hingga %1$s sekaligus."
+Reading the data export,Membaca ekspor data
+Liked videos (%1$s),Video yang disukai (%1$s)
+Favorites (%1$s),Favorit (%1$s)
+That export lists no liked or favorited videos,Ekspor itu tidak mencantumkan video yang disukai atau favorit
+Couldn't start saving. Try again in a moment.,Tidak bisa mulai menyimpan. Coba lagi sebentar lagi.
+You've already saved every one of these videos here,Kamu sudah menyimpan semua video ini di sini
+Saving one video,Menyimpan satu video
+Saving %1$s videos,Menyimpan %1$s video
+One you saved before is left out,Satu yang sudah kamu simpan dilewati
+%1$s you saved before are left out,%1$s yang sudah kamu simpan dilewati
+Choose the file again after this run to save the other %1$s,Pilih file itu lagi setelah putaran ini untuk menyimpan %1$s lainnya
+That file is larger than %1$s MB. Choose the JSON file from the export.,File itu lebih besar dari %1$s MB. Pilih file JSON dari ekspor.
+That isn't a TikTok data export in JSON format. Choose user_data_tiktok.json or the zip it came in.,Itu bukan ekspor data TikTok dalam format JSON. Pilih user_data_tiktok.json atau file zip tempatnya datang.
+One isn't on TikTok anymore,Satu sudah tidak ada di TikTok
+%1$s aren't on TikTok anymore,%1$s sudah tidak ada di TikTok
 The host can see you,Host bisa melihatmu
 Let the host see you,Biarkan host melihatmu
 Couldn't tell which LIVE this is. Open it again.,Tidak tahu LIVE mana ini. Buka lagi.

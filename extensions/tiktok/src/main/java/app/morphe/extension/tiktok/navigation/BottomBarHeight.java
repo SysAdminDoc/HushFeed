@@ -22,8 +22,10 @@ import java.util.WeakHashMap;
  * space every screen leaves above it in a static it works out once a launch (49 dp on most
  * phones), and places a divider and a stub over the bar with 47 and 45 dp literals. Each of
  * those passes through here, so the bar and everything sitting on it move together. Inside each
- * tab, TikTok pins the icon to the top and the name to the bottom, so those two move half the
- * difference each and keep the gap TikTok's own bar gives them. TikTok also keeps a standard room
+ * tab, TikTok pins the icon to the top and the name to the bottom. On a taller bar those two move
+ * half the difference each and keep the gap TikTok's own bar gives them. A shorter bar has no room
+ * for both inside the selected tab's outline at TikTok's size, so they shrink with the tab, each
+ * toward its own edge. TikTok also keeps a standard room
  * for the bar and pads its tabs differently once the room stops matching it, so the standard moves
  * along with the room.
  */
@@ -35,6 +37,8 @@ public final class BottomBarHeight {
     public static final String TALLER = "56";
     /** TikTok's own bar, in dp. */
     static final int TIKTOK_DP = 47;
+    /** The room TikTok leaves for its bar on most phones, in dp. */
+    static final int TIKTOK_NAV_DP = 49;
 
     /** The picked height in dp, read once a launch like TikTok reads its own. */
     private static volatile int pickedDp;
@@ -100,14 +104,26 @@ public final class BottomBarHeight {
     }
 
     /**
-     * How far a tab's icon and name move toward each other, in pixels: half of what the bar gave
-     * up, or less than nothing for a taller bar. Before the bar's dimension is read it goes by dp.
+     * How far a taller bar's tab icon and name move apart, in pixels, as less than nothing: half of
+     * what the bar gained. Before the bar's dimension is read it goes by dp. A shorter bar shrinks
+     * them instead, so it moves nothing.
      */
     static int contentShift(float density) {
         int dp = heightDp();
-        if (dp == TIKTOK_DP) return 0;
+        if (dp <= TIKTOK_DP) return 0;
         float bar = tikTokBarPixels > 0 ? tikTokBarPixels : TIKTOK_DP * density;
         return Math.round(bar * (TIKTOK_DP - dp) / (2f * TIKTOK_DP));
+    }
+
+    /**
+     * How much a shorter bar shrinks its tabs' icons and names: as much as the tab itself shrank,
+     * since each tab is as tall as the room TikTok leaves for the bar. A taller bar keeps them at
+     * TikTok's size.
+     */
+    static float contentScale() {
+        if (heightDp() >= TIKTOK_DP) return 1f;
+        int nav = tikTokNavDp > 0 ? tikTokNavDp : TIKTOK_NAV_DP;
+        return (float) roomFor(nav) / nav;
     }
 
     /** A bottom tab, as it's made. Each view put in it from then on is moved as it goes in. */
@@ -116,13 +132,14 @@ public final class BottomBarHeight {
         try {
             if (!(cell instanceof ViewGroup)) return;
             int shift = contentShift(cell.getResources().getDisplayMetrics().density);
-            if (shift == 0) return;
+            float scale = contentScale();
+            if (shift == 0 && scale == 1f) return;
             ViewGroup tab = (ViewGroup) cell;
-            for (int i = 0; i < tab.getChildCount(); i++) moveInTab(tab.getChildAt(i), shift);
+            for (int i = 0; i < tab.getChildCount(); i++) moveInTab(tab.getChildAt(i), shift, scale);
             tab.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
                 @Override
                 public void onChildViewAdded(View parent, View child) {
-                    moveInTab(child, shift);
+                    moveInTab(child, shift, scale);
                 }
 
                 @Override
@@ -136,9 +153,10 @@ public final class BottomBarHeight {
 
     /**
      * Moves a view pinned to the tab's top up by the shift, and one pinned to its bottom down by
-     * it. A centered view, and one as tall as the tab, already sits right.
+     * it, or shrinks it by the scale toward the edge it's pinned to. A centered view, and one as
+     * tall as the tab, already sits right.
      */
-    static void moveInTab(View child, int shift) {
+    static void moveInTab(View child, int shift, float scale) {
         ViewGroup.LayoutParams params = child.getLayoutParams();
         if (!(params instanceof FrameLayout.LayoutParams) || params.height == ViewGroup.LayoutParams.MATCH_PARENT) return;
         FrameLayout.LayoutParams frame = (FrameLayout.LayoutParams) params;
@@ -146,12 +164,32 @@ public final class BottomBarHeight {
         int vertical = frame.gravity & Gravity.VERTICAL_GRAVITY_MASK;
         if (frame.gravity != -1 && vertical == Gravity.CENTER_VERTICAL) return;
         if (!moved.add(frame)) return;
-        if (frame.gravity != -1 && vertical == Gravity.BOTTOM) {
+        boolean atBottom = frame.gravity != -1 && vertical == Gravity.BOTTOM;
+        if (scale != 1f) {
+            child.setScaleX(scale);
+            child.setScaleY(scale);
+            pinToEdge(child, atBottom);
+            child.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                    pinToEdge(view, atBottom));
+            return;
+        }
+        if (atBottom) {
             frame.bottomMargin -= shift;
         } else {
             frame.topMargin -= shift;
         }
         child.requestLayout();
+    }
+
+    /**
+     * Shrinks a view toward the tab's top or bottom edge and its middle, so it lands where TikTok's
+     * own tab would put it if the whole tab were drawn smaller.
+     */
+    private static void pinToEdge(View child, boolean atBottom) {
+        if (!(child.getParent() instanceof View)) return;
+        View tab = (View) child.getParent();
+        child.setPivotX(tab.getWidth() / 2f - child.getLeft());
+        child.setPivotY(atBottom ? tab.getHeight() - child.getTop() : -child.getTop());
     }
 
     /** A distance up from the screen's bottom edge, in dp, that clears the bar. */

@@ -136,25 +136,50 @@ public class BottomBarHeightTest {
         assertEquals(46, BottomBarHeight.navHeight(49));
     }
 
-    /** At 2x TikTok's bar is 94 pixels and a 40 dp one 80, so the icon and the name each move 7. */
-    @Test public void aTabsContentMovesHalfWhatTheBarGaveUp() {
+    /**
+     * At 2x TikTok's bar is 94 pixels and a 56 dp one 112, so the icon and the name each move 9 apart.
+     * A shorter bar shrinks the tab's content instead, so nothing moves.
+     */
+    @Test public void aTallerBarsTabContentMovesHalfWhatTheBarGained() {
         assertEquals(0, BottomBarHeight.contentShift(2f));
-        pick(BottomBarHeight.SHORTER);
-        assertEquals(7, BottomBarHeight.contentShift(2f));
-        // Once the bar's dimension is read, its own pixels count: 138 * 7 / 94 is 10.3.
-        BottomBarHeight.barPixels(138);
-        assertEquals(10, BottomBarHeight.contentShift(2f));
         pick(BottomBarHeight.TALLER);
+        assertEquals(-9, BottomBarHeight.contentShift(2f));
+        // Once the bar's dimension is read, its own pixels count: 138 * 9 / 94 is 13.2.
         BottomBarHeight.barPixels(138f);
         assertEquals(-13, BottomBarHeight.contentShift(2f));
-    }
-
-    /** On a 40 dp bar the name sat over the icon, each pinned to its own edge of the tab. */
-    @Test public void aShorterBarBringsTheIconAndTheNameIn() {
         pick(BottomBarHeight.SHORTER);
         BottomBarHeight.barPixels(138);
+        assertEquals(0, BottomBarHeight.contentShift(2f));
+    }
+
+    /** A tab is as tall as the room above the bar, so a shorter bar shrinks its content by as much. */
+    @Test public void aShorterBarsTabContentShrinksWithTheTab() {
+        assertEquals(1f, BottomBarHeight.contentScale(), 0f);
+        pick(BottomBarHeight.TALLER);
+        assertEquals(1f, BottomBarHeight.contentScale(), 0f);
+        // Before TikTok works its room out, it goes by the 49 dp most phones get.
+        pick(BottomBarHeight.SHORTER);
+        assertEquals(42f / 49, BottomBarHeight.contentScale(), 0.0001f);
+        pick(BottomBarHeight.SHORT);
+        assertEquals(46f / 49, BottomBarHeight.contentScale(), 0.0001f);
+        BottomBarHeight.navHeight(52);
+        assertEquals(49f / 52, BottomBarHeight.contentScale(), 0.0001f);
+    }
+
+    /**
+     * On a 40 dp bar the icon and the name didn't fit inside the selected tab's outline at TikTok's
+     * size, so they shrink with the tab, each toward its own edge, and land where TikTok's bar would
+     * put them at that scale.
+     */
+    @Test public void aShorterBarShrinksTheIconAndTheNameTowardTheirEdges() {
+        pick(BottomBarHeight.SHORTER);
+        BottomBarHeight.barPixels(138);
+        BottomBarHeight.navHeight(49);
+        float scale = 42f / 49;
         FrameLayout tab = new FrameLayout(RuntimeEnvironment.getApplication());
         View icon = child(tab, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 11, 0);
+        icon.getLayoutParams().width = 60;
+        icon.getLayoutParams().height = 60;
         View centered = child(tab, Gravity.CENTER, 0, 0);
         View unpinned = child(tab, -1, 5, 0);
         View filling = new View(tab.getContext());
@@ -162,21 +187,50 @@ public class BottomBarHeightTest {
 
         BottomBarHeight.onBarCell(tab);
         View name = new View(tab.getContext());
-        FrameLayout.LayoutParams nameParams = new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+        FrameLayout.LayoutParams nameParams = new FrameLayout.LayoutParams(100, 20, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
         nameParams.bottomMargin = 11;
         tab.addView(name, nameParams);
+        layOut(tab, 216, 118);
 
-        assertEquals(1, margins(icon).topMargin);
-        assertEquals(1, margins(name).bottomMargin);
-        assertEquals(-5, margins(unpinned).topMargin);
-        assertEquals(0, margins(centered).topMargin);
-        assertEquals(0, margins(centered).bottomMargin);
-        assertEquals(0, margins(filling).topMargin);
+        assertEquals(scale, icon.getScaleX(), 0.0001f);
+        assertEquals(scale, icon.getScaleY(), 0.0001f);
+        assertEquals(scale, name.getScaleY(), 0.0001f);
+        assertEquals(scale, unpinned.getScaleY(), 0.0001f);
+        assertEquals(1f, centered.getScaleY(), 0f);
+        assertEquals(1f, filling.getScaleY(), 0f);
+        // Where they're drawn: the icon's top 11 * scale below the tab's, the name's bottom 11 * scale
+        // above the tab's, both still centered across the tab.
+        assertEquals(11 * scale, drawnTop(icon), 0.01f);
+        assertEquals(118 - 11 * scale, drawnTop(name) + 20 * scale, 0.01f);
+        assertEquals(108f, drawnLeft(icon) + 30 * scale, 0.01f);
+        assertEquals(108f, drawnLeft(name) + 50 * scale, 0.01f);
+        assertEquals(5 * scale, drawnTop(unpinned), 0.01f);
+        // The margins stay TikTok's.
+        assertEquals(11, margins(icon).topMargin);
+        assertEquals(11, margins(name).bottomMargin);
+        assertEquals(5, margins(unpinned).topMargin);
 
         // Taken out and put back, it stays where it went the first time.
         tab.removeView(name);
         tab.addView(name);
-        assertEquals(1, margins(name).bottomMargin);
+        layOut(tab, 216, 118);
+        assertEquals(scale, name.getScaleY(), 0.0001f);
+        assertEquals(118 - 11 * scale, drawnTop(name) + 20 * scale, 0.01f);
+    }
+
+    private static void layOut(FrameLayout tab, int width, int height) {
+        tab.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        tab.layout(0, 0, width, height);
+    }
+
+    /** A scaled view's drawn top in its parent: its pivot stays put and the rest closes in on it. */
+    private static float drawnTop(View view) {
+        return view.getTop() + view.getPivotY() * (1 - view.getScaleY());
+    }
+
+    private static float drawnLeft(View view) {
+        return view.getLeft() + view.getPivotX() * (1 - view.getScaleX());
     }
 
     @Test public void aTallerBarMovesThemApartAndTikToksLeavesThemBe() {

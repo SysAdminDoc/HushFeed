@@ -5,8 +5,11 @@
 package app.morphe.extension.tiktok.navigation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,17 +31,22 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 /** The bottom bar's height: TikTok's unless picked, and the bar and what sits on it move together. */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
 public class BottomBarHeightTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+    private static final BottomBarHeight.Drawing REAL_DRAWING = BottomBarHeight.drawing;
 
     @Before public void setUp() {
         BottomBarHeight.resetForTests();
     }
 
     @After public void tearDown() {
+        BottomBarHeight.drawing = REAL_DRAWING;
         setPaused(false);
         Settings.BOTTOM_BAR_HEIGHT.resetToDefault();
         BottomBarHeight.resetForTests();
@@ -176,6 +184,10 @@ public class BottomBarHeightTest {
         BottomBarHeight.barPixels(138);
         BottomBarHeight.navHeight(49);
         float scale = 42f / 49;
+        BottomBarHeight.drawing = (view, matrix) -> {
+            drawings.put(view, matrix);
+            return true;
+        };
         FrameLayout tab = new FrameLayout(RuntimeEnvironment.getApplication());
         View icon = child(tab, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 11, 0);
         icon.getLayoutParams().width = 60;
@@ -192,31 +204,34 @@ public class BottomBarHeightTest {
         tab.addView(name, nameParams);
         layOut(tab, 216, 118);
 
-        assertEquals(scale, icon.getScaleX(), 0.0001f);
-        assertEquals(scale, icon.getScaleY(), 0.0001f);
-        assertEquals(scale, name.getScaleY(), 0.0001f);
-        assertEquals(scale, unpinned.getScaleY(), 0.0001f);
-        assertEquals(1f, centered.getScaleY(), 0f);
-        assertEquals(1f, filling.getScaleY(), 0f);
         // Where they're drawn: the icon's top 11 * scale below the tab's, the name's bottom 11 * scale
-        // above the tab's, both still centered across the tab.
-        assertEquals(11 * scale, drawnTop(icon), 0.01f);
-        assertEquals(118 - 11 * scale, drawnTop(name) + 20 * scale, 0.01f);
-        assertEquals(108f, drawnLeft(icon) + 30 * scale, 0.01f);
-        assertEquals(108f, drawnLeft(name) + 50 * scale, 0.01f);
-        assertEquals(5 * scale, drawnTop(unpinned), 0.01f);
-        // The margins stay TikTok's.
+        // above the tab's, each that much smaller and still centered across the tab.
+        assertDrawn(icon, 11 * scale, 60 * scale, 60 * scale);
+        assertEquals(118 - 11 * scale, drawn(name).bottom, 0.01f);
+        assertEquals(20 * scale, drawn(name).height(), 0.01f);
+        assertEquals(108f, drawn(name).centerX(), 0.01f);
+        assertEquals(5 * scale, drawn(unpinned).top, 0.01f);
+        assertNull(drawings.get(centered));
+        assertNull(drawings.get(filling));
+        // The margins and the views' own scale stay TikTok's.
         assertEquals(11, margins(icon).topMargin);
         assertEquals(11, margins(name).bottomMargin);
         assertEquals(5, margins(unpinned).topMargin);
+        assertEquals(1f, icon.getScaleX(), 0f);
+
+        // TikTok sets an icon's own scale once its tab is picked, and the shrink stays on top of it.
+        icon.setScaleX(1f);
+        icon.setScaleY(1f);
+        assertDrawn(icon, 11 * scale, 60 * scale, 60 * scale);
 
         // Taken out and put back, it stays where it went the first time.
         tab.removeView(name);
         tab.addView(name);
         layOut(tab, 216, 118);
-        assertEquals(scale, name.getScaleY(), 0.0001f);
-        assertEquals(118 - 11 * scale, drawnTop(name) + 20 * scale, 0.01f);
+        assertEquals(118 - 11 * scale, drawn(name).bottom, 0.01f);
     }
+
+    private final Map<View, Matrix> drawings = new IdentityHashMap<>();
 
     private static void layOut(FrameLayout tab, int width, int height) {
         tab.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
@@ -224,13 +239,27 @@ public class BottomBarHeightTest {
         tab.layout(0, 0, width, height);
     }
 
-    /** A scaled view's drawn top in its parent: its pivot stays put and the rest closes in on it. */
-    private static float drawnTop(View view) {
-        return view.getTop() + view.getPivotY() * (1 - view.getScaleY());
+    /**
+     * Where a view is drawn in its tab: Android applies its own scale, then the animation matrix
+     * the shrink recorded, then moves it to its place.
+     */
+    private RectF drawn(View view) {
+        RectF rect = new RectF(0, 0, view.getWidth(), view.getHeight());
+        Matrix own = new Matrix();
+        own.setScale(view.getScaleX(), view.getScaleY(), view.getPivotX(), view.getPivotY());
+        own.mapRect(rect);
+        Matrix animation = drawings.get(view);
+        if (animation != null) animation.mapRect(rect);
+        rect.offset(view.getLeft(), view.getTop());
+        return rect;
     }
 
-    private static float drawnLeft(View view) {
-        return view.getLeft() + view.getPivotX() * (1 - view.getScaleX());
+    private void assertDrawn(View view, float top, float width, float height) {
+        RectF rect = drawn(view);
+        assertEquals(top, rect.top, 0.01f);
+        assertEquals(width, rect.width(), 0.01f);
+        assertEquals(height, rect.height(), 0.01f);
+        assertEquals(108f, rect.centerX(), 0.01f);
     }
 
     @Test public void aTallerBarMovesThemApartAndTikToksLeavesThemBe() {

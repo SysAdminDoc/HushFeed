@@ -4,6 +4,8 @@
  */
 package app.morphe.extension.tiktok.navigation;
 
+import android.graphics.Matrix;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -166,11 +169,9 @@ public final class BottomBarHeight {
         if (!moved.add(frame)) return;
         boolean atBottom = frame.gravity != -1 && vertical == Gravity.BOTTOM;
         if (scale != 1f) {
-            child.setScaleX(scale);
-            child.setScaleY(scale);
-            pinToEdge(child, atBottom);
+            shrinkToEdge(child, atBottom, scale);
             child.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
-                    pinToEdge(view, atBottom));
+                    shrinkToEdge(view, atBottom, scale));
             return;
         }
         if (atBottom) {
@@ -182,14 +183,68 @@ public final class BottomBarHeight {
     }
 
     /**
-     * Shrinks a view toward the tab's top or bottom edge and its middle, so it lands where TikTok's
-     * own tab would put it if the whole tab were drawn smaller.
+     * The drawing a view in a tab gets on a shorter bar, in its own coordinates: smaller by the
+     * scale toward the tab's top or bottom edge and its middle, so it lands where TikTok's own tab
+     * would put it if the whole tab were drawn smaller.
      */
-    private static void pinToEdge(View child, boolean atBottom) {
-        if (!(child.getParent() instanceof View)) return;
+    static Matrix edgeMatrix(View child, boolean atBottom, float scale) {
+        float[] pivot = edgePivot(child, atBottom);
+        Matrix matrix = new Matrix();
+        matrix.setScale(scale, scale, pivot[0], pivot[1]);
+        return matrix;
+    }
+
+    /** The tab's middle and the edge a view is pinned to, in the view's own coordinates. */
+    private static float[] edgePivot(View child, boolean atBottom) {
         View tab = (View) child.getParent();
-        child.setPivotX(tab.getWidth() / 2f - child.getLeft());
-        child.setPivotY(atBottom ? tab.getHeight() - child.getTop() : -child.getTop());
+        return new float[]{tab.getWidth() / 2f - child.getLeft(),
+                atBottom ? tab.getHeight() - child.getTop() : -child.getTop()};
+    }
+
+    private static void shrinkToEdge(View child, boolean atBottom, float scale) {
+        if (!(child.getParent() instanceof View)) return;
+        if (drawing.apply(child, edgeMatrix(child, atBottom, scale))) return;
+        // Without an animation matrix, the view's own scale does it, until TikTok next sets that.
+        float[] pivot = edgePivot(child, atBottom);
+        child.setPivotX(pivot[0]);
+        child.setPivotY(pivot[1]);
+        child.setScaleX(scale);
+        child.setScaleY(scale);
+    }
+
+    /** Puts a drawing on a view on top of its own scale and the like. Tests swap it for a recorder. */
+    interface Drawing {
+        boolean apply(View view, Matrix matrix);
+    }
+
+    /**
+     * TikTok sets an icon's scale itself once its tab is picked, so the shrink goes in the view's
+     * animation matrix, which Android applies before the view's own scale and TikTok never touches.
+     */
+    static Drawing drawing = BottomBarHeight::setAnimationMatrix;
+
+    private static Method hiddenSetAnimationMatrix;
+    private static boolean lookedUpHidden;
+
+    private static boolean setAnimationMatrix(View view, Matrix matrix) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            view.setAnimationMatrix(matrix);
+            return true;
+        }
+        // Before Android 10 the method is there but hidden, as androidx.transition finds it too.
+        try {
+            if (!lookedUpHidden) {
+                lookedUpHidden = true;
+                hiddenSetAnimationMatrix = View.class.getMethod("setAnimationMatrix", Matrix.class);
+            }
+            if (hiddenSetAnimationMatrix == null) return false;
+            hiddenSetAnimationMatrix.invoke(view, matrix);
+            return true;
+        } catch (Throwable problem) {
+            Logger.printDebug(() -> "Bottom bar height: no animation matrix, shrinking by scale: " + problem);
+            hiddenSetAnimationMatrix = null;
+            return false;
+        }
     }
 
     /** A distance up from the screen's bottom edge, in dp, that clears the bar. */

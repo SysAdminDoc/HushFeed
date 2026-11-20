@@ -443,7 +443,7 @@ val feedTabNavigationPatch = bytecodePatch(
             mutableClassDefBy(sites.navHeight.owner).findMutableMethodOf(sites.navHeight.method)
                 .adjustNavHeight(sites.navHeight)
             // TikTok pins each tab's icon to its top and name to its bottom, which meet on a
-            // shorter bar unless both move in.
+            // shorter bar unless both shrink with it, and drift apart on a taller one.
             icon.methods.mutableCopyOf(cellConstructor).holdBarCellContent()
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,

@@ -116,7 +116,7 @@ class TikTokLiteFixtureTest {
     }
 
     @Test
-    fun `Lite clears its dynamic shortcuts only through the calls the settings shortcut is put back after`() {
+    fun `Lite clears or pushes its dynamic shortcuts only through the calls the settings shortcut is put back after`() {
         val clears = classes.values.flatMap { classDef ->
             classDef.methods.flatMap { method ->
                 method.implementation?.instructions?.mapNotNull {
@@ -125,9 +125,11 @@ class TikTokLiteFixtureTest {
             }
         }.filter {
             it.definingClass == "Landroid/content/pm/ShortcutManager;" &&
-                it.name in setOf("removeAllDynamicShortcuts", "setDynamicShortcuts")
+                it.name in setOf("removeAllDynamicShortcuts", "setDynamicShortcuts", "pushDynamicShortcut")
         }.map { it.toString() }.toSet()
         assertTrue("Lite never clears its shortcuts, so nothing has to put Hushfeed's back", clears.isNotEmpty())
+        // The push is how Lite's own four get ahead of Hushfeed's on every start.
+        assertTrue("$clears", clears.any { "pushDynamicShortcut" in it })
         assertTrue("$clears", SHORTCUT_CLEARS.containsAll(clears))
     }
 

@@ -80,8 +80,9 @@ internal fun hostSettingsInOwnActivity() {
         onCreate.addInstruction(0, "invoke-static/range { p0 .. p0 }, $LAUNCHER_SHORTCUT_CLASS->publish(Landroid/content/Context;)V")
     }
     // Lite's start-up ShortCutTask clears every dynamic shortcut when its own are switched off,
-    // which took Open Hushfeed settings off the icon a moment after it went on. Each method that
-    // clears or replaces them puts it back on its way out.
+    // which took Open Hushfeed settings off the icon a moment after it went on, and otherwise
+    // pushes its own four ahead of it. Each method that clears, replaces or pushes them puts it
+    // back on top on its way out.
     invokeSitesOf(SHORTCUT_CLEARS).map { it.owner.type to it.method }.distinct().forEach { (owner, method) ->
         val clearer = mutableClassDefBy(owner).findMutableMethodOf(method)
         clearer.findInstructionIndicesReversedOrThrow { opcode in RETURNS }.forEach { index ->
@@ -91,10 +92,14 @@ internal fun hostSettingsInOwnActivity() {
     registerForBuildDetails("enableSettings")
 }
 
-/** The ShortcutManager calls that take every dynamic shortcut away, Hushfeed's included. */
+/**
+ * The ShortcutManager calls that take every dynamic shortcut away, Hushfeed's included, or push
+ * one of the app's own ahead of it. The icon's menu shows the first four, and Lite has four.
+ */
 internal val SHORTCUT_CLEARS = setOf(
     "Landroid/content/pm/ShortcutManager;->removeAllDynamicShortcuts()V",
     "Landroid/content/pm/ShortcutManager;->setDynamicShortcuts(Ljava/util/List;)Z",
+    "Landroid/content/pm/ShortcutManager;->pushDynamicShortcut(Landroid/content/pm/ShortcutInfo;)V",
 )
 
 private val RETURNS = setOf(Opcode.RETURN_VOID, Opcode.RETURN, Opcode.RETURN_WIDE, Opcode.RETURN_OBJECT)

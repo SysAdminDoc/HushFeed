@@ -46,9 +46,9 @@ public final class LauncherSettingsShortcut {
     }
 
     /**
-     * Called on the way out of every Lite method that clears or replaces the app's dynamic
-     * shortcuts. Lite's start-up task clears them all when its own are switched off, and this
-     * one went with them.
+     * Called on the way out of every Lite method that clears, replaces or pushes the app's dynamic
+     * shortcuts. Lite's start-up task clears them all when its own are switched off, and this one
+     * went with them. When they're on, it pushes four ahead of this one, past what the menu shows.
      */
     public static void republish() {
         publish(Utils.getContext());
@@ -65,6 +65,8 @@ public final class LauncherSettingsShortcut {
         ShortcutInfo.Builder shortcut = new ShortcutInfo.Builder(context, ID)
                 .setShortLabel("Hushfeed")
                 .setLongLabel(label)
+                // First: the launcher's menu shows four by rank, and Lite has four of its own.
+                .setRank(0)
                 .setIntent(intent);
         int icon = context.getApplicationInfo().icon;
         if (icon != 0) shortcut.setIcon(Icon.createWithResource(context, icon));

@@ -68,6 +68,13 @@ public class HushfeedSettingsActivityTest {
         assertEquals(HushfeedSettingsActivity.class.getName(), opens.getComponent().getClassName());
     }
 
+    /** A launcher's menu shows the first four by rank, and Lite pushes four of its own each start (#48). */
+    @Test public void oursAsksForTheTopOfTheIconMenu() {
+        Context context = RuntimeEnvironment.getApplication();
+        LauncherSettingsShortcut.publishNow(context);
+        assertEquals(0, context.getSystemService(ShortcutManager.class).getDynamicShortcuts().get(0).getRank());
+    }
+
     /** Lite clears every dynamic shortcut as it starts (#48); the patch calls republish after. */
     @Test public void afterTheAppClearsItsShortcutsOursComesBack() throws InterruptedException {
         Context context = RuntimeEnvironment.getApplication();

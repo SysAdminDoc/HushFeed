@@ -31,7 +31,10 @@ param(
     [string]$DesktopJar,
     [string]$Xmx = '6g',
     # Patch names to leave out of the run, separated by ';', to see what a smaller selection needs.
-    [string]$Leave = ''
+    [string]$Leave = '',
+    # Patch option values, each '<patch name>|<key>=<value>' (for example
+    # 'AMOLED dark theme|inAppSwitch=false'), as patch-for-device.ps1 takes them.
+    [string[]]$Option = @()
 )
 
 $ErrorActionPreference = 'Stop'
@@ -58,6 +61,14 @@ $unknown = @($left | Where-Object { $_ -notin $names })
 if ($unknown.Count -gt 0) { throw "Not a patch in patches-list.json: $($unknown -join ', ')" }
 $names = @($names | Where-Object { $_ -notin $left })
 if ($names.Count -eq 0) { throw '-Leave left out every patch.' }
+$optionsByPatch = @{}
+foreach ($entry in $Option) {
+    $optionPatch, $assignment = $entry -split '\|', 2
+    if (-not $assignment -or $assignment -notmatch '^[^=]+=') { throw "Option '$entry' isn't '<patch name>|<key>=<value>'." }
+    if ($optionPatch -notin $names) { throw "No selected patch named '$optionPatch' for option '$assignment'." }
+    if (-not $optionsByPatch.ContainsKey($optionPatch)) { $optionsByPatch[$optionPatch] = @() }
+    $optionsByPatch[$optionPatch] += $assignment
+}
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutDir = (Resolve-Path -LiteralPath $OutDir).Path
@@ -66,7 +77,10 @@ $cliLog = Join-Path $OutDir 'cli.log'
 $temp = Join-Path $OutDir 'tmp'
 $argv = @('patch', '--exclusive', '--continue-on-error', '--unsigned', '-p', $Bundle,
     '-o', (Join-Path $OutDir 'output.apk'), '-t', $temp, '-r', (Join-Path $OutDir 'result.json'))
-foreach ($name in $names) { $argv += '-e'; $argv += $name }
+foreach ($name in $names) {
+    $argv += '-e'; $argv += $name
+    if ($optionsByPatch.ContainsKey($name)) { foreach ($assignment in $optionsByPatch[$name]) { $argv += '-O'; $argv += $assignment } }
+}
 $argv += $Apk
 # A response file keeps the patch names off the command line, whose length Windows caps.
 $bs = [string][char]92

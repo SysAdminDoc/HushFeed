@@ -12,6 +12,7 @@ import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
@@ -56,6 +57,14 @@ class BottomBarHeightAnchorsTest {
             BOTTOM_BAR_FRAMES.forEach { type ->
                 assertEquals("$version: $type literals", listOf(47f, 45f), values.filter { it.first == type }.map { it.second })
             }
+            // The feed's own controls (two placed views and two stubs) and the Tako entrance, each
+            // pinned 47 dp up from the bottom of the video, where TikTok's bar ends.
+            assertEquals("$version: feed area literals", listOf(47f, 47f, 47f, 47f),
+                values.filter { it.first == FEED_ABOVE_BAR_FRAMES.first() }.map { it.second })
+            FEED_ABOVE_BAR_FRAMES.drop(1).forEach { type ->
+                assertEquals("$version: $type literals", listOf(47f), values.filter { it.first == type }.map { it.second })
+            }
+            checkFeedHooks(version, sites)
 
             // The nav height: stored, then less 47 into a static of its own.
             val nav = sites.navHeight
@@ -117,6 +126,33 @@ class BottomBarHeightAnchorsTest {
         val placed = after.indices.filter { after[it].getReference<MethodReference>()?.name == "aboveBar" }
         assertEquals("$version: the divider and the stub", 2, placed.size)
         placed.forEach { assertEquals("$version: what aboveBar takes", Opcode.CONST_HIGH16, after[it - 1].opcode) }
+    }
+
+    /** Each feed literal goes through aboveBar right where it's loaded, and the dp conversion takes the answer. */
+    private fun checkFeedHooks(version: String, sites: BottomBarHeightSites) {
+        val feed = sites.hooksByMethod().filterKeys { it.first in FEED_ABOVE_BAR_FRAMES }
+        assertEquals("$version: feed inflaters hooked", FEED_ABOVE_BAR_FRAMES.toSet(), feed.keys.map { it.first }.toSet())
+        feed.forEach { (site, hooks) ->
+            val method = MutableMethod(site.second)
+            val size = method.implementation!!.instructions.size
+            method.addBottomBarHooks(hooks)
+            val after = method.implementation!!.instructions.toList()
+            assertEquals(size + 2 * hooks.size, after.size)
+            val placed = after.indices.filter { after[it].getReference<MethodReference>()?.name == "aboveBar" }
+            assertEquals("$version: ${site.first} hooks", hooks.size, placed.size)
+            placed.forEach { at ->
+                val load = after[at - 1]
+                assertEquals("$version: what aboveBar takes", Opcode.CONST_HIGH16, load.opcode)
+                assertEquals(47f, Float.fromBits((load as NarrowLiteralInstruction).narrowLiteral))
+                val register = (load as OneRegisterInstruction).registerA
+                assertEquals(register, (after[at] as RegisterRangeInstruction).startRegister)
+                assertEquals(register, (after[at + 1] as OneRegisterInstruction).registerA)
+                val conversion = (at + 2 until minOf(after.size, at + 10)).first { index ->
+                    after[index].getReference<MethodReference>()?.name == "applyDimension"
+                }
+                assertEquals("$version: the dp conversion reads it", register, (after[conversion] as FiveRegisterInstruction).registerD)
+            }
+        }
     }
 
     private fun checkNavHook(version: String, nav: NavHeightStatic, app: Map<String, ClassDef>) {

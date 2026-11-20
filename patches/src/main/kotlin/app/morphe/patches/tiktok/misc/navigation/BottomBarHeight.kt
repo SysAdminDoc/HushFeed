@@ -16,6 +16,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -26,6 +28,17 @@ internal const val BOTTOM_BAR_HEIGHT_EXTENSION = "Lapp/morphe/extension/tiktok/n
 internal val BOTTOM_BAR_FRAMES = listOf(
     "Lcom/by/andInflater/homepage_common_fragment_main_page;",
     "Lcom/by/andInflater/homepage_common_fragment_main_page_opt;",
+)
+
+/**
+ * The feed's precompiled inflaters. The first pins a video's own controls (the caption block, the
+ * search strip and its progress line) 47 dp up from the bottom of the video, the others the Tako
+ * entrance, and TikTok's bar ends right there, so they move with it.
+ */
+internal val FEED_ABOVE_BAR_FRAMES = listOf(
+    "Lcom/by/andInflater/common_feed_interaction_area_feed;",
+    "Lcom/by/andInflater/common_feed_fragment_feed_base;",
+    "Lcom/by/andInflater/common_feed_fragment_feed_base_opt;",
 )
 
 /** The main activity's inflater, which sizes its own bottom frame from the same dimension. */
@@ -74,7 +87,8 @@ internal class NavHeightStatic(
  * - the bar view, which the main page's inflater sizes from a dimension resource. That id is the
  *   first dimension the inflater reads, and the main activity's inflater reads it too. Every read
  *   of it in the app (8 on 47.9.2, one of them as whole pixels) is passed through the extension;
- * - a divider and a stub in the same inflater, placed 47 and 45 dp up from the bottom;
+ * - a divider and a stub in the same inflater, placed 47 and 45 dp up from the bottom, and the
+ *   feed's own controls and Tako entrance, placed 47 dp up from the bottom of the video;
  * - the nav height static, worked out once in a static initializer that starts on the low screen
  *   strategy getter, then stored with the extra above the 47 dp bar right after it. The video
  *   cells, sheets and toasts all leave that much room. The standard height the same initializer
@@ -163,26 +177,18 @@ internal fun bottomBarHeightSites(
     }
 
     val literals = frameMethods.flatMap { (type, method) ->
-        val code = method.implementation!!.instructions.toList()
-        val targets = method.branchTargets()
-        val found = code.indices.mapNotNull { index ->
-            val load = code[index]
-            if (load.opcode != Opcode.CONST_HIGH16) return@mapNotNull null
-            val value = Float.fromBits((load as NarrowLiteralInstruction).narrowLiteral)
-            if (value !in ABOVE_BAR_LITERALS) return@mapNotNull null
-            val register = (load as OneRegisterInstruction).registerA
-            // Only a literal turned into pixels as a dp value places something.
-            val used = code.subList(index + 1, minOf(code.size, index + 4)).any { next ->
-                next.methodReference()?.let { it.definingClass == "Landroid/util/TypedValue;" && it.name == "applyDimension" } == true &&
-                    (next as FiveRegisterInstruction).registerD == register
-            }
-            if (!used || index + 1 in targets) return@mapNotNull null
-            AboveBarLiteral(type, method, index, register) to value
-        }
+        val found = aboveBarLiterals(type, method, ABOVE_BAR_LITERALS)
         if (found.none { it.second == 47f }) {
             throw PatchException("Bottom bar height: $type no longer places the divider 47 dp up.")
         }
         found.map { it.first }
+    } + FEED_ABOVE_BAR_FRAMES.flatMap { type ->
+        val frame = classDef(type) ?: return@flatMap emptyList()
+        val method = frame.inflater() ?: throw PatchException("Bottom bar height: $type has no inflater.")
+        aboveBarLiterals(type, method, setOf(47f)).map { it.first }
+    }
+    if (literals.none { it.owner == FEED_ABOVE_BAR_FRAMES.first() }) {
+        throw PatchException("Bottom bar height: the feed no longer places a video's controls 47 dp up.")
     }
 
     val statics = callers(listOf(LOW_SCREEN_AB)).flatMap { owner ->
@@ -216,6 +222,42 @@ internal fun bottomBarHeightSites(
     }
 
     return BottomBarHeightSites(dimension, reads, literals, navHeight)
+}
+
+/**
+ * The dp literals among [values] that [method] turns into pixels: the first instruction after the
+ * load that touches its register is a `TypedValue.applyDimension` reading it, within a few steps
+ * (the feed's inflater checks the layout params' type in between). A load something branches past
+ * can't take a hook right behind it.
+ */
+private fun aboveBarLiterals(type: String, method: Method, values: Set<Float>): List<Pair<AboveBarLiteral, Float>> {
+    val code = method.implementation!!.instructions.toList()
+    val targets = method.branchTargets()
+    return code.indices.mapNotNull { index ->
+        val load = code[index]
+        if (load.opcode != Opcode.CONST_HIGH16) return@mapNotNull null
+        val value = Float.fromBits((load as NarrowLiteralInstruction).narrowLiteral)
+        if (value !in values) return@mapNotNull null
+        val register = (load as OneRegisterInstruction).registerA
+        val next = (index + 1 until minOf(code.size, index + 9)).firstOrNull { code[it].mentions(register) }
+            ?: return@mapNotNull null
+        val use = code[next]
+        val converts = use.methodReference()?.let { it.definingClass == "Landroid/util/TypedValue;" && it.name == "applyDimension" } == true &&
+            (use as FiveRegisterInstruction).registerD == register
+        if (!converts || index + 1 in targets) return@mapNotNull null
+        AboveBarLiteral(type, method, index, register) to value
+    }
+}
+
+/** Whether this instruction reads or writes [register] (a wide pair's second half included). */
+private fun Instruction.mentions(register: Int): Boolean = when (this) {
+    is FiveRegisterInstruction ->
+        listOf(registerC, registerD, registerE, registerF, registerG).take(registerCount).contains(register)
+    is RegisterRangeInstruction -> register in startRegister until startRegister + registerCount
+    else -> writes(register) ||
+        (this is OneRegisterInstruction && registerA == register) ||
+        (this is TwoRegisterInstruction && registerB == register) ||
+        (this is ThreeRegisterInstruction && registerC == register)
 }
 
 /** The code each site takes, by the index it goes in at. */

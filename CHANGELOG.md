@@ -37,6 +37,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * With `Bottom bar height` on anything but TikTok default, the tab icons no longer sit on top of their names. TikTok pads its tabs differently once the bar's room isn't the size it expects, and the new height counted as unexpected, so the icon and the name got pushed into each other. On a taller bar they keep the same gap as on TikTok's own bar now. On a shorter one they shrink a little with the bar, so the selected tab's outline still fits around them.
+* With `Bottom bar height` on Tall or Taller, the search strip at the bottom of a video no longer slides under the bar, and on Short or Shorter it no longer floats above the bar with a gap. The caption, the strip and its progress line keep TikTok's distance from the bar at every height now.
 * TikTok no longer crashes a few seconds after launch on some phones with "Final field cannot be written to". The Feed filter's check on videos TikTok saved for later wrote a value TikTok had marked read-only (#472).
 * With `Log diagnostics` on, Hushfeed settings no longer log a failure for the App icon row each time the page opens or refreshes. It stays out of the diagnostic report, and `Show failures on screen` doesn't pop an error for it anymore. That row saves nothing, so it was never a missing setting.
 * `Copy quick report` puts the report together in the background, so the settings page no longer stalls while it reads saved crashes. The other patch bundles line is filled in on the first copy too, where it used to ask you to copy again.

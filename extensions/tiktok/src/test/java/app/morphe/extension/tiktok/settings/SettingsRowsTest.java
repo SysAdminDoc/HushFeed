@@ -128,13 +128,40 @@ public class SettingsRowsTest {
         List<String> labels = new ArrayList<>();
         for (SettingsRows.Row row : SettingsRows.offered(Set.of("shake"))) labels.add(row.label);
 
-        assertEquals(List.of("Account", "Shake to report", "Report a problem", "Log out", "New row name"),
+        assertEquals(List.of("Account", "Shake to report", "Help Center", "Log out", "New row name"),
                 labels);
+    }
+
+    /**
+     * The 36 names TikTok 47.9.2 listed on the S22 (2026-11-20), as the hook recorded them, and
+     * the labels and order that phone's Settings and privacy page showed, section titles left out.
+     */
+    @Test public void the4792PageGetsItsOwnLabelsInItsOwnOrder() {
+        Settings.SETTINGS_ROW_CATALOG.save("analytics_center,manage_posts,content_preference,live_settings,"
+                + "notification_settings,screen_time,family_pairing,account_item,security_and_permissions,"
+                + "share_profile,switch_inbox_mode,audience_control,ads_settings,playback_settings,display,"
+                + "language,accessibility,contacts_and_location,offline_videos,clear_cache,data_saver,"
+                + "local_live_wallpaper,feedback,privacy_center,about,private_account,blocked_account,comments,"
+                + "mention,direct_messages,reuse_of_content,shared_links,downloads,following_list,liked_video,"
+                + "viewers");
+
+        List<String> labels = new ArrayList<>();
+        for (SettingsRows.Row row : SettingsRows.offered(Set.of())) labels.add(row.label);
+
+        assertEquals(List.of("Manage posts", "Content preferences", "LIVE", "Notifications",
+                "Time and well-being", "Family Pairing", "Account", "Security & permissions", "Share profile",
+                "Private account", "Blocked accounts",
+                "Comments", "Mentions", "Direct messages", "Reuse of content",
+                "Display profile when sharing links", "Downloads", "Following list", "Liked videos", "Viewers",
+                "Inbox & Messaging", "Activity center", "Audience control", "Ads", "Playback", "Display",
+                "Language", "Accessibility", "Contacts and location",
+                "Offline videos", "Free up space", "Data Saver", "Wallpaper",
+                "Help Center", "Privacy Center", "Terms and Policies"), labels);
     }
 
     @Test public void withNothingListedYetTheChecklistOffersTheWholeTable() {
         assertEquals(SettingsRows.ROWS.size(), SettingsRows.offered(Set.of()).size());
-        assertEquals("Activity center", SettingsRows.offered(Set.of()).get(0).label);
+        assertEquals("Manage posts", SettingsRows.offered(Set.of()).get(0).label);
     }
 
     @Test public void aListThatCanNotChangeIsLeftAsItIs() {

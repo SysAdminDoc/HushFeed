@@ -44,11 +44,11 @@ public final class SettingsRows {
     }
 
     /**
-     * TikTok's English labels for the rows its 47.x page lists, in the page's order. The checklist
-     * shows them through L10n.
+     * TikTok's English labels for the rows its page lists, in the page's order as the S22 showed
+     * it on 47.9.2, with the rows other accounts get kept where they sat. The checklist shows them
+     * through L10n.
      */
     public static final List<Row> ROWS = List.of(
-            new Row("analytics_center", "Activity center"),
             new Row("manage_posts", "Manage posts"),
             new Row("content_preference", "Content preferences"),
             new Row("live_settings", "LIVE"),
@@ -66,10 +66,25 @@ public final class SettingsRows {
             new Row("share_profile", "Share profile"),
             new Row("tiktok_plus", "TikTok Plus"),
             new Row("referral_invite_friends", "Invite friends"),
+            // Visibility
+            new Row("private_account", "Private account"),
+            new Row("blocked_account", "Blocked accounts"),
+            // Interactions
+            new Row("comments", "Comments"),
+            new Row("mention", "Mentions"),
+            new Row("direct_messages", "Direct messages"),
+            new Row("reuse_of_content", "Reuse of content"),
+            new Row("shared_links", "Display profile when sharing links"),
+            new Row("downloads", "Downloads"),
+            new Row("following_list", "Following list"),
+            new Row("liked_video", "Liked videos"),
+            new Row("viewers", "Viewers"),
+            // Content & Display
             new Row("favorite_settings", "Favorites"),
             new Row("music_settings", "Music"),
-            new Row("switch_inbox_mode", "Inbox mode"),
-            new Row("audience_control", "Audience controls"),
+            new Row("switch_inbox_mode", "Inbox & Messaging"),
+            new Row("analytics_center", "Activity center"),
+            new Row("audience_control", "Audience control"),
             new Row("background_audio", "Background audio"),
             new Row("ads_settings", "Ads"),
             new Row("playback_settings", "Playback"),
@@ -85,11 +100,11 @@ public final class SettingsRows {
             new Row("clear_cache", "Free up space"),
             new Row("data_saver", "Data Saver"),
             new Row("zero_rating", "Free data"),
-            new Row("local_live_wallpaper", "Live wallpaper"),
+            new Row("local_live_wallpaper", "Wallpaper"),
             new Row("check_update", "Check for updates"),
             new Row("lite_mode", "Lite mode"),
             new Row("base_settings", "TikTok Beta"),
-            new Row("feedback", "Report a problem"),
+            new Row("feedback", "Help Center"),
             new Row("safety_center", "Safety Center"),
             new Row("privacy_center", "Privacy Center"),
             new Row("privacy_checkup", "Privacy checkup"),

@@ -308,7 +308,7 @@ Ask for the quality on each save,Ask for the quality on each save
 "Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone.","Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone."
 "At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.","At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it."
 Attention,Attention
-Audience controls,Audience controls
+Audience control,Audience control
 Audio,Audio
 Audio only,Audio only
 Author text size,Author text size
@@ -642,6 +642,7 @@ Diagnostic report copied to the clipboard,Diagnostic report copied to the clipbo
 Diagnostics,Diagnostics
 Dim when idle,Dim when idle
 Dim when idle and shift,Dim when idle and shift
+Direct messages,Direct messages
 Disable,Disable
 Disabled,Disabled
 Discard edits,Discard edits
@@ -653,6 +654,7 @@ Dismissed %1$s suggested accounts,Dismissed %1$s suggested accounts
 Dismissed one suggested account,Dismissed one suggested account
 Display,Display
 Display name last changed,Display name last changed
+Display profile when sharing links,Display profile when sharing links
 Do nothing,Do nothing
 Doesn't follow you back,Doesn't follow you back
 Don't auto translate these languages,Don't auto translate these languages
@@ -777,6 +779,7 @@ Follow refused (%1$s). Maybe a hidden CAPTCHA.,Follow refused (%1$s). Maybe a hi
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.","Follow refused, code %1$s. Maybe a hidden CAPTCHA."
 Followers,Followers
 Following,Following
+Following list,Following list
 Follows you,Follows you
 For Hushfeed's settings and messages. TikTok keeps its own language.,For Hushfeed's settings and messages. TikTok keeps its own language.
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.","For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."
@@ -847,6 +850,7 @@ Handle or id,Handle or id
 Haptic style,Haptic style
 Haptics on the tabs,Haptics on the tabs
 Hashtags,Hashtags
+Help Center,Help Center
 Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.,Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.
 Hidden %1$s on this phone,Hidden %1$s on this phone
 Hidden LIVE categories,Hidden LIVE categories
@@ -1144,7 +1148,7 @@ In a chat,In a chat
 "In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.","In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again."
 "In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it.","In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it."
 Inbox,Inbox
-Inbox mode,Inbox mode
+Inbox & Messaging,Inbox & Messaging
 Inbox tab name,Inbox tab name
 Include diagnostic events,Include diagnostic events
 Included diagnostics,Included diagnostics
@@ -1298,7 +1302,6 @@ Lite mode,Lite mode
 Live photo clip,Live photo clip
 Live photo clip saved to %1$s,Live photo clip saved to %1$s
 Live photo clips: %1$s,Live photo clips: %1$s
-Live wallpaper,Live wallpaper
 Load more,Load more
 Loaded current values. Loading all known gates…,Loaded current values. Loading all known gates…
 Loaded-value file export failed,Loaded-value file export failed
@@ -1375,6 +1378,7 @@ Media,Media
 Media config (VE),Media config (VE)
 Media save,Media save
 Medium,Medium
+Mentions,Mentions
 Message,Message
 "Message bubble colors, Inbox archive and sharing to more chats","Message bubble colors, Inbox archive and sharing to more chats"
 Message search isn't on for this account,Message search isn't on for this account
@@ -1865,6 +1869,7 @@ Retry,Retry
 Return a copy with the fields below changed,Return a copy with the fields below changed
 Return after using a TikTok feature to see every gate read during the recording.,Return after using a TikTok feature to see every gate read during the recording.
 Returns %1$s,Returns %1$s
+Reuse of content,Reuse of content
 Reviewed for TikTok %1$s,Reviewed for TikTok %1$s
 Reviewed presets,Reviewed presets
 Reviewed presets for TikTok %1$s,Reviewed presets for TikTok %1$s
@@ -2769,6 +2774,7 @@ Videos posted from %1$s,Videos posted from %1$s
 Videos tagged %1$s,Videos tagged %1$s
 Videos with the sound %1$s,Videos with the sound %1$s
 Videos you watch show up here,Videos you watch show up here
+Viewers,Viewers
 Views range,Views range
 Visual search,Visual search
 Visual search on paused videos,Visual search on paused videos
@@ -2783,6 +2789,7 @@ Waiting to record. Go to the screen you want recorded.,Waiting to record. Go to 
 Waiting to save %1$s files,Waiting to save %1$s files
 Waiting to save one file,Waiting to save one file
 Waiting to save video,Waiting to save video
+Wallpaper,Wallpaper
 Watch LIVEs unseen,Watch LIVEs unseen
 Watch history cleared,Watch history cleared
 Watch history was imported for the account that chose the file. Switch back to see it.,Watch history was imported for the account that chose the file. Switch back to see it.

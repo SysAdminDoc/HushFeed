@@ -2440,7 +2440,7 @@ Manage posts	Paylaşımları idarə et
 Content preferences	Məzmun seçimləri
 Notifications	Bildirişlər
 Time and well-being	Vaxt və rifah
-Family Pairing	Ailə Cütləşməsi
+Family Pairing	Ailə əlaqələndirməsi
 Sign up	Qeydiyyatdan keç
 Account	Hesab
 Security & permissions	Təhlükəsizlik və icazələr
@@ -2451,8 +2451,6 @@ QR code	QR kod
 Share profile	Profili paylaş
 TikTok Plus	TikTok Plus
 Invite friends	Dostları dəvət et
-Inbox mode	Gələnlər rejimi
-Audience controls	Auditoriya nəzarəti
 Background audio	Arxa fon səsi
 Display	Ekran
 Commercial content library	Kommersiya məzmunu kitabxanası
@@ -2464,7 +2462,6 @@ Shake to report	Bildirmək üçün silkələ
 Free up space	Yer boşalt
 Data Saver	Data qənaəti
 Free data	Pulsuz data
-Live wallpaper	Canlı divar kağızı
 Check for updates	Yeniləmələri yoxla
 Lite mode	Lite rejimi
 TikTok Beta	TikTok Beta
@@ -2478,6 +2475,16 @@ Policy updates	Siyasət yeniləmələri
 What's new on TikTok	TikTok-da yeniliklər
 Switch account	Hesabı dəyiş
 Log out	Çıxış
+Mentions	Bəhsetmələr
+Direct messages	Birbaşa mesajlar
+Reuse of content	Kontentin təkrar istifadəsi
+Display profile when sharing links	Linkləri paylaşanda profili göstər
+Following list	İzlənilənlər siyahısı
+Viewers	İzləyicilər
+Inbox & Messaging	Mesaj qutusu və Mesajlaşma
+Audience control	Auditoriyaya nəzarət
+Wallpaper	Divar kağızı
+Help Center	Kömək mərkəzi
 Open the search page	Axtarış səhifəsini aç
 Search didn't open. Restart TikTok and try again.	Axtarış açılmadı. TikTok-u yenidən başladıb yoxlayın.
 Fold the search into a button	Axtarışı düyməyə yığ

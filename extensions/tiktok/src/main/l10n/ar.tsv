@@ -2683,7 +2683,7 @@ Manage posts	إدارة المنشورات
 Content preferences	تفضيلات المحتوى
 Notifications	الإشعارات
 Time and well-being	الوقت والرفاهية
-Family Pairing	الاقتران العائلي
+Family Pairing	ربط الحسابات للعائلة
 Sign up	التسجيل
 Account	الحساب
 Security & permissions	الأمان والأذونات
@@ -2694,8 +2694,6 @@ QR code	رمز QR
 Share profile	مشاركة الملف الشخصي
 TikTok Plus	TikTok Plus
 Invite friends	دعوة الأصدقاء
-Inbox mode	وضع البريد الوارد
-Audience controls	عناصر التحكم في الجمهور
 Background audio	الصوت في الخلفية
 Display	العرض
 Commercial content library	مكتبة المحتوى التجاري
@@ -2707,7 +2705,6 @@ Shake to report	هزّ للإبلاغ
 Free up space	تحرير مساحة
 Data Saver	توفير البيانات
 Free data	بيانات مجانية
-Live wallpaper	خلفية حية
 Check for updates	التحقق من التحديثات
 Lite mode	وضع Lite
 TikTok Beta	TikTok Beta
@@ -2721,6 +2718,16 @@ Policy updates	تحديثات السياسة
 What's new on TikTok	الجديد على TikTok
 Switch account	تبديل الحساب
 Log out	تسجيل الخروج
+Mentions	الذِكر
+Direct messages	الرسائل الخاصة
+Reuse of content	إعادة استخدام المحتوى
+Display profile when sharing links	عرض الملف الشخصي عند مشاركة الروابط
+Following list	قائمة أتابعه
+Viewers	المشاهدون
+Inbox & Messaging	صندوق الوارد والمراسلة
+Audience control	التحكم في الجمهور
+Wallpaper	الخلفية
+Help Center	مركز المساعدة
 Open the search page	فتح صفحة البحث
 Search didn't open. Restart TikTok and try again.	لم يتم فتح البحث. أعد تشغيل TikTok وحاول مرة أخرى.
 Fold the search into a button	طي البحث في زر

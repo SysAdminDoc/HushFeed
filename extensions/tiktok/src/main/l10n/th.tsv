@@ -2443,7 +2443,7 @@ Manage posts	จัดการโพสต์
 Content preferences	การตั้งค่าเนื้อหา
 Notifications	การแจ้งเตือน
 Time and well-being	เวลาและความเป็นอยู่ที่ดี
-Family Pairing	การจับคู่ครอบครัว
+Family Pairing	แนะนำโดยผู้ปกครอง
 Sign up	ลงทะเบียน
 Account	บัญชี
 Security & permissions	ความปลอดภัยและการอนุญาต
@@ -2454,8 +2454,6 @@ QR code	คิวอาร์โค้ด
 Share profile	แชร์โปรไฟล์
 TikTok Plus	TikTok Plus
 Invite friends	เชิญเพื่อน
-Inbox mode	โหมดกล่องข้อความ
-Audience controls	การควบคุมผู้ชม
 Background audio	เสียงในพื้นหลัง
 Display	การแสดงผล
 Commercial content library	คลังเนื้อหาเชิงพาณิชย์
@@ -2467,7 +2465,6 @@ Shake to report	เขย่าเพื่อรายงาน
 Free up space	เพิ่มพื้นที่ว่าง
 Data Saver	ประหยัดอินเทอร์เน็ต
 Free data	อินเทอร์เน็ตฟรี
-Live wallpaper	วอลเปเปอร์เคลื่อนไหว
 Check for updates	ตรวจหาการอัปเดต
 Lite mode	โหมด Lite
 TikTok Beta	TikTok Beta
@@ -2481,6 +2478,16 @@ Policy updates	การอัปเดตนโยบาย
 What's new on TikTok	มีอะไรใหม่บน TikTok
 Switch account	สลับบัญชี
 Log out	ออกจากระบบ
+Mentions	เอ่ยถึง
+Direct messages	ข้อความโดยตรง
+Reuse of content	การใช้เนื้อหาอีกครั้ง
+Display profile when sharing links	แสดงโปรไฟล์เมื่อแชร์ลิงก์
+Following list	รายชื่อผู้ที่กำลังติดตาม
+Viewers	ผู้ชม
+Inbox & Messaging	กล่องข้อความและการส่งข้อความ
+Audience control	การควบคุมผู้ชม
+Wallpaper	รูปพื้นหลัง
+Help Center	ศูนย์ช่วยเหลือ
 Open the search page	เปิดหน้าค้นหา
 Search didn't open. Restart TikTok and try again.	ไม่สามารถเปิดการค้นหาได้ รีสตาร์ท TikTok แล้วลองอีกครั้ง
 Fold the search into a button	ยุบการค้นหาเป็นปุ่ม

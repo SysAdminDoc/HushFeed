@@ -111,6 +111,7 @@ final class RemoteMedia {
                     }
                     // URL parsing and transport failures stay with this mirror. The aggregate
                     // message contains only a query-free, bounded address summary.
+                    MediaRefusals.record(url, exception);
                     failure.addSuppressed(new IOException(
                             "Media mirror failed (" + exception.getClass().getSimpleName() + "): "
                                      + summarizeUrl(url), exception));

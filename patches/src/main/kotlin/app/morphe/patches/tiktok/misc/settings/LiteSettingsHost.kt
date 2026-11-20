@@ -11,7 +11,7 @@ import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.patch.patch
 import app.morphe.patches.shared.compat.AppCompatibilities
-import app.morphe.patches.tiktok.misc.extension.LiteMainActivityOnCreateFingerprint
+import app.morphe.patches.tiktok.misc.extension.launcherOnCreates
 import app.morphe.patches.tiktok.privacy.invokeSitesOf
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -70,15 +70,15 @@ internal val ownSettingsActivityPatch = patch {
  * TikTok Lite's half of the Settings patch. Lite has none of the TikTok screens the page rides on
  * (the ad personalisation screen, Settings and privacy's Open Debug row, the For You tab), so the
  * page opens in Hushfeed's own screen, and the way in is "Open Hushfeed settings" on the app
- * icon's long-press menu, published as Lite's main screen opens. Settings registers last, as on
+ * icon's long-press menu, published as Lite's main screen opens (whichever of its two activities
+ * that is). Settings registers last, as on
  * TikTok, so a run that fails partway doesn't list it as applied.
  */
 internal fun hostSettingsInOwnActivity() {
     OwnSettingsActivityFingerprint.method.returnEarly(true)
-    LiteMainActivityOnCreateFingerprint.method.addInstruction(
-        0,
-        "invoke-static/range { p0 .. p0 }, $LAUNCHER_SHORTCUT_CLASS->publish(Landroid/content/Context;)V",
-    )
+    launcherOnCreates(AppCompatibilities.TIKTOK_LITE_PACKAGE).forEach { onCreate ->
+        onCreate.addInstruction(0, "invoke-static/range { p0 .. p0 }, $LAUNCHER_SHORTCUT_CLASS->publish(Landroid/content/Context;)V")
+    }
     // Lite's start-up ShortCutTask clears every dynamic shortcut when its own are switched off,
     // which took Open Hushfeed settings off the icon a moment after it went on. Each method that
     // clears or replaces them puts it back on its way out.

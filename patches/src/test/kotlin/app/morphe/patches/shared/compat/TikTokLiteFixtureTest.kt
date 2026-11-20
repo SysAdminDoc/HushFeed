@@ -5,6 +5,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.TARGET_BUILD_ANCHORS
 import app.morphe.patches.tiktok.misc.diagnostics.missingTargetAnchors
 import app.morphe.patches.tiktok.misc.diagnostics.targetBuildAnchors
 import app.morphe.patches.tiktok.misc.extension.LITE_APPLICATION_CLASS
+import app.morphe.patches.tiktok.misc.extension.LITE_HOME_ACTIVITY_CLASS
 import app.morphe.patches.tiktok.misc.extension.LITE_MAIN_ACTIVITY_CLASS
 import app.morphe.patches.tiktok.misc.extension.afterSuperAttachBaseContext
 import app.morphe.patches.tiktok.misc.settings.SHORTCUT_CLEARS
@@ -15,6 +16,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.Opcode
 import app.morphe.patches.tiktok.feedfilter.LITE_FEED_ITEM_LIST_CLASS
@@ -68,6 +70,25 @@ class TikTokLiteFixtureTest {
         val launcher = classes[LITE_MAIN_ACTIVITY_CLASS]
         assertNotNull(LITE_MAIN_ACTIVITY_CLASS, launcher)
         assertTrue(launcher!!.methods.any { it.name == "onCreate" && it.parameterTypes == listOf("Landroid/os/Bundle;") })
+    }
+
+    @Test
+    fun `Lite opens its home screen in the launcher's place, and that screen has the onCreate the hooks enter`() {
+        // The class names Lite's Instrumentation.newActivity hands to the real newActivity.
+        val dispatchers = classes.values.filter { it.superclass == "Landroid/app/Instrumentation;" }.flatMap { it.methods }
+            .filter { it.name == "newActivity" && it.parameterTypes.firstOrNull()?.toString() == "Ljava/lang/ClassLoader;" }
+            .map { method ->
+                method.implementation?.instructions
+                    ?.mapNotNull { ((it as? ReferenceInstruction)?.reference as? StringReference)?.string }
+                    .orEmpty().map { "L" + it.replace('.', '/') + ";" }.filter { it in classes }.toSet()
+            }
+        val swaps = dispatchers.filter { LITE_MAIN_ACTIVITY_CLASS in it }
+        assertTrue("no Instrumentation.newActivity in Lite names its launcher", swaps.isNotEmpty())
+        val standIns = swaps.flatten().toSet() - LITE_MAIN_ACTIVITY_CLASS
+        assertTrue("Lite opens $standIns in its launcher's place, not $LITE_HOME_ACTIVITY_CLASS", LITE_HOME_ACTIVITY_CLASS in standIns)
+        val home = classes[LITE_HOME_ACTIVITY_CLASS]
+        assertNotNull(LITE_HOME_ACTIVITY_CLASS, home)
+        assertTrue(home!!.methods.any { it.name == "onCreate" && it.parameterTypes == listOf("Landroid/os/Bundle;") })
     }
 
     @Test

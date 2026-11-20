@@ -66,6 +66,13 @@ internal object StoreRegionInitTaskRunFingerprint : Fingerprint(
 internal const val LITE_APPLICATION_CLASS = "Lcom/zhiliaoapp/musically/go/mini/MiniApplication;"
 internal const val LITE_MAIN_ACTIVITY_CLASS = "Lcom/zhiliaoapp/musically/go/mini/MainActivity;"
 
+/**
+ * The main screen Lite really opens. Its Instrumentation creates this class in place of
+ * [LITE_MAIN_ACTIVITY_CLASS] whenever the feature module is in the APK, which it always is in a
+ * patched one, so a hook only on the launcher's own onCreate never ran.
+ */
+internal const val LITE_HOME_ACTIVITY_CLASS = "Lcom/ss/android/ugc/aweme/main/homepage/MainActivity;"
+
 internal object LiteApplicationAttachBaseContextFingerprint : Fingerprint(
     definingClass = LITE_APPLICATION_CLASS,
     name = "attachBaseContext",
@@ -80,10 +87,23 @@ internal object LiteMainActivityOnCreateFingerprint : Fingerprint(
     parameters = listOf("Landroid/os/Bundle;"),
 )
 
-/** The launcher activity's onCreate: TikTok's MainActivity, or Lite's (#48). */
-internal fun launcherOnCreate(packageName: String): MutableMethod =
-    if (packageName == AppCompatibilities.TIKTOK_LITE_PACKAGE) LiteMainActivityOnCreateFingerprint.method
-    else MainActivityOnCreateFingerprint.method
+internal object LiteHomeActivityOnCreateFingerprint : Fingerprint(
+    definingClass = LITE_HOME_ACTIVITY_CLASS,
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/**
+ * Each onCreate the app's main screen can start from: TikTok's MainActivity, or in Lite (#48) the
+ * home screen it opens and the launcher it falls back to without its feature module.
+ */
+internal fun launcherOnCreates(packageName: String): List<MutableMethod> =
+    if (packageName == AppCompatibilities.TIKTOK_LITE_PACKAGE) {
+        listOf(LiteHomeActivityOnCreateFingerprint.method, LiteMainActivityOnCreateFingerprint.method)
+    } else {
+        listOf(MainActivityOnCreateFingerprint.method)
+    }
 
 private val TIKTOK_ONLY = setOf(AppCompatibilities.TIKTOK_PACKAGE)
 private val LITE_ONLY = setOf(AppCompatibilities.TIKTOK_LITE_PACKAGE)
@@ -141,6 +161,11 @@ private val liteInitHook = ExtensionHook(
     packageNames = LITE_ONLY,
 )
 
+private val liteHomeInitHook = ExtensionHook(
+    fingerprint = LiteHomeActivityOnCreateFingerprint,
+    packageNames = LITE_ONLY,
+)
+
 private val tiktokExtensionPatch = extendShared(
     extensionName = "tiktok",
     isYouTubeOrYouTubeMusic = false,
@@ -150,6 +175,7 @@ private val tiktokExtensionPatch = extendShared(
     storeRegionInitHook,
     liteApplicationInitHook,
     liteInitHook,
+    liteHomeInitHook,
 )
 
 val sharedExtensionPatch = bytecodePatch {

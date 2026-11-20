@@ -91,6 +91,28 @@ public class BottomBarHeightTest {
         assertEquals(0, BottomBarHeight.navHeight(3));
     }
 
+    /**
+     * TikTok pads its tabs one way while the nav height is its standard one and another way when it
+     * isn't, so the standard moves with the nav height when the two matched and stays put otherwise.
+     */
+    @Test public void theStandardNavHeightMovesOnlyWhenItMatchedTikToks() {
+        pick(BottomBarHeight.TALLER);
+        assertEquals(49, BottomBarHeight.standardNavHeight(49));
+        assertEquals(58, BottomBarHeight.navHeight(49));
+        assertEquals(58, BottomBarHeight.standardNavHeight(49));
+        assertEquals(42, BottomBarHeight.standardNavHeight(42));
+        assertEquals(0, BottomBarHeight.standardNavHeight(0));
+
+        pick(BottomBarHeight.SHORTER);
+        assertEquals(42, BottomBarHeight.navHeight(49));
+        assertEquals(42, BottomBarHeight.standardNavHeight(49));
+    }
+
+    @Test public void tikToksOwnBarLeavesTheStandardNavHeightAlone() {
+        assertEquals(49, BottomBarHeight.navHeight(49));
+        assertEquals(49, BottomBarHeight.standardNavHeight(49));
+    }
+
     /** The height is read once a launch, like TikTok's static, so a pick waits for the restart. */
     @Test public void aPickTakesHoldOnTheNextLaunch() {
         assertEquals(49, BottomBarHeight.navHeight(49));

@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
@@ -68,7 +69,7 @@ class BottomBarHeightAnchorsTest {
             assertNotEquals("$version: the extra lands elsewhere", nav.field.name, clinit[nav.after - 1].getReference<FieldReference>()!!.name)
 
             checkFrameHooks(version, sites, sites.reads.first { it.owner == BOTTOM_BAR_FRAMES.first() })
-            checkNavHook(version, nav)
+            checkNavHook(version, nav, app)
             checkCellHook(version, app)
         }
     }
@@ -118,18 +119,57 @@ class BottomBarHeightAnchorsTest {
         placed.forEach { assertEquals("$version: what aboveBar takes", Opcode.CONST_HIGH16, after[it - 1].opcode) }
     }
 
-    private fun checkNavHook(version: String, nav: NavHeightStatic) {
+    private fun checkNavHook(version: String, nav: NavHeightStatic, app: Map<String, ClassDef>) {
         val method = MutableMethod(nav.method)
         method.adjustNavHeight(nav)
         val after = method.implementation!!.instructions.toList()
-        assertEquals(
-            "$version: the nav height hook",
-            listOf(Opcode.SGET, Opcode.INVOKE_STATIC_RANGE, Opcode.MOVE_RESULT, Opcode.SPUT),
-            after.subList(nav.after, nav.after + 4).map { it.opcode },
-        )
+        val hook = listOf(Opcode.SGET, Opcode.INVOKE_STATIC_RANGE, Opcode.MOVE_RESULT, Opcode.SPUT)
+        assertEquals("$version: the nav height hook", hook, after.subList(nav.after, nav.after + 4).map { it.opcode })
         assertEquals(nav.field.name, after[nav.after].getReference<FieldReference>()!!.name)
         assertEquals("navHeight", after[nav.after + 1].getReference<MethodReference>()!!.name)
         assertEquals(nav.field.name, after[nav.after + 3].getReference<FieldReference>()!!.name)
+
+        // The tab bar pads its tabs by whether the nav height is still TikTok's standard one (4 dp
+        // more at the top and 4.5 at the bottom when it isn't), so that static moves right after.
+        val standard = comparedWithNavHeight(app, nav.field)
+        assertEquals("$version: statics the tab bar compares the nav height with", 1, standard.size)
+        assertEquals("$version: the standard nav height hook", hook, after.subList(nav.after + 4, nav.after + 8).map { it.opcode })
+        assertEquals(standard.single(), after[nav.after + 4].getReference<FieldReference>()!!.name)
+        assertEquals("standardNavHeight", after[nav.after + 5].getReference<MethodReference>()!!.name)
+        assertEquals(standard.single(), after[nav.after + 7].getReference<FieldReference>()!!.name)
+    }
+
+    /**
+     * The int statics of the nav height's class that code elsewhere tests against the nav height: an
+     * `if-eq` or `if-ne` right after the static's load, whose other register last took the nav height.
+     */
+    private fun comparedWithNavHeight(app: Map<String, ClassDef>, nav: FieldReference): Set<String> {
+        fun FieldReference.isNav() = definingClass == nav.definingClass && name == nav.name
+        val found = mutableSetOf<String>()
+        app.values.forEach { classDef ->
+            if (classDef.type == nav.definingClass) return@forEach
+            classDef.methods.forEach { method ->
+                val code = method.implementation?.instructions?.toList() ?: return@forEach
+                for (index in 1 until code.size) {
+                    val test = code[index]
+                    if (test.opcode != Opcode.IF_EQ && test.opcode != Opcode.IF_NE) continue
+                    val load = code[index - 1]
+                    if (load.opcode != Opcode.SGET) continue
+                    val field = load.getReference<FieldReference>()!!
+                    if (field.definingClass != nav.definingClass || field.isNav() || field.type != "I") continue
+                    val loaded = (load as OneRegisterInstruction).registerA
+                    val compare = test as TwoRegisterInstruction
+                    val other = when (loaded) {
+                        compare.registerA -> compare.registerB
+                        compare.registerB -> compare.registerA
+                        else -> continue
+                    }
+                    val source = (index - 2 downTo 0).firstOrNull { code[it].writes(other) }?.let(code::get) ?: continue
+                    if (source.opcode == Opcode.SGET && source.getReference<FieldReference>()!!.isNav()) found += field.name
+                }
+            }
+        }
+        return found
     }
 
     @Test

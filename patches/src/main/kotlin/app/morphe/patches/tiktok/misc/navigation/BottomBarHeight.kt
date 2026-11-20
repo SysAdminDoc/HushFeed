@@ -54,7 +54,10 @@ internal class AboveBarLiteral(val owner: String, val method: Method, val index:
 
 /**
  * The static that holds the room screens leave for the bar, in dp. [after] is the instruction
- * past the store of the extra above the 47 dp bar, which overwrites [register] next.
+ * past the store of the extra above the 47 dp bar, which overwrites [register] next. [standard] is
+ * TikTok's standard room, the one other int the same initializer stores: the tab bar pads its tabs
+ * one way while the room matches it and another way (4 dp more at the top, 4.5 at the bottom) when
+ * it doesn't, so it has to move with the room. Null when the initializer stores no single other int.
  */
 internal class NavHeightStatic(
     val owner: String,
@@ -62,6 +65,7 @@ internal class NavHeightStatic(
     val after: Int,
     val register: Int,
     val field: FieldReference,
+    val standard: FieldReference?,
 )
 
 /**
@@ -73,7 +77,8 @@ internal class NavHeightStatic(
  * - a divider and a stub in the same inflater, placed 47 and 45 dp up from the bottom;
  * - the nav height static, worked out once in a static initializer that starts on the low screen
  *   strategy getter, then stored with the extra above the 47 dp bar right after it. The video
- *   cells, sheets and toasts all leave that much room.
+ *   cells, sheets and toasts all leave that much room. The standard height the same initializer
+ *   stores moves with it, since the tab bar pads its tabs by whether the two still match.
  *
  * BottomBarHeightAnchorsTest holds each piece to every declared build.
  */
@@ -194,12 +199,21 @@ internal fun bottomBarHeightSites(
             val extraStore = (index + 2 until code.size).firstOrNull { code[it].opcode == Opcode.SPUT } ?: return@mapNotNull null
             val free = (code[extraStore] as OneRegisterInstruction).registerA
             if (extraStore + 1 >= code.size || !code[extraStore + 1].writes(free)) return@mapNotNull null
-            NavHeightStatic(owner.type, clinit, extraStore + 1, free, store.getReference<FieldReference>()!!)
+            val nav = store.getReference<FieldReference>()!!
+            val extraField = code[extraStore].getReference<FieldReference>()!!
+            val others = code.filter { it.opcode == Opcode.SPUT }
+                .mapNotNull { it.getReference<FieldReference>() }
+                .filter { it.definingClass == owner.type && it.type == "I" && it.name != nav.name && it.name != extraField.name }
+                .distinctBy { it.name }
+            NavHeightStatic(owner.type, clinit, extraStore + 1, free, nav, others.singleOrNull())
         }
     }
     val navHeight = statics.singleOrNull()
         ?: throw PatchException("Bottom bar height: expected one nav height static, found ${statics.size}.")
     if (navHeight.field.type != "I") throw PatchException("Bottom bar height: the nav height static isn't an int.")
+    if (navHeight.standard == null) {
+        throw PatchException("Bottom bar height: the nav height's initializer stores no single standard height beside it.")
+    }
 
     return BottomBarHeightSites(dimension, reads, literals, navHeight)
 }
@@ -262,16 +276,26 @@ internal fun MutableMethod.holdBarCellContent() {
     )
 }
 
-/** Passes the nav height through the extension once the extra above the bar is stored. */
+/**
+ * Passes the nav height through the extension once the extra above the bar is stored, then the
+ * standard height it's compared with, which the extension moves only when the two matched.
+ */
 internal fun MutableMethod.adjustNavHeight(site: NavHeightStatic) {
-    val field = "${site.field.definingClass}->${site.field.name}:${site.field.type}"
+    fun FieldReference.smali() = "$definingClass->$name:$type"
+    val field = site.field.smali()
+    val standard = (site.standard ?: throw PatchException("Bottom bar height: no standard nav height to move.")).smali()
+    val register = "v${site.register}"
     addInstructionsAtControlFlowLabel(
         site.after,
         """
-            sget v${site.register}, $field
-            invoke-static/range {v${site.register} .. v${site.register}}, $BOTTOM_BAR_HEIGHT_EXTENSION->navHeight(I)I
-            move-result v${site.register}
-            sput v${site.register}, $field
+            sget $register, $field
+            invoke-static/range {$register .. $register}, $BOTTOM_BAR_HEIGHT_EXTENSION->navHeight(I)I
+            move-result $register
+            sput $register, $field
+            sget $register, $standard
+            invoke-static/range {$register .. $register}, $BOTTOM_BAR_HEIGHT_EXTENSION->standardNavHeight(I)I
+            move-result $register
+            sput $register, $standard
         """,
     )
 }

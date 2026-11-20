@@ -23,7 +23,9 @@ import java.util.WeakHashMap;
  * phones), and places a divider and a stub over the bar with 47 and 45 dp literals. Each of
  * those passes through here, so the bar and everything sitting on it move together. Inside each
  * tab, TikTok pins the icon to the top and the name to the bottom, so those two move half the
- * difference each and keep the gap TikTok's own bar gives them.
+ * difference each and keep the gap TikTok's own bar gives them. TikTok also keeps a standard room
+ * for the bar and pads its tabs differently once the room stops matching it, so the standard moves
+ * along with the room.
  */
 public final class BottomBarHeight {
     public static final String TIKTOK = "tiktok";
@@ -39,6 +41,9 @@ public final class BottomBarHeight {
 
     /** TikTok's bar in pixels, as its dimension last read before scaling. */
     private static volatile float tikTokBarPixels;
+
+    /** The room TikTok worked out for the bar this launch, in dp, or -1 before it has. */
+    private static volatile int tikTokNavDp = -1;
 
     /** The tab views already moved, so one put back into its tab doesn't move twice. */
     private static final Set<ViewGroup.LayoutParams> moved =
@@ -74,6 +79,7 @@ public final class BottomBarHeight {
     static void resetForTests() {
         pickedDp = 0;
         tikTokBarPixels = 0;
+        tikTokNavDp = -1;
         moved.clear();
     }
 
@@ -157,6 +163,22 @@ public final class BottomBarHeight {
     /** The room TikTok's screens leave at the bottom for the bar, in dp. */
     @SuppressWarnings("unused")
     public static int navHeight(int dp) {
+        tikTokNavDp = dp;
+        return roomFor(dp);
+    }
+
+    /**
+     * TikTok's standard room for the bar, in dp, which the tab bar compares the room with: the same,
+     * and each tab gets no padding at the top and 1.5 dp at the bottom; different, and 4 dp and 6 dp,
+     * which pushes the icon and the name into each other. It moves with the room when the two matched,
+     * so they still match, and stays put when they didn't.
+     */
+    @SuppressWarnings("unused")
+    public static int standardNavHeight(int dp) {
+        return dp == tikTokNavDp ? roomFor(dp) : dp;
+    }
+
+    private static int roomFor(int dp) {
         return Math.max(0, dp + heightDp() - TIKTOK_DP);
     }
 }

@@ -38,6 +38,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `My watch history` is up to date when you come back to it from a video you opened in it. It used to show the list from before you left until you closed and reopened it.
 * The checklist under `Hide Settings and privacy rows` now names the rows the way TikTok 47.9.2 shows them, in the same order as the page, and it has the Visibility and Interactions rows too, like Blocked accounts, Mentions and Direct messages. Before, those showed up under made-up names like "Shared links", and a few others still had their old labels, like Inbox mode for what's now Inbox & Messaging. In German, Italian, Russian and five more languages, Family Pairing now has TikTok's current name too (#244).
 * With `Bottom bar height` on anything but TikTok default, the tab icons no longer sit on top of their names. TikTok pads its tabs differently once the bar's room isn't the size it expects, and the new height counted as unexpected, so the icon and the name got pushed into each other. On a taller bar they keep the same gap as on TikTok's own bar now. On a shorter one they shrink a little with the bar, so the selected tab's outline still fits around them.
 * With `Bottom bar height` on Tall or Taller, the search strip at the bottom of a video no longer slides under the bar, and on Short or Shorter it no longer floats above the bar with a gap. The caption, the strip and its progress line keep TikTok's distance from the bar at every height now.

@@ -146,8 +146,21 @@ final class VideoListDialog {
         });
         clear.setOnClickListener(clearOrUndo[0]);
 
-        list.setOnItemClickListener((parent, view, position, id) ->
-                LocalWatchHistoryPreference.open(context, rows.shown.get(position).aid));
+        boolean[] away = new boolean[1];
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            away[0] = true;
+            LocalWatchHistoryPreference.open(context, rows.shown.get(position).aid);
+        });
+        // Back from a video the list opened, it reads the list again: a like taken back on that
+        // page, or the video just watched, would otherwise show the list from before.
+        dialog.getWindow().getDecorView().getViewTreeObserver().addOnWindowFocusChangeListener(focused -> {
+            if (!focused || !away[0]) return;
+            away[0] = false;
+            source.load(loaded -> {
+                rows.all = loaded;
+                refresh.run();
+            });
+        });
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence text, int start, int count, int after) {

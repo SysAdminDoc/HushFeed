@@ -3,6 +3,7 @@ package app.morphe.extension.shared.settings.preference;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
@@ -386,6 +387,27 @@ public class LogBufferManagerExportTest {
         assertFalse("a 41st frame was shown: " + section, section.contains("Frame39.run"));
         assertFalse("another thread's frame was shown: " + section, section.contains("Other.loop"));
         assertFalse(section, section.contains("Object.wait"));
+    }
+
+    /**
+     * A real record: TikTok 47.9.2 on an API 36 guest, closed from "isn't responding" while jdb held
+     * its main thread. ART's native frames come first, interpreted framework methods among them.
+     */
+    @Test @Config(sdk = 30)
+    public void aRealAnrRecordShowsItsMainThread() throws Exception {
+        byte[] dump;
+        try (java.io.InputStream in = getClass().getClassLoader().getResourceAsStream("exit-traces/anr-api36-main-held.txt")) {
+            assertNotNull("the recorded ANR dump is missing", in);
+            dump = in.readAllBytes();
+        }
+        addExit(6, 10057, dump);
+
+        String section = lastExits(LogBufferManager.buildExportText());
+        assertTrue(section, section.contains("\n  trace: main thread, java dump (35 of 35 frames)\n"));
+        assertTrue(section, section.contains("\n  \"main\" prio=5 tid=1 Native\n"));
+        assertTrue(section, section.contains("\n  native: #10 framework.jar (android.os.MessageQueue.nextLegacy)\n"));
+        assertTrue(section, section.contains("\n  at android.app.ActivityThread.main(ActivityThread.java:9067)\n"));
+        assertFalse("the next thread's frames were shown: " + section, section.contains("ReferenceQueueDaemon"));
     }
 
     @Test @Config(sdk = 30)

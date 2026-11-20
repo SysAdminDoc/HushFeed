@@ -1,0 +1,76 @@
+Subject: Input dispatching timed out (19e1bdf com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity is not responding. Waited 5014ms for MotionEvent(deviceId=-1, eventTime=777711000000, source=TOUCHSCREEN, displayId=0, action=DOWN, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000000, classification=NONE, edgeFlags=0x00000000, xPrecision=1.0, yPrecision=1.0, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (360.0, 760.0)]), policyFlags=0x6b000000).
+RssHwmKb: 1358288
+RssKb: 1339296
+RssAnonKb: 537136
+RssShmemKb: 251756
+VmSwapKb: 22488
+
+
+--- CriticalEventLog ---
+capacity: 20
+timestamp_ms: 1795150096479
+window_ms: 300000
+
+----- dumping pid: 10057 at 782737
+proc 10057
+context hwbinder
+  buffer 471358: 0 size 8:0:0 delivered
+  buffer 472360: 8 size 88:16:32 delivered
+  buffer 473070: 90 size 8:0:0 delivered
+
+----- pid 10057 at 2026-11-19 23:48:20.529319891-0500 -----
+Cmd line: com.zhiliaoapp.musically
+Build fingerprint: 'google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys'
+ABI: 'x86_64'
+Build type: optimized
+Debug Store: 3,16,786811::ID:0,C:P,T:761674,N:Finish,D:tname=main;tid=2;prid=727c104||ID:37,C:E,T:761674||ID:37,C:S,T:761674,N:BcRcvReg,D:tname=main;tid=2;act=android.intent.action.BATTERY_CHANGED;cmp=null;pkg=null;prid=727c104||ID:36,C:E,T:761674||ID:36,C:S,T:761674,N:SchRcvReg,D:tname=binder:10057_2;tid=43||ID:0,C:P,T:749289,N:Finish,D:tname=main;tid=2;prid=dd9af73||ID:35,C:E,T:749289||ID:35,C:S,T:749288,N:BcRcvReg,D:tname=main;tid=2;act=android.net.conn.CONNECTIVITY_CHANGE;cmp=null;pkg=null;prid=dd9af73||ID:34,C:E,T:749196||ID:34,C:S,T:749196,N:SchRcvReg,D:tname=binder:10057_6;tid=377||ID:0,C:P,T:746355,N:Finish,D:tname=main;tid=2;prid=44756ac||ID:33,C:E,T:746355||ID:33,C:S,T:746355,N:BcRcvReg,D:tname=main;tid=2;act=android.intent.action.BATTERY_CHANGED;cmp=null;pkg=null;prid=44756ac||ID:0,C:P,T:746355,N:Finish,D:tname=main;tid=2;prid=378bc5f||ID:32,C:E,T:746355||ID:32,C:S,T:746355,N:BcRcvReg,D:tname=main;tid=2;act=android.intent.action.BATTERY_CHANGED;cmp=null;pkg=null;prid=378bc5f;;
+suspend all histogram:	Sum: 521.436ms 99% C.I. 0.026ms-141.393ms Avg: 8.410ms Max: 148.556ms
+DALVIK THREADS (296):
+"main" prio=5 tid=1 Native
+  | group="main" sCount=2 ucsCount=1 flags=1 obj=0x72f3cfa8 self=0x7f836bd54380
+  | sysTid=10057 nice=-20 cgrp=top-app sched=0/0 handle=0x7f8628ef7088
+  | state=S schedstat=( 3601593729 5152146234 16829 ) utm=254 stm=105 core=0 HZ=100
+  | stack=0x7fffc7efe000-0x7fffc7f00000 stackSize=8188KB
+  | held mutexes=
+  native: #00 pc 0008f806  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+22) (BuildId: fcb82240218d1473de1e3d2137c0be35)
+  native: #01 pc 0046d6af  /apex/com.android.art/lib64/libart.so (art::ConditionVariable::WaitHoldingLocks+111) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #02 pc 009a6dc6  /apex/com.android.art/lib64/libart.so (artJniMethodEnd+502) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #03 pc 009a6f7b  /apex/com.android.art/lib64/libart.so (art::GenericJniMethodEnd+107) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #04 pc 0022c8e1  /apex/com.android.art/lib64/libart.so (art_quick_generic_jni_trampoline+241) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #05 pc 00211e94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+756) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #06 pc 004621c5  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke+181) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #07 pc 005fa142  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false>+2402) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #08 pc 00233611  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false>+10625) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #09 pc 00210915  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+5) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #10 pc 0027e714  /system/framework/framework.jar (offset 1286000) (android.os.MessageQueue.nextLegacy)
+  native: #11 pc 005f2082  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute +466) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #12 pc 005f9396  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge+102) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #13 pc 005fa128  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false>+2376) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #14 pc 00233611  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false>+10625) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #15 pc 00210915  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+5) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #16 pc 0027e57c  /system/framework/framework.jar (offset 1286000) (android.os.MessageQueue.next)
+  native: #17 pc 005f2082  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute +466) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #18 pc 005f9396  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge+102) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #19 pc 005fa128  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false>+2376) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #20 pc 00233611  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false>+10625) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #21 pc 00210915  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+5) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #22 pc 0027c938  /system/framework/framework.jar (offset 1286000) (android.os.Looper.loopOnce)
+  native: #23 pc 005f2082  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute +466) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #24 pc 009a861b  /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+907) (BuildId: 108a321dc93c20580e74b855c407e975)
+  native: #25 pc 0022ca5c  /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+140) (BuildId: 108a321dc93c20580e74b855c407e975)
+  at android.os.MessageQueue.nativePollOnce(Native method)
+  at android.os.MessageQueue.nextLegacy(MessageQueue.java:913)
+  at android.os.MessageQueue.next(MessageQueue.java:1025)
+  at android.os.Looper.loopOnce(Looper.java:196)
+  at android.os.Looper.loop(Looper.java:338)
+  at android.app.ActivityThread.main(ActivityThread.java:9067)
+  at java.lang.reflect.Method.invoke(Native method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+DumpLatencyMs: 3.05295
+
+"ReferenceQueueDaemon" daemon prio=5 tid=6 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x20006b8 self=0x7f836bd55f50
+  | sysTid=10065 nice=4 cgrp=top-app sched=0/0 handle=0x7f82d1fda690
+
+----- end 10057 -----

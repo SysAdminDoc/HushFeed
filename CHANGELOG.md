@@ -50,6 +50,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Remove feed ads` takes another kind of search ad out of the results. Some search ads carry their video tucked inside the card rather than on it, and TikTok itself doesn't call them ads when asked, so they stayed in the grid (#484).
 * With `Floating bottom bar` and `Hide the bottom tab names` on, the bar lines each tab up by its icon, and an empty box inside a tab doesn't count as the icon anymore. TikTok's Create tab can carry one, and lining up by it could leave the + sitting higher than the other icons (#474).
 * TikTok doesn't freeze and crash anymore with thousands of offline videos saved. Every few minutes TikTok checked how many saved videos were still unwatched by loading all of them, and with a big `Custom offline videos limit` that filled its memory. It asks the database for the number now (#482).
 * With `Slide to change the hold speed` on, pulling down to lock keeps the speed the bubble shows on every video. Once a lock carried its speed into the next videos, TikTok counted each of them as locked already, so a slide and a pull there unlocked the video and dropped it to 1x instead. A pull without sliding still unlocks (#485).

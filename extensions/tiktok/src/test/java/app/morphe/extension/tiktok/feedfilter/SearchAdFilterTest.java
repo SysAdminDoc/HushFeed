@@ -43,9 +43,19 @@ public class SearchAdFilterTest {
         public Object aiAdCard;
         public Object brandZoneCard;
         public Object aweme;
+        public PreciseAd preciseAd;
 
         public boolean isAdOrContainAd() {
             return adOrContainAd;
+        }
+    }
+
+    /** Stands in for SearchPreciseAd: the advert videos a precise ad card carries. */
+    public static class PreciseAd {
+        public List awemeCards;
+
+        PreciseAd(List awemeCards) {
+            this.awemeCards = awemeCards;
         }
     }
 
@@ -122,6 +132,41 @@ public class SearchAdFilterTest {
         card.aweme = video(true);
 
         assertTrue(FeedItemsFilter.isSearchAd(card));
+    }
+
+    @Test
+    public void aPreciseAdIsAnAdThoughNeitherTheCardNorItsVideoSaysSo() {
+        // #484: TikTok's own answer is no and the card wraps no video, the videos ride in the
+        // precise ad, and none of them needs to admit to being an advert either.
+        Card card = plain();
+        card.preciseAd = new PreciseAd(new ArrayList<>(Collections.singletonList(video(false))));
+
+        assertTrue(FeedItemsFilter.isSearchAd(card));
+        assertTrue(FeedItemsFilter.searchCardKind(card), FeedItemsFilter.searchCardKind(card).endsWith(" precise advert"));
+    }
+
+    @Test
+    public void aPreciseAdWithNoVideosIsKept() {
+        Card none = plain();
+        none.preciseAd = new PreciseAd(null);
+        assertFalse(FeedItemsFilter.isSearchAd(none));
+
+        Card empty = plain();
+        empty.preciseAd = new PreciseAd(new ArrayList<>());
+        assertFalse(FeedItemsFilter.isSearchAd(empty));
+    }
+
+    @Test
+    public void theGridNeverSeesAPreciseAd() {
+        Card precise = plain();
+        precise.preciseAd = new PreciseAd(new ArrayList<>(Collections.singletonList(video(true))));
+        Card first = plain();
+        Card second = plain();
+
+        Result result = new Result(new ArrayList<>(Arrays.asList(precise, first, second)));
+        FeedItemsFilter.filterSearchAds(result);
+
+        assertEquals(Arrays.asList(first, second), result.mItems);
     }
 
     @Test

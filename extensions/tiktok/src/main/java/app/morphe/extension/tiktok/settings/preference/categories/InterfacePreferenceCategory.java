@@ -1034,10 +1034,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             List<String> tapLabels = new ArrayList<>(Arrays.asList("TikTok default", "Do nothing",
                     "Like or unlike the video", "Open comments",
                     "Save the original sound", "Copy the video link", "Copy the sound link",
-                    "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
+                    "Find the sound on YouTube Music", "Identify the song with Shazam",
+                    "Set a sleep timer that closes TikTok",
                     "Save the frame on screen as a photo", "Save the video's cover", "Open the search page"));
             List<String> tapValues = new ArrayList<>(Arrays.asList("default", "nothing", "like_toggle", "comments",
-                    "original_sound", "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "original_sound", "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer",
+                    "save_frame",
                     "save_cover", "open_search"));
             if (SettingsStatus.liveSpeedEnabled) {
                 tapLabels.add("Speed up this video, double tap again to undo");
@@ -1078,10 +1080,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             List<String> pressLabels = new ArrayList<>(Arrays.asList("TikTok default (hold to speed up, quick share)",
                     "Do nothing", "Like the video", "Open comments", "Save the original sound",
                     "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
+                    "Identify the song with Shazam",
                     "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
                     "Save the video's cover", "Open the search page"));
             List<String> pressValues = new ArrayList<>(Arrays.asList("default", "nothing", "like", "comments",
-                    "original_sound", "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "original_sound", "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer",
+                    "save_frame",
                     "save_cover", "open_search"));
             if (SettingsStatus.automaticClearDisplayEnabled) {
                 pressLabels.add("Turn Clear display on or off");

@@ -1509,6 +1509,17 @@ Creator exceptions,Pengecualian kreator
 "An exception takes a handle or id, not a display name: %1$s","Pengecualian memakai nama akun atau id, bukan nama tampilan: %1$s"
 "Also on a block list, so still hidden: %1$s","Juga ada di daftar blokir, jadi tetap disembunyikan: %1$s"
 Find the sound on YouTube Music,Cari suaranya di YouTube Music
+Identify the song with Shazam,Kenali lagu dengan Shazam
+This video has no sound to identify,Video ini tidak punya suara untuk dikenali
+Still looking up the song,Lagu masih dicari
+Looking up the song,Mencari lagunya
+Shazam didn't recognize this song,Shazam tidak mengenali lagu ini
+This sound is too quiet to identify,Suara ini terlalu pelan untuk dikenali
+Shazam is busy. Try again later.,Shazam sedang sibuk. Coba lagi nanti.
+The song couldn't be looked up. Try again.,Lagu tidak bisa dicari. Coba lagi.
+%1$s by %2$s,%1$s oleh %2$s
+Song copied,Lagu disalin
+YouTube Music,YouTube Music
 YouTube Music isn't installed,YouTube Music belum terpasang
 This video's sound has no title to look for,Suara video ini tidak punya judul untuk dicari
 YouTube Music didn't open. Open it yourself to search.,YouTube Music tak terbuka. Buka sendiri lalu cari.

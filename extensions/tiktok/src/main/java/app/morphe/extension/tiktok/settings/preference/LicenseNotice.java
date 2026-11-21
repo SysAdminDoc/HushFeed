@@ -179,6 +179,17 @@ public final class LicenseNotice {
             "replace it with your own build of that library. Hushfeed's own code stays under the\n" +
             "GPLv3, which the LGPL allows.\n" +
             "\n" +
+            "SongRec\n" +
+            "\n" +
+            "Copyright the SongRec contributors\n" +
+            "Source: https://github.com/marin-m/SongRec\n" +
+            "GNU GENERAL PUBLIC LICENSE, Version 3\n" +
+            "https://www.gnu.org/licenses/gpl-3.0.html\n" +
+            "\n" +
+            "Identify the song with Shazam makes its fingerprint with a Java port of SongRec's\n" +
+            "signature generator and signature format (download/ShazamSignature.java), under\n" +
+            "the same GPLv3 as the rest of Hushfeed.\n" +
+            "\n" +
             "\n" +
             "Material Design icons\n" +
             "---------------------\n" +

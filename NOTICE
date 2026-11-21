@@ -151,6 +151,17 @@ encoder, unmodified and carried as its own library inside the extension. You can
 replace it with your own build of that library. Hushfeed's own code stays under the
 GPLv3, which the LGPL allows.
 
+SongRec
+
+Copyright the SongRec contributors
+Source: https://github.com/marin-m/SongRec
+GNU GENERAL PUBLIC LICENSE, Version 3
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Identify the song with Shazam makes its fingerprint with a Java port of SongRec's
+signature generator and signature format (download/ShazamSignature.java), under
+the same GPLv3 as the rest of Hushfeed.
+
 
 Material Design icons
 ---------------------

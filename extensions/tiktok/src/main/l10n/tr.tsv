@@ -1531,6 +1531,17 @@ An exception names one creator, so a pattern can't be one: %1$s	Bir istisna tek 
 An exception takes a handle or id, not a display name: %1$s	Bir istisna hesap adı veya kimlik alır, görünen ad değil: %1$s
 Also on a block list, so still hidden: %1$s	Bir engelleme listesinde de var, bu yüzden gizli kalır: %1$s
 Find the sound on YouTube Music	Sesi YouTube Music'te bul
+Identify the song with Shazam	Şarkıyı Shazam ile tanı
+This video has no sound to identify	Bu videoda tanınacak bir ses yok
+Still looking up the song	Şarkı hâlâ aranıyor
+Looking up the song	Şarkı aranıyor
+Shazam didn't recognize this song	Shazam bu şarkıyı tanımadı
+This sound is too quiet to identify	Bu ses tanınmak için çok kısık
+Shazam is busy. Try again later.	Shazam meşgul. Daha sonra tekrar deneyin.
+The song couldn't be looked up. Try again.	Şarkı aranamadı. Tekrar deneyin.
+%1$s by %2$s	%1$s, sanatçı: %2$s
+Song copied	Şarkı kopyalandı
+YouTube Music	YouTube Music
 YouTube Music isn't installed	YouTube Music yüklü değil
 This video's sound has no title to look for	Bu videonun sesinin aranacak bir başlığı yok
 YouTube Music didn't open. Open it yourself to search.	YouTube Music açılmadı. Kendin açıp sesi ara.

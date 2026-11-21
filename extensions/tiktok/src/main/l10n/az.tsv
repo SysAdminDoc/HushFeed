@@ -1531,6 +1531,17 @@ An exception names one creator, so a pattern can't be one: %1$s	İstisna bir yar
 An exception takes a handle or id, not a display name: %1$s	İstisna istifadəçi adı və ya ID qəbul edir, görünən ad yox: %1$s
 Also on a block list, so still hidden: %1$s	Həm də bloklama siyahısındadır, ona görə yenə gizlədilir: %1$s
 Find the sound on YouTube Music	Səsi YouTube Music-də tapın
+Identify the song with Shazam	Mahnını Shazam ilə tanıyın
+This video has no sound to identify	Bu videoda tanınacaq səs yoxdur
+Still looking up the song	Mahnı hələ axtarılır
+Looking up the song	Mahnı axtarılır
+Shazam didn't recognize this song	Shazam bu mahnını tanımadı
+This sound is too quiet to identify	Bu səs tanınmaq üçün çox zəifdir
+Shazam is busy. Try again later.	Shazam məşğuldur. Sonra yenidən cəhd edin.
+The song couldn't be looked up. Try again.	Mahnını axtarmaq mümkün olmadı. Yenidən cəhd edin.
+%1$s by %2$s	%1$s, ifaçı: %2$s
+Song copied	Mahnı kopyalandı
+YouTube Music	YouTube Music
 YouTube Music isn't installed	YouTube Music quraşdırılmayıb
 This video's sound has no title to look for	Bu videonun səsində axtarılacaq ad yoxdur
 YouTube Music didn't open. Open it yourself to search.	YouTube Music açılmadı. Özünüz açıb axtarın.

@@ -1669,6 +1669,17 @@ An exception names one creator, so a pattern can't be one: %1$s	Исключен
 An exception takes a handle or id, not a display name: %1$s	Исключение принимает имя аккаунта или id, а не отображаемое имя: %1$s
 Also on a block list, so still hidden: %1$s	Также в списке блокировки, поэтому всё ещё скрыт: %1$s
 Find the sound on YouTube Music	Найти звук в YouTube Music
+Identify the song with Shazam	Распознать песню через Shazam
+This video has no sound to identify	В этом видео нет звука для распознавания
+Still looking up the song	Песня ещё ищется
+Looking up the song	Ищем песню
+Shazam didn't recognize this song	Shazam не распознал эту песню
+This sound is too quiet to identify	Этот звук слишком тихий для распознавания
+Shazam is busy. Try again later.	Shazam занят. Попробуйте позже.
+The song couldn't be looked up. Try again.	Не удалось найти песню. Попробуйте ещё раз.
+%1$s by %2$s	%1$s, исполнитель: %2$s
+Song copied	Песня скопирована
+YouTube Music	YouTube Music
 YouTube Music isn't installed	YouTube Music не установлен
 This video's sound has no title to look for	У звука этого видео нет названия для поиска
 YouTube Music didn't open. Open it yourself to search.	YouTube Music не открылся. Откройте его сами и найдите.

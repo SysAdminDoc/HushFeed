@@ -649,6 +649,17 @@ Filter the list,Lọc danh sách
 Filter: %1$s,Bộ lọc: %1$s
 "Filters, translation and copy options","Bộ lọc, tùy chọn dịch và sao chép"
 Find the sound on YouTube Music,Tìm âm thanh trên YouTube Music
+Identify the song with Shazam,Nhận diện bài hát bằng Shazam
+This video has no sound to identify,Video này không có âm thanh để nhận diện
+Still looking up the song,Vẫn đang tìm bài hát
+Looking up the song,Đang tìm bài hát
+Shazam didn't recognize this song,Shazam không nhận ra bài hát này
+This sound is too quiet to identify,Âm thanh này quá nhỏ để nhận diện
+Shazam is busy. Try again later.,Shazam đang bận. Hãy thử lại sau.
+The song couldn't be looked up. Try again.,Không tìm được bài hát. Hãy thử lại.
+%1$s by %2$s,%1$s của %2$s
+Song copied,Đã sao chép bài hát
+YouTube Music,YouTube Music
 First caller,Người gọi đầu tiên
 First rejection:,Lần từ chối đầu tiên:
 Fit the video to the screen,Hiển thị vừa vặn video trên màn hình

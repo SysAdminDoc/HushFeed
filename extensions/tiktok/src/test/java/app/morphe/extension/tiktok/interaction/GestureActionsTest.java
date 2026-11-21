@@ -139,7 +139,7 @@ public class GestureActionsTest {
             assertNotNull(choice);
             // #136: it offered only nothing and comments, and Long press had all the rest.
             assertArrayEquals(new String[]{"default", "nothing", "like_toggle", "comments", "original_sound",
-                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer", "save_frame",
                     "save_cover", "open_search"}, choice.getEntryValues());
             assertEquals("every value needs a label to pick it by",
                     choice.getEntryValues().length, choice.getEntries().length);
@@ -375,7 +375,7 @@ public class GestureActionsTest {
             ClipboardManager clipboard =
                     (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
             for (String action : new String[]{"copy_link", "copy_sound_link", "original_sound",
-                    "youtube_music", "save_frame", "save_cover"}) {
+                    "youtube_music", "identify_song", "save_frame", "save_cover"}) {
                 Settings.DOUBLE_TAP_ACTION.save("default");
                 Settings.LONG_PRESS_ACTION.save(action);
                 clipboard.setPrimaryClip(ClipData.newPlainText("before", "before"));
@@ -557,7 +557,7 @@ public class GestureActionsTest {
             assertNotNull(choice);
             // #136: a like, the one thing a double tap did that a long press couldn't.
             assertArrayEquals(new String[]{"default", "nothing", "like", "comments", "original_sound",
-                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer", "save_frame",
                     "save_cover", "open_search"}, choice.getEntryValues());
             assertEquals("every value needs a label to pick it by",
                     choice.getEntryValues().length, choice.getEntries().length);
@@ -712,7 +712,9 @@ public class GestureActionsTest {
                     {"copy_link", "This video has no link to copy"},
                     {"copy_sound_link", "This video has no sound of its own"},
                     // The same dispatch: a video with no sound has nothing to look up either.
-                    {"youtube_music", "This video's sound has no title to look for"}
+                    {"youtube_music", "This video's sound has no title to look for"},
+                    // Nothing goes to Shazam for a video with no sound entry.
+                    {"identify_song", "This video has no sound to identify"}
             };
             for (String[] testCase : cases) {
                 Settings.LONG_PRESS_ACTION.save(testCase[0]);

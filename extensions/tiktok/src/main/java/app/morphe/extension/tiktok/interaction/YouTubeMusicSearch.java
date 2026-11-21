@@ -47,7 +47,13 @@ public final class YouTubeMusicSearch {
             Utils.showToastShort(L10n.t("This original sound isn't on YouTube Music"));
             return false;
         }
-        Intent view = new Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_URL + Uri.encode(query)));
+        return openQuery(query, context);
+    }
+
+    /** Opens YouTube Music's search for {@code query}, such as a song Shazam named. */
+    static boolean openQuery(String query, Context context) {
+        if (context == null || query == null || query.trim().isEmpty()) return false;
+        Intent view = new Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_URL + Uri.encode(query.trim())));
         view.setPackage(PACKAGE);
         view.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {

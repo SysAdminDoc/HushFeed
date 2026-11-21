@@ -618,6 +618,17 @@ Filter the list,过滤列表
 Filter: %1$s,过滤器：%1$s
 "Filters, translation and copy options",过滤器、翻译和复制选项
 Find the sound on YouTube Music,在 YouTube Music 上查找声音
+Identify the song with Shazam,用 Shazam 识别歌曲
+This video has no sound to identify,这个视频没有可识别的声音
+Still looking up the song,仍在查找歌曲
+Looking up the song,正在查找歌曲
+Shazam didn't recognize this song,Shazam 没有识别出这首歌
+This sound is too quiet to identify,这段声音太小，无法识别
+Shazam is busy. Try again later.,Shazam 正忙。请稍后再试.
+The song couldn't be looked up. Try again.,无法查找这首歌。请重试.
+%1$s by %2$s,%2$s 的《%1$s》
+Song copied,已复制歌曲
+YouTube Music,YouTube Music
 First caller,第一个来电者
 First rejection:,第一次拒绝:
 Fit the video to the screen,让视频适合屏幕

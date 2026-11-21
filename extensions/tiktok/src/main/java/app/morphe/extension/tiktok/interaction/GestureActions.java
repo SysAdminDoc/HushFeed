@@ -249,7 +249,7 @@ public final class GestureActions {
         return "nothing".equals(action) || "comments".equals(action) || "like".equals(action)
                 || "like_toggle".equals(action) || "original_sound".equals(action) || "copy_link".equals(action)
                 || "copy_sound_link".equals(action) || "youtube_music".equals(action)
-                || "sleep_timer".equals(action) || "save_frame".equals(action)
+                || "identify_song".equals(action) || "sleep_timer".equals(action) || "save_frame".equals(action)
                 || "save_cover".equals(action) || "clear_display".equals(action)
                 || "open_search".equals(action)
                 || ("not_interested".equals(action) && SettingsStatus.notInterestedEnabled);
@@ -406,6 +406,11 @@ public final class GestureActions {
             Context context = Utils.getActivity();
             YouTubeMusicSearch.open(onScreenAweme(),
                     context != null ? context : Utils.getContext());
+            return true;
+        }
+        if ("identify_song".equals(action)) {
+            // Only the fingerprint goes out, and only now, on the gesture (SongRecognition).
+            SongLookup.start(onScreenAweme(), Utils.getActivity());
             return true;
         }
         if ("sleep_timer".equals(action)) {

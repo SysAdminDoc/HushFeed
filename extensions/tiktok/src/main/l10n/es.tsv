@@ -1531,6 +1531,17 @@ An exception names one creator, so a pattern can't be one: %1$s	Una excepción n
 An exception takes a handle or id, not a display name: %1$s	Una excepción toma un nombre de cuenta o un id, no un nombre para mostrar: %1$s
 Also on a block list, so still hidden: %1$s	También está en una lista de bloqueo, así que sigue oculto: %1$s
 Find the sound on YouTube Music	Buscar el sonido en YouTube Music
+Identify the song with Shazam	Identificar la canción con Shazam
+This video has no sound to identify	Este video no tiene sonido para identificar
+Still looking up the song	Todavía se está buscando la canción
+Looking up the song	Buscando la canción
+Shazam didn't recognize this song	Shazam no reconoció esta canción
+This sound is too quiet to identify	Este sonido es demasiado bajo para identificarlo
+Shazam is busy. Try again later.	Shazam está ocupado. Inténtalo más tarde.
+The song couldn't be looked up. Try again.	No se pudo buscar la canción. Inténtalo de nuevo.
+%1$s by %2$s	%1$s de %2$s
+Song copied	Canción copiada
+YouTube Music	YouTube Music
 YouTube Music isn't installed	YouTube Music no está instalado
 This video's sound has no title to look for	El sonido de este video no tiene título que buscar
 YouTube Music didn't open. Open it yourself to search.	No abrió YouTube Music. Ábrelo tú y busca allí.

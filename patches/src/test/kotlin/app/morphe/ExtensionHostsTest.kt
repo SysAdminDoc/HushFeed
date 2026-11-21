@@ -102,15 +102,16 @@ class ExtensionHostsTest {
         val ALLOWED_HOSTS = setOf(
             "github.com", "api.github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com",
             "music.youtube.com", "git.iem.at", "central.sonatype.com", "www.apache.org",
-            "accounts.spotify.com", "localhost",
+            "accounts.spotify.com", "amp.shazam.com", "localhost",
         )
         /**
          * The media transport (the client, and the connection it pins to a checked address), and
          * Network proxy's check, which asks the proxy the user set for a greeting or a tunnel and
          * hangs up on the answer, and the relay on the phone's own loopback address that signs
          * TikTok in to a proxy with a password, and Check for Hushfeed updates, which asks
-         * api.github.com for the latest release at most once a day after the user turns it on (the
-         * README's Privacy section names all of them).
+         * api.github.com for the latest release at most once a day after the user turns it on, and
+         * Identify the song, which sends a sound's fingerprint to amp.shazam.com only on the
+         * gesture (the README's Privacy section names all of them).
          */
         val OPENERS = setOf(
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/MediaTransport.java",
@@ -118,6 +119,7 @@ class ExtensionHostsTest {
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/network/NetworkProxy.java",
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/network/ProxyRelay.java",
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/UpdateNotice.java",
+            "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/SongRecognition.java",
         )
         val URL = Regex("""(?:https?|wss?)://([A-Za-z0-9.-]+)""")
         val NETWORK = Regex(

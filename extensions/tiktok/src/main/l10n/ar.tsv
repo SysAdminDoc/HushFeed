@@ -1718,6 +1718,17 @@ An exception names one creator, so a pattern can't be one: %1$s	الاستثنا
 An exception takes a handle or id, not a display name: %1$s	الاستثناء يأخذ اسم مستخدم أو id، وليس اسم العرض: %1$s
 Also on a block list, so still hidden: %1$s	موجود أيضا في قائمة الحظر، لذا لا يزال مخفيا: %1$s
 Find the sound on YouTube Music	العثور على الصوت في YouTube Music
+Identify the song with Shazam	التعرف على الأغنية عبر Shazam
+This video has no sound to identify	لا يحتوي هذا الفيديو على صوت للتعرف عليه
+Still looking up the song	لا يزال البحث عن الأغنية جاريا
+Looking up the song	جارٍ البحث عن الأغنية
+Shazam didn't recognize this song	لم يتعرف Shazam على هذه الأغنية
+This sound is too quiet to identify	هذا الصوت منخفض جدا للتعرف عليه
+Shazam is busy. Try again later.	Shazam مشغول. حاول لاحقا.
+The song couldn't be looked up. Try again.	تعذر البحث عن الأغنية. حاول مرة أخرى.
+%1$s by %2$s	%1$s لـ %2$s
+Song copied	تم نسخ الأغنية
+YouTube Music	YouTube Music
 YouTube Music isn't installed	YouTube Music غير مثبت
 This video's sound has no title to look for	صوت هذا الفيديو ليس له عنوان للبحث عنه
 YouTube Music didn't open. Open it yourself to search.	لم يفتح YouTube Music. افتحه بنفسك للبحث.

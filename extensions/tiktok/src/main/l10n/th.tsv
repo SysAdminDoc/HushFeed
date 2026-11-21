@@ -1534,6 +1534,17 @@ An exception names one creator, so a pattern can't be one: %1$s	ข้อยก�
 An exception takes a handle or id, not a display name: %1$s	ข้อยกเว้นต้องใช้แฮนเดิลหรือ ID ไม่ใช่ชื่อที่แสดง: %1$s
 Also on a block list, so still hidden: %1$s	อยู่ในรายการที่บล็อกด้วย จึงยังคงถูกซ่อน: %1$s
 Find the sound on YouTube Music	ค้นหาเสียงใน YouTube Music
+Identify the song with Shazam	ระบุเพลงด้วย Shazam
+This video has no sound to identify	วิดีโอนี้ไม่มีเสียงให้ระบุ
+Still looking up the song	ยังค้นหาเพลงอยู่
+Looking up the song	กำลังค้นหาเพลง
+Shazam didn't recognize this song	Shazam จำเพลงนี้ไม่ได้
+This sound is too quiet to identify	เสียงนี้เบาเกินกว่าจะระบุได้
+Shazam is busy. Try again later.	Shazam ไม่ว่าง ลองอีกครั้งภายหลัง
+The song couldn't be looked up. Try again.	ค้นหาเพลงไม่ได้ ลองอีกครั้ง
+%1$s by %2$s	%1$s โดย %2$s
+Song copied	คัดลอกเพลงแล้ว
+YouTube Music	YouTube Music
 YouTube Music isn't installed	ไม่ได้ติดตั้ง YouTube Music
 This video's sound has no title to look for	เสียงของวิดีโอนี้ไม่มีชื่อที่จะใช้ค้นหา
 YouTube Music didn't open. Open it yourself to search.	YouTube Music ไม่เปิดขึ้นมา โปรดเปิดด้วยตนเองเพื่อค้นหา

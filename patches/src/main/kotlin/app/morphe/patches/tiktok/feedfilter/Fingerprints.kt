@@ -1389,6 +1389,18 @@ internal object Lemon8CardRequestFingerprint : Fingerprint(
     strings = listOf("fyp_big_card_not_interested_time"),
 )
 
+/**
+ * The full-screen "people you may know" card's request builder (#478), X.07ao.LIZLLL(List, X) on
+ * 47.9.3: it reads the last round's card results and answers a one-item list asking for card
+ * type 49 (FEED_REC_USER_BIG_CARD, drawn by TTRecUserBigCardViewHolder), or an empty list when
+ * TikTok's experiment is off. Its log line names the flow index it asks at.
+ */
+internal object RecUserBigCardRequestFingerprint : Fingerprint(
+    returnType = "Ljava/util/List;",
+    parameters = listOf("Ljava/util/List;", "L"),
+    strings = listOf("insert big card to request at flow idx "),
+)
+
 /** Loads the Lynx view behind an inserted card, which happens before any list filter runs. */
 internal object FeedLynxCardLoadFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),

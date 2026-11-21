@@ -9,6 +9,7 @@ package app.morphe.extension.tiktok.feedfilter;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -84,6 +85,30 @@ public final class CardFilters {
         return Settings.HIDE_INSERTED_CARDS.get();
     }
 
+    /** The export's line for the full-screen people you may know card (#478). */
+    static final String REC_USER_BIG_CARD_SOURCE = "RecUserBigCard";
+
+    /** CardInsertInfo's card type for that card, TikTok's FEED_REC_USER_BIG_CARD. */
+    static final int REC_USER_BIG_CARD_TYPE = 49;
+
+    /**
+     * The full-screen "people you may know" card between videos (#478) is never asked for. Its
+     * request builder answers an empty list when TikTok's experiment is off, and that's what it
+     * gets with Hide inserted cards on. Each ask is counted, so an export says whether TikTok
+     * went looking for the card at all.
+     */
+    public static boolean shouldSkipRecUserBigCardRequest() {
+        try {
+            FeedFilterCounters.sawList(REC_USER_BIG_CARD_SOURCE, 1);
+            if (!shouldHideInsertedCards()) return false;
+            FeedFilterCounters.removed(REC_USER_BIG_CARD_SOURCE, 1, "recUserBigCardRequest");
+            return true;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check the people you may know card", failure);
+            return false;
+        }
+    }
+
     /**
      * The Lemon8 install promo card is never asked for. Its request is the Lemon8 handler's
      * answer to the card-insert round, and an empty answer is the app's own "nothing to insert".
@@ -135,7 +160,15 @@ public final class CardFilters {
 
         @Override
         public boolean getFiltered(Aweme item) {
-            return item.getAwemeType() == AWEME_TYPE_INSERT_CARD;
+            return item.getAwemeType() == AWEME_TYPE_INSERT_CARD || isRecUserBigCard(item);
+        }
+
+        /** The people you may know card by its card type, whatever awemeType it came with (#478). */
+        static boolean isRecUserBigCard(Aweme item) {
+            Object insert = Reflect.property(item, "getCardInsertInfo", "cardInsertInfo");
+            if (insert == null) return false;
+            Object type = Reflect.property(insert, "getCardType", "cardType");
+            return type instanceof Number && ((Number) type).intValue() == REC_USER_BIG_CARD_TYPE;
         }
     }
 }

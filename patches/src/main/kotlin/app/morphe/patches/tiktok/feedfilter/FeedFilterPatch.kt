@@ -1089,6 +1089,20 @@ val feedFilterPatch = bytecodePatch(
             """,
         )
 
+        // The full-screen people you may know card (#478) is asked for the same way, in a round
+        // of its own. An empty list is what its builder answers with TikTok's experiment off, so
+        // the card is never requested; Hide inserted cards also drops it from the list.
+        RecUserBigCardRequestFingerprint.method.requireLocals("Feed filter", 1)
+        RecUserBigCardRequestFingerprint.method.guardAtEntry(
+            "Feed filter",
+            "invoke-static {}, $CARD_FILTERS_CLASS_DESCRIPTOR->shouldSkipRecUserBigCardRequest()Z",
+            """
+                new-instance v0, Ljava/util/ArrayList;
+                invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+                return-object v0
+            """,
+        )
+
         DramaBlockingAdFingerprint.method.apply {
             // Every return, not the first one. This fingerprint does not even name its method,
             // so a build that answers false down one path and true down another would have had

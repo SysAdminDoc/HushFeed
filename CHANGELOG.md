@@ -28,6 +28,7 @@ Every Hushfeed release, newest first.
 * `Hide or reorder profile tabs` (it used to be `Hide profile tabs`) now has arrows on each tab. Move Liked to the top and it's first on your profile, while the tabs you didn't touch stay where TikTok puts them. `Original order` puts TikTok's back (#466).
 * `Hide Add bio` under App takes the Add bio prompt off your own profile while it has no bio. Edit profile still lets you add one. It starts off (#466).
 * `Hide the people you may know tag` under Feed screen takes that tag away from beside a creator's name. The Friends and Following labels stay (#462).
+* `Hide inserted cards` takes the full-screen people you may know card out of For You too. TikTok doesn't even ask for it while the switch is on, and if one shows up anyway it's dropped from the feed (#478).
 * `Hide stories from accounts you don't follow` clears the recommended stories TikTok mixes into the Inbox's stories tray. Stories from accounts you follow, and your own, stay (#462).
 * `LIVE buttons in the long-press menu` takes Record and Auto tap off the video and puts them in the menu you get by holding the middle of a LIVE. TikTok won't open that menu right after a like, so while Auto tap runs, holding the LIVE stops it instead. Hold again and the menu opens (#359).
 * `Fade the name, date and caption` gives the creator's name, the date, the caption and the music line their own opacity over the video (#462).

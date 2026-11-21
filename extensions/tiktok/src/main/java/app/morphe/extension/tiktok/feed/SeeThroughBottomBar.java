@@ -231,7 +231,8 @@ final class SeeThroughBottomBar {
 
     /**
      * The middle of {@code tab}'s icon, from the tab's top: the largest shown view in it that
-     * isn't text, so a count badge or a name never counts. NaN when it has none.
+     * isn't text and draws something, so a count badge, a name or an empty container never
+     * counts. NaN when it has none.
      */
     static float iconMiddle(View tab) {
         float[] best = {0f, Float.NaN};
@@ -250,6 +251,11 @@ final class SeeThroughBottomBar {
             return;
         }
         if (view instanceof android.widget.TextView) return;
+        // An empty container with no background draws nothing, so it can't be the icon. TikTok's
+        // Create tab (47.9.3 LX/05e7) can carry a centered container of its own, and taking that
+        // for the icon puts the tab's middle in the pill's middle, leaving the + high (#474).
+        // Android skips drawing such a view the same way: will-not-draw and nothing behind or over it.
+        if (view.willNotDraw() && view.getBackground() == null && view.getForeground() == null) return;
         float area = (float) view.getWidth() * view.getHeight();
         if (area > best[0]) {
             best[0] = area;

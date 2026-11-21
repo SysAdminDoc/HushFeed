@@ -582,6 +582,31 @@ public class SeeThroughBottomBarTest {
         }
     }
 
+    /**
+     * TikTok's Create tab can hold an empty container of its own, bigger than its + and centered
+     * in the tab (#474). It draws nothing, so the + is the icon and goes in the pill's middle,
+     * not the tab's middle with the + left high above it.
+     */
+    @Test
+    public void anEmptyContainerIsNeverTakenForTheCreateTabsIcon() {
+        FrameLayout tab = new FrameLayout(context);
+        android.widget.ImageView plus = new android.widget.ImageView(context);
+        plus.setImageDrawable(new android.graphics.drawable.ColorDrawable(0xffffffff));
+        FrameLayout.LayoutParams plusAt = new FrameLayout.LayoutParams(100, 60);
+        plusAt.topMargin = 20;
+        tab.addView(plus, plusAt);
+        FrameLayout empty = new FrameLayout(context);
+        tab.addView(empty, new FrameLayout.LayoutParams(150, 150, android.view.Gravity.CENTER));
+        tab.measure(View.MeasureSpec.makeMeasureSpec(270, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(150, View.MeasureSpec.EXACTLY));
+        tab.layout(0, 0, 270, 150);
+
+        assertEquals("the empty container was taken for the icon", 50f, SeeThroughBottomBar.iconMiddle(tab), 0f);
+
+        empty.setBackground(new android.graphics.drawable.ColorDrawable(0xff000000));
+        assertEquals("a container that draws is still a picture", 75f, SeeThroughBottomBar.iconMiddle(tab), 0f);
+    }
+
     /** HushGram's proportions: 5% of the width each side, at least 16dp, the pill no wider than 420dp. */
     @Test
     public void thePillKeepsHushGramsProportions() {

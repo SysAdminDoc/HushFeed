@@ -44,6 +44,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* TikTok doesn't freeze and crash anymore with thousands of offline videos saved. Every few minutes TikTok checked how many saved videos were still unwatched by loading all of them, and with a big `Custom offline videos limit` that filled its memory. It asks the database for the number now (#482).
 * With `Slide to change the hold speed` on, pulling down to lock keeps the speed the bubble shows on every video. Once a lock carried its speed into the next videos, TikTok counted each of them as locked already, so a slide and a pull there unlocked the video and dropped it to 1x instead. A pull without sliding still unlocks (#485).
 * `My watch history` is up to date when you come back to it from a video you opened in it. It used to show the list from before you left until you closed and reopened it.
 * The checklist under `Hide Settings and privacy rows` now names the rows the way TikTok 47.9.3 shows them, in the same order as the page, and it has the Visibility and Interactions rows too, like Blocked accounts, Mentions and Direct messages. Before, those showed up under made-up names like "Shared links", and a few others still had their old labels, like Inbox mode for what's now Inbox & Messaging. In German, Italian, Russian and five more languages, Family Pairing now has TikTok's current name too (#244).

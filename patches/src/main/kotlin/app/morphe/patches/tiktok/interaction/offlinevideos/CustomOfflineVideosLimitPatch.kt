@@ -15,6 +15,7 @@ import app.morphe.util.addInstructions
 import app.morphe.util.cloneMutable
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -192,6 +193,25 @@ val customOfflineVideosLimitPatch = bytecodePatch(
             null
         }
 
+        // TikTok's offline update task loads every unwatched video only to count them, and with
+        // thousands saved that fills the heap and the app dies of OutOfMemoryError (#482). Those
+        // two asks get the count from the database instead. Required on a declared build, where
+        // OfflineUnwatchedCountAnchorsTest holds it, and left out with a note on any other.
+        val unwatchedCount = try {
+            val task = OfflineUpdateTaskFingerprint.method
+            task to unwatchedCountSites(
+                task,
+                SavedOfflineCountQueryFingerprint.method,
+                WatchedOfflineCountQueryFingerprint.method,
+                { type -> classDefByOrNull(type) },
+                PATCH_NAME,
+            )
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out counting unwatched offline videos on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+
         settingsStatus.addInstruction(
             0,
             "invoke-static {}, " +
@@ -236,12 +256,7 @@ val customOfflineVideosLimitPatch = bytecodePatch(
             // The extension's four private stubs become the calls themselves. Each one returns
             // before its own body, which only answers a test's fake.
             val extension = mutableClassDefBy(WATCHED_DELETE_EXTENSION)
-            fun fill(stub: MutableMethod, smali: String) {
-                val filled = stub.cloneMutable(additionalRegisters = 1)
-                extension.methods.remove(stub)
-                extension.methods.add(filled)
-                filled.addInstructions(0, smali)
-            }
+            fun fill(stub: MutableMethod, smali: String) = extension.fillStub(stub, smali)
             fill(
                 extension.methods.single { it.name == "watchedAids" },
                 """
@@ -282,7 +297,17 @@ val customOfflineVideosLimitPatch = bytecodePatch(
                     "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableOfflineWatchedDelete()V",
             )
         }
+
+        unwatchedCount?.let { (task, found) -> countUnwatchedOfflineVideos(task, found) }
     }
+}
+
+/** Swaps an extension stub for a copy that runs [smali] first, which returns before the stub's own body. */
+internal fun MutableClass.fillStub(stub: MutableMethod, smali: String) {
+    val filled = stub.cloneMutable(additionalRegisters = 1)
+    methods.remove(stub)
+    methods.add(filled)
+    filled.addInstructions(0, smali)
 }
 
 /** A method as smali names it in a call. */

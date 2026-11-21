@@ -104,26 +104,32 @@ public class GlassPillDrawingTest {
     }
 
     /**
-     * The lens on TikTok's own bar (#416): TikTok's color everywhere but behind the selected
-     * tab, a lighter bubble there on a dark bar, and a darker one on a white bar, where white
-     * glass wouldn't show. A bar background that isn't a plain color gets the same.
+     * The lens on TikTok's own bar (#416, #483): TikTok's color everywhere but the thin outline
+     * around the selected tab, nothing filled inside it. The line is light on a dark bar and dark
+     * on a white bar, where a white one wouldn't show. A bar background that isn't a plain color
+     * gets the same.
      */
     @Test
-    public void theLensShowsOnTikToksOwnDarkAndWhiteBars() {
+    public void theLensIsAThinOutlineOnTikToksOwnDarkAndWhiteBars() {
         SeeThroughBottomBar.ColorLensBackground dark = new SeeThroughBottomBar.ColorLensBackground(Color.BLACK, false, 1f);
         barWearing(dark);
         Bitmap onDark = drawn(dark);
         assertEquals("TikTok's color didn't draw", Color.BLACK, onDark.getPixel(40, H / 2));
-        int darkLens = onDark.getPixel(W / 2, H / 2);
-        assertTrue("no lens on the dark bar: " + Integer.toHexString(darkLens), light(darkLens) > light(Color.BLACK) + 60);
+        assertEquals("the lens filled its inside", Color.BLACK, onDark.getPixel(W / 2, H / 2));
+        int[] darkLine = outline(onDark, Color.BLACK);
+        assertTrue("no outline on the dark bar", darkLine[0] > 0);
+        assertTrue("the outline on the dark bar is dim: " + Integer.toHexString(darkLine[1]),
+                light(darkLine[1]) > light(Color.BLACK) + 200);
+        assertTrue("the outline is thicker than a line: " + darkLine[0], darkLine[0] <= 2);
 
         SeeThroughBottomBar.ColorLensBackground white = new SeeThroughBottomBar.ColorLensBackground(Color.WHITE, false, 1f);
         barWearing(white);
         Bitmap onWhite = drawn(white);
         assertEquals(Color.WHITE, onWhite.getPixel(40, H / 2));
-        int whiteLens = onWhite.getPixel(W / 2, H / 2);
-        assertTrue("the lens on the white bar doesn't show: " + Integer.toHexString(whiteLens),
-                light(whiteLens) < light(Color.WHITE) - 30);
+        assertEquals("the lens filled its inside", Color.WHITE, onWhite.getPixel(W / 2, H / 2));
+        int[] whiteLine = outline(onWhite, Color.WHITE);
+        assertTrue("the outline on the white bar doesn't show: " + Integer.toHexString(whiteLine[1]),
+                whiteLine[0] > 0 && light(whiteLine[1]) < light(Color.WHITE) - 120);
 
         android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
         shape.setColor(Color.WHITE);
@@ -131,8 +137,23 @@ public class GlassPillDrawingTest {
         barWearing(over);
         Bitmap onShape = drawn(over);
         assertEquals(Color.WHITE, onShape.getPixel(40, H / 2));
-        assertTrue("the lens on a white shape doesn't show",
-                light(onShape.getPixel(W / 2, H / 2)) < light(Color.WHITE) - 30);
+        assertEquals("the lens filled its inside on a shape", Color.WHITE, onShape.getPixel(W / 2, H / 2));
+        assertTrue("the outline on a white shape doesn't show", outline(onShape, Color.WHITE)[0] > 0);
+    }
+
+    /**
+     * Along the bar's middle row, right of its middle: how many pixels differ from {@code bar},
+     * and the one that differs most. The lens's right side crosses that row once.
+     */
+    private static int[] outline(Bitmap bitmap, int bar) {
+        int count = 0, most = bar;
+        for (int x = W / 2; x < W; x++) {
+            int pixel = bitmap.getPixel(x, H / 2);
+            if (pixel == bar) continue;
+            count++;
+            if (Math.abs(light(pixel) - light(bar)) > Math.abs(light(most) - light(bar))) most = pixel;
+        }
+        return new int[]{count, most};
     }
 
     /** The clear bar's lens (#416): the video untouched around it, lighter behind the selected tab. */

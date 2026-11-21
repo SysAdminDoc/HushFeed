@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* On TikTok's own bottom bar, `Glass lens on the current tab` is a thin outline now, white on a dark bar and dark on a light one, with nothing filled inside, so it doesn't sit on the icons like a heavy frame. Sliding across the tabs works the same. The glass, floating and see-through bars keep the glass bubble (#483).
 * A name typed after an @ in a bio, like @First Last, opens TikTok's search on the Accounts tab now, where the person is usually the first row. It used to open the Top results. A typed @username still opens that profile, and `Tap @names in bios` turns all of it off (#247).
 * `Identify the song with Shazam` is a new choice for Long press and Double tap, the corners included. It takes 12 seconds from the middle of the video's sound, turns them into a Shazam fingerprint on your phone, and shows the song and artist with Copy and YouTube Music. Only the fingerprint goes to Shazam, never the audio, and only when you use the gesture. The fingerprint code is ported from SongRec.
 * `Unfollow accounts that don't follow you back` is new under Privacy > Clean up your account. It reads who you follow and your followers first, with a running count and Stop, then tells you how many it found and counts down with Cancel before it unfollows them one at a time. An account only counts when your Following list marks it as followed and not mutual and it isn't on your followers list, so the people who follow you back stay followed.

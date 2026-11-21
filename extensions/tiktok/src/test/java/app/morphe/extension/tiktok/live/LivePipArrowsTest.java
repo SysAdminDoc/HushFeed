@@ -49,7 +49,7 @@ import org.robolectric.util.ReflectionHelpers;
 @Config(sdk = 28, qualifiers = "en")
 @LooperMode(LooperMode.Mode.PAUSED)
 public class LivePipArrowsTest {
-    /** 47.9.2's pager of LIVE rooms, by the methods the window looks for. Its class name is renamed. */
+    /** 47.9.3's pager of LIVE rooms, by the methods the window looks for. Its class name is renamed. */
     public static class RoomPager extends ViewGroup {
         int current;
         int count;

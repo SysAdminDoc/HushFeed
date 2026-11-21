@@ -54,8 +54,8 @@ public final class CaptionStyle {
      * method, which loads dlr, and CLACaptionAssemV2, which loads dlk. 47.1.3 renamed them again,
      * the text dmb and the strip dm5, the names 47.1.4 keeps, so the names are written for the build.
      */
-    private static final String[] TEXT_IDS = {"47.9.2:dtc"};
-    private static final String[] BACKGROUND_IDS = {"47.9.2:dt6"};
+    private static final String[] TEXT_IDS = {"47.9.3:dtc"};
+    private static final String[] BACKGROUND_IDS = {"47.9.3:dt6"};
     /** The feed's progress bar, which the line kept in Clear display stays above. */
     private static final String[] SEEK_BAR_IDS = {"video_seek_bar"};
     private static final String TEXT = String.join("|", TEXT_IDS);

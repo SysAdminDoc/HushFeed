@@ -80,7 +80,7 @@ class ReviewedProfilesMatchFixturesTest {
         // effect creator library closed TikTok on All effects (#285). The universal APK carries the
         // effect plugins, and the 47.9.2 split bundle has none left to empty.
         val apks = fixtures()
-        assertTrue("no 47.9.2 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        assertTrue("no 47.9.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
         for (apk in apks) {
             val root = temporary.newFolder("creation-${apk.extension}")
             val kept = { path: String -> path.startsWith(FACE_MODEL) || path.endsWith(EFFECT_EDITOR) }
@@ -108,7 +108,7 @@ class ReviewedProfilesMatchFixturesTest {
         // so friends' invitations, co-hosting and joining as a guest stopped working (#382, #132).
         // The match templates draw the battle score bar and the guest names (#107).
         val apks = fixtures()
-        assertTrue("no 47.9.2 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        assertTrue("no 47.9.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
         for (apk in apks) {
             val root = temporary.newFolder("live-${apk.extension}")
             val guestCalls = { path: String -> path.endsWith(GUEST_CALL_LIBRARY) || path.startsWith(MATCH_SCREENS) }

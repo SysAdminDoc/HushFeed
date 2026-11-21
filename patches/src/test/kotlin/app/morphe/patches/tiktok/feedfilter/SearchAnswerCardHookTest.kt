@@ -110,7 +110,7 @@ class SearchAnswerCardHookTest {
             listOf(
                 "Landroid/view/View;",
                 "Landroidx/lifecycle/LifecycleOwner;",
-                "LX/0HMp;",
+                "LX/0HMi;",
                 SEARCH_CARD_PROTOCOL_CLASS_DESCRIPTOR,
                 "Lkotlin/jvm/functions/Function0;",
                 "Lcom/ss/android/ugc/aweme/search/arch/v2/services/signal/impl/SearchContextAbilityImpl;",

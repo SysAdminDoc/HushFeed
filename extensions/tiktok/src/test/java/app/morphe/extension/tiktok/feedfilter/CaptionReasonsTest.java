@@ -26,7 +26,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
 public class CaptionReasonsTest {
-    /** TikTok's CaptionModel as 47.9.2 has it: the tracks and the reason an empty list is empty. */
+    /** TikTok's CaptionModel as 47.9.3 has it: the tracks and the reason an empty list is empty. */
     public static final class Model {
         public final List<Object> captionList;
         public final Integer noOriginalCaptionReasonV2;

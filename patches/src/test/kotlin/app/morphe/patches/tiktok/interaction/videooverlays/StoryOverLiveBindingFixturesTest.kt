@@ -40,18 +40,43 @@ class StoryOverLiveBindingFixturesTest {
 
     @Test fun `the chat row reuses its picture and passes its current inbox UID into that bind`() {
         Fixtures.forEachDeclared { apk ->
-            val row = classes(apk, setOf(ROW)).getValue(ROW)
-            val code = row.methods.mapNotNull { it.implementation?.instructions?.toList() }.single { instructions ->
-                instructions.any { it.getReference<MethodReference>()?.let { call -> call.definingClass == AVATAR && call.name == BIND } == true }
+            val found = classes(apk, setOf(ROW, AVATAR))
+            val row = found.getValue(ROW)
+            val pictures = found.getValue(AVATAR).interfaces.toSet()
+            // Where the bind's UID argument sits: 47.9.2 calls the picture's LIZIZ itself (picture,
+            // owner, model, UID), 47.9.3 goes through its Kotlin default-arguments helper, a static
+            // X.0YsR.LIZ(picture, UID, model, owner, ...) that calls LIZIZ on the picture.
+            fun uidSlot(call: MethodReference): Int? = when {
+                call.definingClass == AVATAR && call.name == BIND -> 3
+                call.parameterTypes.size > 2 && call.parameterTypes[0].toString() in pictures &&
+                    call.parameterTypes[1].toString() == STRING && forwardsToBind(apk, call, pictures) -> 1
+                else -> null
             }
-            val bindAt = code.indexOfFirst { it.getReference<MethodReference>()?.let { call -> call.definingClass == AVATAR && call.name == BIND } == true }
+            val code = row.methods.mapNotNull { it.implementation?.instructions?.toList() }.single { instructions ->
+                instructions.any { it.getReference<MethodReference>()?.let(::uidSlot) != null }
+            }
+            val bindAt = code.indexOfFirst { it.getReference<MethodReference>()?.let(::uidSlot) != null }
             val bind = code[bindAt] as RegisterRangeInstruction
             val uidAt = (0 until bindAt).last { code[it].getReference<MethodReference>()?.name == "getInboxUid" }
             assertEquals(Opcode.MOVE_RESULT_OBJECT, code[uidAt + 1].opcode)
-            assertEquals(bind.startRegister + 3, (code[uidAt + 1] as OneRegisterInstruction).registerA)
+            assertEquals(bind.startRegister + uidSlot(code[bindAt].getReference<MethodReference>()!!)!!,
+                (code[uidAt + 1] as OneRegisterInstruction).registerA)
             val pictureAt = (0 until uidAt).last { code[it].getReference<MethodReference>()?.returnType == AVATAR }
             assertEquals(bind.startRegister, (code[pictureAt + 1] as OneRegisterInstruction).registerA)
             assertTrue(code.take(bindAt).none { it.opcode == Opcode.NEW_INSTANCE && it.getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == AVATAR })
+        }
+    }
+
+    /** A static helper whose body calls the six-argument bind on one of the picture's interfaces. */
+    private fun forwardsToBind(apk: File, call: MethodReference, pictures: Set<String>): Boolean {
+        val helper = classes(apk, setOf(call.definingClass))[call.definingClass] ?: return false
+        val method = helper.methods.singleOrNull {
+            it.name == call.name && it.parameterTypes.map(CharSequence::toString) == call.parameterTypes.map(CharSequence::toString)
+        } ?: return false
+        return AccessFlags.STATIC.isSet(method.accessFlags) && method.implementation!!.instructions.any { instruction ->
+            instruction.getReference<MethodReference>()?.let {
+                it.definingClass in pictures && it.name == BIND && it.parameterTypes.size == 6
+            } == true
         }
     }
 

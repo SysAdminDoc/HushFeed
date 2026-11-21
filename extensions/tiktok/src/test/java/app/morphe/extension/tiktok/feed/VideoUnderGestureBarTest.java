@@ -18,7 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
- * TikTok pads a host near the top of each page by the gesture bar on 47.9.2, so the feed under its
+ * TikTok pads a host near the top of each page by the gesture bar on 47.9.3, so the feed under its
  * tabs and an opened video under its comment bar stopped over a strip of the window's black (#408).
  */
 @RunWith(RobolectricTestRunner.class)

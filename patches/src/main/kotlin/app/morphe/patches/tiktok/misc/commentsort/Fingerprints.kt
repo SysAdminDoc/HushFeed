@@ -41,7 +41,7 @@ internal object CommentSortOptionStyleFingerprint : Fingerprint(
 /**
  * The per-post eligibility check.
  *
- * <p>Its class was written here as `LX/0nmj;` and it carries no string of its own, so there was
+ * <p>Its class was written here as `LX/0o5R;` and it carries no string of its own, so there was
  * nothing to hold on to but that name. What it does have is a lazily read AB value, and the key
  * that value reads is `comment_sort_opt_style`, the same one the style fingerprint above is
  * anchored on. That key is TikTok's own name and is on all three builds.

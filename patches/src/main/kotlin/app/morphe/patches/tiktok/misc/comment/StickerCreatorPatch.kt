@@ -56,8 +56,8 @@ private fun Method.stickerMethodCalls(): List<MethodReference> =
 
 /**
  * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source, the
- * canvas text (null when there is none, new on 47.9.2) and the continuation. R8 renames it
- * (LIZIZ on TikTok 47.9.2).
+ * canvas text (null when there is none, new on 47.9.3) and the continuation. R8 renames it
+ * (LIZIZ on TikTok 47.9.3).
  */
 internal fun MethodReference.isStickerSaveCall(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
@@ -105,9 +105,9 @@ internal object StickerServerParameterFingerprint : Fingerprint(
 )
 
 /**
- * The DM canvas saver (0hMc.LIZIZ on TikTok 47.9.2): it saves a
+ * The DM canvas saver (0hMc.LIZIZ on TikTok 47.9.3): it saves a
  * drawing through im/sticker/save and adds the answer to Saved. Every call the bridges make comes
- * out of it. 47.9.2 grew its parameters from four to nine (the canvas text, flags and two
+ * out of it. 47.9.3 grew its parameters from four to nine (the canvas text, flags and two
  * callbacks), and a sibling in the same class that posts to the sticker store carries
  * "dm_ai_canvas" too, so the save and the Saved store call are what pick it, not its parameters.
  */
@@ -294,7 +294,7 @@ internal fun MutableClass.swapStickerStubs(calls: StickerCreatorCalls) {
 }
 
 /**
- * The profile's Stickers tab gate (0OB3.LIZIZ on TikTok 47.9.2, #214): static, takes the User, asks
+ * The profile's Stickers tab gate (0OB3.LIZIZ on TikTok 47.9.3, #214): static, takes the User, asks
  * the IM sticker store's Z(Z) check and on yes returns a helper of its own class that asks whether
  * the profile owns a sticker set. Otherwise it reads the profile's own showStickerTab flag. 47.6.3
  * read only the flag.
@@ -368,7 +368,7 @@ internal object ProfileStickerPageFingerprint : Fingerprint(
 
 /**
  * Hands the page's curated-set experiment answer to ProfileStickerTab with the profile's uid, right
- * after it's read. 47.9.2 asks the sticker store's Z(Z) check, then on yes asks the store for the
+ * after it's read. 47.9.3 asks the sticker store's Z(Z) check, then on yes asks the store for the
  * curated page with (uid, view model key, is self); on no it builds the 47.6.3 sticker sets pager.
  */
 internal fun MutableMethod.keepProfileStickerPage() {

@@ -50,7 +50,7 @@ public final class ProfileTabs {
     }
 
     /**
-     * The checklist's rows, the first seven in the order your own profile shows them on 47.9.2,
+     * The checklist's rows, the first seven in the order your own profile shows them on 47.9.3,
      * so the list you reorder starts out as the strip you see.
      */
     public static final List<Row> ROWS = List.of(

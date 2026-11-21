@@ -21,17 +21,17 @@ class ProgressStoreTest {
     /** The names on one build: the holder, its Lazy and its record type. */
     private class Build(val holder: String, val lazy: String, val record: String)
 
-    private val v4623 = Build("LX/0ocy;", "LX/01xT;", "LX/0Mlv;")
-    private val v4683 = Build("LX/0NLm;", "LX/01C5;", "LX/0NO3;")
+    private val v4623 = Build("LX/195L;", "LX/01xW;", "LX/0Mlo;")
+    private val v4683 = Build("LX/0NLf;", "LX/01C5;", "LX/0NNw;")
 
     @Test
     fun `the store is read off the put that ends the progress callback`() {
         val store = storeOf(v4623)
-        assertEquals("LX/0ocy;->LIZLLL:LX/01xT;", store.cache.smali())
-        assertEquals("LX/01xT;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
+        assertEquals("LX/195L;->LIZLLL:LX/01xW;", store.cache.smali())
+        assertEquals("LX/01xW;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
         assertEquals("invoke-interface", store.cacheValueInvoke)
-        assertEquals("LX/0ocy;->LJ:LX/0Mlv;", store.lastRecord.smali())
-        assertEquals("LX/0ocy;->LJFF:Ljava/lang/String;", store.lastAid.smali())
+        assertEquals("LX/195L;->LJ:LX/0Mlo;", store.lastRecord.smali())
+        assertEquals("LX/195L;->LJFF:Ljava/lang/String;", store.lastAid.smali())
     }
 
     @Test
@@ -39,10 +39,10 @@ class ProgressStoreTest {
         // 46.8.3, where every one of the three classes has another name and LX/0Lze; is a
         // class with no fields at all.
         val store = storeOf(v4683)
-        assertEquals("LX/0NLm;->LIZLLL:LX/01C5;", store.cache.smali())
+        assertEquals("LX/0NLf;->LIZLLL:LX/01C5;", store.cache.smali())
         assertEquals("LX/01C5;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
-        assertEquals("LX/0NLm;->LJ:LX/0NO3;", store.lastRecord.smali())
-        assertEquals("LX/0NLm;->LJFF:Ljava/lang/String;", store.lastAid.smali())
+        assertEquals("LX/0NLf;->LJ:LX/0NNw;", store.lastRecord.smali())
+        assertEquals("LX/0NLf;->LJFF:Ljava/lang/String;", store.lastAid.smali())
     }
 
     @Test

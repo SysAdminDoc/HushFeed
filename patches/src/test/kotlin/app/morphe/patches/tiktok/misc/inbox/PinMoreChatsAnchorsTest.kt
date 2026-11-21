@@ -111,7 +111,7 @@ class PinMoreChatsAnchorsTest {
     private val SETTINGS_READ = ImmutableMethodReference(SETTINGS_MANAGER, "LJ", listOf("Ljava/lang/String;", "I"), "I")
 
     /**
-     * The lambda cut down, as 47.9.2 has it: load the key into v1 and the default 5 into v0, read
+     * The lambda cut down, as 47.9.3 has it: load the key into v1 and the default 5 into v0, read
      * into v0 (index 4), box and return it. Without the key, a class is loaded in its place.
      */
     private fun read(
@@ -123,7 +123,7 @@ class PinMoreChatsAnchorsTest {
         val key = if (loadsKey) {
             ImmutableInstruction21c(Opcode.CONST_STRING, 1, ImmutableStringReference(PIN_CHAT_LIMIT_KEY))
         } else {
-            ImmutableInstruction21c(Opcode.CONST_CLASS, 1, ImmutableTypeReference("LX/0Kk4;"))
+            ImmutableInstruction21c(Opcode.CONST_CLASS, 1, ImmutableTypeReference("LX/0Kjx;"))
         }
         val instructions = listOf(
             ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,

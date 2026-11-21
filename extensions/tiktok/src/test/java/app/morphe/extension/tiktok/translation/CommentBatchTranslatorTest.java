@@ -1056,7 +1056,7 @@ public class CommentBatchTranslatorTest {
         public void removeObserver(Observer observer) { observers.remove(observer); }
     }
 
-    /** The native translator as 47.9.2 has it: the batch call and a per-comment updates lookup. */
+    /** The native translator as 47.9.3 has it: the batch call and a per-comment updates lookup. */
     public static final class ObservedTranslator {
         static final Map<String, TranslationUpdates> UPDATES = new HashMap<>();
 
@@ -1071,11 +1071,11 @@ public class CommentBatchTranslatorTest {
     /** The type the row's state holder declares for its manager. */
     public abstract static class TranslationManagerBase {}
 
-    /** Stands in for the interface 47.9.2's manager declares its row writer under. */
+    /** Stands in for the interface 47.9.3's manager declares its row writer under. */
     public interface Writer {}
 
     /**
-     * The row's text writer as 47.9.2 has it: an update's text goes in when a 100 ms fade-out
+     * The row's text writer as 47.9.3 has it: an update's text goes in when a 100 ms fade-out
      * ends, and the set's cancel listener takes the listeners off its fades, so a cancel drops it.
      */
     public static final class RowWriter implements Writer {
@@ -1124,7 +1124,7 @@ public class CommentBatchTranslatorTest {
         TranslationManagerBase translation;
     }
 
-    /** A comment row that keeps its manager on a state holder, the way 47.9.2's cell does. */
+    /** A comment row that keeps its manager on a state holder, the way 47.9.3's cell does. */
     public static final class CommentRow {
         final View itemView;
         final RowState state = new RowState();

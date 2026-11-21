@@ -23,7 +23,7 @@ import org.junit.Test
  * What the sticker saver reads off the StickerItem the Downloads patch registers, held to each
  * declared build. Until 2026-09-26 it reached the sticker through R8 names (a StickerItem field
  * `LLILLIZIL` and a converter class `X.0UD5`), and on 47.0.3 and 47.1.3 neither was there, or
- * `X.0UD5` was some other class, without a word from any test. It reads TikTok's own member
+ * `X.0Tso` was some other class, without a word from any test. It reads TikTok's own member
  * names now, which R8 keeps for this model, and sorts stickers by the numbers TikTok's sticker
  * type enum hands out; this test is what says so on each new build.
  */

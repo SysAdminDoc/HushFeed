@@ -155,7 +155,7 @@ class LazyAbGateTest {
     fun `the search refuses a class with two methods of the gate's shape by name`() {
         // The old prefilter asked for exactly one method of the shape and skipped the class
         // when there were two, so the failure read as "no class reads that key" when one did.
-        val gateClass = "LX/0hku;"
+        val gateClass = "LX/1CsM;"
         val first = lazyRead(unwraps = true, owner = gateClass, name = "LIZ")
         val second = lazyRead(unwraps = true, owner = gateClass, name = "LIZIZ")
         val clinit = method("<clinit>", emptyList(), "V", 1, owner = gateClass).apply {
@@ -203,7 +203,7 @@ class LazyAbGateTest {
         )
         val groupDef =
             group(entry, body("invoke\$1472"), body("invoke\$1473", key = "some_other_key"))
-        val clinit = method("<clinit>", emptyList(), "V", 2, owner = "LX/0hku;").apply {
+        val clinit = method("<clinit>", emptyList(), "V", 2, owner = "LX/1CsM;").apply {
             addInstructionsWithLabels(
                 0,
                 """
@@ -270,7 +270,7 @@ class LazyAbGateTest {
     fun `the key is found in any no-argument method of a lambda class, not only the first`() {
         // Kotlin adds a bridge invoke()Object beside invoke()String, and R8 can list the bridge
         // first. The bridge holds no string.
-        val lambda = "LX/0cJM;"
+        val lambda = "LX/0c4O;"
         val bridge = method("invoke", emptyList(), "Ljava/lang/Object;", 1, owner = lambda).apply {
             addInstructionsWithLabels(
                 0,
@@ -290,7 +290,7 @@ class LazyAbGateTest {
             )
         }
         val lambdaDef = classDef(lambda, bridge, real)
-        val clinit = method("<clinit>", emptyList(), "V", 1, owner = "LX/0hku;").apply {
+        val clinit = method("<clinit>", emptyList(), "V", 1, owner = "LX/1CsM;").apply {
             addInstructionsWithLabels(
                 0,
                 """
@@ -374,7 +374,7 @@ class LazyAbGateTest {
         // 46.9.3 splits the comment sort gate: LIZ(Aweme)Z asks LIZIZ()Z on the same class and
         // the lazy read lives there. The read is followed one level, on the owner only: the
         // same call made from some other class is that class's business, not this gate.
-        val owner = "LX/0Bfo;"
+        val owner = "LX/0Bfl;"
         val aweme = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
         val helper = lazyRead(unwraps = true, owner = owner, name = "LIZIZ")
         val asksHelper = """
@@ -385,7 +385,7 @@ class LazyAbGateTest {
         val gate = method("LIZ", listOf(aweme), "Z", 2, owner = owner).apply {
             addInstructionsWithLabels(0, asksHelper)
         }
-        val elsewhere = method("LIZ", listOf(aweme), "Z", 2, owner = "LX/0BhN;").apply {
+        val elsewhere = method("LIZ", listOf(aweme), "Z", 2, owner = "LX/0BhK;").apply {
             addInstructionsWithLabels(0, asksHelper)
         }
         val holder = classDef(owner, helper, gate)
@@ -393,7 +393,7 @@ class LazyAbGateTest {
         assertFalse(gate.isLazyAbRead())
         assertTrue(gate.readsLazyAb(holder))
         assertTrue(helper.readsLazyAb(holder))
-        assertFalse(elsewhere.readsLazyAb(classDef("LX/0BhN;", elsewhere)))
+        assertFalse(elsewhere.readsLazyAb(classDef("LX/0BhK;", elsewhere)))
     }
 
     private fun body(name: String, key: String = "a_settings_key") =
@@ -420,8 +420,8 @@ class LazyAbGateTest {
         addInstructionsWithLabels(
             0,
             """
-                sget-object v0, $group->LIZ:LX/01xT;
-                invoke-interface { v0 }, LX/01xT;->getValue()Ljava/lang/Object;
+                sget-object v0, $group->LIZ:LX/01xW;
+                invoke-interface { v0 }, LX/01xW;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Ljava/lang/Number;
                 $unwrap

@@ -35,7 +35,7 @@ import java.util.List;
  * <p>The story viewer binds one model per person, whose id is the person's own. Its
  * {@code getUserStory().getStories()} holds their stories in the order the viewer plays them,
  * the one on screen among them by id. TikTok fills that list a page at a time as the viewer
- * moves on (8 of 22 at first on 47.9.2, then 18 after seven taps), so the checklist holds what
+ * moves on (8 of 22 at first on 47.9.3, then 18 after seven taps), so the checklist holds what
  * has loaded and its title says how many are still to come.
  *
  * <p>One pick saves the way a single save does, extras included. Several go out as one

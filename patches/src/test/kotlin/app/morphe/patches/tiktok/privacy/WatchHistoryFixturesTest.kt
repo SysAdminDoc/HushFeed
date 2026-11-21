@@ -8,6 +8,7 @@ import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -25,7 +26,7 @@ class WatchHistoryFixturesTest {
     @Test
     fun `each declared host has exactly one view report and one batch send`() {
         val items = mapOf(
-            "47.9.2" to "LX/09Md;",
+            "47.9.3" to "LX/09Mc;",
         )
         assertEquals(Fixtures.declaredVersions().toSet(), items.keys)
         Fixtures.forEachDeclared { apk ->
@@ -50,8 +51,7 @@ class WatchHistoryFixturesTest {
             assertTrue("$version: every other AwemeStatsApi method only builds data: ${others.map { it.name }}",
                 others.all(::onlyBuildsData))
 
-            // The diagnostic report's counts (#448): each sender waits for its request once, and the
-            // batch send's one catch is the one around that wait.
+            // The diagnostic report's counts (#448): each sender waits for its request once.
             for (method in reports + flushes) {
                 val instructions = method.implementation!!.instructions.toList()
                 val sent = method.afterSent()
@@ -79,13 +79,28 @@ class WatchHistoryFixturesTest {
             assertEquals("$version: the limit check is asked of its own instance",
                 limit.definingClass, limit.parameterTypes.single().toString())
             assertTrue("$version: the limit is asked before the batch size", heldAt < sizeAt)
+            // A failed batch send is counted in the wait itself (47.9.3's catch keeps no exception
+            // and lands on the method's last return-void), so the wait has to sit inside TikTok's
+            // catch for the rethrown failure to end where it shipped.
             val flush = flushes.single()
-            val (caughtAt, _) = flush.caught()!!
-            val sentAt = flush.afterSent()!!
-            assertTrue("$version: the catch follows the wait", caughtAt >= sentAt)
-            assertEquals("$version: the catch hands the error to TikTok's checker",
-                "doCheck", flush.implementation!!.instructions.toList()[caughtAt + 1]
-                    .getReference<MethodReference>()?.name)
+            val native = flush.implementation!!
+            val waitAt = flush.sendWait()!!
+            val waitAddress = native.instructions.take(waitAt).sumOf { it.codeUnits }
+            assertTrue("$version: TikTok's catch covers the wait", native.tryBlocks.any {
+                waitAddress >= it.startCodeAddress && waitAddress < it.startCodeAddress + it.codeUnitCount
+            })
+            val swapped = MutableMethod(flush)
+            val unswapped = swapped.implementation!!.instructions.toList()
+            assertEquals(waitAt, swapped.countFailedSends())
+            val after = swapped.implementation!!.instructions.toList()
+            assertEquals(Opcode.INVOKE_STATIC, after[waitAt].opcode)
+            val await = after[waitAt].getReference<MethodReference>()!!
+            assertEquals("Lapp/morphe/extension/tiktok/privacy/WatchHistoryRecording;->awaitBatch",
+                "${await.definingClass}->${await.name}")
+            assertEquals("$version: the same register waits",
+                (unswapped[waitAt] as FiveRegisterInstruction).registerC, (after[waitAt] as FiveRegisterInstruction).registerC)
+            assertEquals(unswapped.size, after.size)
+            unswapped.indices.filter { it != waitAt }.forEach { assertSame(unswapped[it], after[it]) }
 
             for (method in reports + flushes) {
                 assertTrue("$version ${method.name}: TikTok already leaves it early",
@@ -99,19 +114,19 @@ class WatchHistoryFixturesTest {
 
     @Test
     fun `a sender without its own strings, or off the stats class, is not taken`() {
-        val report = method(AWEME_STATS_API, "LX/08z3;", static = true,
+        val report = method(AWEME_STATS_API, "LX/08z2;", static = true,
             "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")
         assertTrue(isViewReport(report))
         assertFalse("the batch list is the flush's", isViewReport(
             method(AWEME_STATS_API, "Ljava/util/List;", static = true,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
         assertFalse("both strings are needed", isViewReport(
-            method(AWEME_STATS_API, "LX/08z3;", static = true, "const-string v0, \"basic_vv_batch_size\"\nreturn-void")))
+            method(AWEME_STATS_API, "LX/08z2;", static = true, "const-string v0, \"basic_vv_batch_size\"\nreturn-void")))
         assertFalse("an instance method is not the sender", isViewReport(
-            method(AWEME_STATS_API, "LX/08z3;", static = false,
+            method(AWEME_STATS_API, "LX/08z2;", static = false,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
         assertFalse("another class reading the same setting", isViewReport(
-            method("LX/0DPF;", "LX/08z3;", static = true,
+            method("LX/0DPB;", "LX/08z2;", static = true,
                 "const-string v0, \"basic_vv_batch_size\"\nconst-string v0, \"homepage_hot\"\nreturn-void")))
 
         val flush = method(AWEME_STATS_API, "Ljava/util/List;", static = true,
@@ -119,7 +134,7 @@ class WatchHistoryFixturesTest {
         assertTrue(isViewReportFlush(flush))
         assertFalse("a void method is a sender, not a helper", onlyBuildsData(flush))
         assertFalse("the one-item report also loads it", isViewReportFlush(
-            method(AWEME_STATS_API, "LX/08z3;", static = true, "const-string v0, \"first_install_time\"\nreturn-void")))
+            method(AWEME_STATS_API, "LX/08z2;", static = true, "const-string v0, \"first_install_time\"\nreturn-void")))
     }
 
     /** The guard asks first, leaves through return-void, and the native body follows untouched. */

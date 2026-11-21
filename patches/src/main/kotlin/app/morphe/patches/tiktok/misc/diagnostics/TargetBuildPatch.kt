@@ -13,7 +13,7 @@ import app.morphe.patches.tiktok.misc.inbox.TOKEN_RESULT
 import com.android.tools.smali.dexlib2.iface.ClassDef
 
 /**
- * Obfuscated methods that patches call by name, as the supported compile of TikTok 47.9.2 names
+ * Obfuscated methods that patches call by name, as the supported compile of TikTok 47.9.3 names
  * them. TikTok can publish a second, separately compiled build under the same version code:
  * APKMirror added an arm64-v8a-only 47.7.3 APK on 2026-11-12 whose R8 names differ almost
  * everywhere, so a handful of patches failed on it and others would have wired to the wrong
@@ -21,8 +21,8 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
  */
 internal val TARGET_BUILD_ANCHORS = listOf(
     TOKEN_RESULT,
-    "LX/03cJ;->LJIIIIZZ(IILjava/lang/String;Ljava/lang/String;)V",
-    "LX/036V;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;",
+    "LX/03cM;->LJIIIIZZ(IILjava/lang/String;Ljava/lang/String;)V",
+    "LX/036Y;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;",
 )
 
 /** The APKMirror files that carry the supported compile, as the refusal names them. */

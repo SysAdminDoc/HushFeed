@@ -116,7 +116,7 @@ val customOfflineVideosLimitPatch = bytecodePatch(
         // The download limit choices: an enum found by the constants it declares, whose custom
         // entry is built with the limit, the minutes and the size the extension overrides.
         val options = OfflineModeOptionEnumFingerprint.method
-        // The enum's own type, off the match. It was written here as LX/1Fwz;, which is the
+        // The enum's own type, off the match. It was written here as LX/1IvB;, which is the
         // 46.2.3 name and nothing else.
         val optionEnum = options.definingClass
         val customEnumFieldWriteIndex = options.indexOfFirstInstructionOrThrow {

@@ -29,7 +29,7 @@ import org.junit.Test
  * (issue #9) and lost Downloads for it. Large frames now copy p0 down first.
  */
 class DownloadNameHookTest {
-    private val coroutine = "LX/0CNc;"
+    private val coroutine = "LX/0CNZ;"
     private val path = ImmutableFieldReference(coroutine, "LIZIZ", "Ljava/lang/String;")
     private val aweme = ImmutableFieldReference(coroutine, "LIZJ", "Lcom/ss/android/ugc/aweme/feed/model/Aweme;")
 

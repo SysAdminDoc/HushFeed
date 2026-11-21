@@ -732,7 +732,7 @@ class TikTokPatchAnchorsMatchFixturesTest {
             assertEquals("profile grid binds", 1, binds.size)
             val bind = binds.single()
             val site = runCatching { bind.gridCountSite() }.getOrElse { throw AssertionError(it.message, it) }
-            assertEquals("text and item registers", 7 to 12, site.textRegister to site.itemRegister)
+            assertEquals("text and item registers", 9 to 13, site.textRegister to site.itemRegister)
             val instructions = bind.implementation!!.instructions.toList()
             val result = instructions[site.insertAt - 1]
             assertEquals(Opcode.MOVE_RESULT_OBJECT, result.opcode)

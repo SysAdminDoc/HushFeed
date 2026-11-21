@@ -44,7 +44,7 @@ public final class SearchTabs {
 
     /**
      * TikTok's English names for the keys its strip uses, for a tab served without a name
-     * (47.9.2 serves every tab nameless). The checklist shows them through L10n.
+     * (47.9.3 serves every tab nameless). The checklist shows them through L10n.
      */
     private static final Map<String, String> KNOWN_NAMES = Map.of(
             "user", "Users",

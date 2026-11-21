@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/** Passive 47.9.2 feed observation. It never creates a native player, seeks or dispatches input. */
+/** Passive 47.9.3 feed observation. It never creates a native player, seeks or dispatches input. */
 final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     private static final String PACKAGE="com.zhiliaoapp.musically";
     private static final String MAIN="com.ss.android.ugc.aweme.main.MainActivity";
@@ -38,8 +38,8 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     static void bootstrap(Application app,ClassLoader loader){
         if(instance!=null)return;
         boolean supported=false;
-        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.9.2".equals(info.versionName)
-                && (info.versionCode==2024709020 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
+        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.9.3".equals(info.versionName)
+                && (info.versionCode==2024709030 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
         instance=new AutoAdvanceWatch(loader,supported);
         // Registered before TikTok replaces the Instrumentation. No extension Activity helper is needed.
         app.registerActivityLifecycleCallbacks(instance);

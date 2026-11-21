@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.privacy
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -17,7 +18,9 @@ import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -71,15 +74,19 @@ private object ViewReportFlushFingerprint : Fingerprint(
  * has none.
  */
 internal fun Method.afterSent(): Int? {
+    val at = sendWait() ?: return null
+    val next = implementation!!.instructions.elementAtOrNull(at + 1)?.opcode
+    return if (next == Opcode.MOVE_RESULT_OBJECT) at + 2 else at + 1
+}
+
+/** The sender's Future.get(), its wait for the request, or null on a build without one. */
+internal fun Method.sendWait(): Int? {
     val instructions = implementation?.instructions?.toList() ?: return null
-    val at = instructions.indexOfFirst {
+    return instructions.indexOfFirst {
         it.getReference<MethodReference>()?.let { r ->
             r.definingClass == "Ljava/util/concurrent/Future;" && r.name == "get"
         } == true
-    }
-    if (at < 0) return null
-    val next = instructions.getOrNull(at + 1)?.opcode
-    return if (next == Opcode.MOVE_RESULT_OBJECT) at + 2 else at + 1
+    }.takeIf { it >= 0 }
 }
 
 /**
@@ -103,7 +110,7 @@ internal fun Method.afterBatchSizeRead(): Pair<Int, Int>? {
 
 /**
  * Where the view report stops for TikTok's own request limit (ApiSpringLimitHelper, `09RE` on
- * 47.9.2): just past the branch on the first static check that takes an object and answers a
+ * 47.9.3): just past the branch on the first static check that takes an object and answers a
  * boolean, whose fall-through ends the method within three instructions. Null on a build laid
  * out some other way.
  */
@@ -122,12 +129,20 @@ internal fun Method.whereTikTokHoldsBack(): Int? {
     return if (returns) held else null
 }
 
-/** The batch send's catch, which TikTok hands to its own checker: the index and its register. */
-internal fun Method.caught(): Pair<Int, Int>? {
-    val instructions = implementation?.instructions?.toList() ?: return null
-    val at = instructions.indexOfFirst { it.opcode == Opcode.MOVE_EXCEPTION }
-    if (at < 0) return null
-    return at to (instructions[at] as OneRegisterInstruction).registerA
+/**
+ * Sends the batch send's wait through the extension, which counts a failed send and throws it on
+ * to TikTok's catch. One invoke swapped for another on the same register, so nothing branches
+ * and no register changes type. The index, or null on a build without the wait.
+ */
+internal fun MutableMethod.countFailedSends(): Int? {
+    val at = sendWait() ?: return null
+    val operands = when (val wait = implementation!!.instructions[at]) {
+        is RegisterRangeInstruction -> "/range {v${wait.startRegister} .. v${wait.startRegister}}"
+        is FiveRegisterInstruction -> " {v${wait.registerC}}"
+        else -> return null
+    }
+    replaceInstruction(at, "invoke-static$operands, $EXTENSION->awaitBatch(Ljava/util/concurrent/Future;)Ljava/lang/Object;")
+    return at
 }
 
 /** Leaves a view report sender before it builds or sends anything when the switch is on. */
@@ -173,13 +188,9 @@ val watchHistoryPatch = bytecodePatch(
             report.whereTikTokHoldsBack()?.let { it to "invoke-static {}, $EXTENSION->noteHeldByTikTok()V" },
         )
         reportWrites.sortedByDescending { it.first }.forEach { (at, smali) -> report.addInstruction(at, smali) }
-        val batchWrites = listOfNotNull(
-            flush.afterSent()?.let { it to "invoke-static {}, $EXTENSION->noteBatchSent()V" },
-            flush.caught()?.let { (at, register) ->
-                at + 1 to "invoke-static {v$register}, $EXTENSION->noteBatchFailed(Ljava/lang/Throwable;)V"
-            },
-        )
-        batchWrites.sortedByDescending { it.first }.forEach { (at, smali) -> flush.addInstruction(at, smali) }
+        // The sent count goes in past the wait first, then the wait itself is swapped in place.
+        flush.afterSent()?.let { flush.addInstruction(it, "invoke-static {}, $EXTENSION->noteBatchSent()V") }
+        flush.countFailedSends()
         report.skipWhenWatchHistoryOff()
         flush.skipWhenWatchHistoryOff()
         // Ahead of the guards, so a report the switch holds back still counts as made.

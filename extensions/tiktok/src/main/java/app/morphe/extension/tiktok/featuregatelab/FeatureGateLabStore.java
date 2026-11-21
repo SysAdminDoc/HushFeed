@@ -648,7 +648,7 @@ public final class FeatureGateLabStore {
             // Korea's one-line comments that scroll across a video (#98), TikTok's "one-liners".
             // Group 1 or 2 turns the feature on once TikTok's own strategy switch allows it, and
             // the landscape flag only counts after that. Each video still carries its own server
-            // flag for them (Aweme.isSupportDanmaku, read by DanmakuServiceImpl). On 47.9.2 the
+            // flag for them (Aweme.isSupportDanmaku, read by DanmakuServiceImpl). On 47.9.3 the
             // server sets it on wide (1024x576) posts for a US account, and with both rules on
             // those get Add one-liner under the video and a one-liner bar in the landscape player;
             // with the rules off the same creator's wide post shows only Full screen. Portrait

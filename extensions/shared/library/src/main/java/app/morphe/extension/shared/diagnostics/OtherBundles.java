@@ -33,7 +33,7 @@ import app.morphe.extension.shared.Utils;
  *
  * <p>Two reports so far crashed in code Hushfeed never touched: another bundle picked beside it
  * had rewritten or added to TikTok, and it took a round of questions to find that out. TikTok's
- * own dex holds no class under {@code app/} (none in any of 47.9.2's dex files), and every Morphe
+ * own dex holds no class under {@code app/} (none in any of 47.9.3's dex files), and every Morphe
  * or ReVanced style bundle puts its extension there ({@code app/morphe/extension},
  * {@code app/revanced/extension}, {@code app/ftl/extension}). So any {@code app/} class that is not
  * Hushfeed's came from another bundle. A bundle that only rewrites TikTok's own classes adds
@@ -66,7 +66,7 @@ public final class OtherBundles {
     private static final byte[] PREFIX = {'L', 'a', 'p', 'p', '/'};
     /** Longer than any class name a bundle ships; a longer string is not a class. */
     private static final int NAME_MAX_BYTES = 512;
-    /** About ten times the strings in TikTok 47.9.2's largest dex file, so only a corrupt file trips it. */
+    /** About ten times the strings in TikTok 47.9.3's largest dex file, so only a corrupt file trips it. */
     private static final int STRINGS_MAX = 1 << 20;
     /** A report section header such as "[RECENT MORPHE EVENTS]", which ends the stack trace. */
     private static final java.util.regex.Pattern SECTION = java.util.regex.Pattern.compile("\\[[A-Z][A-Z ]*\\]");

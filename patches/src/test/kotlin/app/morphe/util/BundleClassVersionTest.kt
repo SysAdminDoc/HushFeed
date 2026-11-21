@@ -51,7 +51,7 @@ class BundleClassVersionTest {
      * checksum is wrong on purpose, so a bundle that gets past the class check stops there.
      */
     private fun releaseShapedBundle(classMajor: Int): Array<String> {
-        val targets = AppCompatibilities.tiktok().flatMap { it.targets }.mapNotNull { it.version }.distinct()
+        val targets = AppCompatibilities.declared().flatMap { it.targets }.mapNotNull { it.version }.distinct()
         val manifest = Manifest().apply {
             mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0"
             mainAttributes.putValue("Version", "9.9.9")

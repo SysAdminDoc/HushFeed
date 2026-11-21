@@ -54,9 +54,9 @@ class PhotoSaveJobFixturesTest {
     /** The image job above does not see Download video's separate native conversion entry. */
     @Test
     fun `each declared conversion is intercepted before native state with only the Aweme argument`() {
-        val owners = mapOf("47.9.2" to "LX/0Cp5;")
+        val owners = mapOf("47.9.3" to "LX/0Cp2;")
         // The method-id entry call's name is the build's own (47.0.3 obfuscated it), although its owner/proto hold.
-        val frameEntries = mapOf("47.9.2" to "push")
+        val frameEntries = mapOf("47.9.3" to "push")
         Fixtures.forEachDeclared { apk ->
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val matches = container.dexEntryNames.asSequence().flatMap { entry ->
@@ -132,7 +132,7 @@ class PhotoSaveJobFixturesTest {
      */
     @Test
     fun `each declared photo save job hands every argument to the extension first`() {
-        val owners = mapOf("47.9.2" to "LX/0C6U;")
+        val owners = mapOf("47.9.3" to "LX/0C6R;")
         Fixtures.forEachDeclared { apk ->
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
@@ -193,7 +193,7 @@ class PhotoSaveJobFixturesTest {
     /** #197: what TikTok's photo save copied to the gallery reaches the extension before each return. */
     @Test
     fun `each declared gallery copy is reported before every return`() {
-        val owners = mapOf("47.9.2" to "LX/0TrK;")
+        val owners = mapOf("47.9.3" to "LX/0UXQ;")
         Fixtures.forEachDeclared { apk ->
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val matches = container.dexEntryNames.asSequence().flatMap { entry ->

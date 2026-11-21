@@ -12,6 +12,8 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -112,8 +114,26 @@ public final class WatchHistoryRecording {
         Logger.printDebug(() -> "Watch history: " + videos + " view reports were sent together");
     }
 
-    /** The batch send failed and TikTok caught it. */
-    public static void noteBatchFailed(Throwable error) {
+    /**
+     * The batch send's wait for its request, called in place of TikTok's own Future.get(). A
+     * failure is counted and thrown on unchanged, so TikTok's catch handles it as it ships. The
+     * count lives here rather than in that catch because 47.9.3's catch keeps no exception: it
+     * lands straight on the method's last return-void.
+     */
+    public static Object awaitBatch(Future<?> request) throws InterruptedException, ExecutionException {
+        try {
+            return request.get();
+        } catch (ExecutionException error) {
+            noteBatchFailed(error.getCause() != null ? error.getCause() : error);
+            throw error;
+        } catch (InterruptedException | RuntimeException error) {
+            noteBatchFailed(error);
+            throw error;
+        }
+    }
+
+    /** The batch send failed. */
+    static void noteBatchFailed(Throwable error) {
         SENDING.remove();
         FAILED.incrementAndGet();
         lastFailure = describe(error);

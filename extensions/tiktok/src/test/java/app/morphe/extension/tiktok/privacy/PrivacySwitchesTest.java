@@ -720,6 +720,34 @@ public class PrivacySwitchesTest {
         WatchHistoryRecording.resetForTests();
     }
 
+    @Test public void theBatchWaitCountsAFailureAndThrowsItOnToTikTok() throws Exception {
+        WatchHistoryRecording.resetForTests();
+        try {
+            java.util.concurrent.FutureTask<Object> answered = new java.util.concurrent.FutureTask<>(() -> "ok");
+            answered.run();
+            assertEquals("ok", WatchHistoryRecording.awaitBatch(answered));
+            assertTrue(WatchHistoryRecording.Report.INSTANCE.lines().contains("Sends that failed: 0"));
+
+            java.io.IOException timeout = new java.io.IOException("timed out on /aweme/v1/aweme/stats/?iid=5678");
+            java.util.concurrent.FutureTask<Object> failed = new java.util.concurrent.FutureTask<>(() -> { throw timeout; });
+            failed.run();
+            java.util.concurrent.ExecutionException thrown = null;
+            try {
+                WatchHistoryRecording.awaitBatch(failed);
+            } catch (java.util.concurrent.ExecutionException error) {
+                thrown = error;
+            }
+            assertNotNull("TikTok's own catch still gets the failure", thrown);
+            assertSame(timeout, thrown.getCause());
+            List<String> lines = WatchHistoryRecording.Report.INSTANCE.lines();
+            assertTrue(lines.toString(), lines.contains("Sends that failed: 1"));
+            assertTrue("the request's own error is named, not the wrapper",
+                    lines.contains("Last failure: IOException: timed out on /aweme/v1/aweme/stats/"));
+        } finally {
+            WatchHistoryRecording.resetForTests();
+        }
+    }
+
     @Test public void aFailedSendKeepsOnlyTheStartOfItsMessage() {
         assertEquals("unknown", WatchHistoryRecording.describe(null));
         assertEquals("IllegalStateException", WatchHistoryRecording.describe(new IllegalStateException()));

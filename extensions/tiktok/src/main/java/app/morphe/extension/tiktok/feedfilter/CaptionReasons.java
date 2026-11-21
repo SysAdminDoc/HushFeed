@@ -17,7 +17,7 @@ import java.util.Map;
  * whose captions never show says whether TikTok sent any and, when it sent none, the reason it
  * gave (#217). The data rides in the video itself: {@code CaptionModel.captionList} holds the
  * tracks and {@code noOriginalCaptionReasonV2} the server's reason for an empty list, read as
- * TikTok 47.9.2's own {@code CaptionModel$NoCaptionReasonEnum} values. Only the reason's name is
+ * TikTok 47.9.3's own {@code CaptionModel$NoCaptionReasonEnum} values. Only the reason's name is
  * counted, never a caption's text or language.
  */
 final class CaptionReasons {

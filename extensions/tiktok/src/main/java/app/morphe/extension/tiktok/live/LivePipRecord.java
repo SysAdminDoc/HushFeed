@@ -253,7 +253,7 @@ public final class LivePipRecord {
     }
 
     /**
-     * TikTok renames the LIVE pager's class (47.9.2's is a bare ViewGroup), but it keeps the pager
+     * TikTok renames the LIVE pager's class (47.9.3's is a bare ViewGroup), but it keeps the pager
      * methods and two of its own, which no other pager in the app has.
      */
     static boolean isPager(Class<?> type) {

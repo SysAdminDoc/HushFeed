@@ -16,7 +16,7 @@ internal const val LOCATION_API_HOST = "https://location.tiktokv.com"
 
 /**
  * The loads of TikTok's own location API host (#379): the Retrofit service built on it and the
- * backend caller that turns it into the v6 URL it asks. Two on 47.9.2.
+ * backend caller that turns it into the v6 URL it asks. Two on 47.9.3.
  */
 internal object LocationApiHostFingerprint : Fingerprint(strings = listOf(LOCATION_API_HOST))
 

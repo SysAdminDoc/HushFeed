@@ -280,7 +280,7 @@ public class SwipeLeftTest {
     /** A post subclass, as TikTok hands a feed cell's post. */
     public static final class FeedPost extends Post {}
 
-    /** IFavoriteService by the shapes that matter on 47.9.2: the popup and its near misses. */
+    /** IFavoriteService by the shapes that matter on 47.9.3: the popup and its near misses. */
     public interface FavoriteService {
         void LJIILJJIL(Context context, Post post, String enterFrom, int[] place);
         void LJIIJ(Context context, Post post, String enterFrom);
@@ -332,18 +332,18 @@ public class SwipeLeftTest {
         feed.getLocationInWindow(origin);
         int x = origin[0];
         int y = origin[1];
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.2:idf", 0x7f0a2c7c);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.3:idf", 0x7f0a2c7c);
         assertArrayEquals(new int[]{x + 950, y + 1460, x + 1080, y + 1590},
                 GestureActions.anchorOf(comments, 1080, 2340));
         GestureActions.ANCHOR_IDS.clear();
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.2:idf", 0);
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.2:iej", 0x7f0a2c7c);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.3:idf", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.3:iej", 0x7f0a2c7c);
         assertArrayEquals("the Favorites button when its popup anchor is missing",
                 new int[]{x + 950, y + 1460, x + 1080, y + 1590},
                 GestureActions.anchorOf(comments, 1080, 2340));
         GestureActions.ANCHOR_IDS.clear();
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.2:idf", 0);
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.2:iej", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.3:idf", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.9.3:iej", 0);
         assertArrayEquals("the comment button", new int[]{x + 950, y + 1300, x + 1080, y + 1430},
                 GestureActions.anchorOf(comments, 1080, 2340));
         assertArrayEquals("the right edge halfway down", new int[]{945, 1103, 1080, 1237},

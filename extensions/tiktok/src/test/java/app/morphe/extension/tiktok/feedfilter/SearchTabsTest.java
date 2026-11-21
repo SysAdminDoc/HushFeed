@@ -160,7 +160,7 @@ public class SearchTabsTest {
         public void setTabName(String tabName) { this.tabName = tabName; }
     }
 
-    /** The default strip 47.9.2 fills before a search opens, in the order of TikTok's enum. */
+    /** The default strip 47.9.3 fills before a search opens, in the order of TikTok's enum. */
     private static List defaults() {
         List tabs = new ArrayList();
         for (String key : Arrays.asList("general", "user", "video", "shop", "live", "place")) {

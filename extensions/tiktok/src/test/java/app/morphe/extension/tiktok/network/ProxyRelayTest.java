@@ -41,7 +41,7 @@ public class ProxyRelayTest {
     private static final String USER = "alice";
     private static final String PASSWORD = "s3cret-pass";
     private static final int TIMEOUT_MS = 5000;
-    /** One of TikTok's API hosts, as 47.9.2's TTNet asks for it. */
+    /** One of TikTok's API hosts, as 47.9.3's TTNet asks for it. */
     private static final String SITE = "api16-normal-useast5.tiktokv.us";
 
     private final List<ServerSocket> servers = new ArrayList<>();

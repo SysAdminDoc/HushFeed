@@ -112,7 +112,7 @@ class AppAbShapeTest {
         parameters: List<String>,
         flags: Int = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
     ) = ImmutableMethod(
-        "LX/05ip;",
+        "LX/05iq;",
         name,
         parameters.map { ImmutableMethodParameter(it, null, null) },
         returnType,
@@ -123,7 +123,7 @@ class AppAbShapeTest {
     )
 
     private fun classDefWith(methods: List<ImmutableMethod>) = ImmutableClassDef(
-        "LX/05ip;",
+        "LX/05iq;",
         AccessFlags.PUBLIC.value,
         "Ljava/lang/Object;",
         null,

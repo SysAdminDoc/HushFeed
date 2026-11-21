@@ -167,7 +167,7 @@ public final class TakoAiFilter {
 
     /**
      * TikTok's own default strip, filled each time a search page opens and kept whenever the
-     * served list doesn't hold as many tabs as it does (47.9.2). The tabs the served list loses
+     * served list doesn't hold as many tabs as it does (47.9.3). The tabs the served list loses
      * go from this one too, so the two still line up and the strip TikTok falls back on is
      * filtered as well. Its tabs keep their key in the name field. Fails open.
      */

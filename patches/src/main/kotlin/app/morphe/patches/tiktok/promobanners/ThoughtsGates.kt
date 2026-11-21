@@ -28,7 +28,7 @@ internal const val THOUGHTS_CONSUMPTION_KEY = "story_note_enable_consumption"
 private const val THOUGHTS_WHAT = "Turn on Thoughts"
 
 /**
- * TikTok's two Thoughts gates, `X.0InA.LIZ()` (publish) and `X.0NPy.LIZ()` (consumption) on
+ * TikTok's two Thoughts gates, `X.0In3.LIZ()` (publish) and `X.0NPr.LIZ()` (consumption) on
  * 47.5.3. Each is a static no-argument boolean on a class of its own that reads its key's lazy
  * value and answers yes when it is 1 and the account's Stories experiment (tt_story2_exp) is
  * above 0. Every Thoughts surface asks one of the two, directly or through the helper that ORs

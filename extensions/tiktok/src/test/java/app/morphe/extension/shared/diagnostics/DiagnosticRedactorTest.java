@@ -188,10 +188,10 @@ public class DiagnosticRedactorTest {
 
     @Test public void anInternationalPhoneNumberGoesWhileVersionsAndTimesStay() {
         String text = DiagnosticRedactor.redact("code sent to +12025550123, retry in 60s;"
-                + " 10:23:11.269 TikTok 47.9.2 offset +0500");
+                + " 10:23:11.269 TikTok 47.9.3 offset +0500");
 
         assertEquals("code sent to [phone omitted], retry in 60s;"
-                + " 10:23:11.269 TikTok 47.9.2 offset +0500", text);
+                + " 10:23:11.269 TikTok 47.9.3 offset +0500", text);
     }
 
     @Test public void aPhoneNumberSplitBySpacesDashesDotsOrBracketsGoesToo() {

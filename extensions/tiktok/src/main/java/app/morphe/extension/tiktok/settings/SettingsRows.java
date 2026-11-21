@@ -45,7 +45,7 @@ public final class SettingsRows {
 
     /**
      * TikTok's English labels for the rows its page lists, in the page's order as the S22 showed
-     * it on 47.9.2, with the rows other accounts get kept where they sat. The checklist shows them
+     * it on 47.9.3, with the rows other accounts get kept where they sat. The checklist shows them
      * through L10n.
      */
     public static final List<Row> ROWS = List.of(

@@ -41,7 +41,7 @@ public final class AmoledTheme {
     static final String RESTORE_STYLE = "hushfeed_amoled_restore_";
     static final String RESTORE_ALL_STYLE = "hushfeed_amoled_restore_all";
 
-    /** More than any build has: 47.9.2 keeps about twenty. */
+    /** More than any build has: 47.9.3 keeps about twenty. */
     private static final int MAX_SURFACES = 256;
 
     /** The restore resources, read by name once. */

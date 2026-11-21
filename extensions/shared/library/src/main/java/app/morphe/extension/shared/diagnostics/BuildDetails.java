@@ -203,12 +203,12 @@ public final class BuildDetails {
         return names.equals(sorted);
     }
 
-    /** The builds the bundle declares: TikTok 47.9.2 and TikTok Lite 47.8.2. */
+    /** The builds the bundle declares: TikTok 47.9.3 and TikTok Lite 47.8.2. */
     private static boolean validTarget(Map<String, String> facts) {
         String name = facts.get("target_package"), version = facts.get("target_version"), code = facts.get("target_version_code");
         if (name.equals("unknown")) return version.equals("unknown") && code.equals("unknown");
         return oneOf(name + "/" + version + "=" + code,
-                "com.zhiliaoapp.musically/47.9.2=2024709020", "com.zhiliaoapp.musically.go/47.8.2=470802");
+                "com.zhiliaoapp.musically/47.9.3=2024709030", "com.zhiliaoapp.musically.go/47.8.2=470802");
     }
 
     private static boolean matches(String value, String pattern, int max) {

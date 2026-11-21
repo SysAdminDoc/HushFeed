@@ -173,7 +173,7 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
     }
 
     /**
-     * 47.9.2's network stack writes {@code statusCode: 403 /tos-.../abc~tplv-...webp, traceCode: ,
+     * 47.9.3's network stack writes {@code statusCode: 403 /tos-.../abc~tplv-...webp, traceCode: ,
      * url: <url>, requestHeaders: {...}}. Each image's own path made its own kind, so four
      * covers filled a host's kinds and the other 191 failures said nothing (#415). An object's
      * path becomes {@link #OBJECT_PATH} while an endpoint like {@code /image/refresh/} stays, and

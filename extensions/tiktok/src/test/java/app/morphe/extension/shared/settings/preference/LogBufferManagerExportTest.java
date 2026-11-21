@@ -390,7 +390,7 @@ public class LogBufferManagerExportTest {
     }
 
     /**
-     * A real record: TikTok 47.9.2 on an API 36 guest, closed from "isn't responding" while jdb held
+     * A real record: TikTok 47.9.3 on an API 36 guest, closed from "isn't responding" while jdb held
      * its main thread. ART's native frames come first, interpreted framework methods among them.
      */
     @Test @Config(sdk = 30)

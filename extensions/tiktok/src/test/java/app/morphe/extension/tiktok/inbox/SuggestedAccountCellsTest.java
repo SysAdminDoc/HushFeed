@@ -48,7 +48,7 @@ public class SuggestedAccountCellsTest {
         SuggestedAccountCells.namesForTests = null;
     }
 
-    /** A profile page as 47.9.2 lays it out around the suggestions it opens after a follow. */
+    /** A profile page as 47.9.3 lays it out around the suggestions it opens after a follow. */
     private static final class Profile {
         final Map<View, String> names = new HashMap<>();
         final FrameLayout page;

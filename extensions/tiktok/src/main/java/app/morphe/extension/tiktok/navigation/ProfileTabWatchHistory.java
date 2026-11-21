@@ -61,7 +61,7 @@ public final class ProfileTabWatchHistory {
      * Where TikTok keeps the Activity center address its Settings and privacy row opens (#425).
      * The address comes from TikTok's servers, so it's read from here at each hold. A fixed
      * {@code aweme://pns/activity_center} route reached TikTok's router and opened nothing (S22,
-     * 47.9.2), and its deep link handler drops the route from outside.
+     * 47.9.3), and its deep link handler drops the route from outside.
      */
     static final String ENTRANCE_CLASS = "com.ss.android.ugc.aweme.ActivityCenterEntranceExperiment";
     /** What TikTok's row adds to the address before opening it. */

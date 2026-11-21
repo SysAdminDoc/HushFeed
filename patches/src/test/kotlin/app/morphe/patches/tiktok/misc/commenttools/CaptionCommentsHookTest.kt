@@ -26,7 +26,7 @@ import org.junit.Test
  */
 class CaptionCommentsHookTest {
     private val caption = "LX/078M;"
-    private val list = "LX/0Gnt;"
+    private val list = "LX/0Gnm;"
     private val aweme = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
     private val contextSource = "Lcom/ss/android/ugc/aweme/comment/model/CommentContextSource;"
 
@@ -121,7 +121,7 @@ class CaptionCommentsHookTest {
             invoke-static {v0}, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
             move-result-object v0
             :ask
-            invoke-static {v0}, LX/0Bic;->LIZ(Ljava/lang/Boolean;)Z
+            invoke-static {v0}, LX/0BiZ;->LIZ(Ljava/lang/Boolean;)Z
             move-result v0
             const/4 v1, 0x0
             if-eqz v0, :leave_out

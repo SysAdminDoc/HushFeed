@@ -7,7 +7,7 @@ package com.bytedance.retrofit2.mime;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-/** Stands in for TikTok's in-memory body, with the constructor 47.9.2 has. */
+/** Stands in for TikTok's in-memory body, with the constructor 47.9.3 has. */
 public class TypedByteArray implements TypedInput {
     public final String mimeType;
     public final byte[] bytes;

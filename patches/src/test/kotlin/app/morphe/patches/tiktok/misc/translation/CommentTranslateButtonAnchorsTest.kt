@@ -245,14 +245,14 @@ class CommentTranslateButtonAnchorsTest {
         parameters: List<String> = emptyList(),
     ) = method("LIZIZ", parameters, "Z", 2, owner = owner, static = static).apply {
         val value = if (readsLazy) {
-            "invoke-interface { v0 }, LX/01xT;->getValue()Ljava/lang/Object;\nmove-result-object v0"
+            "invoke-interface { v0 }, LX/01xW;->getValue()Ljava/lang/Object;\nmove-result-object v0"
         } else {
             "const/4 v0, 0x0"
         }
         addInstructionsWithLabels(
             0,
             """
-                sget-object v0, $owner->LIZ:LX/01xT;
+                sget-object v0, $owner->LIZ:LX/01xW;
                 $value
                 $unwrap
                 return v0
@@ -295,7 +295,7 @@ class CommentTranslateButtonAnchorsTest {
     private fun toggleWrite(
         key: String = TOGGLE_STATE_KEY,
         static: Boolean = true,
-        parameters: List<String> = listOf("Ljava/lang/Boolean;", "LX/0jYX;"),
+        parameters: List<String> = listOf("Ljava/lang/Boolean;", "LX/0oK6;"),
         owner: String = TOGGLE_OWNER,
         opening: String = "",
     ) = method("LJIIL", parameters, "V", 4, owner = owner, static = static).apply {

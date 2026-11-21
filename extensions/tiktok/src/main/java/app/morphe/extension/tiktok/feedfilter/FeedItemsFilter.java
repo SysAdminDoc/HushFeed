@@ -401,6 +401,11 @@ public final class FeedItemsFilter {
         java.lang.reflect.Field field = liteItemsField;
         if (field == null || field.getDeclaringClass() != feedItemList.getClass()) {
             field = feedItemList.getClass().getDeclaredField("items");
+            // A static field of that name would be a write Android 17 refuses once TikTok
+            // targets it, and never the list this feed shows.
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                throw new NoSuchFieldException("TikTok Lite's items field is static");
+            }
             field.setAccessible(true);
             liteItemsField = field;
         }

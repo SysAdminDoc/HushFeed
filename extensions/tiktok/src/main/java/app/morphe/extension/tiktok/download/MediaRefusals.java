@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.LongSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,8 +42,13 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
     /** Guarded by itself. */
     private static final Map<String, Host> HOSTS = new LinkedHashMap<>();
     private static volatile boolean installed;
-    /** Seconds since the epoch; a test sets its own clock. */
-    static volatile LongSupplier clockForTests;
+    /** Seconds since the epoch. Its own interface: java.util.function is API 24, the payload's floor 23. */
+    interface Clock {
+        long seconds();
+    }
+
+    /** A test sets its own clock. */
+    static volatile Clock clockForTests;
 
     private static final class Host {
         long refused;
@@ -141,8 +145,8 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
     }
 
     private static long now() {
-        LongSupplier clock = clockForTests;
-        return clock != null ? clock.getAsLong() : System.currentTimeMillis() / 1000L;
+        Clock clock = clockForTests;
+        return clock != null ? clock.seconds() : System.currentTimeMillis() / 1000L;
     }
 
     @Override

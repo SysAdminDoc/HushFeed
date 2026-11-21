@@ -1804,6 +1804,11 @@ public class Settings extends BaseSettings {
     /** One button each at the top of the comments (#371). Read each time the header lays out. */
     public static final BooleanSetting HIDE_COMMENT_CLOSE_BUTTON = new BooleanSetting("hide_comment_close_button", FALSE);
     public static final BooleanSetting HIDE_COMMENT_EXPAND_BUTTON = new BooleanSetting("hide_comment_expand_button", FALSE);
+    /** Answers two comment sheet experiments, read once per TikTok start (#479, CommentSheetGates). */
+    public static final BooleanSetting SHOW_COMMENT_EXPAND_BUTTON =
+            new BooleanSetting("show_comment_expand_button", FALSE, true);
+    public static final BooleanSetting KEEP_VIDEO_SIZE_UNDER_COMMENTS =
+            new BooleanSetting("keep_video_size_under_comments", FALSE, true);
     public static final BooleanSetting LARGER_COMMENT_LIKE_TARGET =
             new BooleanSetting("larger_comment_like_target", FALSE, true);
     public static final BooleanSetting HIDE_COMMENT_EGGS = new BooleanSetting("hide_comment_eggs", FALSE);

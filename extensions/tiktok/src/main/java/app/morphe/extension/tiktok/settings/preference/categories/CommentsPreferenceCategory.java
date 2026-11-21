@@ -314,6 +314,21 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Always show the expand button in comments",
+                    "Puts the button that stretches the comments over the whole screen on every "
+                            + "video. TikTok only gives it to some accounts. Hide the expand button "
+                            + "in comments wins if both are on.",
+                    Settings.SHOW_COMMENT_EXPAND_BUTTON
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep the video full size under comments",
+                    "The video keeps its size when you open the comments, and the comments cover "
+                            + "its lower part instead of pushing it up into a smaller box.",
+                    Settings.KEEP_VIDEO_SIZE_UNDER_COMMENTS
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Filter comments by keyword",
                     "Hide comments that contain any of the words below, or that come from the accounts below.",
                     Settings.COMMENT_KEYWORD_FILTER

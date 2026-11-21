@@ -286,6 +286,7 @@ Also turns on TikTok's own Auto scroll for videos opened from search. Restart Ti
 Always dark,Always dark
 Always light,Always light
 Always show publish date,Always show publish date
+Always show the expand button in comments,Always show the expand button in comments
 Always show the publish date in video author information. Restart TikTok to apply this.,Always show the publish date in video author information. Restart TikTok to apply this.
 Always upload in HD,Always upload in HD
 Amazon Appstore,Amazon Appstore
@@ -1230,6 +1231,7 @@ Keep the progress bar,Keep the progress bar
 Keep the screen's brightness in the camera,Keep the screen's brightness in the camera
 Keep the screen's refresh rate,Keep the screen's refresh rate
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only."
+Keep the video full size under comments,Keep the video full size under comments
 Keep this string to %1$s characters or fewer,Keep this string to %1$s characters or fewer
 Keep this structured value to %1$s KB or less,Keep this structured value to %1$s KB or less
 Keep unsent messages,Keep unsent messages
@@ -1793,6 +1795,7 @@ Put the comment search away,Put the comment search away
 "Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.","Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel."
 "Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it."
 "Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.","Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on."
+Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.,Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.
 Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.,Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.
 "Puts your time zone after the time to the second, like EDT.","Puts your time zone after the time to the second, like EDT."
 Putting seen videos back,Putting seen videos back
@@ -2570,6 +2573,7 @@ The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
 The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.
 The time of day the message goes out.,The time of day the message goes out.
+"The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.","The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box."
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this."
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.","The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays."
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.","The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did."

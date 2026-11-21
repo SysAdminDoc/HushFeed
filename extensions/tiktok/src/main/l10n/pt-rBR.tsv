@@ -3128,3 +3128,8 @@ With the long press save on, holding a profile picture opens it full screen at f
 The profile picture couldn't be loaded. Try again.	A foto de perfil não carregou. Tente de novo.
 Share any comment	Compartilhar qualquer comentário
 Share a comment or send it in a chat even when TikTok says it can't be shared.	Compartilhe um comentário ou envie em um chat mesmo quando o TikTok diz que ele não pode ser compartilhado.
+# context: Comment tools switches; Hide the expand button in comments is another switch's title
+Always show the expand button in comments	Sempre mostrar o botão de expandir nos comentários
+Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.	Coloca o botão que estica os comentários pela tela inteira em todos os vídeos. O TikTok só dá esse botão para algumas contas. Se os dois estiverem ativados, vale Esconder o botão de expandir nos comentários.
+Keep the video full size under comments	Manter o vídeo em tamanho cheio sob os comentários
+The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.	O vídeo mantém o tamanho quando você abre os comentários, e os comentários cobrem a parte de baixo dele em vez de empurrá-lo para cima numa caixa menor.

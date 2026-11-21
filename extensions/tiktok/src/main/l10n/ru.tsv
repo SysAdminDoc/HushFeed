@@ -3329,3 +3329,8 @@ With the long press save on, holding a profile picture opens it full screen at f
 The profile picture couldn't be loaded. Try again.	Не удалось загрузить фото профиля. Повторите попытку.
 Share any comment	Делиться любым комментарием
 Share a comment or send it in a chat even when TikTok says it can't be shared.	Делитесь комментарием или отправляйте его в чат, даже если TikTok говорит, что им нельзя поделиться.
+# context: Comment tools switches; Hide the expand button in comments is another switch's title
+Always show the expand button in comments	Всегда показывать кнопку развёртывания в комментариях
+Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.	Добавляет кнопку, которая растягивает комментарии на весь экран, к каждому видео. TikTok даёт её только некоторым аккаунтам. Если включены оба переключателя, побеждает «Скрывать кнопку развёртывания в комментариях».
+Keep the video full size under comments	Оставлять видео в полный размер под комментариями
+The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.	Видео сохраняет размер, когда вы открываете комментарии, и комментарии закрывают его нижнюю часть, а не сдвигают его вверх в окно поменьше.

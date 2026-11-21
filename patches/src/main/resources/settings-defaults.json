@@ -171,6 +171,8 @@
       "compact_comment_header",
       "hide_comment_close_button",
       "hide_comment_expand_button",
+      "show_comment_expand_button",
+      "keep_video_size_under_comments",
       "share_any_comment",
       "larger_comment_like_target"
     ],
@@ -3239,6 +3241,12 @@
       "type": "boolean",
       "default": false
     },
+    "keep_video_size_under_comments": {
+      "field": "KEEP_VIDEO_SIZE_UNDER_COMMENTS",
+      "key": "keep_video_size_under_comments",
+      "type": "boolean",
+      "default": false
+    },
     "larger_comment_like_target": {
       "field": "LARGER_COMMENT_LIKE_TARGET",
       "key": "larger_comment_like_target",
@@ -4352,6 +4360,12 @@
     "show_author_region": {
       "field": "SHOW_AUTHOR_REGION",
       "key": "show_author_region",
+      "type": "boolean",
+      "default": false
+    },
+    "show_comment_expand_button": {
+      "field": "SHOW_COMMENT_EXPAND_BUTTON",
+      "key": "show_comment_expand_button",
       "type": "boolean",
       "default": false
     },

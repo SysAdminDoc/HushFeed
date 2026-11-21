@@ -38,6 +38,8 @@ class AppAbTwinFixturesTest {
         "player_enable_surface_surfaceview",
         "search_player_surface_view",
         "comment_share_expose_revamp",
+        "comment_panel_full_page",
+        "video_shrink_by_comment",
         "seekbar_show_thumbnail_when_drag",
         "enable_non_personalized_search",
     )

@@ -19,6 +19,7 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.blockauthor.BlockServiceFingerprint
 import app.morphe.patches.tiktok.interaction.blockauthor.sessionPlaybackBridgePatch
 import app.morphe.patches.tiktok.interaction.gesture.doubleTapPatch
+import app.morphe.patches.tiktok.misc.absettings.appAbTypedClasses
 import app.morphe.patches.tiktok.misc.absettings.hookAppAbIntBoundary
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -55,6 +56,7 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/comment/CommentTools;"
 private const val TRANSLATED_COMMENT_FILTER_DESCRIPTOR = "Lapp/morphe/extension/tiktok/comment/TranslatedCommentFilter;"
+internal const val COMMENT_SHEET_GATES_DESCRIPTOR = "Lapp/morphe/extension/tiktok/comment/CommentSheetGates;"
 private const val COMMENT_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/comment/model/Comment;"
 private const val COMMENT_LIST_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/comment/model/CommentItemList;"
 private const val TOUCH_LISTENER_DESCRIPTOR = "Landroid/view/View\$OnTouchListener;"
@@ -473,6 +475,17 @@ val commentToolsPatch = bytecodePatch(
                 )
                 val write: CommentToolsWrite = {
                     method.addInstructions(responseReadyIndex, bridge)
+                }
+                write
+            },
+            {
+                // Two comment sheet experiments, answered where TikTok reads them (#479):
+                // comment_panel_full_page at 1 builds the expand button on every sheet, and
+                // video_shrink_by_comment off 1 keeps the feed video full size under the sheet.
+                // The AB classes are resolved here so a build without them fails before any write.
+                appAbTypedClasses()
+                val write: CommentToolsWrite = {
+                    hookAppAbIntBoundary(COMMENT_SHEET_GATES_DESCRIPTOR, "answer")
                 }
                 write
             },

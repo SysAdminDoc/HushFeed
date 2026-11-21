@@ -3128,3 +3128,8 @@ With the long press save on, holding a profile picture opens it full screen at f
 The profile picture couldn't be loaded. Try again.	Profil fotoğrafı yüklenemedi. Yeniden dene.
 Share any comment	Her yorumu paylaş
 Share a comment or send it in a chat even when TikTok says it can't be shared.	TikTok paylaşılamaz dese bile bir yorumu paylaş veya sohbette gönder.
+# context: Comment tools switches; Hide the expand button in comments is another switch's title
+Always show the expand button in comments	Yorumlarda genişletme düğmesini hep göster
+Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.	Yorumları tüm ekrana yayan düğmeyi her videoya koyar. TikTok bu düğmeyi yalnızca bazı hesaplara verir. İkisi de açıksa Yorumlarda genişletme düğmesini gizle geçerli olur.
+Keep the video full size under comments	Yorumların altında videoyu tam boyutta tut
+The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.	Yorumları açtığında video boyutunu korur, yorumlar da videoyu yukarı, daha küçük bir kutuya itmek yerine alt kısmını örter.

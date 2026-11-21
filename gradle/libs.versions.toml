@@ -1,22 +1,25 @@
 [versions]
 # Align with morphe-patches-template (Compatibility / Manager display names). Hold the patcher
 # at the version the stable Morphe Manager bundles: a newer pin trips the manager's
-# Patcher-Version gate and it refuses the bundle. Stable Manager 2.6.0 bundles 2.4.0, and so does
-# morphe-desktop 2.2.0 (Manager 2.5.0 and desktop 2.1.1 stay on 2.3.0). Patcher 2.4.0 went stable
+# Patcher-Version gate and it refuses the bundle. Stable Manager 2.7.0 bundles 2.5.0, and so does
+# morphe-desktop 2.3.0 (both stable 2026-11-21). 2.5.0 keeps 2.4.0's smali, ARSCLib and apksig and
+# only adds API (replaceStrings, keeping the original v1/v2 signatures); it moves
+# kotlinx-serialization to 1.13.0. Manager 2.6.0 and desktop 2.2.0 bundle 2.4.0 (Manager 2.5.0 and
+# desktop 2.1.1 stay on 2.3.0). Patcher 2.4.0 went stable
 # on 2026-11-15: smali moves to 5eaff5a2c9 and ARSCLib to 50418a07a8 (ValueType becomes the
 # DataType constants, setValueAs*/getValueAs* become setDataAs*/getDataAs*), PackageMetadata's
 # constructor takes the bundle's OBB files after the signature block, DEX files are compressed
 # unless the app runs them from the APK, and every APK it writes is signed with v2 alone. 2.3.0
 # replaced the typed patch builders with patch().
-morphe-patcher = "2.4.0"
+morphe-patcher = "2.5.0"
 # First stable Manager release that bundled the patcher above. Nothing reads it since the release
 # fact check went (9f6217088), so the README's install step and the bug form have to match by hand.
-manager-floor = "2.6.0"
+manager-floor = "2.7.0"
 # Read by the app.morphe.patches settings plugin, not by anything in this repo: remove it and
 # configuration fails with "Version with alias smali not found in version catalog". The commit
 # resolves as com.github.MorpheApp.smali through JitPack. It is not waiting on an official
 # release, which google/smali 3.0.10 delivered on 2026-08-20: the pin has to match whatever the
-# patcher above was built against (2.4.0 asks for 5eaff5a2c9, 2.0.1 to 2.3.0 asked for ac700e1942,
+# patcher above was built against (2.5.0 and 2.4.0 ask for 5eaff5a2c9, 2.0.1 to 2.3.0 asked for ac700e1942,
 # 2.0.0 for 4220ae75f7), because a mismatch puts two copies of dexlib2 on the R8 classpath and
 # buildAndroid fails with "Classpath type already present".
 #noinspection GradleDependency

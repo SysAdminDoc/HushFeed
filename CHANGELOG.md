@@ -82,6 +82,7 @@ Every Hushfeed release, newest first.
 
 * The GitHub release notes leave out the Build changes and the What was checked list now. Build changes are still listed here in the changelog.
 * The build runs on Gradle 9.9.1, which fixes the three Gradle security advisories published on November 10. The wrapper jar and the distribution checksum come from services.gradle.org.
+* The patches are built with Morphe patcher 2.5.0, the one stable Morphe Manager 2.7.0 and morphe-desktop 2.3.0 ship. Bundles from now on need Manager 2.7.0 or newer, and the README and the bug form say so.
 * The scripts that move the patches to a new TikTok build are in `scripts/retarget/` now. `retarget.ps1` takes the old and new fixture folders and runs the whole renaming pass, and concepts/patch-development.md says how to read what it reports.
 * `Custom offline videos limit` stops the patch with an error if TikTok ever puts a branch between its clean-up answer and the return the patch rewrites. The check for that never matched an if or a goto before.
 * The README's advice for a 32-bit Manager now says to leave out `AMOLED dark theme`, where it used to say to pick only one of AMOLED and `Region spoof`. In 1 GB tests on TikTok 47.9.2 every other patch fit together, Region spoof included, while AMOLED ran out of memory even beside Simple mode's patches.

@@ -429,13 +429,13 @@ final class CaptionBurner {
     }
 
     /** The clockwise turn the player gives the picture, or 0 for one the muxer wouldn't take. */
-    private static int rotation(MediaFormat format) {
+    static int rotation(MediaFormat format) {
         int degrees = number(format, "rotation-degrees", 0);
         degrees = ((degrees % 360) + 360) % 360;
         return degrees % 90 == 0 ? degrees : 0;
     }
 
-    private static long duration(MediaFormat format) {
+    static long duration(MediaFormat format) {
         try {
             return format.containsKey(MediaFormat.KEY_DURATION) ? Math.max(0L, format.getLong(MediaFormat.KEY_DURATION)) : 0L;
         } catch (ClassCastException unreadable) {
@@ -444,7 +444,7 @@ final class CaptionBurner {
     }
 
     /** A whole number the format may hold as a float, or not hold at all. */
-    private static int number(MediaFormat format, String key, int fallback) {
+    static int number(MediaFormat format, String key, int fallback) {
         if (!format.containsKey(key)) return fallback;
         try {
             return format.getInteger(key);
@@ -508,7 +508,7 @@ final class CaptionBurner {
      * <p>The program and texture go with the encoder's context when that's released, as
      * {@link AnimatedWebpMp4Converter.CodecSurface}'s own do.
      */
-    private static final class DecodedFrames implements SurfaceTexture.OnFrameAvailableListener {
+    static final class DecodedFrames implements SurfaceTexture.OnFrameAvailableListener {
         /** Not flipped, unlike CodecSurface's: the texture's own matrix turns the frame upright. */
         private static final float[] VERTICES = {
                 -1f, -1f, 0f, 0f,
@@ -606,10 +606,19 @@ final class CaptionBurner {
 
         /** Takes the newest frame onto the texture and draws it across the whole frame. */
         void draw(int width, int height) {
+            draw(0, 0, width, height);
+        }
+
+        /**
+         * Takes the newest frame onto the texture and draws it into the box whose lower left
+         * corner is ({@code x}, {@code y}), counted from the frame's bottom as GL counts.
+         * {@link SlideshowEncoder#addClip} fits a post's video into the photos' frame with it.
+         */
+        void draw(int x, int y, int width, int height) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + UNIT);
             texture.updateTexImage();
             texture.getTransformMatrix(matrix);
-            GLES20.glViewport(0, 0, width, height);
+            GLES20.glViewport(x, y, width, height);
             GLES20.glDisable(GLES20.GL_BLEND);
             GLES20.glUseProgram(program);
             GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureName);

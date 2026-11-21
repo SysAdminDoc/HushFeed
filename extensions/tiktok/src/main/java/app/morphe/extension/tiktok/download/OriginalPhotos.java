@@ -104,9 +104,17 @@ public final class OriginalPhotos {
         // The job held for the check, started again: it was TikTok's the first time too.
         if (NativePhotoSaves.rerunning()) return false;
         boolean live = video != 0;
+        Object[] arguments = {job, from, key, extra, aweme, indices, share, live, callback, defaults};
+        if (live && anyChosenIsLive(aweme, indices)) {
+            // Photos and videos picked together can still be one video (#465). Save photos
+            // starts TikTok's own job, the only save that keeps each video a video.
+            boolean onMain = android.os.Looper.myLooper() == android.os.Looper.getMainLooper();
+            if (SlideshowVideo.offerMixed(aweme, indices,
+                    () -> NativePhotoSaves.resume(job, aweme, arguments, onMain))) return true;
+            return NativePhotoSaves.hold(job, aweme, arguments);
+        }
         if (startPhotos(aweme, indices, live)) return true;
-        return NativePhotoSaves.hold(job, aweme,
-                new Object[]{job, from, key, extra, aweme, indices, share, live, callback, defaults});
+        return NativePhotoSaves.hold(job, aweme, arguments);
     }
 
     /**
@@ -531,12 +539,26 @@ public final class OriginalPhotos {
     }
 
     static List<List<String>> sources(Object aweme) {
+        return sources(aweme, null);
+    }
+
+    /**
+     * Each photo's addresses, best first. An item {@code clips} gives a video of its own (#465)
+     * may have no still, and then its list is empty; a photo without one empties the whole answer.
+     */
+    static List<List<String>> sources(Object aweme, List<List<String>> clips) {
         Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
         Object raw = Reflect.property(info, "getImageList", "imageList");
         if (!(raw instanceof List<?>)) return Collections.emptyList();
         List<List<String>> result = new ArrayList<>();
         for (Object photo : (List<?>) raw) {
             List<String> candidates = addresses(photo, "getDisplayImageNoWatermark", "displayImageNoWatermark");
+            int at = result.size();
+            if (candidates.isEmpty() && clips != null && at < clips.size() && !clips.get(at).isEmpty()) {
+                // The frame TikTok shows for it, which stands in if the video won't play.
+                result.add(saveOrder(addresses(photo, "getDisplayImage", "displayImage")));
+                continue;
+            }
             // Never silently save just part of a post whose original sources are missing.
             if (candidates.isEmpty()) return Collections.emptyList();
             int position = result.size() + 1;

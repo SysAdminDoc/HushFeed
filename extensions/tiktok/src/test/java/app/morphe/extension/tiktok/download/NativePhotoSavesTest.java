@@ -386,6 +386,51 @@ public class NativePhotoSavesTest {
         assertNull(SavedVideoArchive.find(context, "unchecked"));
     }
 
+    /**
+     * #465: photos and videos picked together, with Save photo posts as a video on, ask first.
+     * Save photos then starts TikTok's own job with all it was handed, the only save that keeps
+     * each video a video, through the already-saved check when that's on and at once when not.
+     */
+    @Test public void savePhotosOnPhotosAndVideosPickedTogetherStartsTikToksOwnSave() throws Exception {
+        boolean previousAsVideo = Settings.DOWNLOAD_PHOTOS_AS_VIDEO.savedValue();
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        try {
+            for (boolean check : new boolean[]{true, false}) {
+                Settings.CHECK_SAVED_VIDEOS.save(check);
+                Job.RAN.clear();
+                String id = check ? "mixed-checked" : "mixed-unchecked";
+                Job.save(Job.INSTANCE, "feed", "key", null, mixed(id), Set.of(0L, 1L), null, true, null, 384);
+                settle();
+                assertTrue("TikTok saved before the question was answered", Job.RAN.isEmpty());
+                AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+                assertNotNull("no question came up", dialog);
+                assertEquals("Save photos or a video?", Shadows.shadowOf(dialog).getTitle().toString());
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+                settle();
+                assertEquals(List.of(id + " feed 384"), Job.RAN);
+                assertTrue("a save that came on the main thread left it", Job.ranOnMain);
+            }
+
+            Job.RAN.clear();
+            Job.save(Job.INSTANCE, "feed", "key", null, mixed("mixed-one"), Set.of(1L), null, true, null, 384);
+            settle();
+            assertEquals("one picked video is TikTok's to save, no question", List.of("mixed-one feed 384"), Job.RAN);
+        } finally {
+            Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(previousAsVideo);
+        }
+    }
+
+    /** A photo, then a video the way a photo post carries one. */
+    private static AdvancedDownloadsTest.PhotoPost mixed(String id) {
+        AdvancedDownloadsTest.VideoData video = new AdvancedDownloadsTest.VideoData(List.of());
+        video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/" + id + "/clip", 10);
+        List<AdvancedDownloadsTest.Photo> images = new ArrayList<>();
+        images.add(new AdvancedDownloadsTest.Photo("https://example.com/" + id));
+        images.add(new AdvancedDownloadsTest.Photo("https://example.com/" + id + "/2").clip(video));
+        return new AdvancedDownloadsTest.PhotoPost(id, images);
+    }
+
     @Test public void aGalleryUriIsKeptWithItsOwnName() throws Exception {
         Uri named = photo("named.jpeg");
         MediaFileWriter.Saved saved = NativePhotoSaves.saved(context, named);

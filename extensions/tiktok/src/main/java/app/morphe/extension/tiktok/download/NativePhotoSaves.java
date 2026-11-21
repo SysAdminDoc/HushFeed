@@ -83,14 +83,31 @@ public final class NativePhotoSaves {
      */
     static boolean hold(Object job, Object aweme, Object[] arguments) {
         try {
-            return holdForCheck(job, aweme, arguments);
+            return holdForCheck(job, aweme, arguments, Looper.myLooper() == Looper.getMainLooper());
         } catch (RuntimeException | LinkageError failure) {
             Logger.printException(() -> "Could not hold TikTok's photo save for the check", failure);
             return false;
         }
     }
 
-    private static boolean holdForCheck(Object job, Object aweme, Object[] arguments) {
+    /**
+     * Starts TikTok's job after Hushfeed asked first and the answer was TikTok's own save (#465:
+     * Save photos on photos and videos picked together). It takes the already-saved check any of
+     * its saves takes, and starts on the thread kind it first came on ({@code onMain}).
+     */
+    static void resume(Object job, Object aweme, Object[] arguments, boolean onMain) {
+        try {
+            if (holdForCheck(job, aweme, arguments, onMain)) return;
+            Method entry = job == null ? null : entry(job.getClass(), arguments);
+            if (entry == null) throw new IllegalStateException("TikTok's photo job has no entry to start again");
+            rerun(entry, arguments, null, onMain);
+        } catch (RuntimeException | LinkageError failure) {
+            Logger.printException(() -> "Could not start TikTok's photo save after asking", failure);
+            Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
+        }
+    }
+
+    private static boolean holdForCheck(Object job, Object aweme, Object[] arguments, boolean onMain) {
         forgetStale();
         if (job == null || !Settings.CHECK_SAVED_VIDEOS.get()) return false;
         String id = Reflect.string(aweme, "getAid", "aid");
@@ -110,7 +127,6 @@ public final class NativePhotoSaves {
         }
         Context application = context.getApplicationContext();
         Context app = application == null ? context : application;
-        boolean onMain = Looper.myLooper() == Looper.getMainLooper();
         Runnable start = () -> rerun(entry, arguments, pending, onMain);
         boolean started = Utils.runOnBackgroundThread(() -> {
             MediaFileWriter.Saved previous;
@@ -132,16 +148,17 @@ public final class NativePhotoSaves {
 
     /**
      * Starts the held job again, on the thread kind it first came on. Save again is tapped on the
-     * main thread, so a job that came off it is handed back to a background thread.
+     * main thread, so a job that came off it is handed back to a background thread. A null
+     * {@code pending} is a save nothing records.
      */
     private static void rerun(Method entry, Object[] arguments, Pending pending, boolean onMain) {
         Runnable run = () -> {
-            PENDING.put(pending.id, pending);
+            if (pending != null) PENDING.put(pending.id, pending);
             RERUNNING.set(true);
             try {
                 entry.invoke(null, arguments);
             } catch (ReflectiveOperationException | RuntimeException | LinkageError failure) {
-                PENDING.remove(pending.id, pending);
+                if (pending != null) PENDING.remove(pending.id, pending);
                 Logger.printException(() -> "Could not start TikTok's photo save again", failure);
                 Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
             } finally {

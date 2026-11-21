@@ -13,6 +13,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.text.InputType;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -41,7 +49,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>Two ways in, both from saves Advanced downloads already hooks. "Download video" on a
  * one-photo post is the conversion entry, and with the switch on it comes here instead of to
  * TikTok's renderer. The photo picker's Download on a post with several photos is the photo save
- * job, and with the switch on it asks whether the picked photos go out as photos or as a video.
+ * job, and with the switch on it asks whether the picked photos go out as photos or as a video,
+ * and for how many seconds each. A post that mixes photos and videos asks too, and its videos
+ * play whole between the photos (#465).
  *
  * <p>The video is drawn in {@link SlideshowEncoder}. Everything decided along the way is a static
  * method here, so a test can reach it without a codec.
@@ -81,42 +91,110 @@ public final class SlideshowVideo {
      * or no screen to ask on leaves the save where it was going.
      */
     static boolean offer(Object aweme, Set<?> indices) {
-        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), StoryShareSave.isStory(aweme));
+        boolean story = StoryShareSave.isStory(aweme);
+        Set<Object> picked = copy(indices);
+        return offer(aweme, picked, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), story,
+                () -> OriginalPhotos.savePicked(aweme, picked, story));
     }
 
-    /** {@code story} names it a story, not a photo post, when it turns out to be saved already. */
-    private static boolean offer(Object aweme, Set<?> indices, int seconds, boolean story) {
+    /**
+     * The picker's save on a post that mixes photos and videos (#465), which TikTok's own job
+     * saves item by item. With the switch on and two or more picked it asks too, and Save as
+     * video plays each picked video in the video between the photos. {@code tiktoks} is Save
+     * photos: TikTok's own save, which keeps each video a video.
+     */
+    static boolean offerMixed(Object aweme, Set<?> indices, Runnable tiktoks) {
+        Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
+        Object raw = Reflect.property(info, "getImageList", "imageList");
+        if (!(raw instanceof List<?>) || OriginalPhotos.positions(indices, ((List<?>) raw).size()).size() < 2) return false;
+        return offer(aweme, copy(indices), seconds(Settings.PHOTO_VIDEO_SECONDS.get()), StoryShareSave.isStory(aweme), tiktoks);
+    }
+
+    private static Set<Object> copy(Set<?> indices) {
+        return indices == null ? null : new HashSet<Object>(indices);
+    }
+
+    /**
+     * {@code story} names it a story, not a photo post, when it turns out to be saved already.
+     * {@code photos} is the Save photos answer.
+     */
+    private static boolean offer(Object aweme, Set<?> picked, int seconds, boolean story, Runnable photos) {
         if (!enabled()) return false;
         Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
         Object raw = Reflect.property(info, "getImageList", "imageList");
         if (!(raw instanceof List<?>) || ((List<?>) raw).size() < 2) return false;
         Activity activity = Utils.getVisibleActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return false;
-        Set<Object> picked = indices == null ? null : new HashSet<Object>(indices);
-        Utils.runOnMainThread(() -> ask(aweme, picked, seconds, story));
+        Utils.runOnMainThread(() -> ask(aweme, picked, seconds, story, photos));
         return true;
     }
 
-    private static void ask(Object aweme, Set<?> picked, int seconds, boolean story) {
+    /**
+     * The question, with the seconds each photo stays right in it (#465), so a long post can be
+     * made shorter without going to settings. A post's choice is kept as the row's, a story's
+     * is for that story alone, since it starts at the story's own length.
+     */
+    private static void ask(Object aweme, Set<?> picked, int seconds, boolean story, Runnable photos) {
         try {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
                 throw new IllegalStateException("No screen to ask on");
             }
             SettingsUi.syncDarkMode(activity);
+            EditText field = new EditText(activity);
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(L10n.t("Save photos or a video?"))
-                    .setNegativeButton(L10n.t("Save photos"), (ignored, which) -> OriginalPhotos.savePicked(aweme, picked, story))
-                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> start(aweme, picked, true, seconds, story))
+                    .setView(secondsView(activity, field, seconds))
+                    .setNegativeButton(L10n.t("Save photos"), (ignored, which) -> photos.run())
+                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> {
+                        int chosen = typedSeconds(field.getText().toString(), seconds);
+                        if (!story) Settings.PHOTO_VIDEO_SECONDS.save(chosen);
+                        start(aweme, picked, true, chosen, story);
+                    })
                     .setNeutralButton(L10n.t("Cancel"), null)
                     .create();
             dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
             dialog.show();
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            }
         } catch (RuntimeException failure) {
             // Download was pressed, so the photos still go out rather than nothing.
             Logger.printException(() -> "Could not ask between photos and a video", failure);
-            OriginalPhotos.savePicked(aweme, picked, story);
+            photos.run();
         }
+    }
+
+    /** "Seconds per photo" over a number field holding {@code seconds}. */
+    private static View secondsView(Context context, EditText field, int seconds) {
+        LinearLayout column = new LinearLayout(context);
+        column.setOrientation(LinearLayout.VERTICAL);
+        int side = SettingsUi.dp(context, 22);
+        column.setPadding(side, SettingsUi.dp(context, 8), side, 0);
+        TextView label = SettingsUi.text(context, L10n.t("Seconds per photo"), SettingsUi.TEXT_BODY_SMALL,
+                SettingsUi.textSecondary(), Typeface.NORMAL);
+        column.addView(label, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        field.setInputType(InputType.TYPE_CLASS_NUMBER);
+        field.setSingleLine(true);
+        field.setText(String.valueOf(seconds));
+        field.setHint(L10n.f("%1$s to %2$s", 1, MAX_SECONDS_PER_PHOTO));
+        SettingsUi.styleEditText(field);
+        SettingsUi.labelEditor(label, field);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, SettingsUi.dp(context, 8), 0, 0);
+        column.addView(field, params);
+        return column;
+    }
+
+    /** What was typed in the question, held to what the row offers. Left empty, it's {@code shown}. */
+    static int typedSeconds(String typed, int shown) {
+        String digits = typed == null ? "" : typed.trim();
+        if (digits.isEmpty() || !digits.matches("[0-9]+")) return seconds(shown);
+        // More digits than any int is past the longest anyway.
+        if (digits.length() > 6) return MAX_SECONDS_PER_PHOTO;
+        return seconds(Integer.parseInt(digits));
     }
 
     /**
@@ -134,7 +212,8 @@ public final class SlideshowVideo {
      */
     static boolean saveStory(Object aweme) {
         int seconds = storySeconds(aweme);
-        return offer(aweme, null, seconds, true) || start(aweme, null, true, seconds, true);
+        return offer(aweme, null, seconds, true, () -> OriginalPhotos.savePicked(aweme, null, true))
+                || start(aweme, null, true, seconds, true);
     }
 
     /** How long TikTok keeps a story with no video of its own on screen, on its default settings. */
@@ -153,7 +232,8 @@ public final class SlideshowVideo {
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) return failed();
-        List<List<String>> photos = OriginalPhotos.sources(aweme);
+        List<List<String>> clips = clips(aweme);
+        List<List<String>> photos = OriginalPhotos.sources(aweme, clips);
         if (photos.isEmpty()) {
             Utils.showToastShort(L10n.t("No video saved. The original photos are missing."));
             return true;
@@ -162,7 +242,11 @@ public final class SlideshowVideo {
         String id = Reflect.string(aweme, "getAid", "aid");
         if (chosen.isEmpty() || id == null) return failed();
         List<List<String>> sources = new ArrayList<>();
-        for (int position : chosen) sources.add(new ArrayList<>(photos.get(position)));
+        List<List<String>> chosenClips = new ArrayList<>();
+        for (int position : chosen) {
+            sources.add(new ArrayList<>(photos.get(position)));
+            chosenClips.add(position < clips.size() ? clips.get(position) : Collections.<String>emptyList());
+        }
         List<String> sound = soundSources(aweme);
         boolean whole = playsWholeSound(photos.size(), story, sound);
         String name, path;
@@ -208,7 +292,7 @@ public final class SlideshowVideo {
                     if (found == SavedVideoArchive.Check.FAILED) return;
                     Utils.showToastShort(making);
                 }
-                SaveProgress.Outcome outcome = progress.run(index -> saved[0] = make(app, sources,
+                SaveProgress.Outcome outcome = progress.run(index -> saved[0] = make(app, sources, chosenClips,
                         Collections.singletonList(new Sound(sound, sources.size(), whole)), seconds, name, path, progress, silent));
                 if (saved[0] == null) {
                     Utils.showToastLong(outcome.stop == SaveProgress.Stop.SERVER_WAIT
@@ -234,9 +318,12 @@ public final class SlideshowVideo {
         return true;
     }
 
-    /** For the tests: stands in for drawing, muxing and publishing the video. */
+    /**
+     * For the tests: stands in for drawing, muxing and publishing the video. {@code clips} holds
+     * each item's video addresses, empty for a photo, or null when no item can have one.
+     */
     interface Maker {
-        MediaFileWriter.Saved make(String name, int seconds, List<Sound> sounds) throws IOException;
+        MediaFileWriter.Saved make(String name, int seconds, List<Sound> sounds, List<List<String>> clips) throws IOException;
     }
 
     static volatile Maker makerForTests;
@@ -253,7 +340,7 @@ public final class SlideshowVideo {
         String path = DownloadFilenameFormatter.destinationPath(aweme, false);
         List<String> sound = soundSources(aweme);
         Sound under = new Sound(sound, photos.size(), playsWholeSound(photos.size(), false, sound));
-        return make(app, photos, Collections.singletonList(under),
+        return make(app, photos, null, Collections.singletonList(under),
                 seconds(Settings.PHOTO_VIDEO_SECONDS.get()), name, path, SaveProgress.begin(1), new boolean[]{false});
     }
 
@@ -267,7 +354,7 @@ public final class SlideshowVideo {
         if (plan.first == null) throw new IOException("The original photos aren't available");
         String name = DownloadFilenameFormatter.formatSelectedVideoName(plan.first);
         String path = DownloadFilenameFormatter.destinationPath(plan.first, false);
-        return make(app, plan.photos, plan.sounds, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), name, path,
+        return make(app, plan.photos, null, plan.sounds, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), name, path,
                 SaveProgress.begin(1), new boolean[]{false});
     }
 
@@ -325,10 +412,11 @@ public final class SlideshowVideo {
      * gallery until the MP4 is finished, so a failure anywhere leaves only temporary files, and
      * those go here.
      */
-    private static MediaFileWriter.Saved make(Context app, List<List<String>> photos, List<Sound> sounds,
-            int seconds, String name, String path, SaveProgress progress, boolean[] silent) throws IOException {
+    private static MediaFileWriter.Saved make(Context app, List<List<String>> photos, List<List<String>> clips,
+            List<Sound> sounds, int seconds, String name, String path, SaveProgress progress, boolean[] silent)
+            throws IOException {
         Maker stand = makerForTests;
-        if (stand != null) return stand.make(name, seconds, sounds);
+        if (stand != null) return stand.make(name, seconds, sounds, clips);
         List<File> temporary = new ArrayList<>();
         try {
             MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
@@ -352,10 +440,10 @@ public final class SlideshowVideo {
                     Logger.printException(() -> "The one-photo video keeps Seconds per photo", unread);
                 }
             }
-            drawPhotos(app, photos, seconds, video, progress, postStarts);
+            long videoUs = drawPhotos(app, photos, clips, seconds, video, progress, postStarts, temporary);
             File result = video;
             try {
-                File track = whole != null ? whole : soundTrack(app, sounds, seconds, temporary);
+                File track = whole != null ? whole : soundTrack(app, sounds, seconds, videoUs, temporary);
                 File muxed = temp(app, temporary, ".mp4");
                 TrackMuxer.combine(video, track, muxed);
                 result = muxed;
@@ -377,12 +465,14 @@ public final class SlideshowVideo {
      * The sound under the video. One post's runs the whole video, from the top again when it's
      * shorter. Several posts' (#430) each run under that post's photos, and when they can't share
      * one track (one doesn't load, or two differ in format) the first post's sound that loads
-     * runs under all of it.
+     * runs under all of it. {@code videoUs} is how long the pictures came out, which one post's
+     * videos (#465) make longer than its photos' seconds.
      */
-    private static File soundTrack(Context app, List<Sound> sounds, int seconds, List<File> temporary)
+    private static File soundTrack(Context app, List<Sound> sounds, int seconds, long videoUs, List<File> temporary)
             throws IOException {
         long total = 0;
         for (Sound sound : sounds) total += durationUs(sound.photos, seconds);
+        if (sounds.size() == 1 && videoUs > 0) total = videoUs;
         if (sounds.size() > 1) {
             try {
                 return joinedSound(app, sounds, seconds, temporary);
@@ -491,9 +581,13 @@ public final class SlideshowVideo {
      * {@code postStarts} holds where each post's photos begin. With several posts, each one gets
      * the time a single save gets, and Cancel on the run stops the video under way, since one
      * video of many posts can take as long as all of their saves would.
+     *
+     * <p>An item with addresses in {@code clips} is one of the post's videos (#465) and plays
+     * whole where it sits. One that can't be fetched or played shows its still instead, when the
+     * post lists one. Answers how long the video runs.
      */
-    private static void drawPhotos(Context app, List<List<String>> photos, int seconds, File output,
-            SaveProgress progress, Set<Integer> postStarts) throws IOException {
+    private static long drawPhotos(Context app, List<List<String>> photos, List<List<String>> clips, int seconds,
+            File output, SaveProgress progress, Set<Integer> postStarts, List<File> temporary) throws IOException {
         int perPhoto = framesPerPhoto(seconds);
         int fps = frameRate(seconds);
         long total = (long) perPhoto * photos.size();
@@ -511,6 +605,38 @@ public final class SlideshowVideo {
                 if (i > 0 && (fps < FPS || (joined && postStarts.contains(i)))) {
                     MediaBudget.deadline().allowAtLeast(MediaBudget.JOB_DEADLINE_MS);
                 }
+                long done = (long) perPhoto * i;
+                List<String> clip = clips == null || i >= clips.size() ? Collections.<String>emptyList() : clips.get(i);
+                if (!clip.isEmpty()) {
+                    try {
+                        File file = temp(app, temporary, ".tmp");
+                        RemoteMedia.fetch(clip, file, RemoteMedia.Kind.VIDEO);
+                        if (encoder == null) {
+                            int[] shown = SlideshowEncoder.clipSize(file);
+                            encoder = SlideshowEncoder.open(output, frameSizes(shown[0], shown[1]), fps);
+                            frame = Bitmap.createBitmap(encoder.width, encoder.height, Bitmap.Config.ARGB_8888);
+                            canvas = new Canvas(frame);
+                        }
+                        encoder.addClip(file, new SlideshowEncoder.ClipProgress() {
+                            @Override public void played(long doneUs, long totalUs) {
+                                progress.transfer(done + clipShare(doneUs, totalUs, perPhoto), total);
+                            }
+
+                            @Override public boolean cancelled() {
+                                return progress.isCancelled() || (joined && MediaBudget.cancelled());
+                            }
+                        });
+                        // A post can hold several long videos, so each goes once it's drawn.
+                        if (MediaCache.delete(file)) temporary.remove(file);
+                        continue;
+                    } catch (MediaBudget.StopException stop) {
+                        throw stop;
+                    } catch (IOException | RuntimeException unplayable) {
+                        if (photos.get(i).isEmpty()) throw unplayable;
+                        int position = i + 1;
+                        Logger.printException(() -> "Item " + position + " goes in as its still", unplayable);
+                    }
+                }
                 Bitmap photo = fetchPhoto(app, photos.get(i), encoder == null ? null : new int[]{encoder.width, encoder.height}, i + 1);
                 try {
                     if (encoder == null) {
@@ -523,14 +649,21 @@ public final class SlideshowVideo {
                 } finally {
                     photo.recycle();
                 }
-                encoder.add(frame, perPhoto, drawn -> progress.transfer(drawn, total));
+                encoder.add(frame, perPhoto, drawn -> progress.transfer(done + drawn, total));
             }
             if (encoder == null) throw new IOException("The post had no photos to draw");
             encoder.finish();
+            return encoder.durationUs();
         } finally {
             if (encoder != null) encoder.close();
             if (frame != null) frame.recycle();
         }
+    }
+
+    /** A video's part of the progress bar, which counts each item as one photo's frames. */
+    static long clipShare(long doneUs, long totalUs, int perPhoto) {
+        if (totalUs <= 0) return 0;
+        return Math.max(0, Math.min(perPhoto, doneUs * perPhoto / totalUs));
     }
 
     /**
@@ -586,6 +719,73 @@ public final class SlideshowVideo {
             }
         }
         return sources;
+    }
+
+    /**
+     * Each item's video addresses, in the post's order, empty for a photo (#465). A video in a
+     * photo post sits on its item as {@code livePhotoStruct.videoModel}, the same place a live
+     * photo keeps its moving part, so both play.
+     */
+    static List<List<String>> clips(Object aweme) {
+        Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
+        Object raw = Reflect.property(info, "getImageList", "imageList");
+        if (!(raw instanceof List<?>)) return Collections.emptyList();
+        List<List<String>> clips = new ArrayList<>();
+        for (Object item : (List<?>) raw) {
+            Object live = Reflect.property(item, "getLivePhotoStruct", "livePhotoStruct");
+            Object video = Reflect.property(live, "getVideoModel", "videoModel");
+            clips.add(video == null ? Collections.<String>emptyList() : clipSources(video));
+        }
+        return clips;
+    }
+
+    /**
+     * Where one of a post's videos can be fetched, the clean copy first and TikTok's stamped
+     * download last: it's drawn again into the photos' video, so a logo would go with it.
+     */
+    static List<String> clipSources(Object video) {
+        List<String> sources = new ArrayList<>();
+        for (String[] field : new String[][]{{"getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"},
+                {"getPlayAddr", "playAddr"}, {"getDownloadAddr", "downloadAddr"}}) {
+            for (String url : VideoDownloads.urls(Reflect.property(video, field[0], field[1]))) {
+                if (MediaTransport.hasAllowedShape(url) && !sources.contains(url)) sources.add(url);
+            }
+        }
+        return sources;
+    }
+
+    /** Between two frames of a post's video when it gives only one to go by. */
+    static final long DEFAULT_CLIP_GAP_US = 33_333L;
+
+    /** A video's size the way its player shows it: a quarter turn swaps the sides. */
+    static int[] shownSize(int width, int height, int rotation) {
+        return rotation == 90 || rotation == 270 ? new int[]{height, width} : new int[]{width, height};
+    }
+
+    /**
+     * {@code area}, counted from the frame's top as a Rect is, as GL's viewport takes it: left,
+     * bottom counted from the frame's bottom, width and height.
+     */
+    static int[] viewport(Rect area, int frameHeight) {
+        return new int[]{area.left, frameHeight - area.bottom, area.width(), area.height()};
+    }
+
+    /**
+     * When a frame of a post's video shows in the photos' video: as far past {@code startNs} as
+     * it is past the video's first frame, and always after the frame before ({@code lastNs},
+     * -1 for none), which a muxer requires.
+     */
+    static long clipFrameNs(long startNs, long firstUs, long frameUs, long lastNs) {
+        long at = startNs + Math.max(0L, frameUs - firstUs) * 1000L;
+        return lastNs >= 0 && at <= lastNs ? lastNs + 1000L : at;
+    }
+
+    /**
+     * Where the photos after a post's video start: one frame's gap past its last frame, the gap
+     * held between a millisecond and a second so a broken time stamp can't stretch the video.
+     */
+    static long clipEndNs(long lastNs, long gapUs) {
+        return lastNs + Math.max(1_000L, Math.min(1_000_000L, gapUs)) * 1000L;
     }
 
     /** The setting, held to what the row offers, in case a restored backup carried something else. */

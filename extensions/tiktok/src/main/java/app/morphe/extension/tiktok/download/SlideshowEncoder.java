@@ -11,6 +11,7 @@ import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.opengl.GLES20;
 
 import app.morphe.extension.shared.Logger;
 
@@ -23,8 +24,8 @@ import java.util.List;
 
 /**
  * The codec half of a photo post saved as a video: an H.264 track drawn photo by photo through
- * the encoder's input surface, and the post's sound turned into an AAC track no longer than the
- * pictures.
+ * the encoder's input surface, with any of the post's own videos played into it between them,
+ * and the post's sound turned into an AAC track no longer than the pictures.
  *
  * <p>Robolectric has no real codecs, so nothing here decides anything a test would want to
  * check. The sizes, frame counts, timestamps and trim length all come from {@link SlideshowVideo}.
@@ -42,7 +43,15 @@ final class SlideshowEncoder implements Closeable {
     private static final int PCM_16BIT = 2;
 
     interface Progress {
+        /** {@code drawn} of the frames one {@link #add} call shows. */
         void frames(long drawn);
+    }
+
+    /** How far a post's video is into the photos' video, and whether the save was cancelled. */
+    interface ClipProgress {
+        void played(long doneUs, long totalUs);
+
+        boolean cancelled();
     }
 
     final int width;
@@ -53,7 +62,13 @@ final class SlideshowEncoder implements Closeable {
     private final MediaCodec encoder;
     private final AnimatedWebpMp4Converter.CodecSurface surface;
     private final AnimatedWebpMp4Converter.EncoderState state = new AnimatedWebpMp4Converter.EncoderState();
+    /** Frames handed to the encoder, photos and videos alike. */
     private long frames;
+    /**
+     * Where the photos since the last video began, and how many frames they've had. A photo's
+     * frames are counted at the video's own rate from there, a post's video keeps its own times.
+     */
+    private long runStartNs, runFrames;
 
     private SlideshowEncoder(int width, int height, int fps, File directory, MediaMuxer muxer,
             MediaCodec encoder, AnimatedWebpMp4Converter.CodecSurface surface) {
@@ -134,14 +149,144 @@ final class SlideshowEncoder implements Closeable {
     void add(Bitmap frame, int count, Progress progress) throws IOException {
         surface.upload(frame);
         for (int i = 0; i < count; i++) {
-            surface.present(SlideshowVideo.presentationTimeNs(frames, fps));
+            surface.present(nextPhotoNs());
+            runFrames++;
             frames++;
-            // Wait only when the encoder falls behind, so its output buffers can't all fill
-            // while the next frame waits for an input slot.
-            long behind = frames - state.samples;
-            AnimatedWebpMp4Converter.drainEncoder(encoder, muxer, false, state, directory,
-                    behind > 2 ? AnimatedWebpMp4Converter.CODEC_TIMEOUT_US : 0);
-            if (progress != null) progress.frames(frames);
+            drain();
+            if (progress != null) progress.frames(i + 1);
+        }
+    }
+
+    /** When the next photo frame shows, which is also where the video so far ends. */
+    private long nextPhotoNs() {
+        return runStartNs + SlideshowVideo.presentationTimeNs(runFrames, fps);
+    }
+
+    /** How long the video drawn so far runs, which is where its sound is cut. */
+    long durationUs() {
+        return nextPhotoNs() / 1000L;
+    }
+
+    /**
+     * Wait only when the encoder falls behind, so its output buffers can't all fill while the
+     * next frame waits for an input slot.
+     */
+    private void drain() throws IOException {
+        long behind = frames - state.samples;
+        AnimatedWebpMp4Converter.drainEncoder(encoder, muxer, false, state, directory,
+                behind > 2 ? AnimatedWebpMp4Converter.CODEC_TIMEOUT_US : 0);
+    }
+
+    /**
+     * The size a post's video shows at, turned the way its player turns it, as width and height.
+     * Read before the first picture, since the frame of the whole video is shaped from it.
+     */
+    static int[] clipSize(File clip) throws IOException {
+        MediaExtractor extractor = new MediaExtractor();
+        try {
+            extractor.setDataSource(clip.getAbsolutePath());
+            return shownSize(TrackMuxer.select(extractor, "video/"));
+        } finally {
+            extractor.release();
+        }
+    }
+
+    private static int[] shownSize(MediaFormat format) throws IOException {
+        int width = CaptionBurner.number(format, MediaFormat.KEY_WIDTH, 0);
+        int height = CaptionBurner.number(format, MediaFormat.KEY_HEIGHT, 0);
+        if (width <= 0 || height <= 0) throw new IOException("The video doesn't say how big it is");
+        return SlideshowVideo.shownSize(width, height, CaptionBurner.rotation(format));
+    }
+
+    /**
+     * Plays a post's video (#465) from where the photos before it reached, at its own pace and
+     * fitted into the frame the way a photo is, without its own sound: the post's sound runs
+     * under the whole video. Each decoded frame goes onto a texture in the encoder's context, as
+     * {@link CaptionBurner} does it, so nothing is copied through memory. The decoder turns a
+     * picture that's stored sideways itself, since it draws onto a surface.
+     *
+     * <p>A video that fails partway leaves what it drew, and the photos after it start past that.
+     */
+    void addClip(File clip, ClipProgress progress) throws IOException {
+        MediaExtractor extractor = new MediaExtractor();
+        MediaCodec decoder = null;
+        CaptionBurner.DecodedFrames decoded = null;
+        long startNs = nextPhotoNs();
+        long firstUs = -1, lastUs = -1, gapUs = SlideshowVideo.DEFAULT_CLIP_GAP_US, lastNs = -1;
+        try {
+            extractor.setDataSource(clip.getAbsolutePath());
+            MediaFormat input = TrackMuxer.select(extractor, "video/");
+            int[] shown = shownSize(input);
+            long lengthUs = CaptionBurner.duration(input);
+            MediaBudget.deadline().allowAtLeast(CaptionBurner.timeAllowedMs(lengthUs));
+            int[] box = SlideshowVideo.viewport(SlideshowVideo.fit(shown[0], shown[1], width, height), height);
+            decoded = new CaptionBurner.DecodedFrames();
+            decoder = MediaCodec.createDecoderByType(input.getString(MediaFormat.KEY_MIME));
+            decoder.configure(input, decoded.surface, null, 0);
+            decoder.start();
+
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+            int idle = 0;
+            boolean fed = false, decodedAll = false;
+            while (!decodedAll) {
+                MediaBudget.check(null);
+                if (progress != null && progress.cancelled()) {
+                    throw new MediaBudget.StopException("Photo video cancelled", MediaBudget.StopException.Reason.CANCELLED);
+                }
+                boolean moved = false;
+                if (!fed) {
+                    int index = decoder.dequeueInputBuffer(0);
+                    if (index >= 0) {
+                        ByteBuffer buffer = decoder.getInputBuffer(index);
+                        int size = buffer == null ? -1 : extractor.readSampleData(buffer, 0);
+                        if (size < 0) {
+                            decoder.queueInputBuffer(index, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+                            fed = true;
+                        } else {
+                            decoder.queueInputBuffer(index, 0, size, extractor.getSampleTime(), 0);
+                            extractor.advance();
+                        }
+                        moved = true;
+                    }
+                }
+                int frame = decoder.dequeueOutputBuffer(info, moved ? 0 : TIMEOUT_US);
+                if (frame >= 0) {
+                    moved = true;
+                    boolean last = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+                    boolean render = info.size > 0;
+                    decoder.releaseOutputBuffer(frame, render);
+                    if (render) {
+                        decoded.await();
+                        GLES20.glViewport(0, 0, width, height);
+                        GLES20.glClearColor(0f, 0f, 0f, 1f);
+                        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+                        decoded.draw(box[0], box[1], box[2], box[3]);
+                        if (firstUs < 0) firstUs = info.presentationTimeUs;
+                        if (lastUs >= 0 && info.presentationTimeUs > lastUs) gapUs = info.presentationTimeUs - lastUs;
+                        lastUs = Math.max(lastUs, info.presentationTimeUs);
+                        lastNs = SlideshowVideo.clipFrameNs(startNs, firstUs, info.presentationTimeUs, lastNs);
+                        surface.submit(lastNs);
+                        frames++;
+                        drain();
+                        if (progress != null) progress.played(lastUs - firstUs, lengthUs);
+                    }
+                    if (last) decodedAll = true;
+                } else if (frame == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    moved = true;
+                }
+                if (moved) idle = 0;
+                else if (++idle > MAX_IDLE_TURNS) throw new IOException("The post's video stopped moving partway through");
+            }
+            if (lastNs < 0) throw new IOException("The post's video gave no frames to draw");
+        } finally {
+            // The photos after it start where its last frame ends, however far it got.
+            if (lastNs >= 0) {
+                runStartNs = SlideshowVideo.clipEndNs(lastNs, gapUs);
+                runFrames = 0;
+            }
+            stopAndRelease(decoder);
+            if (decoded != null) decoded.release();
+            extractor.release();
         }
     }
 

@@ -127,10 +127,12 @@ public class AdvancedDownloadsTest {
         Photo(String url) { displayImageNoWatermark = new Address(url, 100); }
         Photo(Address source) { displayImageNoWatermark = source; }
         Photo live() { livePhotoStruct = new LivePhoto(); return this; }
+        /** A video in a photo post (#465), which sits where a live photo's moving part does. */
+        Photo clip(VideoData video) { livePhotoStruct = new LivePhoto(); livePhotoStruct.videoModel = video; return this; }
         Photo shown(Address copy) { displayImage = copy; return this; }
     }
     public static final class LivePhoto {
-        public final Object videoModel = new Object();
+        public Object videoModel = new Object();
     }
     public static final class Info {
         public List<Photo> imageList;

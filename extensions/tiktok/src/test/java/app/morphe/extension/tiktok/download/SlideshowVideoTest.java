@@ -175,6 +175,71 @@ public class SlideshowVideoTest {
         assertEquals(128_000, SlideshowVideo.audioBitRate(2));
     }
 
+    /** #465: what's typed in the question, held to the row's range, and the row's value when it's not a number. */
+    @Test public void theSecondsTypedInTheQuestionKeepToTheRowsRange() {
+        assertEquals(12, SlideshowVideo.typedSeconds("12", 3));
+        assertEquals(5, SlideshowVideo.typedSeconds(" 5 ", 3));
+        assertEquals("Left empty", 3, SlideshowVideo.typedSeconds("", 3));
+        assertEquals(3, SlideshowVideo.typedSeconds(null, 3));
+        assertEquals(3, SlideshowVideo.typedSeconds("2.5", 3));
+        assertEquals(3, SlideshowVideo.typedSeconds("-4", 3));
+        assertEquals(1, SlideshowVideo.typedSeconds("0", 3));
+        assertEquals(300, SlideshowVideo.typedSeconds("999", 3));
+        assertEquals("Past what an int holds", 300, SlideshowVideo.typedSeconds("99999999999999", 3));
+        assertEquals("A story's own length out of range", 300, SlideshowVideo.typedSeconds("", 900));
+    }
+
+    /** #465: a post's video keeps its own pace and the photos after it start one frame past its end. */
+    @Test public void aPostsVideoKeepsItsTimesAndThePhotosAfterItStartPastItsEnd() {
+        long start = 6_000_000_000L;
+        assertEquals("Its first frame shows where the photos stopped", start,
+                SlideshowVideo.clipFrameNs(start, 40_000L, 40_000L, -1));
+        assertEquals(start + 33_333_000L, SlideshowVideo.clipFrameNs(start, 40_000L, 73_333L, start));
+        assertEquals("A frame stamped before the first counts from it", start,
+                SlideshowVideo.clipFrameNs(start, 40_000L, 10_000L, -1));
+        assertEquals("Never at or before the frame before it", start + 1_000L,
+                SlideshowVideo.clipFrameNs(start, 40_000L, 40_000L, start));
+        assertEquals(start + 33_333_000L, SlideshowVideo.clipEndNs(start, 33_333L));
+        assertEquals("A broken stamp can't stretch it", start + 1_000_000_000L,
+                SlideshowVideo.clipEndNs(start, 90_000_000L));
+        assertEquals(start + 1_000_000L, SlideshowVideo.clipEndNs(start, 0L));
+
+        assertArrayEquals(new int[]{1080, 1920}, SlideshowVideo.shownSize(1080, 1920, 0));
+        assertArrayEquals("Stored sideways, shown upright", new int[]{1080, 1920}, SlideshowVideo.shownSize(1920, 1080, 90));
+        assertArrayEquals(new int[]{1920, 1080}, SlideshowVideo.shownSize(1920, 1080, 180));
+        assertArrayEquals(new int[]{720, 1280}, SlideshowVideo.shownSize(1280, 720, 270));
+
+        Rect wide = SlideshowVideo.fit(1920, 1080, 1072, 1920);
+        assertArrayEquals("GL counts the box from the frame's bottom",
+                new int[]{wide.left, 1920 - wide.bottom, wide.width(), wide.height()},
+                SlideshowVideo.viewport(wide, 1920));
+        assertArrayEquals(new int[]{0, 659, 1072, 603}, SlideshowVideo.viewport(wide, 1920));
+
+        assertEquals(0, SlideshowVideo.clipShare(0, 3_000_000L, 45));
+        assertEquals(15, SlideshowVideo.clipShare(1_000_000L, 3_000_000L, 45));
+        assertEquals("Never past the item's share", 45, SlideshowVideo.clipShare(9_000_000L, 3_000_000L, 45));
+        assertEquals("A video with no length moves nothing", 0, SlideshowVideo.clipShare(1_000_000L, 0, 45));
+    }
+
+    /** #465: a post's video is fetched clean first, TikTok's stamped download last. */
+    @Test public void aPostsVideoIsFetchedCleanFirstAndStampedLast() {
+        var video = new AdvancedDownloadsTest.VideoData(List.of());
+        video.downloadAddr = new AdvancedDownloadsTest.Address("https://example.com/stamped", 10);
+        video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/play", 10);
+        assertEquals(List.of("https://example.com/play", "https://example.com/stamped"), SlideshowVideo.clipSources(video));
+        video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://example.com/clean", 10);
+        assertEquals(List.of("https://example.com/clean", "https://example.com/play", "https://example.com/stamped"),
+                SlideshowVideo.clipSources(video));
+
+        var post = post("slideshow-clip-sources", List.of(photo("https://example.com/one"),
+                photo("https://example.com/two").clip(video), photo("https://example.com/three").live()));
+        List<List<String>> clips = SlideshowVideo.clips(post);
+        assertEquals(3, clips.size());
+        assertEquals(List.of(), clips.get(0));
+        assertEquals("https://example.com/clean", clips.get(1).get(0));
+        assertEquals("A moving part with no address stays a photo", List.of(), clips.get(2));
+    }
+
     @Test public void aLargePhotoDecodesSmallAndAnUnreadableOneIsNull() throws Exception {
         File png = File.createTempFile("slideshow-", ".png", RuntimeEnvironment.getApplication().getCacheDir());
         File junk = File.createTempFile("slideshow-", ".tmp", RuntimeEnvironment.getApplication().getCacheDir());
@@ -305,7 +370,7 @@ public class SlideshowVideoTest {
         Settings.PHOTO_VIDEO_SECONDS.save(3);
         List<Integer> lengths = new java.util.concurrent.CopyOnWriteArrayList<>();
         CountDownLatch made = new CountDownLatch(1);
-        SlideshowVideo.makerForTests = (name, seconds, sounds) -> {
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> {
             lengths.add(seconds);
             made.countDown();
             throw new java.io.IOException("Nothing to draw with here");
@@ -327,7 +392,7 @@ public class SlideshowVideoTest {
         List<String> made = new java.util.concurrent.CopyOnWriteArrayList<>();
         java.util.concurrent.atomic.AtomicReference<CountDownLatch> next =
                 new java.util.concurrent.atomic.AtomicReference<>(new CountDownLatch(1));
-        SlideshowVideo.makerForTests = (name, seconds, sounds) -> {
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> {
             made.add(seconds + " " + sounds.size() + " " + sounds.get(0).whole + " " + sounds.get(0).sources.isEmpty());
             next.get().countDown();
             throw new java.io.IOException("Nothing to draw with here");
@@ -460,6 +525,108 @@ public class SlideshowVideoTest {
         } finally {
             Utils.setActivity(previous);
         }
+    }
+
+    /**
+     * #465: the question carries the seconds each photo stays, set to the row's. What's typed
+     * makes this video and becomes the row's, so the next post starts from it.
+     */
+    @Test public void theQuestionHoldsTheSecondsAndAPostKeepsWhatWasTyped() throws Exception {
+        Settings.PHOTO_VIDEO_SECONDS.save(3);
+        List<Integer> lengths = new java.util.concurrent.CopyOnWriteArrayList<>();
+        CountDownLatch made = new CountDownLatch(1);
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> {
+            lengths.add(seconds);
+            made.countDown();
+            throw new java.io.IOException("Nothing to draw with here");
+        };
+        Activity previous = Utils.getActivity();
+        try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
+            Utils.setActivity(owner.get());
+            var post = post("slideshow-ask-seconds", List.of(photo("https://example.com/one"),
+                    photo("https://example.com/two"), photo("https://example.com/three")));
+            assertTrue(OriginalPhotos.startPhotos(post, Set.of(0, 2), true));
+            idle();
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(dialog);
+            android.widget.EditText field = editText(dialog.getWindow().getDecorView());
+            assertNotNull("The question has no seconds field", field);
+            assertEquals("3", field.getText().toString());
+            assertEquals(android.text.InputType.TYPE_CLASS_NUMBER, field.getInputType());
+            assertEquals("The keyboard pushes the buttons up instead of covering them",
+                    android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE,
+                    dialog.getWindow().getAttributes().softInputMode
+                            & android.view.WindowManager.LayoutParams.SOFT_INPUT_MASK_ADJUST);
+            field.setText("7");
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+            idle();
+            assertTrue("The video never started", made.await(5, TimeUnit.SECONDS));
+            assertEquals(List.of(7), lengths);
+            assertEquals("The row keeps what was typed", 7, (int) Settings.PHOTO_VIDEO_SECONDS.get());
+        } finally {
+            SlideshowVideo.makerForTests = null;
+            Utils.setActivity(previous);
+        }
+    }
+
+    /**
+     * #465: photos and videos picked together ask too, and Save as video hands each picked item's
+     * video along in the picked order. A video item TikTok gives no still keeps the save going.
+     */
+    @Test public void photosAndVideosPickedTogetherMakeOneVideo() throws Exception {
+        var video = new AdvancedDownloadsTest.VideoData(List.of());
+        video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/clip", 10);
+        List<List<List<String>>> made = new java.util.concurrent.CopyOnWriteArrayList<>();
+        CountDownLatch done = new CountDownLatch(1);
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> {
+            made.add(clips);
+            done.countDown();
+            throw new java.io.IOException("Nothing to draw with here");
+        };
+        List<String> tiktoks = new java.util.concurrent.CopyOnWriteArrayList<>();
+        Activity previous = Utils.getActivity();
+        try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
+            Utils.setActivity(owner.get());
+            var mixed = post("slideshow-mixed", List.of(photo("https://example.com/one"),
+                    photo(null).clip(video), photo("https://example.com/three")));
+            assertTrue(SlideshowVideo.offerMixed(mixed, Set.of(1L, 0L), () -> tiktoks.add("saved")));
+            idle();
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(dialog);
+            assertEquals("Save photos or a video?", Shadows.shadowOf(dialog).getTitle().toString());
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+            idle();
+            assertTrue("The video never started", done.await(5, TimeUnit.SECONDS));
+            assertEquals(List.of(List.of(List.of(), List.of("https://example.com/clip"))), made);
+            assertEquals("TikTok's save stays out of a video", List.of(), tiktoks);
+
+            var photos = post("slideshow-mixed-photos", List.of(photo("https://example.com/one"),
+                    photo("https://example.com/two").clip(video)));
+            assertTrue(SlideshowVideo.offerMixed(photos, Set.of(0L, 1L), () -> tiktoks.add("saved")));
+            idle();
+            ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+            idle();
+            assertEquals("Save photos is TikTok's own save", List.of("saved"), tiktoks);
+            assertNull(MediaJobScheduler.job("photos " + photos.getAid()));
+
+            assertFalse("One picked item is TikTok's to save", SlideshowVideo.offerMixed(photos, Set.of(1L), () -> { }));
+            Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(false);
+            assertFalse(SlideshowVideo.offerMixed(photos, Set.of(0L, 1L), () -> { }));
+        } finally {
+            SlideshowVideo.makerForTests = null;
+            Utils.setActivity(previous);
+        }
+    }
+
+    private static android.widget.EditText editText(android.view.View view) {
+        if (view instanceof android.widget.EditText) return (android.widget.EditText) view;
+        if (!(view instanceof android.view.ViewGroup)) return null;
+        android.view.ViewGroup group = (android.view.ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            android.widget.EditText found = editText(group.getChildAt(i));
+            if (found != null) return found;
+        }
+        return null;
     }
 
     @Test public void aFailedPhotoEndsWithTheErrorAndNoFilesLeftBehind() throws Exception {

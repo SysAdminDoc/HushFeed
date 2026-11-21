@@ -148,7 +148,7 @@ public class PhotoPostSavedRecordTest {
     @Test public void aPostSavedAsAVideoIsRecordedAndOffered() throws Exception {
         var post = post("video-recorded", 2);
         int[] made = {0};
-        SlideshowVideo.makerForTests = (name, seconds, sounds) -> {
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> {
             made[0]++;
             return file(name);
         };
@@ -175,7 +175,7 @@ public class PhotoPostSavedRecordTest {
 
     @Test public void aPhotoStorySavedAsAVideoAgainIsCalledAStory() throws Exception {
         var story = post("story-video", 2);
-        SlideshowVideo.makerForTests = (name, seconds, sounds) -> file(name);
+        SlideshowVideo.makerForTests = (name, seconds, sounds, clips) -> file(name);
         assertTrue(SlideshowVideo.saveStory(story));
         finish();
         assertNotNull("the story's video never reached the record", SavedVideoArchive.find(context, "story-video"));

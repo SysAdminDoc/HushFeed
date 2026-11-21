@@ -300,6 +300,20 @@ val commentToolsPatch = bytecodePatch(
                 write
             },
             {
+                // Share any comment (#481): a comment TikTok won't let you send to a chat or share
+                // carries the refusal in two getters, and every share check reads them, so both
+                // answer 0 first while the switch is on.
+                val dm = CommentDmShareBlockFingerprint.method
+                val acl = CommentShareAclCodeFingerprint.method
+                dm.requireLocals("Comment tools", 1)
+                acl.requireLocals("Comment tools", 1)
+                val write: CommentToolsWrite = {
+                    dm.answerShareable()
+                    acl.answerShareable()
+                }
+                write
+            },
+            {
                 // A comment survey comes from one config getter, and null is its own answer for
                 // no survey. Hide comment surveys asks first and, on yes, answers null.
                 val method = CommentSurveyConfigFingerprint.method

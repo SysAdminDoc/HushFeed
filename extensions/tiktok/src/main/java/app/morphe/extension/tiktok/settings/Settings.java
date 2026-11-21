@@ -1782,6 +1782,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_COMMENT_BOX_BUTTONS = new BooleanSetting("hide_comment_box_buttons", FALSE);
     /** Draws a comment poll's results before the reader votes, from the counts TikTok already sends. */
     public static final BooleanSetting SHOW_POLL_RESULTS = new BooleanSetting("show_poll_results", FALSE);
+    /** Shares or sends a comment TikTok marks as not shareable, by answering its share block with 0 (#481). */
+    public static final BooleanSetting SHARE_ANY_COMMENT = new BooleanSetting("share_any_comment", FALSE);
     /**
      * A commenter's @username in place of their display name, and in a reply's label once the
      * person it answers has been drawn. Read on each comment bind, so no restart.

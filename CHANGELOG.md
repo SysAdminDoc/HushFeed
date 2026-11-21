@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Share any comment`, under Comments, lets you share a comment or send it to a friend when TikTok says it can't be shared. TikTok's server marks those comments, and with the switch on the long-press menu treats them like any other. The link it shares is the video's link with the comment's id on it, the same kind TikTok makes for every comment. It's part of Comment tools and starts off (#481).
 * Show account country asks TikTok's sign-in region lookup when the profile has no country, the same lookup TikTok makes before it logs an account in. It goes by the account's id and doesn't need its videos, which a private account keeps hidden. The country the videos were posted from is only the last try now (#417).
 * On TikTok's own bottom bar, `Glass lens on the current tab` is a thin outline now, white on a dark bar and dark on a light one, with nothing filled inside, so it doesn't sit on the icons like a heavy frame. Sliding across the tabs works the same. The glass, floating and see-through bars keep the glass bubble (#483).
 * A name typed after an @ in a bio, like @First Last, opens TikTok's search on the Accounts tab now, where the person is usually the first row. It used to open the Top results. A typed @username still opens that profile, and `Tap @names in bios` turns all of it off (#247).

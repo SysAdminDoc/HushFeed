@@ -253,6 +253,12 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "TikTok where that account is based, or where its latest videos were posted from.",
                     Settings.COUNTRY_FROM_COMMENT_MENU
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Share any comment",
+                    "Share a comment or send it in a chat even when TikTok says it can't be shared.",
+                    Settings.SHARE_ANY_COMMENT
+            ));
         }
 
         boolean hiding = SettingsStatus.hideCommentQuickReactionsEnabled

@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* Show account country asks TikTok's sign-in region lookup when the profile has no country, the same lookup TikTok makes before it logs an account in. It goes by the account's id and doesn't need its videos, which a private account keeps hidden. The country the videos were posted from is only the last try now (#417).
 * On TikTok's own bottom bar, `Glass lens on the current tab` is a thin outline now, white on a dark bar and dark on a light one, with nothing filled inside, so it doesn't sit on the icons like a heavy frame. Sliding across the tabs works the same. The glass, floating and see-through bars keep the glass bubble (#483).
 * A name typed after an @ in a bio, like @First Last, opens TikTok's search on the Accounts tab now, where the person is usually the first row. It used to open the Top results. A typed @username still opens that profile, and `Tap @names in bios` turns all of it off (#247).
 * `Identify the song with Shazam` is a new choice for Long press and Double tap, the corners included. It takes 12 seconds from the middle of the video's sound, turns them into a Shazam fingerprint on your phone, and shows the song and artist with Copy and YouTube Music. Only the fingerprint goes to Shazam, never the audio, and only when you use the gesture. The fingerprint code is ported from SongRec.

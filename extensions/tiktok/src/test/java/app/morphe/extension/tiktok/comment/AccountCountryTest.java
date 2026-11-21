@@ -57,6 +57,34 @@ public class AccountCountryTest {
         outcome(null, AccountCountry.Outcome.FAILED);
     }
 
+    @Test public void theSignInRegionLookupAsksByTheNumericIdAsItIs() {
+        assertEquals("/passport/app/region/", AccountCountry.REGION_PATH);
+        java.util.Map<String, String> fields = AccountCountry.regionFields("7012345678901234567");
+        assertEquals("7012345678901234567", fields.get("hashed_id"));
+        assertEquals("5", fields.get("type"));
+        assertEquals(2, fields.size());
+    }
+
+    private static void region(String body, AccountCountry.Outcome outcome, String code) {
+        AccountCountry.Answer answer = AccountCountry.parseRegion(body);
+        assertEquals(body, outcome, answer.outcome);
+        assertEquals(body, code, answer.code);
+    }
+
+    @Test public void theSignInRegionReplysCountryIsTheAccountsOwn() {
+        region("{\"data\":{\"country_code\":\"tr\",\"domain\":\"api16-normal-useast5.us.tiktokv.com\"},"
+                + "\"message\":\"success\"}", AccountCountry.Outcome.FOUND, "TR");
+        region("{\"data\":{\"country_code\":\"\",\"domain\":\"x\"},\"message\":\"success\"}",
+                AccountCountry.Outcome.NONE, null);
+        region("{\"data\":{\"country_code\":\"useast5\"}}", AccountCountry.Outcome.NONE, null);
+        region("{\"data\":{\"error_code\":7,\"description\":\"Too many attempts\"},\"message\":\"error\"}",
+                AccountCountry.Outcome.FAILED, null);
+        region("{\"message\":\"error\"}", AccountCountry.Outcome.FAILED, null);
+        region("<html>blocked</html>", AccountCountry.Outcome.FAILED, null);
+        region("", AccountCountry.Outcome.FAILED, null);
+        region(null, AccountCountry.Outcome.FAILED, null);
+    }
+
     private static String post(String uid, String region) {
         return "{\"aweme_id\":\"1\",\"author\":{\"uid\":\"" + uid + "\"},\"region\":\"" + region + "\"}";
     }

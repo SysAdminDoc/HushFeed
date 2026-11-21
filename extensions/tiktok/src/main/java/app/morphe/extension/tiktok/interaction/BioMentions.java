@@ -81,6 +81,11 @@ public final class BioMentions {
     static final String PROFILE_URL = "https://www.tiktok.com/@";
     /** TikTok's own search link, the one its search history rows open, typed in with the keyword. */
     static final String SEARCH_URL = "snssdk1233://search?enter_from=search_history&enter_method=search_history&keyword=";
+    /**
+     * Opens the search on its Accounts tab, where the person a name stands for is usually the first
+     * row (#247). TikTok's search link reads {@code target_tab} by the tab's own name.
+     */
+    static final String ACCOUNTS_TAB = "&target_tab=user";
 
     /** Bio views already wired with the watcher and touch listener. Main thread only. */
     private static final Map<TextView, Boolean> WIRED = new WeakHashMap<>();
@@ -233,7 +238,7 @@ public final class BioMentions {
             String link = MENTION.matcher("@" + handle).matches()
                     ? PROFILE_URL + handle
                     : DISPLAY_NAME.matcher("@" + handle).matches() || DATED_NAME.matcher("@" + handle).matches()
-                    ? SEARCH_URL + Uri.encode(handle) : null;
+                    ? SEARCH_URL + Uri.encode(handle) + ACCOUNTS_TAB : null;
             if (link == null) return false;
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link))
                     .setPackage(context.getPackageName());

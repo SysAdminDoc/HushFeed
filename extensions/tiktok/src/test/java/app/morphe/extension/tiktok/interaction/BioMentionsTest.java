@@ -138,6 +138,7 @@ public class BioMentionsTest {
         assertNotNull(started);
         assertEquals("snssdk1233", started.getData().getScheme());
         assertEquals("Davidjennings11/30/24", started.getData().getQueryParameter("keyword"));
+        assertEquals("the Accounts tab", "user", started.getData().getQueryParameter("target_tab"));
     }
 
     @Test public void aMentionTikTokAlreadyLinkedKeepsTikToksLink() {
@@ -176,6 +177,7 @@ public class BioMentionsTest {
         assertEquals(Intent.ACTION_VIEW, started.getAction());
         assertEquals("snssdk1233", started.getData().getScheme());
         assertEquals("First Last", started.getData().getQueryParameter("keyword"));
+        assertEquals("the Accounts tab", "user", started.getData().getQueryParameter("target_tab"));
         assertEquals(activity.getPackageName(), started.getPackage());
     }
 

@@ -49,8 +49,11 @@ import java.util.TreeSet;
  * held; nothing here takes a touch from TikTok.
  *
  * <p>A video already at the hold speed is one TikTok counts as locked: its padlock starts closed,
- * a pull opens it (that pull is TikTok's unlock), and letting go on another speed locks that one
- * by arming TikTok's own lock just before its release reads the state.
+ * and letting go on another speed locks that one by arming TikTok's own lock just before its
+ * release reads the state. A pull locks that new speed too (#485): once a lock carries a speed
+ * into the next videos, every one of them counts as locked, and a pull that unlocked after a slide
+ * sent the video back to 1x instead of keeping what the bubble showed. Only a pull on the speed
+ * the video already had opens the padlock, and that one is TikTok's unlock.
  *
  * <p>There is one bubble at most. A new hold, letting go, the video on screen changing, the window
  * losing focus (a pause, a dialog, the notification shade), Hushfeed Pause and the switch going off
@@ -324,16 +327,29 @@ public final class HoldSpeedHud {
         }
     }
 
-    /** The padlock is closed on a locked video and when a pull will lock; a pull on a locked video opens it. */
+    /**
+     * The padlock is closed when letting go now leaves the video locked: on a locked video unless
+     * a pull on the speed it already had is unlocking it, and on any other once a pull will lock.
+     */
     private static void showLockState() {
         Bubble shown = bubble.get();
-        if (shown != null) shown.setLocked(startedLocked != pulled);
+        if (shown != null) shown.setLocked(willLock());
+    }
+
+    static boolean willLock() {
+        return startedLocked ? !pulled || slidAway() : pulled;
+    }
+
+    /** Whether this hold has slid to a speed other than the one the video played at before it. */
+    private static boolean slidAway() {
+        float speed = slidSpeed();
+        return !Float.isNaN(speed) && !Float.isNaN(heldFrom) && Float.compare(speed, heldFrom) != 0;
     }
 
     /**
      * Called from the gesture's release, past its "not held" guard, before it reads the speed to
-     * go back to or the lock state: a locked hold let go on a new speed locks that one, and the
-     * bubble goes.
+     * go back to or the lock state: a locked hold let go on a new speed locks that one, pulled
+     * down or not, and the bubble goes.
      */
     public static void onHoldRelease() {
         try {
@@ -350,10 +366,12 @@ public final class HoldSpeedHud {
     }
 
     private static void lockTheSlidSpeed() {
-        if (!holding || !startedLocked || pulled) return;
+        // A pull here would be TikTok's unlock; after a slide it means lock (#485), so the bridge
+        // arms the lock over it the same way.
+        if (!holding || !startedLocked || !slidAway()) return;
         Object component = gesture.get();
         float speed = slidSpeed();
-        if (component == null || Float.isNaN(speed) || Float.compare(speed, heldFrom) == 0) return;
+        if (component == null) return;
         Applier armer = lockArmerForTests;
         if (armer != null) armer.apply(component, speed);
         else armLockNative(component, speed);

@@ -379,12 +379,59 @@ public class HoldSpeedHudTest {
         assertEquals(List.of(), armed);
     }
 
+    /**
+     * #485: a lock carries its speed into the next videos, so each of them counts as locked. A
+     * slide to another speed and a pull down there locks that speed, not TikTok's unlock to 1x.
+     */
     @Test
-    public void aPullOnALockedHoldStaysTikToksUnlock() {
+    public void aPullAfterASlideOnALockedHoldLocksTheNewSpeed() {
         holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        assertEquals(List.of(2.25f), applied);
         HoldSpeedHud.onPullDown(1);
+        assertTrue("the padlock says the new speed locks", shown().locked());
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(2.25f), armed);
+    }
+
+    @Test
+    public void aPullOnALockedHoldThatStayedOnItsSpeedStaysTikToksUnlock() {
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(2f);
+        HoldSpeedHud.onPullDown(1);
+        assertFalse("the padlock opens", shown().locked());
         HoldSpeedHud.onHoldRelease();
         assertEquals(List.of(), armed);
+    }
+
+    @Test
+    public void aPullOnALockedHoldSlidBackToItsSpeedStaysTikToksUnlock() {
+        holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        move(DEAD_ZONE - 2);
+        assertEquals(List.of(2.25f, 2f), applied);
+        HoldSpeedHud.onPullDown(1);
+        assertFalse("the padlock opens", shown().locked());
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(), armed);
+    }
+
+    /** The video already plays at a speed slid to and locked before, which TikTok counts as locked. */
+    @Test
+    public void aVideoLockedAtASlidSpeedLocksTheNextSlideOnAPull() {
+        holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(2.25f), armed);
+        armed.clear();
+        applied.clear();
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(2.25f);
+        assertTrue("2.25x is the hold speed now, so the video counts as locked", shown().locked());
+        move(0);
+        move(-(DEAD_ZONE + STEP + 2));
+        assertEquals(List.of(2f), applied);
+        HoldSpeedHud.onPullDown(1);
+        assertTrue(shown().locked());
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(2f), armed);
     }
 
     @Test

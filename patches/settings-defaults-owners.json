@@ -168,6 +168,7 @@
       "COMPACT_COMMENT_HEADER",
       "HIDE_COMMENT_CLOSE_BUTTON",
       "HIDE_COMMENT_EXPAND_BUTTON",
+      "SHARE_ANY_COMMENT",
       "LARGER_COMMENT_LIKE_TARGET"
     ],
     "Confirm feed interactions": [
@@ -367,7 +368,8 @@
       "GHOST_HIDE_STORY_VIEWS",
       "GHOST_HIDE_PROFILE_VISITS",
       "GHOST_HIDE_TYPING",
-      "GHOST_HIDE_LIVE_VIEWS"
+      "GHOST_HIDE_LIVE_VIEWS",
+      "GHOST_LOCAL_LIKES"
     ],
     "Group likes per comment": [
       "BUNDLE_ACTIVITY_LIKES"
@@ -782,6 +784,7 @@
     "Show follow status": [
       "SHOW_FOLLOW_STATUS",
       "SHOW_JOIN_DATE",
+      "SHOW_PROFILE_CHANGES",
       "LOCAL_PROFILE_COUNTS",
       "LOCAL_PROFILE_VERIFIED_BADGE",
       "HIDE_OWN_PROFILE_RESTRICTION_NOTICE",

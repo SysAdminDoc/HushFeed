@@ -171,6 +171,7 @@
       "compact_comment_header",
       "hide_comment_close_button",
       "hide_comment_expand_button",
+      "share_any_comment",
       "larger_comment_like_target"
     ],
     "Confirm feed interactions": [
@@ -370,7 +371,8 @@
       "ghost_hide_story_views",
       "ghost_hide_profile_visits",
       "ghost_hide_typing",
-      "ghost_hide_live_views"
+      "ghost_hide_live_views",
+      "ghost_local_likes"
     ],
     "Group likes per comment": [
       "bundle_activity_likes"
@@ -798,6 +800,7 @@
     "Show follow status": [
       "show_follow_status",
       "show_join_date",
+      "show_profile_changes",
       "local_profile_counts",
       "local_profile_verified_badge",
       "hide_own_profile_restriction_notice",
@@ -2123,6 +2126,12 @@
       "key": "ghost_hide_typing",
       "type": "boolean",
       "default": true
+    },
+    "ghost_local_likes": {
+      "field": "GHOST_LOCAL_LIKES",
+      "key": "ghost_local_likes",
+      "type": "boolean",
+      "default": false
     },
     "ghost_mode": {
       "field": "GHOST_MODE",
@@ -4292,6 +4301,12 @@
       "type": "boolean",
       "default": false
     },
+    "share_any_comment": {
+      "field": "SHARE_ANY_COMMENT",
+      "key": "share_any_comment",
+      "type": "boolean",
+      "default": false
+    },
     "share_block_author": {
       "field": "SHARE_BLOCK_AUTHOR",
       "key": "share_block_author",
@@ -4403,6 +4418,12 @@
     "show_poll_results": {
       "field": "SHOW_POLL_RESULTS",
       "key": "show_poll_results",
+      "type": "boolean",
+      "default": false
+    },
+    "show_profile_changes": {
+      "field": "SHOW_PROFILE_CHANGES",
+      "key": "show_profile_changes",
       "type": "boolean",
       "default": false
     },

@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchPayload
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -485,6 +486,66 @@ internal fun Method.backPress(): BackPress? {
     // Each answer goes in front of an instruction nothing jumps to, so no path skips it.
     if (setOf(namedAt, handledAt, homeAt).any { it in branchTargets() }) return null
     return BackPress(namedAt, tag, handledAt, handled, homeAt, home)
+}
+
+internal const val TIKTOK_BASE_MAIN_HELPER = "Lcom/ss/android/ugc/aweme/homepage/TiktokBaseMainHelper;"
+
+/**
+ * TikTok's press-twice-to-quit check, the main activity helper's onBackPressed (#489), which the
+ * main activity's Back ([BackPressFingerprint]) asks first. It quits when the time since the last
+ * Back is within a gap TikTok's settings give, and otherwise keeps the time, shows "Tap again to
+ * exit" unless the activity is finishing, and answers no, so Back goes on to the tab switch.
+ */
+internal object BackAgainFingerprint : Fingerprint(
+    name = "onBackPressed",
+    returnType = "Z",
+    parameters = listOf(),
+    custom = { method, classDef -> classDef.superclass == TIKTOK_BASE_MAIN_HELPER && method.backAgain() != null },
+)
+
+/**
+ * Where Exit with one Back answers in [BackAgainFingerprint]'s method: [firstBackAt] is the
+ * if-gtz that sends a Back past the gap on to the toast, testing the compare held in [compared];
+ * [toastAt] is the test of isFinishing()'s answer, held in [finishing], that skips the toast.
+ */
+internal class BackAgain(val firstBackAt: Int, val compared: Int, val toastAt: Int, val finishing: Int)
+
+internal fun Method.backAgain(): BackAgain? {
+    val code = implementation?.instructions?.toList() ?: return null
+    // The time since the last Back: now, less the long the helper keeps that time in.
+    val since = code.indices.firstOrNull { i ->
+        code[i].opcode == Opcode.SUB_LONG_2ADDR && code.getOrNull(i - 1)?.let { read ->
+            read.opcode == Opcode.IGET_WIDE &&
+                read.getReference<FieldReference>()?.let { it.definingClass == TIKTOK_BASE_MAIN_HELPER && it.type == "J" } == true &&
+                (read as TwoRegisterInstruction).registerA == (code[i] as TwoRegisterInstruction).registerB
+        } == true
+    } ?: return null
+    val elapsed = (code[since] as TwoRegisterInstruction).registerA
+    // That time against the gap, an int widened right before the compare.
+    val compareAt = code.indices.firstOrNull { i ->
+        i > since && code[i].opcode == Opcode.CMP_LONG && code.getOrNull(i - 1)?.opcode == Opcode.INT_TO_LONG &&
+            (code[i] as ThreeRegisterInstruction).registerB == elapsed &&
+            (code[i] as ThreeRegisterInstruction).registerC == (code[i - 1] as TwoRegisterInstruction).registerA
+    } ?: return null
+    val compared = (code[compareAt] as ThreeRegisterInstruction).registerA
+    // Past the gap is a first Back: the compare's answer is tested with if-gtz a few lines on,
+    // with nothing writing it in between.
+    val firstBackAt = (compareAt + 1..minOf(compareAt + 4, code.lastIndex)).firstOrNull {
+        code[it].opcode == Opcode.IF_GTZ && (code[it] as OneRegisterInstruction).registerA == compared
+    } ?: return null
+    if ((compareAt + 1 until firstBackAt).any { code[it].writes(compared) }) return null
+    // The toast waits on Activity.isFinishing(), whose yes skips it.
+    val toastAt = code.indices.firstOrNull { i ->
+        i > firstBackAt && code[i].opcode == Opcode.IF_NEZ && code.getOrNull(i - 1)?.opcode == Opcode.MOVE_RESULT &&
+            code.getOrNull(i - 2)?.getReference<MethodReference>()?.let {
+                it.definingClass == "Landroid/app/Activity;" && it.name == "isFinishing" && it.returnType == "Z"
+            } == true &&
+            (code[i] as OneRegisterInstruction).registerA == (code[i - 1] as OneRegisterInstruction).registerA
+    } ?: return null
+    val finishing = (code[toastAt] as OneRegisterInstruction).registerA
+    // Each answer goes in front of an instruction nothing jumps to, so no path skips it.
+    if (setOf(firstBackAt, toastAt).any { it in branchTargets() }) return null
+    return BackAgain(firstBackAt, compared, toastAt, finishing)
 }
 
 internal const val A11Y_FEED_TOOL = "Lcom/ss/android/ugc/feed/platform/panel/accessibility/A11yFeedToolComponent;"

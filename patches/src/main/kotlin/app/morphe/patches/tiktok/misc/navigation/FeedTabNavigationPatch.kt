@@ -47,6 +47,7 @@ private const val TAB_BADGES_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/na
 private const val FEED_REFRESH_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/FeedRefresh;"
 private const val FEED_LOCK_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/wellbeing/FeedLock;"
 private const val START_PAGE_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/StartPage;"
+private const val BACK_EXIT_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/BackExit;"
 private const val FEED_BUTTONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/FeedButtons;"
 private const val PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/ProfileTabWatchHistory;"
 private const val BOTTOM_TAB_ICONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/BottomTabIcons;"
@@ -100,6 +101,32 @@ internal fun MutableMethod.answerBackWithStartPage() {
     addInstruction(
         back.namedAt,
         "invoke-static/range {v${back.tag} .. v${back.tag}}, $START_PAGE_CLASS_DESCRIPTOR->backPressedOn(Ljava/lang/String;)V",
+    )
+}
+
+/**
+ * Exit with one Back (#489) in TikTok's press-twice-to-quit check: every Back reads as one past
+ * the gap, so the check never quits on its own, and its "Tap again to exit" toast is skipped the
+ * way TikTok skips it for a finishing activity. The start page then leaves from Home. BackExit
+ * hands both answers back untouched while the switch is off.
+ */
+internal fun MutableMethod.leaveOnFirstBack() {
+    val back = backAgain()
+        ?: throw PatchException("Feed tab navigation: TikTok's press-twice-to-quit check no longer reads where it did.")
+    // Latest first, so the earlier indexes still point where they did.
+    addInstructions(
+        back.toastAt,
+        """
+            invoke-static/range {v${back.finishing} .. v${back.finishing}}, $BACK_EXIT_CLASS_DESCRIPTOR->skipAgainToast(I)I
+            move-result v${back.finishing}
+        """,
+    )
+    addInstructions(
+        back.firstBackAt,
+        """
+            invoke-static/range {v${back.compared} .. v${back.compared}}, $BACK_EXIT_CLASS_DESCRIPTOR->pastTheGap(I)I
+            move-result v${back.compared}
+        """,
     )
 }
 
@@ -304,6 +331,15 @@ val feedTabNavigationPatch = bytecodePatch(
         } catch (problem: PatchException) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Feed tab navigation] Left out the bottom bar height on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // Exit with one Back (#489) answers TikTok's press-twice-to-quit check. Same rule as
+        // above: BackAgainAnchorsTest holds it on a declared build.
+        val backAgain = try {
+            BackAgainFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Feed tab navigation] Left out Exit with one Back on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -607,6 +643,15 @@ val feedTabNavigationPatch = bytecodePatch(
         // feed is there to keep out of sight. It goes to the start tab instead, and leaves the app
         // from there.
         BackPressFingerprint.method.answerBackWithStartPage()
+        // TikTok asks its press-twice-to-quit check before that handler, so with Exit with one
+        // Back on, the first Back on Home reaches the start page instead of a toast.
+        if (backAgain != null) {
+            backAgain.leaveOnFirstBack()
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableExitWithOneBack()V",
+            )
+        }
 
         // TikTok's feed button row (play and pause, previous, next) shows only while a screen reader
         // with touch exploration runs. Its check answers yes first when the switch is on.

@@ -249,6 +249,13 @@ public class SettingsStatus {
         feedNavigationEnabled = true;
     }
 
+    /** Feed tab navigation found TikTok's press-twice-to-quit check and hooked it (#489). */
+    public static boolean exitWithOneBackEnabled = false;
+
+    public static void enableExitWithOneBack() {
+        exitWithOneBackEnabled = true;
+    }
+
     public static void enableCommentTranslation() {
         commentTranslationEnabled = true;
     }

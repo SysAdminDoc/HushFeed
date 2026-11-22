@@ -5726,6 +5726,12 @@
     "row": "Open TikTok on"
    },
    {
+    "key": "exit_with_one_back",
+    "default": false,
+    "type": "bool",
+    "row": "Exit with one Back"
+   },
+   {
     "key": "bottom_tab_icon_style",
     "default": "tiktok",
     "type": "string",

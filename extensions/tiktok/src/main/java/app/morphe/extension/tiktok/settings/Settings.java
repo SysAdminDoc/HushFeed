@@ -679,6 +679,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting INBOX_TAB_FLIPS_READ_RECEIPTS = new BooleanSetting("inbox_tab_flips_read_receipts", FALSE);
     /** The tab TikTok opens on from its icon: tiktok (its own pick), for_you, following, friends, inbox or profile. */
     public static final StringSetting START_PAGE = new StringSetting("start_page", "tiktok");
+    /** Back on Home leaves TikTok at once, with no "Tap again to exit" (#489). */
+    public static final BooleanSetting EXIT_WITH_ONE_BACK = new BooleanSetting("exit_with_one_back", FALSE);
     /** TikTok's previous, pause and next buttons on the feed, shown without a screen reader. Off by default. */
     public static final BooleanSetting SHOW_FEED_BUTTONS = new BooleanSetting("show_feed_buttons", FALSE);
     public static final BooleanSetting HIDE_TAKO_AI = new BooleanSetting("hide_tako_ai", FALSE, true);

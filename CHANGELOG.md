@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Exit with one Back` is new on the Feed tabs page. One Back on Home leaves TikTok, with no "Tap again to exit" toast. From any other tab, Back still goes to Home first, or to the tab `Open TikTok on` picks. It starts off and doesn't need a restart (#489).
 * `Hide the pause icon` is new on the Feed screen page. A tap still pauses and plays the video, but the big play icon doesn't pop up over it anymore. It starts off and doesn't need a restart (#489).
 * `Hide playable games` is new under Feed filter. It takes the mini games tagged Playable out of For You before they show. A creator on your exceptions list keeps theirs. It starts off and needs a restart (#486).
 * `Hide the Tako bubble` also covers the Tako icon some accounts get in the home top bar. inxomnyaa found where TikTok sets it up and sent the hook in a pull request (#475).

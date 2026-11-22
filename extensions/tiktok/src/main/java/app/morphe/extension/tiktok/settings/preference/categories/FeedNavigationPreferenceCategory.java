@@ -100,6 +100,16 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
         addPreference(new ChoicePreference(context, "Open TikTok on", Settings.START_PAGE,
                 new String[]{"TikTok default", "For You", "Following", "Friends", "Discover", "Inbox", "Profile"},
                 new String[]{StartPage.TIKTOK, StartPage.FOR_YOU, StartPage.FOLLOWING, StartPage.FRIENDS, StartPage.DISCOVER, StartPage.INBOX, StartPage.PROFILE}));
+        // The start page's Back hook leaves from Home, so the row needs both of the patch's hooks.
+        if (SettingsStatus.feedNavigationEnabled && SettingsStatus.exitWithOneBackEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Exit with one Back",
+                    "Back on Home leaves TikTok right away, with no \"Tap again to exit\" message. From "
+                            + "another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.",
+                    Settings.EXIT_WITH_ONE_BACK
+            ));
+        }
         addPreference(new TogglePreference(
                 context,
                 "Show TikTok's feed buttons",

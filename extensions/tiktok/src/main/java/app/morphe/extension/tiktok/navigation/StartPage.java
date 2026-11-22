@@ -192,12 +192,14 @@ public final class StartPage {
     /**
      * Whether TikTok's back handler stops here, given its own answer (non-zero when it is closing a
      * guide). A Back on the tab the app opens on puts the app in the background and answers yes,
-     * so TikTok goes no further; any other Back keeps TikTok's answer.
+     * so TikTok goes no further; any other Back keeps TikTok's answer. With Exit with one Back on
+     * (#489), Home counts as that tab when the app opens on a feed.
      */
     public static int leaveOnBack(int handled) {
         if (handled != 0) return handled;
         try {
             String start = backStartTag();
+            if (start == null && BackExit.isOn()) start = HOME_TAG;
             if (start == null || !start.equals(backFrom)) return handled;
             Activity activity = Utils.getActivity();
             if (activity == null || activity.isFinishing() || !activity.moveTaskToBack(true)) return handled;

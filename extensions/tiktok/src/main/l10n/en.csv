@@ -345,6 +345,7 @@ Automatically record LIVEs you enter,Automatically record LIVEs you enter
 Avatar and follow button,Avatar and follow button
 Azərbaycan dili,Azərbaycan dili
 Back,Back
+"Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.","Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks."
 Back up settings,Back up settings
 Backdrop behind video text,Backdrop behind video text
 Background audio,Background audio
@@ -735,6 +736,7 @@ Episode %1$s,Episode %1$s
 Errors,Errors
 Español,Español
 Everyone you follow follows you back,Everyone you follow follows you back
+Exit with one Back,Exit with one Back
 Expand activity list,Expand activity list
 Expanded,Expanded
 Explore or Community,Explore or Community

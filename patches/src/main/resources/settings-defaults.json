@@ -342,6 +342,7 @@
       "inbox_tab_flips_read_receipts",
       "search_instead_of_home",
       "start_page",
+      "exit_with_one_back",
       "show_feed_buttons",
       "hide_tako_ai",
       "shared_video_alone",
@@ -1858,6 +1859,12 @@
     "enable_voice_comments": {
       "field": "ENABLE_VOICE_COMMENTS",
       "key": "enable_voice_comments",
+      "type": "boolean",
+      "default": false
+    },
+    "exit_with_one_back": {
+      "field": "EXIT_WITH_ONE_BACK",
+      "key": "exit_with_one_back",
       "type": "boolean",
       "default": false
     },

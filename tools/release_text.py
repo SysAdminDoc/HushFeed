@@ -30,6 +30,7 @@ NOTES = ROOT / "extensions/tiktok/src/main/l10n/notes"
 LANGUAGES = ("ar", "az", "de", "es", "in", "it", "pt-rBR", "ru", "th", "tr", "vi", "zh-Hans")
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 GUIDE = "concepts/patch-development.md"
+TIKTOK = "com.zhiliaoapp.musically"
 # The README's Supported target lines, and the line naming the build the next release patches.
 SUPPORTED_VERSION = re.compile(
     r"^- Version: \[(?P<version>\d+\.\d+\.\d+)\]\((?P<url>[^)\s]+)\), on APKMirror since (?P<date>\d{4}-\d{2}-\d{2})\.$",
@@ -209,10 +210,14 @@ def catalog_patches() -> list:
 
 
 def catalog() -> tuple[int, list[str]]:
+    """The patch count and global TikTok's declared versions. Side declarations like TikTok Lite
+    aren't TikTok versions: the README, the index and the notes name only what to patch for TikTok."""
     patches = catalog_patches()
     versions = set()
     for patch in patches:
         for app in patch.get("compatibility") or []:
+            if app.get("packageName", TIKTOK) != TIKTOK:
+                continue
             versions.update(t["version"] for t in app.get("targets") or []
                             if t.get("version") and not t.get("experimental"))
     return len(patches), sorted(versions, key=lambda v: tuple(map(int, v.split("."))))

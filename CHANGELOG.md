@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Build
+
+* The release tools name only global TikTok's version in the README, the Manager text and the update steps. With TikTok Lite declared too, v0.84.0 went out saying "TikTok 47.8.2 and 47.9.3", and the README still pointed at 47.8.3.
+
 ## 0.84.0 (2026-11-22)
 
 ### Features

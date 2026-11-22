@@ -94,6 +94,8 @@ final class FeedFilterFeedback {
                 new MarkerSwitch(feedFilter, Settings.HIDE_PLAYLIST_VIDEOS.key, "Hide playlist videos"));
         MARKER_SWITCHES.put("SubscriberOnlyFilter",
                 new MarkerSwitch(feedFilter, Settings.HIDE_SUBSCRIBER_ONLY.key, "Hide subscriber-only videos"));
+        MARKER_SWITCHES.put("PlayableGameFilter",
+                new MarkerSwitch(feedFilter, Settings.HIDE_PLAYABLE_GAMES.key, "Hide playable games"));
         MARKER_SWITCHES.put("PromotionalMusicFilter",
                 new MarkerSwitch(feedFilter, Settings.HIDE_PROMOTIONAL_MUSIC.key, "Hide promotional music"));
         MARKER_SWITCHES.put("LiveReplayFilter",
@@ -325,6 +327,7 @@ final class FeedFilterFeedback {
         if ("DramaFilter".equals(reason)) return "Mini dramas";
         if ("PlaylistFilter".equals(reason)) return "Playlist posts";
         if ("SubscriberOnlyFilter".equals(reason)) return "Subscriber-only posts";
+        if ("PlayableGameFilter".equals(reason)) return "Playable games";
         if ("InsertedCardFilter".equals(reason)) return "Inserted cards";
         if ("MidAdFilter".equals(reason)) return "Mid-roll ads";
         if ("SeenVideoFilter".equals(reason)) return "Seen videos";

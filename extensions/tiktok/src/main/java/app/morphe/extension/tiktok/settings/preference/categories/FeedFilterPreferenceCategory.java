@@ -161,6 +161,12 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 "Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.",
                 Settings.HIDE_SUBSCRIBER_ONLY
         ));
+        addPreference(new TogglePreference(
+                context,
+                "Hide playable games",
+                "Hide the mini games you can play right in the For You feed.",
+                Settings.HIDE_PLAYABLE_GAMES
+        ));
         // A kind of post, not an ad: its summary says it goes even when the badge isn't paid.
         addPreference(new TogglePreference(context, "Filter location-tagged videos",
                 "Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.",

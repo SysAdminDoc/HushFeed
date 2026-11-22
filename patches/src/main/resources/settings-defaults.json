@@ -304,6 +304,7 @@
       "hide_inserted_cards",
       "hide_playlist_videos",
       "hide_subscriber_only",
+      "hide_playable_games",
       "live_feed_filter",
       "live_hide_gaming",
       "live_hide_shopping",
@@ -2726,6 +2727,12 @@
     "hide_paid_partnership": {
       "field": "HIDE_PAID_PARTNERSHIP",
       "key": "hide_paid_partnership",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_playable_games": {
+      "field": "HIDE_PLAYABLE_GAMES",
+      "key": "hide_playable_games",
       "type": "boolean",
       "default": false
     },

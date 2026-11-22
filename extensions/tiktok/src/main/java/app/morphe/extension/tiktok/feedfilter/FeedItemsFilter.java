@@ -62,6 +62,7 @@ public final class FeedItemsFilter {
         new ContentMarkerFilters.DramaFilter(),
         new ContentMarkerFilters.PlaylistFilter(),
         SUBSCRIBER_ONLY_FILTER,
+        new ContentMarkerFilters.PlayableGameFilter(),
         new CardFilters.InsertedCardFilter(),
         SEEN_FILTER,
         new OfflineVideoFilter(),

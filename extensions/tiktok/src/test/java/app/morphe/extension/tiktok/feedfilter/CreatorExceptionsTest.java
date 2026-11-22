@@ -238,6 +238,8 @@ public class CreatorExceptionsTest {
                         item -> item.mixInfo = new Mix()),
                 new Case("SubscriberOnlyFilter", () -> Settings.HIDE_SUBSCRIBER_ONLY.save(true),
                         item -> item.subOnly = true),
+                new Case("PlayableGameFilter", () -> Settings.HIDE_PLAYABLE_GAMES.save(true),
+                        item -> item.awemeType = 260),
                 new Case("PublicationAgeFilter", () -> Settings.MAX_PUBLICATION_AGE_DAYS.save(7),
                         item -> item.createTime = nowSeconds - 30L * 86_400L),
                 new Case("QualityFilter", () -> Settings.MAX_VIDEO_SECONDS.save(1),
@@ -309,7 +311,7 @@ public class CreatorExceptionsTest {
                 Settings.HIDE_SERIES, Settings.HIDE_MINI_DRAMAS, Settings.HIDE_PLAYLIST_VIDEOS,
                 Settings.HIDE_INSERTED_CARDS, Settings.HIDE_SEEN_VIDEOS, Settings.HIDE_PROMOTIONAL_MUSIC,
                 Settings.HIDE_LIVE_REPLAYS, Settings.HIDE_UNPERSONALIZED_FOR_YOU, Settings.HIDE_OFFLINE_VIDEOS,
-                Settings.BLOCKED_WORDS_IN_STICKERS, Settings.HIDE_SUBSCRIBER_ONLY,
+                Settings.BLOCKED_WORDS_IN_STICKERS, Settings.HIDE_SUBSCRIBER_ONLY, Settings.HIDE_PLAYABLE_GAMES,
         };
     }
 
@@ -897,7 +899,7 @@ public class CreatorExceptionsTest {
         Set<String> subjective = new TreeSet<>();
         for (Class<?> type : CreatorExceptions.SUBJECTIVE) subjective.add(type.getSimpleName());
         assertEquals(new TreeSet<>(List.of("AiGeneratedFilter", "CommentCountFilter", "FavouriteCountFilter",
-                "ImageVideoFilter", "LikeCountFilter", "LocationBadgeFilter", "PlaylistFilter",
+                "ImageVideoFilter", "LikeCountFilter", "LocationBadgeFilter", "PlayableGameFilter", "PlaylistFilter",
                 "PublicationAgeFilter", "QualityFilter", "ShareCountFilter", "StoryFilter", "SubscriberOnlyFilter",
                 "UnpersonalizedForYouFilter", "VerifiedFilter", "ViewCountFilter")), subjective);
     }

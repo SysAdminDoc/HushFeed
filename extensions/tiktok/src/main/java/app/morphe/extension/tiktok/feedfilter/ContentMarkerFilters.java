@@ -362,6 +362,25 @@ public final class ContentMarkerFilters {
         }
     }
 
+    /**
+     * The mini games tagged "Playable" that For You serves as posts (#486). TikTok marks one by
+     * its aweme type alone: its own check, the static Aweme to boolean that the Playable tag, the
+     * game preloader and the repost guard all ask, is getAwemeType() == 260.
+     */
+    public static class PlayableGameFilter implements IFilter {
+        static final int AWEME_TYPE_PLAYABLE = 260;
+
+        @Override
+        public boolean getEnabled() {
+            return Settings.HIDE_PLAYABLE_GAMES.get();
+        }
+
+        @Override
+        public boolean getFiltered(Aweme item) {
+            return item.getAwemeType() == AWEME_TYPE_PLAYABLE;
+        }
+    }
+
     /** Videos from verified accounts. */
     public static class VerifiedFilter implements IFilter {
         @Override

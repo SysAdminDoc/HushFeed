@@ -49,6 +49,7 @@ public final class CreatorExceptions {
             ContentMarkerFilters.VerifiedFilter.class,
             ContentMarkerFilters.PlaylistFilter.class,
             ContentMarkerFilters.SubscriberOnlyFilter.class,
+            ContentMarkerFilters.PlayableGameFilter.class,
             AdvancedFeedRules.PublicationAgeFilter.class,
             AdvancedFeedRules.QualityFilter.class,
             AdvancedFeedRules.UnpersonalizedForYouFilter.class,

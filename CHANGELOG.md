@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Hide playable games` is new under Feed filter. It takes the mini games tagged Playable out of For You before they show. A creator on your exceptions list keeps theirs. It starts off and needs a restart (#486).
 * `Hide the Tako bubble` also covers the Tako icon some accounts get in the home top bar. inxomnyaa found where TikTok sets it up and sent the hook in a pull request (#475).
 * Two new Comment tools switches for the comment sheet (#479). `Always show the expand button in comments` gives every video's comments the button that stretches them over the whole screen, which TikTok only hands to some accounts. `Keep the video full size under comments` stops the video from shrinking into a small box when the comments open, so they cover its lower part instead. Both start off and take a TikTok restart.
 * `Share any comment`, under Comments, lets you share a comment or send it to a friend when TikTok says it can't be shared. TikTok's server marks those comments, and with the switch on the long-press menu treats them like any other. The link it shares is the video's link with the comment's id on it, the same kind TikTok makes for every comment. It's part of Comment tools and starts off (#481).

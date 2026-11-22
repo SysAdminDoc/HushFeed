@@ -2975,3 +2975,6 @@ Always show the expand button in comments,始终显示评论中的展开按钮
 Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.,在每个视频的评论里都放上把评论拉满整个屏幕的按钮。TikTok 只给部分账号这个按钮。两个开关都打开时，以“隐藏评论中的展开按钮”为准.
 Keep the video full size under comments,评论打开时保持视频原大小
 "The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.",打开评论时视频保持原来的大小，评论盖住视频的下半部分，而不是把视频推到上方的小框里.
+Hide playable games,隐藏可玩的游戏
+Hide the mini games you can play right in the For You feed.,隐藏可以直接在“为你推荐”信息流里玩的小游戏.
+Playable games,可玩的游戏

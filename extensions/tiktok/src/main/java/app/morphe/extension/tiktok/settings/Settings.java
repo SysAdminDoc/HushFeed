@@ -1548,6 +1548,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_PLAYLIST_VIDEOS = new BooleanSetting("hide_playlist_videos", FALSE, true);
     // TikTok Subs posts only subscribers can watch (#219), on the feed and on profile grids.
     public static final BooleanSetting HIDE_SUBSCRIBER_ONLY = new BooleanSetting("hide_subscriber_only", FALSE, true);
+    // The mini games tagged Playable that For You serves as posts (#486).
+    public static final BooleanSetting HIDE_PLAYABLE_GAMES = new BooleanSetting("hide_playable_games", FALSE, true);
     // The LIVE feed you swipe through (issue #57). Read on every page TikTok sends, so a change
     // reaches the next page without a restart.
     public static final BooleanSetting LIVE_FEED_FILTER = new BooleanSetting("live_feed_filter", FALSE);

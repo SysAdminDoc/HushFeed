@@ -5126,6 +5126,13 @@
     "restart": true
    },
    {
+    "key": "hide_playable_games",
+    "default": false,
+    "type": "bool",
+    "row": "Hide playable games",
+    "restart": true
+   },
+   {
     "key": "hide_ai_cast",
     "default": false,
     "type": "bool",

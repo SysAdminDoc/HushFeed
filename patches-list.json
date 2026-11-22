@@ -867,6 +867,15 @@
           "values": null
         },
         {
+          "key": "rounded_grid_corners",
+          "title": "Default: rounded grid corners",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "profile_grid_sort",
           "title": "Default: profile grid sort",
           "description": null,
@@ -4191,6 +4200,15 @@
           "values": null
         },
         {
+          "key": "hide_playable_games",
+          "title": "Default: hide playable games",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "live_feed_filter",
           "title": "Default: live feed filter",
           "description": null,
@@ -4543,6 +4561,15 @@
           "required": false,
           "type": "kotlin.String",
           "default": "tiktok",
+          "values": null
+        },
+        {
+          "key": "exit_with_one_back",
+          "title": "Default: exit with one back",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         },
         {
@@ -6531,6 +6558,15 @@
           "values": null
         },
         {
+          "key": "hide_pause_icon",
+          "title": "Default: hide pause icon",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_following_live_row",
           "title": "Default: hide following live row",
           "description": null,
@@ -7768,6 +7804,15 @@
         {
           "key": "show_exact_live_viewers",
           "title": "Default: show exact live viewers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_room_info",
+          "title": "Default: live room info",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

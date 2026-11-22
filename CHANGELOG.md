@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.84.0 (2026-11-22)
+
 ### Features
 
 * `Long press` and `Double tap` can now be set to `Save this video`. It saves the video on screen the way the save button does, with your download settings, mini drama episodes included. It's offered when Advanced downloads is patched in (#463).

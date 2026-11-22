@@ -250,6 +250,7 @@ Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving t
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID."
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts."
+"Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok."
 Ads,Ads
 Advanced,Advanced
 Advanced JSON value,Advanced JSON value
@@ -2278,6 +2279,7 @@ Sleep timer off,Sleep timer off
 Slide across the tabs,Slide across the tabs
 Slide to change the hold speed,Slide to change the hold speed
 Small,Small
+Smaller text sizes,Smaller text sizes
 Smallest,Smallest
 Soft blur,Soft blur
 Soft tick,Soft tick

@@ -905,6 +905,10 @@
       "IMPORTED_FONT",
       "IMPORTED_EMOJI_FONT"
     ],
+    "Smaller text sizes": [
+      "SMALLER_TEXT_SIZES",
+      "SMALLER_TEXT_SIZE_LEVEL"
+    ],
     "Account cleanup": [
       "TAP_TO_REMOVE"
     ]

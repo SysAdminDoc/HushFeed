@@ -3154,3 +3154,6 @@ Hide the pause icon	Esconder o ícone de pausa
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	Um toque ainda pausa e reproduz o vídeo, mas o ícone grande de reproduzir não aparece por cima.
 Exit with one Back	Sair com um só Voltar
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Voltar no Início fecha o TikTok na hora, sem a mensagem "Toque de novo para sair". Em outra aba, Voltar ainda leva você primeiro ao Início, ou à aba que Abrir o TikTok em escolhe.
+# context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
+Smaller text sizes	Tamanhos de texto menores
+Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	Adiciona três níveis abaixo do menor tamanho ao próprio controle Tamanho do texto do TikTok, em Configurações e privacidade > Acessibilidade. Escolha um lá e reinicie o TikTok.

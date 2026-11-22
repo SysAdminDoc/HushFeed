@@ -18100,5 +18100,45 @@
    }
   ],
   "notes": "Importing a .ttf/.otf (imported_font) needs a file chosen in the Android picker and is not exercised; the 'imported' bound name would appear then. The hook records on the first typeface request after the process starts, hence every phase restarts. How the text looks on screen is a visual review the hook status stands in for."
+ },
+ {
+  "name": "Smaller text sizes",
+  "category": "Interface",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/textsize/SmallerTextSizesPatch.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/textsize/TextSizeSites.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/font/SmallerTextSizes.java"
+  ],
+  "settings": [
+   {
+    "key": "smaller_text_sizes",
+    "default": false,
+    "type": "bool",
+    "row": "Smaller text sizes",
+    "restart": true
+   }
+  ],
+  "surface": "other",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.smallerTextSizesEnabled is true, so every hook point was found and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "smallerTextSizesEnabled"
+      },
+      "expect": "\\bsmallerTextSizesEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issue #476, inxomnyaa's pull request. TikTok's Text size page (Settings and privacy > Accessibility, DynamicFontSizeFragment) keeps a mode from 0 to 3 under dynamic_font_mode, and X.03aF's LIZ()F and LIZJ()F turn it into the factor its density rewrites scale the whole interface by, 1.0 for mode 0. With the switch on the slider (X.1PkU) gets three positions below mode 0, smaller_text_size_level keeps the one confirmed (factors 0.93, 0.87 and 0.8) and TikTok still stores mode 0. The switch has a row; the level has none, the slider writes it. Check on a phone: switch on, restart, open Text size, confirm the leftmost stop, restart, and everything is smaller than at TikTok's smallest; switch off and restart, and TikTok's smallest is back."
  }
 ]

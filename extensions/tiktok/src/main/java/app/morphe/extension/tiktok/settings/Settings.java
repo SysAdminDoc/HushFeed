@@ -126,6 +126,14 @@ public class Settings extends BaseSettings {
     /** The Accessibility page's Captions switch and the caption controls, where TikTok leaves them off (CaptionsAvailable). */
     public static final BooleanSetting KEEP_CAPTIONS_AVAILABLE = new BooleanSetting("keep_captions_available", FALSE, true);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
+    /** Three stops below the smallest size on TikTok's own Text size slider (#476). */
+    public static final BooleanSetting SMALLER_TEXT_SIZES = new BooleanSetting("smaller_text_sizes", FALSE, true);
+    /**
+     * Which of those stops the slider was last confirmed on: 0 for none of them, 1 to 3 from the
+     * one next to TikTok's smallest down. No row: the slider writes it (SmallerTextSizes).
+     */
+    public static final IntegerSetting SMALLER_TEXT_SIZE_LEVEL =
+            new IntegerSetting("smaller_text_size_level", 0).withRange(0, 3);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
     // Use system font's hook draws TikTok's text in the imported font file while this is on and

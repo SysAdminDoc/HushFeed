@@ -842,6 +842,10 @@
     "Skip update checks": [
       "skip_update_checks"
     ],
+    "Smaller text sizes": [
+      "smaller_text_sizes",
+      "smaller_text_size_level"
+    ],
     "Split activity list": [
       "split_activity_list"
     ],
@@ -4557,6 +4561,20 @@
     "skip_update_checks": {
       "field": "SKIP_UPDATE_CHECKS",
       "key": "skip_update_checks",
+      "type": "boolean",
+      "default": false
+    },
+    "smaller_text_size_level": {
+      "field": "SMALLER_TEXT_SIZE_LEVEL",
+      "key": "smaller_text_size_level",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 3
+    },
+    "smaller_text_sizes": {
+      "field": "SMALLER_TEXT_SIZES",
+      "key": "smaller_text_sizes",
       "type": "boolean",
       "default": false
     },

@@ -97,6 +97,7 @@ public class SettingsStatus {
     public static boolean externalBrowserEnabled = false;
     public static boolean alwaysShowPublishDateEnabled = false;
     public static boolean systemFontEnabled = false;
+    public static boolean smallerTextSizesEnabled = false;
     public static boolean turnOffHapticsEnabled = false;
     public static boolean amoledDarkModeEnabled = false;
     public static boolean screenTransitionsEnabled = false;
@@ -520,6 +521,10 @@ public class SettingsStatus {
 
     public static void enableSystemFont() {
         systemFontEnabled = true;
+    }
+
+    public static void enableSmallerTextSizes() {
+        smallerTextSizesEnabled = true;
     }
 
     public static void enableTurnOffHaptics() {

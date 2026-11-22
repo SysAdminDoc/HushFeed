@@ -3355,3 +3355,6 @@ Hide the pause icon	Скрывать значок паузы
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	Нажатие по-прежнему ставит видео на паузу и запускает его, но большой значок воспроизведения поверх него не появляется.
 Exit with one Back	Выход одним нажатием Назад
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Назад на Главной сразу закрывает TikTok, без сообщения «Нажмите ещё раз, чтобы выйти». На другой вкладке Назад по-прежнему сначала ведёт на Главную или на вкладку, выбранную в «Открыть TikTok на».
+# context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
+Smaller text sizes	Уменьшенные размеры текста
+Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	Добавляет три деления ниже самого маленького размера на собственный ползунок TikTok Размер текста в разделе Настройки и конфиденциальность > Универсальный доступ. Выберите там одно из них и перезапустите TikTok.

@@ -3157,3 +3157,6 @@ Hide the pause icon	ซ่อนไอคอนหยุดชั่วครา
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	การแตะยังคงหยุดและเล่นวิดีโอได้ แต่ไอคอนเล่นขนาดใหญ่จะไม่แสดงทับวิดีโอ
 Exit with one Back	ออกด้วยการกดกลับครั้งเดียว
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	การกดกลับที่หน้าแรกจะออกจาก TikTok ทันที โดยไม่มีข้อความ "แตะอีกครั้งเพื่อออก" จากแท็บอื่น การกดกลับยังคงพาคุณไปที่หน้าแรกก่อน หรือไปที่แท็บที่เลือกไว้ในเปิด TikTok ที่
+# context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
+Smaller text sizes	ขนาดข้อความที่เล็กลง
+Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	เพิ่มอีกสามระดับที่เล็กกว่าขนาดเล็กสุดให้แถบเลื่อน ขนาดข้อความ ของ TikTok เอง ใน การตั้งค่าและความเป็นส่วนตัว > การเข้าถึง เลือกหนึ่งระดับที่นั่น จากนั้นรีสตาร์ท TikTok

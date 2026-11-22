@@ -1055,6 +1055,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "original_sound", "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer",
                     "save_frame",
                     "save_cover", "open_search"));
+            if (SettingsStatus.advancedDownloadsEnabled) {
+                // The save button's save, so it needs Advanced downloads (#463).
+                tapLabels.add("Save this video");
+                tapValues.add("save_video");
+            }
             if (SettingsStatus.liveSpeedEnabled) {
                 tapLabels.add("Speed up this video, double tap again to undo");
                 tapValues.add("speed_toggle");
@@ -1101,6 +1106,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "original_sound", "copy_link", "copy_sound_link", "youtube_music", "identify_song", "sleep_timer",
                     "save_frame",
                     "save_cover", "open_search"));
+            if (SettingsStatus.advancedDownloadsEnabled) {
+                pressLabels.add("Save this video");
+                pressValues.add("save_video");
+            }
             if (SettingsStatus.automaticClearDisplayEnabled) {
                 pressLabels.add("Turn Clear display on or off");
                 pressValues.add("clear_display");

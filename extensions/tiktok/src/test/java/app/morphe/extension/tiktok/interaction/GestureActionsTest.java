@@ -640,6 +640,47 @@ public class GestureActionsTest {
         }
     }
 
+    /** #463: a long press or a double tap can save the video on screen, the way the save button does. */
+    @Test public void saveThisVideoIsOfferedWithAdvancedDownloadsAndRunsTheSaveButtonsSave() throws Exception {
+        boolean downloads = SettingsStatus.advancedDownloadsEnabled;
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.longPressEnabled = true;
+            SettingsStatus.doubleTapEnabled = true;
+            SettingsStatus.advancedDownloadsEnabled = true;
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            for (String key : new String[]{"long_press_action", "double_tap_action"}) {
+                ChoicePreference choice = (ChoicePreference) screen.findPreference(key);
+                int at = -1;
+                for (int i = 0; i < choice.getEntryValues().length; i++) {
+                    if ("save_video".contentEquals(choice.getEntryValues()[i])) at = i;
+                }
+                assertTrue(key + " offers it", at >= 0);
+                assertEquals(key, L10n.t("Save this video"), String.valueOf(choice.getEntries()[at]));
+            }
+            assertTrue(GestureActions.takesLongPress("save_video"));
+
+            // Nothing on screen, so the save answers the way the save button does then.
+            java.lang.reflect.Method reset =
+                    app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor.class.getDeclaredMethod("resetForTests");
+            reset.setAccessible(true);
+            reset.invoke(null);
+            ShadowToast.reset();
+            assertTrue(GestureActions.runAction("save_video"));
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals("the save button's own answer with nothing on screen",
+                    L10n.t("No video selected. Open a video first."), ShadowToast.getTextOfLatestToast());
+
+            SettingsStatus.advancedDownloadsEnabled = false;
+            assertFalse("without Advanced downloads the press stays TikTok's", GestureActions.takesLongPress("save_video"));
+            assertFalse(GestureActions.runAction("save_video"));
+        } finally {
+            SettingsStatus.advancedDownloadsEnabled = downloads;
+        }
+    }
+
     /** Save the cover is Hushfeed's press too, and says so when the post on screen has no cover. */
     @Test public void longPressSaveCoverTakesThePressAndSaysWhenThereIsNoCover() {
         try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {

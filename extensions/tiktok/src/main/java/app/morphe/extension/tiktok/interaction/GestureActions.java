@@ -30,6 +30,7 @@ import app.morphe.extension.tiktok.download.CoverSaver;
 import app.morphe.extension.tiktok.download.OriginalSoundDownloads;
 import app.morphe.extension.tiktok.download.ExternalDownloader;
 import app.morphe.extension.tiktok.download.FrameSaver;
+import app.morphe.extension.tiktok.download.OriginalPhotos;
 import app.morphe.extension.tiktok.share.ShareUrlSanitizer;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.notinterested.AlsoFilter;
@@ -252,7 +253,8 @@ public final class GestureActions {
                 || "identify_song".equals(action) || "sleep_timer".equals(action) || "save_frame".equals(action)
                 || "save_cover".equals(action) || "clear_display".equals(action)
                 || "open_search".equals(action)
-                || ("not_interested".equals(action) && SettingsStatus.notInterestedEnabled);
+                || ("not_interested".equals(action) && SettingsStatus.notInterestedEnabled)
+                || ("save_video".equals(action) && SettingsStatus.advancedDownloadsEnabled);
     }
 
     /**
@@ -428,6 +430,14 @@ public final class GestureActions {
         }
         if ("save_cover".equals(action)) {
             CoverSaver.save(Utils.getActivity(), onScreenAweme());
+            return true;
+        }
+        if ("save_video".equals(action)) {
+            // The save button's save, with the download settings, a drama episode included (#463).
+            // Advanced downloads does the saving, so a bundle without it leaves the gesture to TikTok.
+            if (!SettingsStatus.advancedDownloadsEnabled) return false;
+            Context context = Utils.getActivity();
+            OriginalPhotos.startFromButton(onScreenAweme(), context != null ? context : Utils.getContext());
             return true;
         }
         if ("clear_display".equals(action)) {

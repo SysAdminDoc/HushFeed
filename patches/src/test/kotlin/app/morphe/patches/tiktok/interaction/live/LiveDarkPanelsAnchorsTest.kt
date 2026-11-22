@@ -617,6 +617,113 @@ class LiveDarkPanelsAnchorsTest {
         }
     }
 
+    private fun called(instruction: com.android.tools.smali.dexlib2.iface.instruction.Instruction): MethodReference? =
+        (instruction as? ReferenceInstruction)?.reference as? MethodReference
+
+    /** A static call handing a Compose view its first argument, the way the host's palette and the page's content take it. */
+    private fun takesComposeView(instruction: com.android.tools.smali.dexlib2.iface.instruction.Instruction, arguments: Int): Boolean {
+        val call = called(instruction) ?: return false
+        return instruction.opcode == Opcode.INVOKE_STATIC && call.parameterTypes.size == arguments &&
+            call.parameterTypes.first().toString() == COMPOSE_VIEW
+    }
+
+    /**
+     * #362: the guest panel's "Find an open guest spot" bar is a Compose view, which TikTok's LIVE
+     * Compose host always gives the Light palette, black on the darkened guest panel's black sheet.
+     * On each declared build the page makes the view in onCreateView and gives it its content
+     * after, so the hook hands the page and the view to the extension right after the view's
+     * constructor, before the content call, and nothing else in the page moves.
+     */
+    @Test
+    fun `each declared build hands the guest spot page's Compose view to the extension before its content`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val page = classes[GUEST_MATCH_ENTRY] ?: throw AssertionError("${apk.name}: no guest spot page")
+            val create = page.methods.filter { GuestMatchEntryViewFingerprint.takes(it, page) }
+            assertEquals("${apk.name}: the page's onCreateView", 1, create.size)
+
+            val original = create.single().implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val hooked = MutableMethod(create.single())
+            hookComposePage(hooked)
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val made = code.indexOfFirst {
+                it.opcode == Opcode.INVOKE_DIRECT && called(it)?.definingClass == COMPOSE_VIEW && called(it)?.name == "<init>"
+            }
+            assertTrue("${apk.name}: the page makes a Compose view", made >= 0)
+            val view = (code[made] as FiveRegisterInstruction).registerC
+            val hook = code[made + 1] as FiveRegisterInstruction
+            assertEquals("${apk.name}: the hook right after the constructor", "darkComposePage", called(hook)?.name)
+            val pageRegister = create.single().implementation!!.registerCount - 4
+            assertEquals("${apk.name}: with the page and its view", listOf(2, pageRegister, view),
+                listOf(hook.registerCount, hook.registerC, hook.registerD))
+            assertEquals("${apk.name}: nothing else moves", original.map { it.opcode },
+                (code.take(made + 1) + code.drop(made + 2)).map { it.opcode })
+            assertTrue("${apk.name}: the page gives the view its content after the hook", code.drop(made + 2).any {
+                takesComposeView(it, 2) && (it as FiveRegisterInstruction).registerC == view
+            })
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+        }
+        assertThrows(PatchException::class.java) {
+            hookComposePage(badgeBind("nop"))
+        }
+    }
+
+    /**
+     * #362: TikTok's LIVE Compose host wraps every LIVE Compose view's content in LIVE's palette
+     * with the mode fixed at Light. On each declared build the host is one method with one palette
+     * call taking the view, the mode and the content, the mode comes from the mode enum's Light
+     * field, and the enum has a constant named Dark, the name the extension picks. The hook asks
+     * the extension with the call's own view and mode registers, puts the answer back in the mode's
+     * register as the mode's type right before the call, and nothing else moves.
+     */
+    @Test
+    fun `each declared build asks the extension for the LIVE Compose host's palette mode`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val host = classes[LIVE_HOST_COMPOSE] ?: throw AssertionError("${apk.name}: no LIVE Compose host")
+            val content = host.methods.filter { LiveHostComposeFingerprint.takes(it, host) }
+            assertEquals("${apk.name}: the host's content call", 1, content.size)
+
+            val original = content.single().implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val hooked = MutableMethod(content.single())
+            hookComposeMode(hooked)
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val palettes = code.indices.filter { takesComposeView(code[it], 3) }
+            assertEquals("${apk.name}: one palette call", 1, palettes.size)
+            val at = palettes.single()
+            val palette = code[at] as FiveRegisterInstruction
+            val mode = palette.registerD
+            val modeType = called(palette)!!.parameterTypes[1].toString()
+
+            val ask = code[at - 3] as FiveRegisterInstruction
+            assertEquals("${apk.name}: the extension is asked", "composeMode", called(ask)?.name)
+            assertEquals("${apk.name}: with the call's view and mode", listOf(2, palette.registerC, mode),
+                listOf(ask.registerCount, ask.registerC, ask.registerD))
+            assertEquals("${apk.name}: its answer", Opcode.MOVE_RESULT_OBJECT, code[at - 2].opcode)
+            assertEquals("${apk.name}: into the mode's register", mode, (code[at - 2] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: as the mode's type", Opcode.CHECK_CAST, code[at - 1].opcode)
+            assertEquals("${apk.name}: the cast register", mode, (code[at - 1] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: the cast type", modeType,
+                ((code[at - 1] as ReferenceInstruction).reference as com.android.tools.smali.dexlib2.iface.reference.TypeReference).type)
+            assertEquals("${apk.name}: nothing else moves", original.map { it.opcode },
+                (code.take(at - 3) + code.drop(at)).map { it.opcode })
+
+            val light = code.take(at - 3).last { (it as? OneRegisterInstruction)?.registerA == mode }
+            assertEquals("${apk.name}: TikTok hands the palette its Light mode", listOf(Opcode.SGET_OBJECT, "Light"),
+                listOf(light.opcode, ((light as ReferenceInstruction).reference as FieldReference).name))
+            val modes = classes[modeType] ?: throw AssertionError("${apk.name}: no palette mode enum $modeType")
+            assertTrue("${apk.name}: the mode is an enum", AccessFlags.ENUM.isSet(modes.accessFlags))
+            val names = modes.methods.single { it.name == "<clinit>" }.implementation!!.instructions.mapNotNull {
+                ((it as? ReferenceInstruction)?.reference as? com.android.tools.smali.dexlib2.iface.reference.StringReference)?.string
+            }
+            assertTrue("${apk.name}: the enum names a Dark constant, not $names", "Dark" in names)
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+        }
+        assertThrows(PatchException::class.java) {
+            hookComposeMode(badgeBind("nop"))
+        }
+    }
+
     /**
      * #362: a host's pinned comment lays LIVE's dark overlay over the room's theme, the darkened one
      * with the switch on. On each declared build the pinned comment base keeps its name, the widget

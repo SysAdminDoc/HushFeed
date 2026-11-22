@@ -86,6 +86,7 @@ Every Hushfeed release, newest first.
 * With `Dark LIVE panels in dark mode` on, the Unmute and Remove buttons in a LIVE's Muted and Blocked lists show their label in white. The buttons are a see-through gray on the dark sheet and the label stayed dark gray on them, so you could barely read it (#362).
 * With `Dark LIVE panels in dark mode` on, every row of a LIVE's Muted, Blocked and Moderation lists stays readable as you scroll. Rows the list brought in while scrolling kept their dark gray text on the dark sheet, and the readable ones seemed to jump around as the list reused them (#362).
 * With `Dark LIVE panels in dark mode` on, an outlined button on a LIVE settings page gets a white outline with its label inside it. The white filled the whole button, so the Moderation list's buttons showed up as blank white boxes (#362).
+* With `Dark LIVE panels in dark mode` on, the "Find an open guest spot" bar under a LIVE guest's card reads light on a dark gray bar. TikTok always draws that bar in its light colors, so its text and arrow were black on the black sheet (#362).
 
 ### Build
 

@@ -94,6 +94,10 @@ public final class LivePanelTheme {
     static volatile boolean panelSeen;
     /** Each darkened panel with the dark context its views inflated through. */
     private static final Map<Object, Context> DARK_PANELS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** The Compose views of LIVE pages under a darkened panel, which take the dark palette. */
+    private static final Map<View, Boolean> DARK_COMPOSE = Collections.synchronizedMap(new WeakHashMap<>());
+    /** The name of the Dark constant of TikTok's Compose palette modes (X.0ofT on 47.9.3: Auto, Light, Dark). */
+    static final String DARK_COMPOSE_MODE = "Dark";
     /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
     private static final int LABEL_DEFAULT = 0x0F161823;
     /**
@@ -1067,23 +1071,79 @@ public final class LivePanelTheme {
      * at a panel that wasn't darkened; anything else hands TikTok's inflater back.
      */
     private static LayoutInflater darkPanelPage(Object fragment, LayoutInflater inflater) {
+        Context dark = darkPanelAbove(fragment, inflater.getContext());
+        if (dark == null) {
+            return inflater;
+        }
+        inkPage(fragment);
+        return inflater.cloneInContext(dark);
+    }
+
+    /**
+     * The dark context of the panel a fragment sits under, by its parent fragments, while the
+     * switch is on for {@code context}. Null when the first panel up the walk wasn't darkened, at
+     * a stock panel, and for a fragment under no panel.
+     */
+    private static Context darkPanelAbove(Object fragment, Context context) {
         Object current = Reflect.invoke(fragment, "getParentFragment");
         for (int depth = 0; current != null && depth < MAX_PARENTS; depth++) {
             int kind = panelType(current.getClass());
             if (kind == STOCK) {
-                return inflater;
+                return null;
             }
             if (kind == PANEL) {
                 Context dark = DARK_PANELS.get(current);
-                if (dark == null || !LiveControls.darkLivePanels(inflater.getContext())) {
-                    return inflater;
-                }
-                inkPage(fragment);
-                return inflater.cloneInContext(dark);
+                return dark != null && LiveControls.darkLivePanels(context) ? dark : null;
             }
             current = Reflect.invoke(current, "getParentFragment");
         }
-        return inflater;
+        return null;
+    }
+
+    /**
+     * Called by the guest panels' "Find an open guest spot" page with the Compose view it just
+     * made, before it hands the view its content. The page is a plain fragment under the guest
+     * panel, whose white sheet goes black with the switch on, and a view under a panel the switch
+     * darkened takes Compose's dark palette from {@link #composeMode}.
+     */
+    public static void darkComposePage(Object page, View view) {
+        try {
+            if (!panelSeen || page == null || view == null) {
+                return;
+            }
+            if (darkPanelAbove(page, view.getContext()) != null) {
+                DARK_COMPOSE.put(view, Boolean.TRUE);
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check a LIVE Compose page for a dark panel", failure);
+        }
+    }
+
+    /**
+     * Called by TikTok's LIVE Compose host with the view and the palette mode it gives every LIVE
+     * Compose view, always Light: the palette's black text and its pill at 5% black. Under the
+     * guest panel the switch turns the white sheet black, so the "Find an open guest spot" bar
+     * read black on black (#362). A view {@link #darkComposePage} found under a darkened panel
+     * takes the mode's Dark constant, near-white text on a dark gray pill; everything else, and
+     * anything that fails, keeps TikTok's mode.
+     */
+    public static Object composeMode(View view, Object mode) {
+        try {
+            if (view == null || !(mode instanceof Enum) || !DARK_COMPOSE.containsKey(view)) {
+                return mode;
+            }
+            Object[] modes = ((Enum<?>) mode).getDeclaringClass().getEnumConstants();
+            if (modes != null) {
+                for (Object constant : modes) {
+                    if (DARK_COMPOSE_MODE.equals(((Enum<?>) constant).name())) {
+                        return constant;
+                    }
+                }
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not pick a LIVE Compose view's palette", failure);
+        }
+        return mode;
     }
 
     /**

@@ -1,7 +1,9 @@
-"""swap.py <repo> --old=<version> --new=<version> --old-code=<code> --new-code=<code> [--write]
+"""swap.py <repo> --old=<version> --new=<version> --old-code=<code> --new-code=<code> [--old-sha=<hex> --new-sha=<hex>] [--write]
 
 The old build's literals become the new build's: the version name, the version code, the
 TIKTOK_<digits> constant and the dashed form, except on history lines and in release text.
+With --old-sha and --new-sha (both APKs' SHA-256) a pinned APK hash moves too, as
+verify-injected-registers.ps1's clean-APK pin does (the 47.9.3 retarget left 47.9.2's there).
 A line is history (left alone) when it also names another build, or says what the old build changed.
 Each literal is replaced only as a whole: 147.9.1, 47.9.1.5 and TIKTOK_47910 aren't 47.9.1.
 """
@@ -11,7 +13,8 @@ import subprocess
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
-VALUED = ("old", "new", "old-code", "new-code")
+REQUIRED = ("old", "new", "old-code", "new-code")
+VALUED = REQUIRED + ("old-sha", "new-sha")
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 opts: dict[str, str] = {}
 for a in sys.argv[1:]:
@@ -23,8 +26,16 @@ for a in sys.argv[1:]:
             opts[key] = value
         else:
             sys.exit(f"--{key}{eq}{value}: unknown option, or a missing value\n\n{__doc__}")
-if len(args) != 1 or not all(k in opts for k in VALUED):
+if len(args) != 1 or not all(k in opts for k in REQUIRED):
     sys.exit(__doc__)
+if ("old-sha" in opts) != ("new-sha" in opts):
+    sys.exit("--old-sha and --new-sha go together")
+SHA = "[0-9a-f]{64}"
+for k in ("old-sha", "new-sha"):
+    if k in opts:
+        opts[k] = opts[k].lower()
+        if not re.fullmatch(SHA, opts[k]):
+            sys.exit(f"--{k} takes a SHA-256 in hex")
 # ASCII digits only: \d and isdigit() also take Arabic-Indic digits and superscripts.
 VERSION_NAME = r"[0-9]+\.[0-9]+\.[0-9]+"
 if not re.fullmatch(VERSION_NAME, opts["old"]) or not re.fullmatch(VERSION_NAME, opts["new"]) \
@@ -45,6 +56,8 @@ PAIRS = [(whole(OLD, r"[\d.]", r"\d|\.\d"), NEW),
          (whole("TIKTOK_" + OLD.replace(".", ""), r"\w", r"\d"), "TIKTOK_" + NEW.replace(".", "")),
          # APKMirror's slug: tiktok-47-9-1-release.
          (whole(OLD.replace(".", "-"), r"\d", r"\d|-\d"), NEW.replace(".", "-"))]
+if "old-sha" in opts:
+    PAIRS.append((whole(opts["old-sha"], "[0-9a-fA-F]", "[0-9a-fA-F]"), opts["new-sha"]))
 SKIP_PREFIX = ("l10n/", "CHANGELOG", "concepts/assets/", "audit/results/", "README.md", "patches-list.json", "patches-bundle.json",
                ".github/", "extensions/tiktok/src/main/l10n/notes/", "scripts/retarget/")
 SKIP_NAME = ("ReleaseNotesData.java",)

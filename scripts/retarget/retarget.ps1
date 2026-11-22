@@ -163,7 +163,9 @@ if ($ReuseTrace) {
 $renameArguments = @($propagate, $root, "--old=$($old.versionName)", "--new=$($new.versionName)", '--write')
 if ($Extra) { $renameArguments += "--extra=$Extra" }
 $swapArguments = @($root, "--old=$($old.versionName)", "--new=$($new.versionName)",
-    "--old-code=$($old.versionCode)", "--new-code=$($new.versionCode)", '--write')
+    "--old-code=$($old.versionCode)", "--new-code=$($new.versionCode)",
+    "--old-sha=$((Get-FileHash -LiteralPath $oldApk -Algorithm SHA256).Hash.ToLowerInvariant())",
+    "--new-sha=$((Get-FileHash -LiteralPath $newApk -Algorithm SHA256).Hash.ToLowerInvariant())", '--write')
 $passes = @(
     @('rename.py', $renameArguments, 'rename.txt', '^=='),
     @('swap.py', $swapArguments, 'swap.txt', '^=='),

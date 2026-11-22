@@ -65,7 +65,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 # The vendor 47.9.3 build main targets, which is the only clean side this comparison means.
-$CleanApkSha256 = '46f90fdb5d6756e33809fcce3cc56da8ad8327ec17f36060c0487a90dfdaeed8'
+$CleanApkSha256 = '7321ae3537572004956e2308c7eb5b1d82e6eb536c2c2fac432f3d8a1801ff70'
 . (Join-Path $PSScriptRoot 'Resolve-Java.ps1')
 . (Join-Path $PSScriptRoot 'device-lease.ps1')
 . (Join-Path $PSScriptRoot 'injected-register-contracts.ps1')

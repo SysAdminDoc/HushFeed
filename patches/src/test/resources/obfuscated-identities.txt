@@ -26,6 +26,8 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/Remembe
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/RememberClearDisplayPatch.java|LIZIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|byi
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|i56
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|et_
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|evc
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|irc
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|k7x
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|mty

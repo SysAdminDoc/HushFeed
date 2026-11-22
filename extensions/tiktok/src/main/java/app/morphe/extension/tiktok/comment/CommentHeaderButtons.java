@@ -31,9 +31,12 @@ import java.util.WeakHashMap;
  * switches are read again on every layout of the panel while it is attached.
  *
  * <p>The same layouts keep the suggested-search banner clear of the translate button (#479).
- * TikTok lays the banner's holder out to the start of the expand button, and puts its translate
- * icons there too, so with Translate button in comments on the banner's text ran under the icon. While
- * that switch is on and an icon in the row shows, the holder ends at the icon instead.
+ * TikTok sizes the banner to clear the close and expand buttons but never its translate icon, so
+ * with Translate button in comments on the banner's text ran under the icon. The banner has two
+ * homes. The older header anchor puts it in a holder in the button row, laid out to the start of
+ * the expand button, which then ends at the icon instead (BannerFit). The newer top bar puts it in
+ * holders in the comment column under the row, with an end margin TikTok works out from the
+ * buttons, which grows by however far the holder still reaches past the icon (HolderFit).
  */
 public final class CommentHeaderButtons {
     /**
@@ -43,6 +46,13 @@ public final class CommentHeaderButtons {
      */
     static final String CLOSE_BUTTON_ID = "47.9.3:byi";
     static final String EXPAND_BUTTON_ID = "47.9.3:i56";
+    /**
+     * The newer top bar's two banner holders in the comment column, both of the 47.9.3 comment
+     * panel layout and kept as ViewGroups by CommentPageActionBarAssem: the top bar's own and the
+     * one the suggested search lands in.
+     */
+    static final String TOP_BAR_HOLDER_ID = "47.9.3:et_";
+    static final String SUGGESTION_HOLDER_ID = "47.9.3:evc";
     /** How many of the bar's ancestors are searched for a button: bar slot, column, container. */
     private static final int DEPTH = 4;
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
@@ -99,7 +109,8 @@ public final class CommentHeaderButtons {
             if (button == null && !searched && bar.isAttachedToWindow()) {
                 // The buttons are inflated with the panel, so one search per attach finds them.
                 searched = true;
-                button = find(bar, close);
+                button = findIn(bar, RESOURCE_IDS.resolve(bar.getResources(), bar.getContext().getPackageName(),
+                        close ? CLOSE_BUTTON_ID : EXPAND_BUTTON_ID, false));
                 view = button == null ? null : new WeakReference<>(button);
             }
             if (button == null) return;
@@ -136,23 +147,16 @@ public final class CommentHeaderButtons {
         WeakReference<View> holder;
         int tiktoksAnchor;
 
-        void apply(View expand) {
+        void apply(View expand, View icon) {
             if (expand == null || !(expand.getParent() instanceof RelativeLayout)) return;
             RelativeLayout row = (RelativeLayout) expand.getParent();
             int expandId = expand.getId();
             View banner = holder == null ? null : holder.get();
-            View icon = null;
-            for (int i = 0; i < row.getChildCount(); i++) {
+            for (int i = 0; banner == null && i < row.getChildCount(); i++) {
                 View child = row.getChildAt(i);
                 if (child == expand || !(child.getLayoutParams() instanceof RelativeLayout.LayoutParams)) continue;
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) child.getLayoutParams();
-                if (startOf(params, row) != expandId) continue;
-                if (params.width == ViewGroup.LayoutParams.MATCH_PARENT) {
-                    if (banner == null) banner = child;
-                } else if (icon == null && child instanceof ImageView && child.getId() != View.NO_ID
-                        && child.getVisibility() == View.VISIBLE) {
-                    icon = child;
-                }
+                if (params.width == ViewGroup.LayoutParams.MATCH_PARENT && startOf(params, row) == expandId) banner = child;
             }
             if (banner == null || !(banner.getLayoutParams() instanceof RelativeLayout.LayoutParams)) return;
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) banner.getLayoutParams();
@@ -189,9 +193,89 @@ public final class CommentHeaderButtons {
                 ? RelativeLayout.RIGHT_OF : RelativeLayout.LEFT_OF);
     }
 
-    private static View find(View bar, boolean close) {
-        int id = RESOURCE_IDS.resolve(bar.getResources(), bar.getContext().getPackageName(),
-                close ? CLOSE_BUTTON_ID : EXPAND_BUTTON_ID, false);
+    /**
+     * One of the top bar's banner holders. TikTok's own end margin is kept each time TikTok sets
+     * one; while the switch is on and the translate icon shows in the same band of the screen, the
+     * margin grows by however far the holder would still reach past the icon's start, and it goes
+     * back to TikTok's once no icon shows, the switch is off or the panel detaches.
+     */
+    private static final class HolderFit {
+        final boolean topBar;
+        WeakReference<View> view;
+        boolean searched;
+        int tiktoks, written = -1;
+
+        HolderFit(boolean topBar) {
+            this.topBar = topBar;
+        }
+
+        void apply(View bar, View icon) {
+            View holder = view == null ? null : view.get();
+            if (holder == null && !searched && bar.isAttachedToWindow()) {
+                searched = true;
+                holder = findIn(bar, RESOURCE_IDS.resolve(bar.getResources(), bar.getContext().getPackageName(),
+                        topBar ? TOP_BAR_HOLDER_ID : SUGGESTION_HOLDER_ID, false));
+                view = holder == null ? null : new WeakReference<>(holder);
+            }
+            if (holder == null || !(holder.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.getLayoutParams();
+            int current = params.getMarginEnd();
+            // A margin other than the last one written here is TikTok's (or the first look).
+            if (current != written) tiktoks = current;
+            int target = tiktoks;
+            if (Settings.COMMENT_TRANSLATE_BUTTON.get() && icon != null
+                    && holder.getVisibility() == View.VISIBLE && holder.getHeight() > 0) {
+                int[] at = new int[2], iconAt = new int[2];
+                holder.getLocationInWindow(at);
+                icon.getLocationInWindow(iconAt);
+                boolean sameBand = at[1] < iconAt[1] + icon.getHeight() && iconAt[1] < at[1] + holder.getHeight();
+                // How far the holder's end, with TikTok's margin, reaches past the icon's start.
+                int added = current - tiktoks;
+                int reach = holder.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL
+                        ? iconAt[0] + icon.getWidth() - (at[0] - added)
+                        : at[0] + holder.getWidth() + added - iconAt[0];
+                if (sameBand && reach > 0) target = tiktoks + reach;
+            }
+            if (target == current) return;
+            params.setMarginEnd(target);
+            written = target;
+            holder.setLayoutParams(params);
+        }
+
+        void restore() {
+            View holder = view == null ? null : view.get();
+            if (written >= 0 && holder != null && holder.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.getLayoutParams();
+                if (params.getMarginEnd() == written) {
+                    params.setMarginEnd(tiktoks);
+                    holder.setLayoutParams(params);
+                }
+            }
+            written = -1;
+        }
+
+        void forget() {
+            searched = false;
+        }
+    }
+
+    /** The translate icon the expand button's row shows to the start of that button, or null. */
+    static View rowIcon(View expand) {
+        if (expand == null || !(expand.getParent() instanceof RelativeLayout)) return null;
+        RelativeLayout row = (RelativeLayout) expand.getParent();
+        for (int i = 0; i < row.getChildCount(); i++) {
+            View child = row.getChildAt(i);
+            if (child == expand || !(child instanceof ImageView) || child.getId() == View.NO_ID
+                    || child.getVisibility() != View.VISIBLE
+                    || !(child.getLayoutParams() instanceof RelativeLayout.LayoutParams)) continue;
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) child.getLayoutParams();
+            if (params.width != ViewGroup.LayoutParams.MATCH_PARENT && startOf(params, row) == expand.getId()) return child;
+        }
+        return null;
+    }
+
+    /** The view with that id in the bar or its nearest ancestors, or null (also for id 0). */
+    private static View findIn(View bar, int id) {
         if (id == 0) return null;
         View own = bar.findViewById(id);
         if (own != null) return own;
@@ -212,6 +296,7 @@ public final class CommentHeaderButtons {
                 new Button(false, Settings.HIDE_COMMENT_EXPAND_BUTTON),
         };
         final BannerFit bannerFit = new BannerFit();
+        final HolderFit[] holderFits = {new HolderFit(true), new HolderFit(false)};
         ViewTreeObserver observer;
 
         Binding(View view) {
@@ -236,11 +321,14 @@ public final class CommentHeaderButtons {
             try {
                 for (Button button : buttons) button.apply(view);
                 View expand = buttons[1].view == null ? null : buttons[1].view.get();
-                bannerFit.apply(expand);
+                View icon = rowIcon(expand);
+                bannerFit.apply(expand, icon);
+                for (HolderFit fit : holderFits) fit.apply(view, icon);
             } catch (Exception error) {
                 unwatch();
                 for (Button button : buttons) button.restore();
                 bannerFit.restore();
+                for (HolderFit fit : holderFits) fit.restore();
                 Logger.printException(() -> "Could not hide a comment header button", error);
             }
         }
@@ -249,6 +337,7 @@ public final class CommentHeaderButtons {
 
         @Override public void onViewAttachedToWindow(View view) {
             for (Button button : buttons) button.forget();
+            for (HolderFit fit : holderFits) fit.forget();
             watch();
             view.post(this);
         }
@@ -258,6 +347,7 @@ public final class CommentHeaderButtons {
             view.removeCallbacks(this);
             for (Button button : buttons) button.restore();
             bannerFit.restore();
+            for (HolderFit fit : holderFits) fit.restore();
         }
     }
 }

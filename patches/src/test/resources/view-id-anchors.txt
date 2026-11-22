@@ -136,6 +136,8 @@ comment/CommentTools.java|AVATAR_IDS|47.9.3:irc|app|com.ss.android.ugc.aweme.com
 comment/CompactCommentHeader.java|BUTTON_ROW_ANCHOR|translate_intro_anchor|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:FrameLayout
 comment/CommentHeaderButtons.java|CLOSE_BUTTON_ID|47.9.3:byi|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#4
 comment/CommentHeaderButtons.java|EXPAND_BUTTON_ID|47.9.3:i56|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#5
+comment/CommentHeaderButtons.java|TOP_BAR_HOLDER_ID|47.9.3:et_|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:ViewGroup#4
+comment/CommentHeaderButtons.java|SUGGESTION_HOLDER_ID|47.9.3:evc|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:ViewGroup#5
 captions/CaptionStyle.java|TEXT_IDS|47.9.3:dtc|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.9.3:dt6|app|layout-method-string:caption_balancer|tag:ConstraintLayout
 captions/CaptionStyle.java|SEEK_BAR_IDS|video_seek_bar|app|com.by.andInflater.detail_feed_video_seek_bar|at:9

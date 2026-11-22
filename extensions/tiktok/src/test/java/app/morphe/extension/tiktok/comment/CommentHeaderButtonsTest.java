@@ -168,15 +168,26 @@ public class CommentHeaderButtonsTest {
      * visible), the translate icon and the banner holder, which is as wide as the row.
      */
     private static final class BannerRow {
+        /** The top bar holder's end margin as TikTok sets it, clearing only the close X. */
+        static final int TIKTOKS_MARGIN = 30;
         final FrameLayout container;
         final RelativeLayout row;
-        final View bar, closeButton, expandButton, anchor, banner;
+        final View bar, closeButton, expandButton, anchor, banner, holder;
         final ImageView translate;
 
         BannerRow(Activity activity) {
             container = new FrameLayout(activity);
+            // The comment column under the row: the newer top bar's banner holder, then the bar.
+            LinearLayout column = new LinearLayout(activity);
+            column.setOrientation(LinearLayout.VERTICAL);
+            holder = new FrameLayout(activity);
+            holder.setId(View.generateViewId());
+            LinearLayout.LayoutParams holderParams = new LinearLayout.LayoutParams(-1, 36);
+            holderParams.setMarginEnd(TIKTOKS_MARGIN);
+            column.addView(holder, holderParams);
             bar = new View(activity);
-            container.addView(bar, new FrameLayout.LayoutParams(-1, 44));
+            column.addView(bar, new LinearLayout.LayoutParams(-1, 44));
+            container.addView(column, new FrameLayout.LayoutParams(-1, -2));
             row = new RelativeLayout(activity);
             closeButton = new ImageView(activity);
             closeButton.setId(View.generateViewId());
@@ -202,6 +213,32 @@ public class CommentHeaderButtonsTest {
             activity.setContentView(container);
             CommentHeaderButtons.resolveForTests(CommentHeaderButtons.CLOSE_BUTTON_ID, closeButton.getId());
             CommentHeaderButtons.resolveForTests(CommentHeaderButtons.EXPAND_BUTTON_ID, expandButton.getId());
+            CommentHeaderButtons.resolveForTests(CommentHeaderButtons.SUGGESTION_HOLDER_ID, holder.getId());
+            CommentHeaderButtons.resolveForTests(CommentHeaderButtons.TOP_BAR_HOLDER_ID, View.generateViewId());
+        }
+
+        int holderMargin() {
+            return ((ViewGroup.MarginLayoutParams) holder.getLayoutParams()).getMarginEnd();
+        }
+
+        void tikTokSetsHolderMargin(int margin) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.getLayoutParams();
+            params.setMarginEnd(margin);
+            holder.setLayoutParams(params);
+        }
+
+        /** Lays out again and lets the binding see that layout, as the panel's next pass would. */
+        void relayout() {
+            layout();
+            bar.getViewTreeObserver().dispatchOnGlobalLayout();
+            layout();
+        }
+
+        int holderEndPastIcon() {
+            int[] at = new int[2], iconAt = new int[2];
+            holder.getLocationInWindow(at);
+            translate.getLocationInWindow(iconAt);
+            return at[0] + holder.getWidth() - iconAt[0];
         }
 
         private RelativeLayout.LayoutParams besideExpand(int width) {
@@ -247,8 +284,44 @@ public class CommentHeaderButtonsTest {
             header.bar.getViewTreeObserver().dispatchOnGlobalLayout();
             assertEquals(header.translate.getId(), header.bannerAnchor());
 
-            header.container.removeView(header.bar);
+            ((ViewGroup) header.bar.getParent()).removeView(header.bar);
             assertEquals(header.expandButton.getId(), header.bannerAnchor());
+        }
+    }
+
+    @Test public void theTopBarHolderStopsAtTheTranslateIconAndKeepsTikToksMargin() {
+        Settings.COMMENT_TRANSLATE_BUTTON.save(true);
+        try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            BannerRow header = new BannerRow(owner.get());
+            header.layout();
+            // TikTok's margin clears the X only, so the holder runs under the icon (Login2, 2026-11-21).
+            int reach = header.holderEndPastIcon();
+            assertTrue(reach > 0);
+            CompactCommentHeader.bindCountBar(header.bar);
+            idle();
+            header.relayout();
+            assertEquals(0, header.holderEndPastIcon());
+            assertEquals(BannerRow.TIKTOKS_MARGIN + reach, header.holderMargin());
+            // Further layouts leave it where it is.
+            header.relayout();
+            assertEquals(BannerRow.TIKTOKS_MARGIN + reach, header.holderMargin());
+
+            // TikTok works out a new margin (the expand button came): that is its margin from now on.
+            header.tikTokSetsHolderMargin(BannerRow.TIKTOKS_MARGIN + 40);
+            header.relayout();
+            assertEquals(0, header.holderEndPastIcon());
+            assertEquals(BannerRow.TIKTOKS_MARGIN + reach, header.holderMargin());
+
+            // No icon: TikTok's latest margin comes back.
+            header.translate.setVisibility(View.GONE);
+            header.relayout();
+            assertEquals(BannerRow.TIKTOKS_MARGIN + 40, header.holderMargin());
+
+            header.translate.setVisibility(View.VISIBLE);
+            header.relayout();
+            assertEquals(0, header.holderEndPastIcon());
+            ((ViewGroup) header.bar.getParent()).removeView(header.bar);
+            assertEquals(BannerRow.TIKTOKS_MARGIN + 40, header.holderMargin());
         }
     }
 
@@ -258,9 +331,10 @@ public class CommentHeaderButtonsTest {
             BannerRow header = new BannerRow(owner.get());
             CompactCommentHeader.bindCountBar(header.bar);
             idle();
-            header.layout();
+            header.relayout();
             assertEquals(View.GONE, header.closeButton.getVisibility());
             assertEquals(header.expandButton.getId(), header.bannerAnchor());
+            assertEquals(BannerRow.TIKTOKS_MARGIN, header.holderMargin());
         }
     }
 

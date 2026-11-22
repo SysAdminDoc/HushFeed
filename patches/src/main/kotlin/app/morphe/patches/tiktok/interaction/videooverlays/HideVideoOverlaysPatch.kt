@@ -156,6 +156,15 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the repost bar on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The play icon a tap fades in over a paused video (#489), the same way: required where
+        // PauseIconAnchorsTest holds both play button classes, left out with a note anywhere else.
+        val pauseIcon = try {
+            PLAY_BUTTON_CLASSES.map { mutableClassDefBy(it).pauseIconHooks(PATCH_NAME) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the pause icon on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
         // holds every hold on the disc's way, left out with a note anywhere else.
         val musicDisc = try {
@@ -209,6 +218,15 @@ val hideVideoOverlaysPatch = bytecodePatch(
             status.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMayKnowTag()V",
+            )
+        }
+        // A tap still pauses and plays; only the icon's alpha goes to zero, and the switch is read
+        // on every pause, so it needs no restart.
+        if (pauseIcon != null) {
+            pauseIcon.forEach { it.hide() }
+            status.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePauseIcon()V",
             )
         }
         // The Following row folds through the same toggle TikTok uses when it has nothing to

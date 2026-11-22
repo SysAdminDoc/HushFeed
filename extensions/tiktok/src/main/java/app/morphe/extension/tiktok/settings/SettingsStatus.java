@@ -810,6 +810,13 @@ public class SettingsStatus {
         mayKnowTagEnabled = true;
     }
 
+    /** Hide video overlays found both play button classes' pause icon fade and hooked them (#489). */
+    public static boolean pauseIconEnabled = false;
+
+    public static void enablePauseIcon() {
+        pauseIconEnabled = true;
+    }
+
     /** Hide video overlays found the Following tab's LIVE and stories row toggle and hooked it (#262). */
     public static boolean followingSkylightEnabled = false;
 

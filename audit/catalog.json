@@ -9122,6 +9122,12 @@
     "row": "Hide the people you may know tag"
    },
    {
+    "key": "hide_pause_icon",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the pause icon"
+   },
+   {
     "key": "hide_following_live_row",
     "default": false,
     "type": "bool",

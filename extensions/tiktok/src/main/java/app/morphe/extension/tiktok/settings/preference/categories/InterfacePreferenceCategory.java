@@ -598,6 +598,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         Settings.HIDE_MAY_KNOW_TAG
                 ));
             }
+            if (SettingsStatus.pauseIconEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the pause icon",
+                        "A tap still pauses and plays the video, but the big play icon doesn't show over it.",
+                        Settings.HIDE_PAUSE_ICON
+                ));
+            }
             if (SettingsStatus.footnotesEnabled) {
                 addPreference(new TogglePreference(
                         context,

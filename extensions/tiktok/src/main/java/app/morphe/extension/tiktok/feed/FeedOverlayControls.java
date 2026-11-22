@@ -71,6 +71,18 @@ public final class FeedOverlayControls {
     }
 
     /**
+     * The alpha the play icon fades in to when a tap pauses a video (#489). Asked with TikTok's
+     * own alpha in front of the fade and in the play button's alpha getter, so with the switch on
+     * the icon is still shown (TikTok reads that as paused, and the next tap plays) but can't be
+     * seen, and with it off TikTok's alpha comes back untouched.
+     */
+    public static float pauseIconAlpha(float alpha) {
+        boolean hide = Settings.HIDE_PAUSE_ICON.get();
+        HookStatus.bound("pause icon", hide ? "hidden" : "left");
+        return hide ? 0f : alpha;
+    }
+
+    /**
      * Whether the Following tab's LIVE and stories row may open (#262). Asked with TikTok's own
      * isShow at the top of the row's toggle, so false is the fold TikTok does when the row has
      * nothing in it, and with the switch off TikTok's answer comes back untouched.

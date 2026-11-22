@@ -3407,3 +3407,5 @@ The video keeps its size when you open the comments, and the comments cover its 
 Hide playable games	إخفاء الألعاب القابلة للعب
 Hide the mini games you can play right in the For You feed.	إخفاء الألعاب الصغيرة التي يمكنك لعبها مباشرة في خلاصة لك.
 Playable games	ألعاب قابلة للعب
+Hide the pause icon	إخفاء أيقونة الإيقاف المؤقت
+A tap still pauses and plays the video, but the big play icon doesn't show over it.	لا يزال النقر يوقف الفيديو مؤقتاً ويشغّله، لكن أيقونة التشغيل الكبيرة لا تظهر فوقه.

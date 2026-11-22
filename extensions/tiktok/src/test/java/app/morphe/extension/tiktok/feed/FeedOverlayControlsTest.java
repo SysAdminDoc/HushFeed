@@ -109,6 +109,35 @@ public class FeedOverlayControlsTest {
     }
 
     /**
+     * #489: the pause icon's alpha goes to zero only with its own switch, TikTok's alpha comes
+     * back untouched otherwise, and Pause brings the icon back. The switch is read on every
+     * pause, so it needs no restart.
+     */
+    @Test public void thePauseIconFadesToNothingOnlyWithItsOwnSwitchAndHonoursPause() {
+        try {
+            assertEquals(Boolean.FALSE, Settings.HIDE_PAUSE_ICON.defaultValue);
+            assertFalse(Settings.HIDE_PAUSE_ICON.rebootApp);
+            Settings.HIDE_MAY_KNOW_TAG.save(true);
+            assertEquals("another overlay switch hid the icon", 0.5f, FeedOverlayControls.pauseIconAlpha(0.5f), 0f);
+            assertEquals(0.3f, FeedOverlayControls.pauseIconAlpha(0.3f), 0f);
+            Settings.HIDE_MAY_KNOW_TAG.save(false);
+            Settings.HIDE_PAUSE_ICON.save(true);
+            assertEquals(0f, FeedOverlayControls.pauseIconAlpha(0.5f), 0f);
+            assertEquals(0f, FeedOverlayControls.pauseIconAlpha(1f), 0f);
+            assertFalse("this switch closed the may know gate", FeedOverlayControls.shouldHideMayKnowTag());
+            PausedProcess.set(true);
+            assertEquals("a paused Hushfeed still hid the icon", 0.3f, FeedOverlayControls.pauseIconAlpha(0.3f), 0f);
+            PausedProcess.set(false);
+            assertTrue(String.join(" ", HookStatus.report()).contains("pause icon"));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_PAUSE_ICON.resetToDefault();
+            Settings.HIDE_MAY_KNOW_TAG.resetToDefault();
+        }
+    }
+
+    /**
      * Issue #262: the Following tab's LIVE row is kept folded only by its own switch. A fold
      * TikTok asked for stays a fold, and Pause hands TikTok's answer back.
      */

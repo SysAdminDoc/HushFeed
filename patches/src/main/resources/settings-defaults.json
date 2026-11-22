@@ -485,6 +485,7 @@
       "hide_feed_surveys",
       "hide_footnotes",
       "hide_may_know_tag",
+      "hide_pause_icon",
       "hide_following_live_row",
       "glass_stories_pill",
       "hide_following_all_button",
@@ -2727,6 +2728,12 @@
     "hide_paid_partnership": {
       "field": "HIDE_PAID_PARTNERSHIP",
       "key": "hide_paid_partnership",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_pause_icon": {
+      "field": "HIDE_PAUSE_ICON",
+      "key": "hide_pause_icon",
       "type": "boolean",
       "default": false
     },

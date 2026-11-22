@@ -1210,6 +1210,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FOOTNOTES = new BooleanSetting("hide_footnotes", FALSE);
     /** The people you may know tag beside a creator's name on a video (#462). */
     public static final BooleanSetting HIDE_MAY_KNOW_TAG = new BooleanSetting("hide_may_know_tag", FALSE);
+    /** The play icon TikTok fades in over a video a tap has paused; the tap still pauses (#489). */
+    public static final BooleanSetting HIDE_PAUSE_ICON = new BooleanSetting("hide_pause_icon", FALSE);
     /** The LIVE and stories row across the top of the Following tab and its count pill (#262). */
     public static final BooleanSetting HIDE_FOLLOWING_LIVE_ROW = new BooleanSetting("hide_following_live_row", FALSE);
     /**

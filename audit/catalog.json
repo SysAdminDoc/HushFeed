@@ -848,7 +848,9 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/AlwaysShowPublishDatePatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/GridCorners.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/GridCorners.java"
   ],
   "settings": [
    {
@@ -893,6 +895,12 @@
     "default": false,
     "type": "bool",
     "row": "Show video length on profile grids"
+   },
+   {
+    "key": "rounded_grid_corners",
+    "default": false,
+    "type": "bool",
+    "row": "Round the corners on profile grids"
    },
    {
     "key": "profile_grid_sort",

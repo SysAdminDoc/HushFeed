@@ -107,4 +107,41 @@ public class GridCornersTest {
         GridCorners.cell(null);
         assertTrue(HookStatus.missing(GridCorners.FAMILY).isEmpty());
     }
+
+    /** A Favorites collection folder's holder: like RecyclerView.ViewHolder, its root view is itemView. */
+    static class FolderHolder {
+        public final View itemView;
+
+        FolderHolder(View itemView) {
+            this.itemView = itemView;
+        }
+    }
+
+    /** The folder's own holder, a subclass the way TikTok's sits under ViewHolder. */
+    static final class CollectionHolder extends FolderHolder {
+        CollectionHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    @Test public void aCollectionFolderCellIsRoundedThroughItsHolder() {
+        Settings.ROUNDED_GRID_CORNERS.save(true);
+        View view = cell(ViewOutlineProvider.BACKGROUND, false);
+        GridCorners.collectionCell(new CollectionHolder(view));
+        assertTrue("the folder's cover is clipped", view.getClipToOutline());
+        assertEquals("8dp at xxhdpi", 24f, outlineOf(view).getRadius(), 0.01f);
+
+        Settings.ROUNDED_GRID_CORNERS.save(false);
+        GridCorners.collectionCell(new CollectionHolder(view));
+        assertSame(ViewOutlineProvider.BACKGROUND, view.getOutlineProvider());
+        assertFalse(view.getClipToOutline());
+    }
+
+    @Test public void aCollectionHolderWithoutItsViewIsLeftAlone() {
+        Settings.ROUNDED_GRID_CORNERS.save(true);
+        GridCorners.collectionCell(null);
+        GridCorners.collectionCell(new Object());
+        GridCorners.collectionCell(new CollectionHolder(null));
+        assertTrue(HookStatus.missing(GridCorners.FAMILY).isEmpty());
+    }
 }

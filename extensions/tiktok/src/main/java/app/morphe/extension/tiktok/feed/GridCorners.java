@@ -11,16 +11,17 @@ import android.view.ViewOutlineProvider;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * Rounded corners on profile grid cells (#487): your videos, Liked, Favorites and anyone else's
- * profile grid, every cell the profile grid's holder binds. A Favorites collection folder draws
- * its posts with a holder of its own and keeps square ones. Each cell's root view is clipped to a
- * rounded outline as its holder binds, so the cover and everything TikTok draws over it share
- * the corners. Turning the switch off gives a cell back the outline and clipping it had at its
- * next bind.
+ * profile grid, every cell the profile grid's holder binds, and the posts inside a Favorites
+ * collection folder, which draws them with a holder of its own. Each cell's root view is clipped
+ * to a rounded outline as its holder binds, so the cover and everything TikTok draws over it
+ * share the corners. Turning the switch off gives a cell back the outline and clipping it had at
+ * its next bind.
  */
 public final class GridCorners {
     static final String FAMILY = "grid corners";
@@ -34,9 +35,24 @@ public final class GridCorners {
         return SettingsStatus.alwaysShowPublishDateEnabled && Settings.ROUNDED_GRID_CORNERS.get();
     }
 
+    /**
+     * A Favorites collection folder's cell holder, as it binds the post its adapter just set. The
+     * hook sits past the bind's first instruction, which Advanced downloads reads, so it hands
+     * over the holder itself and its root view is read here.
+     */
+    public static void collectionCell(Object holder) {
+        HookStatus.bound(FAMILY, "collection cell bind");
+        Object view = Reflect.readField(holder, "itemView");
+        if (view instanceof View) round((View) view);
+    }
+
     /** A profile grid cell's root view, as its holder binds the next post. */
     public static void cell(View cell) {
         HookStatus.bound(FAMILY, "grid cell bind");
+        round(cell);
+    }
+
+    private static void round(View cell) {
         if (cell == null) return;
         try {
             ViewOutlineProvider current = cell.getOutlineProvider();

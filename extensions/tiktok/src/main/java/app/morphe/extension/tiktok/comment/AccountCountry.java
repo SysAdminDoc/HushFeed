@@ -36,12 +36,13 @@ import java.util.concurrent.RejectedExecutionException;
  * <p>A comment's account often comes without its country. The profile reply TikTok's own
  * assistant card reads, {@code /aweme/v1/user/profile/other/}, is asked first and its
  * {@code region} or {@code account_region} wins, but on 47.7 that reply leaves both out for
- * anyone but the viewer (66 user keys and no country on @tiktok, 2026-11-14). So TikTok's sign-in
- * region lookup, {@code /passport/app/region/}, comes next: it answers for any account by its
- * numeric id, a private one's included, with the country the account belongs to. Only when that
- * gives nothing do the account's newest videos from {@code /aweme/v1/aweme/post/} answer, with
- * the country most of them were posted from, worded as where the videos were posted from rather
- * than where the account is based. The requests go out through TikTok's own
+ * anyone but the viewer (66 user keys and no country on @tiktok, 2026-11-14). So the account's
+ * newest videos from {@code /aweme/v1/aweme/post/} come next, and the country most of them were
+ * posted from is the answer, worded as where the videos were posted from rather than where the
+ * account is based. A private account's videos stay hidden, so it gets no country. TikTok's
+ * sign-in region lookup ({@code /passport/app/region/}) is no route: asked by user id it gives
+ * {@code country_code} "-" and the asking phone's data center for every id, a made-up one
+ * included (Login2, 47.9.3, 2026-11-21). The request goes out through TikTok's own
  * client the way its block action's does: {@code ServiceManager} hands out the
  * {@code IRetrofitService}, whose {@code createNewRetrofit} builds a client for the API host in
  * {@code Api}, and TTNet's {@code INetworkApi} on that client fetches the raw reply, so it is
@@ -60,13 +61,6 @@ public final class AccountCountry {
     static final String POSTS_PATH = "/aweme/v1/aweme/post/";
     /** How many of the newest videos are read for where they were posted from. */
     static final int POSTS = 6;
-    /** The region lookup TikTok's sign-in makes before it logs an account in. */
-    static final String REGION_PATH = "/passport/app/region/";
-    /**
-     * The lookup's id type for a numeric user id. TikTok's TTPInterceptor sends a {@code user_id}
-     * as type 5, and its hashing step passes types 5 and 6 through as they are.
-     */
-    static final String USER_ID_TYPE = "5";
     /**
      * The reply size TikTok's own raw GETs allow. A profile reply is under 10 KB and the post
      * list about 100 KB a video (496 KB for five on 2026-11-14).
@@ -160,65 +154,15 @@ public final class AccountCountry {
 
     /**
      * The profile record first. TikTok often leaves another account's country out of it, so
-     * then the sign-in region lookup, and last the account's newest videos say where they were
-     * posted from.
+     * then the account's newest videos say where they were posted from.
      */
     private static Answer find(String uid, String secUid) throws Exception {
         Answer account = parse(fetch(PATH, query(uid, secUid)));
         if (account.outcome == Outcome.FOUND) return account;
-        Answer registered = signInRegion(uid);
-        if (registered.outcome == Outcome.FOUND) return registered;
         Map<String, String> posts = query(uid, secUid);
         posts.put("max_cursor", "0");
         posts.put("count", String.valueOf(POSTS));
         return either(account, parsePosts(fetch(POSTS_PATH, posts), uid));
-    }
-
-    /**
-     * The country TikTok's sign-in region lookup gives the account. A failed lookup leaves the
-     * videos to answer, so it is logged here and never thrown.
-     */
-    private static Answer signInRegion(String uid) {
-        if (uid == null || uid.isEmpty()) return failed();
-        try {
-            return parseRegion(post(REGION_PATH, regionFields(uid)));
-        } catch (UnsupportedOperationException missing) {
-            Logger.printInfo(() -> "Account region lookup unavailable: " + missing.getMessage());
-        } catch (Exception failure) {
-            Logger.printInfo(() -> "Account region lookup failed: " + failure);
-        }
-        return failed();
-    }
-
-    /** The form TikTok's sign-in sends for a numeric user id: the id as it is, and its type. */
-    static Map<String, String> regionFields(String uid) {
-        Map<String, String> fields = new LinkedHashMap<>();
-        fields.put("hashed_id", uid);
-        fields.put("type", USER_ID_TYPE);
-        return fields;
-    }
-
-    /**
-     * The account's country from the sign-in region reply, whose {@code data} holds
-     * {@code country_code}, {@code domain} and, when it refused, {@code error_code}. No data or
-     * an error code is a failure; data with neither is an account it gives no country for.
-     */
-    static Answer parseRegion(String body) {
-        if (body == null || body.isEmpty()) return failed();
-        try {
-            JSONObject data = new JSONObject(body).optJSONObject("data");
-            if (data == null) {
-                Logger.printInfo(() -> "Account region reply had no data");
-                return failed();
-            }
-            String code = twoLetters(data.optString("country_code", null));
-            if (code != null) return new Answer(Outcome.FOUND, code);
-            Logger.printInfo(() -> "Account region reply had no country, error " + data.opt("error_code"));
-            return data.isNull("error_code") ? new Answer(Outcome.NONE, null) : failed();
-        } catch (Exception unreadable) {
-            Logger.printInfo(() -> "Account region reply was not readable: " + unreadable.getMessage());
-            return failed();
-        }
     }
 
     /** The profile's country, else the videos' one; no country when either reply had none. */
@@ -331,25 +275,13 @@ public final class AccountCountry {
         Method get = networkApi.getMethod("doGetBytes", boolean.class, int.class, String.class,
                 Map.class, List.class, Object.class);
         // True asks TikTok's client to add its usual device parameters, as its own raw GETs do.
-        return replyText(get.invoke(api, true, MAX_BODY, cachedHost + path, query, new ArrayList<>(), null));
-    }
-
-    /** A form POST on TikTok's API host through the same client, and the reply's text. */
-    static String post(String path, Map<String, String> fields) throws Exception {
-        Object api = api();
-        Method post = Class.forName(NETWORK_API).getMethod("doPost", int.class, String.class,
-                Map.class, Map.class, List.class, Object.class);
-        return replyText(post.invoke(api, MAX_BODY, cachedHost + path, new LinkedHashMap<String, String>(),
-                fields, new ArrayList<>(), null));
-    }
-
-    private static String replyText(Object call) throws Exception {
+        Object call = get.invoke(api, true, MAX_BODY, cachedHost + path, query, new ArrayList<>(), null);
         if (call == null) throw new UnsupportedOperationException("no call from INetworkApi");
         Method execute = call.getClass().getMethod("execute");
         execute.setAccessible(true);
-        Object body = bodyOf(execute.invoke(call));
+        Object response = execute.invoke(call);
+        Object body = bodyOf(response);
         if (body == null) throw new UnsupportedOperationException("no reply body");
-        if (body instanceof String) return (String) body;
         Method in = Class.forName(TYPED_INPUT).getMethod("in");
         try (InputStream stream = (InputStream) in.invoke(body)) {
             return read(stream);
@@ -359,7 +291,7 @@ public final class AccountCountry {
     /**
      * The reply's body. The response keeps it in its one generic field, declared Object once
      * erased, next to an error body declared as the input type itself, so only the field
-     * declared Object counts. A raw GET's body is the input type, a POST's may be its text.
+     * declared Object counts.
      */
     private static Object bodyOf(Object response) throws Exception {
         if (response == null) return null;
@@ -369,7 +301,7 @@ public final class AccountCountry {
                 if (Modifier.isStatic(field.getModifiers()) || field.getType() != Object.class) continue;
                 field.setAccessible(true);
                 Object value = field.get(response);
-                if (input.isInstance(value) || value instanceof String) return value;
+                if (input.isInstance(value)) return value;
             }
         }
         return null;

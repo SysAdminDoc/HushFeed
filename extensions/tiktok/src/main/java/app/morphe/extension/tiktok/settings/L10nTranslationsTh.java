@@ -5319,14 +5319,14 @@ final class L10nTranslationsTh {
                 "ขอบของแถบแก้วทรงแคปซูลจะหักเหภาพวิดีโอฟีดที่เบลอด้านหลัง เหมือนกับขอบของแก้วจริง และสีสันจะดูสดใสขึ้นเล็กน้อย ต้องเปิดใช้งาน \"เบลอวิดีโอด้านหลังแถบ\" และต้องเป็น Android 13 ขึ้นไป");
         table.put("The heading at the top. Leave it empty for none.",
                 "หัวเรื่องที่ด้านบน เว้นว่างไว้หากไม่ต้องการ");
-        table.put("The host can already see you in this LIVE",
-                "โฮสต์เห็นคุณใน LIVE นี้อยู่แล้ว");
         table.put("The host can see you",
                 "โฮสต์มองเห็นคุณ");
         table.put("The host can see you now",
                 "ตอนนี้โฮสต์เห็นคุณแล้ว");
         table.put("The host sees you next time you open it",
                 "โฮสต์จะเห็นคุณเมื่อคุณเปิดอีกครั้ง");
+        table.put("The host won't see you next time you open it",
+                "โฮสต์จะไม่เห็นคุณเมื่อคุณเปิดอีกครั้ง");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "ชั่วโมงที่งบประมาณทั้งสองจะรีเซ็ต ในรูปแบบนาฬิกา 24 ชั่วโมง ค่าเริ่มต้นคือ 04:00 น. เพื่อให้ช่วงดึกยังคงนับเป็นวันเดียวกัน");
         table.put("The last feed capture wasn't saved. Tap to try again.",

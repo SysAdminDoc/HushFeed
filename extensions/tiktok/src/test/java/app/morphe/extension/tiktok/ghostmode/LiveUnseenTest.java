@@ -303,7 +303,7 @@ public class LiveUnseenTest {
     }
 
     /** Stands in for TikTok's reasons a LIVE room page leaves, by their real names. */
-    enum Leave { ENTER_FAILED, USER_CLOSE_CLICK, PLAYER_ERROR }
+    enum Leave { ENTER_FAILED, USER_CLOSE_CLICK, PLAYER_ERROR, JUMP_TO_OTHER }
 
     /** Stands in for TikTok's LIVE room page: the room it shows. */
     public static final class Page {
@@ -356,6 +356,59 @@ public class LiveUnseenTest {
         assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
         assertTrue(LiveUnseen.keepRoom(new Object(), Leave.ENTER_FAILED));
         assertTrue(LiveUnseen.keepRoom(null, Leave.ENTER_FAILED));
+    }
+
+    @Test public void leavingARoomTheEyeOpenedHidesYouFromItAgainNextTime() throws Exception {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(ROOM));
+        LiveUnseen.holdEnter(new Interceptor(ENTER), "chain");
+
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.USER_CLOSE_CLICK));
+        assertFalse("the visit is over", LiveUnseen.revealed(ROOM));
+        assertTrue(LiveUnseen.hiding(ROOM));
+        assertThrows("opening it again is hidden (#491)", IOException.class,
+                () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+    }
+
+    @Test public void aRealFailedEnterLeavingTheRoomEndsTheVisitToo() throws Exception {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(ROOM));
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+        assertFalse(LiveUnseen.revealed(ROOM));
+    }
+
+    @Test public void aRevealWaitingForTheNextOpenOutlastsTheLeaveBeforeIt() throws Exception {
+        on();
+        assertEquals(LiveUnseen.Reveal.NEXT_TIME, reveal(ROOM));
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.USER_CLOSE_CLICK));
+        assertTrue("seen next time, as the eye said", LiveUnseen.revealed(ROOM));
+        LiveUnseen.holdEnter(new Interceptor(ENTER), "chain");
+
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.JUMP_TO_OTHER));
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+    }
+
+    @Test public void leavingAnotherRoomOrAnUnreadablePageChangesNothing() throws Exception {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(ROOM));
+        assertFalse(LiveUnseen.keepRoom(new Page("7570000000000000001"), Leave.USER_CLOSE_CLICK));
+        assertFalse(LiveUnseen.keepRoom(new Object(), Leave.USER_CLOSE_CLICK));
+        assertFalse(LiveUnseen.keepRoom(null, Leave.USER_CLOSE_CLICK));
+        assertFalse("not a reason TikTok gives", LiveUnseen.keepRoom(new Page(ROOM), "USER_CLOSE_CLICK"));
+        assertTrue(LiveUnseen.revealed(ROOM));
+    }
+
+    @Test public void theEyeTappedAgainHidesTheNextVisit() throws Exception {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(ROOM));
+        LiveUnseen.hideAgain(ROOM);
+        assertTrue(LiveUnseen.hiding(ROOM));
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        LiveUnseen.hideAgain(null);
     }
 
     @Test public void noRoomReadsAsNoRoom() {

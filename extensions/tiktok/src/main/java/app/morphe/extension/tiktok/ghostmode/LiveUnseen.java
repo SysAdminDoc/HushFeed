@@ -36,8 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>While hidden, the room shows the video and the eye, and nothing a successful enter builds
  * (the chat, the host bar, the close button). The eye in the room ({@code LiveUnseenButton})
  * lets the room you're in see you: the room page enters again through TikTok's own enter, which
- * builds the rest of the room, and the room's later enters go out as usual until TikTok is
- * closed.
+ * builds the rest of the room, and the room's later enters go out as usual for the rest of that
+ * visit. Leaving the room, or tapping the eye again, hides you from it again (#491).
  *
  * <p>The hook fails open. With a switch off, Hushfeed paused, the settings not loaded yet, or
  * the request unreadable, the request goes out as it always does.
@@ -61,8 +61,14 @@ public final class LiveUnseen {
     static final long UNKNOWN_ROOM_WINDOW_MS = 15_000;
     private static final long NEVER = -1;
 
-    /** Rooms the eye was tapped in, whose enters go out. Until TikTok is closed. */
+    /**
+     * Rooms the eye was tapped in, whose enters go out: until the eye is tapped again, or until
+     * the room is left after one of its enters went out (#491).
+     */
     private static final Set<String> REVEALED =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    /** Revealed rooms an enter went out for since the eye, so leaving one ends its visit. */
+    private static final Set<String> ENTERED =
             Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     /** The latest enter held for each room, guarded by itself. */
     private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
@@ -126,7 +132,11 @@ public final class LiveUnseen {
             Object path = Reflect.required(request, "getPath", HOOK_FAMILY);
             if (!isEnter(path instanceof String ? (String) path : null)) return;
             room = FollowDiagnostics.liveRoomIdOf(request);
-            if (!GhostMode.holdLiveEnter(room != null && REVEALED.contains(room))) return;
+            boolean revealed = room != null && REVEALED.contains(room);
+            if (!GhostMode.holdLiveEnter(revealed)) {
+                if (revealed) ENTERED.add(room);
+                return;
+            }
             long now = SystemClock.elapsedRealtime();
             heldAt = now;
             if (room != null) keep(room, new HeldEnter(interceptor, chain));
@@ -147,9 +157,16 @@ public final class LiveUnseen {
      * Called by TikTok's LIVE room page at the start of its leave, with itself and the reason.
      * TikTok takes the enter Ghost mode held back as a failed one and leaves the room for the
      * next LIVE with an "Unstable connection" toast. Returns true to stay in the room when the
-     * reason is a failed enter that Ghost mode held for this room; any other leave goes ahead.
+     * reason is a failed enter that Ghost mode held for this room; any other leave goes ahead
+     * and ends the visit ({@link #endVisit}).
      */
     public static boolean keepRoom(Object page, Object reason) {
+        boolean stays = stays(page, reason);
+        if (!stays && reason instanceof Enum) endVisit(page);
+        return stays;
+    }
+
+    private static boolean stays(Object page, Object reason) {
         try {
             if (!(reason instanceof Enum) || !ENTER_FAILED.equals(((Enum<?>) reason).name())) return false;
             if (!enabled()) return false;
@@ -166,6 +183,22 @@ public final class LiveUnseen {
                     () -> "Ghost mode kept a LIVE open after holding back its room enter");
         }
         return true;
+    }
+
+    /**
+     * The room on {@code page} left, for any reason but an enter Ghost mode held. When the eye was
+     * tapped there and its enter went out, the visit is over and the room is hidden from again
+     * the next time it opens (#491). A room the eye was tapped in that hasn't been entered yet
+     * keeps its reveal for that next time. An unreadable page changes nothing.
+     */
+    static void endVisit(Object page) {
+        String room;
+        try {
+            room = LiveRecordChip.roomKey(LiveRecordChip.roomOf(page));
+        } catch (Throwable unreadable) {
+            return;
+        }
+        if (room != null && ENTERED.remove(room)) REVEALED.remove(room);
     }
 
     /**
@@ -243,11 +276,13 @@ public final class LiveUnseen {
         }
         Utils.runOnMainThread(() -> {
             if (enterAgainOnMain(page, room)) {
+                ENTERED.add(room);
                 done.accept(Reveal.SENT);
                 return;
             }
             boolean queued = Utils.runOnBackgroundThread(() -> {
                 Reveal outcome = send(held);
+                if (outcome == Reveal.SENT) ENTERED.add(room);
                 Utils.runOnMainThread(() -> done.accept(outcome));
             });
             if (!queued) done.accept(Reveal.FAILED);
@@ -321,7 +356,9 @@ public final class LiveUnseen {
 
     /** The eye tapped again: the room's next enter is held again. The host already saw this one. */
     public static void hideAgain(String room) {
-        if (room != null) REVEALED.remove(room);
+        if (room == null) return;
+        REVEALED.remove(room);
+        ENTERED.remove(room);
     }
 
     static int heldForTests() {
@@ -333,6 +370,7 @@ public final class LiveUnseen {
     static void resetForTests() {
         reentry = LiveUnseen::enterAgain;
         REVEALED.clear();
+        ENTERED.clear();
         synchronized (HELD) {
             HELD.clear();
         }

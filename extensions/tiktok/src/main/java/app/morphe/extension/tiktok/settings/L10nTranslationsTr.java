@@ -5319,14 +5319,14 @@ final class L10nTranslationsTr {
                 "Cam hapın kenarları arkasındaki bulanık videoyu gerçek camın kenarı gibi büker ve renkler biraz daha canlı görünür. Çubuğun arkasındaki videoyu bulanıklaştır ve Android 13 veya üstü gerekir.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Üstteki başlık. Başlık istemiyorsanız boş bırakın.");
-        table.put("The host can already see you in this LIVE",
-                "Sunucu bu LIVE'da seni zaten görüyor");
         table.put("The host can see you",
                 "Sunucu seni görüyor");
         table.put("The host can see you now",
                 "Sunucu artık seni görüyor");
         table.put("The host sees you next time you open it",
                 "Bir dahaki açışında sunucu seni görecek");
+        table.put("The host won't see you next time you open it",
+                "Bir dahaki açışında sunucu seni görmeyecek");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Her iki bütçenin sıfırlandığı saat, 24 saatlik düzende. Varsayılan sabah 4'tür, böylece geç saatlere uzanan bir gece hâlâ aynı günden sayılır.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

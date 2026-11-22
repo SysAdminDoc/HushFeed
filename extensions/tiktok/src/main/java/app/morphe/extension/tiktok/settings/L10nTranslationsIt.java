@@ -5319,14 +5319,14 @@ final class L10nTranslationsIt {
                 "I bordi della pillola di vetro piegano il video sfocato che c'è dietro, come il bordo di un vetro vero, e i colori risultano un po' più vivi. Richiede Sfoca il video dietro la barra e Android 13 o successivo.");
         table.put("The heading at the top. Leave it empty for none.",
                 "L'intestazione in alto. Lascialo vuoto per non mostrarne nessuna.");
-        table.put("The host can already see you in this LIVE",
-                "Chi conduce ti vede già in questa LIVE");
         table.put("The host can see you",
                 "Chi conduce può vederti");
         table.put("The host can see you now",
                 "Ora chi conduce può vederti");
         table.put("The host sees you next time you open it",
                 "Chi conduce ti vedrà la prossima volta che la apri");
+        table.put("The host won't see you next time you open it",
+                "Chi conduce non ti vedrà la prossima volta che la apri");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "L'ora in cui i due budget si azzerano, nel formato a 24 ore. Il valore predefinito è le 4 del mattino, così una notte lunga conta ancora come lo stesso giorno.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

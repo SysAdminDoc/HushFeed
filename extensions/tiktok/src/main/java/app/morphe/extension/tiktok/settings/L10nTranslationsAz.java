@@ -5319,14 +5319,14 @@ final class L10nTranslationsAz {
                 "Şüşə həbin kənarları arxadakı bulanıq videonu əsl şüşənin kənarı kimi əyir, rənglər də bir az daha canlı görünür. Panelin arxasındakı videonu bulanıqlaşdırın və Android 13 və yuxarı tələb olunur.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Yuxarıdakı başlıq. Başlıq istəmirsinizsə, boş saxlayın.");
-        table.put("The host can already see you in this LIVE",
-                "Aparıcı bu LIVE-da sizi artıq görür");
         table.put("The host can see you",
                 "Aparıcı sizi görür");
         table.put("The host can see you now",
                 "Aparıcı indi sizi görür");
         table.put("The host sees you next time you open it",
                 "Növbəti dəfə açanda aparıcı sizi görəcək");
+        table.put("The host won't see you next time you open it",
+                "Növbəti dəfə açanda aparıcı sizi görməyəcək");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Hər iki büdcənin sıfırlandığı saat, 24 saatlıq formatda. Standart 4:00-dır, beləliklə gec gecə eyni gün sayılır.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

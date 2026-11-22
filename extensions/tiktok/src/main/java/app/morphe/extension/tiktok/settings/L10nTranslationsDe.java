@@ -5319,14 +5319,14 @@ final class L10nTranslationsDe {
                 "Die Ränder der Glaskapsel brechen das unscharfe Video dahinter wie der Rand von echtem Glas, und die Farben wirken etwas satter. Braucht Video hinter der Leiste unscharf machen und Android 13 oder neuer.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Die Überschrift oben. Leer lassen für keine.");
-        table.put("The host can already see you in this LIVE",
-                "Der Host sieht dich in diesem LIVE schon");
         table.put("The host can see you",
                 "Der Host sieht dich");
         table.put("The host can see you now",
                 "Der Host sieht dich jetzt");
         table.put("The host sees you next time you open it",
                 "Der Host sieht dich, wenn du es wieder öffnest");
+        table.put("The host won't see you next time you open it",
+                "Der Host sieht dich nicht, wenn du es wieder öffnest");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Die Stunde, zu der beide Budgets zurückgesetzt werden, im 24-Stunden-Format. Standard ist 4 Uhr morgens, damit eine lange Nacht noch zum selben Tag zählt.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

@@ -5697,14 +5697,14 @@ final class L10nTranslationsRu {
                 "Края стеклянной панели преломляют размытое видео за ними, как край настоящего стекла, а цвета становятся чуть насыщеннее. Нужен «Размывать видео за панелью» и Android 13 или новее.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Заголовок сверху. Оставьте пустым, чтобы его не было.");
-        table.put("The host can already see you in this LIVE",
-                "Ведущий уже видит вас в этом LIVE");
         table.put("The host can see you",
                 "Ведущий вас видит");
         table.put("The host can see you now",
                 "Теперь ведущий вас видит");
         table.put("The host sees you next time you open it",
                 "Ведущий увидит вас, когда вы откроете его снова");
+        table.put("The host won't see you next time you open it",
+                "Ведущий не увидит вас, когда вы откроете его снова");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Час, в который оба лимита сбрасываются, в 24-часовом формате. По умолчанию это 4 утра, поэтому поздняя ночь ещё считается тем же днём.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

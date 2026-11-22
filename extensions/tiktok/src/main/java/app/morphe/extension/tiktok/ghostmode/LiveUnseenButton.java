@@ -35,8 +35,9 @@ import java.util.WeakHashMap;
 /**
  * The eye in a LIVE room while Watch LIVEs unseen is on (#420). Crossed out, the host can't see
  * you: the room's enter was held back. A tap lets this host see you, by sending the enter that
- * was held when the room opened, and the eye opens. It stays open for that room until TikTok is
- * closed.
+ * was held when the room opened, and the eye opens. It stays open for the rest of that visit.
+ * Leaving the room, or tapping the open eye, crosses it out again, so the next visit is hidden
+ * (#491).
  *
  * <p>The room's page tells this class it is resuming, the hook the Record chip and the block
  * button use. The pager resumes the next room right after the one being watched, so the room is
@@ -230,7 +231,11 @@ public final class LiveUnseenButton {
             return;
         }
         if (LiveUnseen.revealed(room)) {
-            Utils.showToastShort(L10n.t("The host can already see you in this LIVE"));
+            // Tapped again (#491): the host saw this visit, so the next one is hidden.
+            LiveUnseen.hideAgain(room);
+            TextView button = buttonReference.get();
+            if (button != null) draw(button, false);
+            Utils.showToastShort(L10n.t("The host won't see you next time you open it"));
             return;
         }
         revealing = true;

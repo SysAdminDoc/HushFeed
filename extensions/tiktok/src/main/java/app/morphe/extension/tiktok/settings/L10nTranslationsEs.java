@@ -5319,14 +5319,14 @@ final class L10nTranslationsEs {
                 "Los bordes de la píldora de cristal curvan el vídeo desenfocado que hay detrás, como el canto de un cristal de verdad, y los colores se ven un poco más vivos. Necesita Desenfocar el vídeo detrás de la barra y Android 13 o posterior.");
         table.put("The heading at the top. Leave it empty for none.",
                 "El encabezado de arriba. Déjalo vacío para no mostrar ninguno.");
-        table.put("The host can already see you in this LIVE",
-                "El anfitrión ya puede verte en este LIVE");
         table.put("The host can see you",
                 "El anfitrión puede verte");
         table.put("The host can see you now",
                 "Ahora el anfitrión puede verte");
         table.put("The host sees you next time you open it",
                 "El anfitrión te verá la próxima vez que lo abras");
+        table.put("The host won't see you next time you open it",
+                "El anfitrión no te verá la próxima vez que lo abras");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "La hora a la que se reinician ambos presupuestos, en formato de 24 horas. Por defecto son las 4 de la mañana, así una noche larga cuenta como el mismo día.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

@@ -5319,14 +5319,14 @@ final class L10nTranslationsVi {
                 "Viền của thanh hình viên thuốc bằng kính bẻ cong phần video bị làm mờ phía sau, giống mép kính thật, và màu sắc hiện lên đậm hơn một chút. Yêu cầu bật Làm mờ video phía sau thanh điều hướng và thiết bị chạy Android 13 trở lên.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Dòng tiêu đề ở trên cùng. Để trống nếu không cần.");
-        table.put("The host can already see you in this LIVE",
-                "Chủ phòng đã thấy bạn trong LIVE này");
         table.put("The host can see you",
                 "Chủ phòng thấy bạn");
         table.put("The host can see you now",
                 "Giờ chủ phòng đã thấy bạn");
         table.put("The host sees you next time you open it",
                 "Chủ phòng sẽ thấy bạn khi bạn mở lại");
+        table.put("The host won't see you next time you open it",
+                "Chủ phòng sẽ không thấy bạn khi bạn mở lại");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Thời điểm đặt lại cả hai ngân sách, sử dụng định dạng 24 giờ. Mặc định là 4 giờ sáng, do đó thời gian thức khuya vẫn tính vào cùng một ngày.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

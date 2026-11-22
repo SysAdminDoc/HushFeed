@@ -5823,14 +5823,14 @@ final class L10nTranslationsAr {
                 "حواف الكبسولة الزجاجية تكسر فيديو الخلاصة الضبابي خلفها، مثل حافة زجاج حقيقي، وتظهر ألوانها أغنى قليلًا. يتطلب ضبابية الفيديو خلف الشريط وAndroid 13 أو أحدث.");
         table.put("The heading at the top. Leave it empty for none.",
                 "العنوان في الأعلى. اتركه فارغ لعدم وجود عنوان.");
-        table.put("The host can already see you in this LIVE",
-                "يمكن للمضيف رؤيتك بالفعل في هذا LIVE");
         table.put("The host can see you",
                 "يمكن للمضيف رؤيتك");
         table.put("The host can see you now",
                 "يمكن للمضيف رؤيتك الآن");
         table.put("The host sees you next time you open it",
                 "سيراك المضيف في المرة القادمة التي تفتحه فيها");
+        table.put("The host won't see you next time you open it",
+                "لن يراك المضيف في المرة القادمة التي تفتحه فيها");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "الساعة التي تتم فيها إعادة تعيين الميزانيتين، بنظام 24 ساعة. الافتراضي هو الرابعة صباحا، لذا تظل السهرة تُحسب في اليوم نفسه.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

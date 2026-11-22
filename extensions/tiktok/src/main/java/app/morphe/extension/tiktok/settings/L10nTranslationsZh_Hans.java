@@ -5319,14 +5319,14 @@ final class L10nTranslationsZh_Hans {
                 "玻璃条的边缘会像真玻璃的边沿一样折射后面模糊的视频，颜色也会更鲜艳一些。需要模糊栏后面的视频和 Android 13 及以上版本.");
         table.put("The heading at the top. Leave it empty for none.",
                 "顶部的标题。留空则不显示.");
-        table.put("The host can already see you in this LIVE",
-                "主播已经能在这个 LIVE 中看到你");
         table.put("The host can see you",
                 "主播能看到你");
         table.put("The host can see you now",
                 "主播现在能看到你");
         table.put("The host sees you next time you open it",
                 "下次你打开时主播就会看到你");
+        table.put("The host won't see you next time you open it",
+                "下次你打开时主播就不会看到你");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "两个预算重置的时间，采用 24 小时制。默认时间为凌晨 4 点，因此深夜仍算作同一天.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

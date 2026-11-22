@@ -5319,14 +5319,14 @@ final class L10nTranslationsIn {
                 "Tepi pil kaca melengkungkan video buram di belakangnya, seperti tepi kaca sungguhan, dan warnanya tampil sedikit lebih kaya. Perlu Buramkan video di belakang bilah dan Android 13 ke atas.");
         table.put("The heading at the top. Leave it empty for none.",
                 "Judul di bagian atas. Biarkan kosong jika tidak perlu.");
-        table.put("The host can already see you in this LIVE",
-                "Host sudah bisa melihatmu di LIVE ini");
         table.put("The host can see you",
                 "Host bisa melihatmu");
         table.put("The host can see you now",
                 "Sekarang host bisa melihatmu");
         table.put("The host sees you next time you open it",
                 "Host akan melihatmu saat kamu membukanya lagi");
+        table.put("The host won't see you next time you open it",
+                "Host tidak akan melihatmu saat kamu membukanya lagi");
         table.put("The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.",
                 "Jam saat kedua anggaran direset, dalam format 24 jam. Bawaannya pukul 4 pagi, jadi malam yang larut masih dihitung sebagai hari yang sama.");
         table.put("The last feed capture wasn't saved. Tap to try again.",

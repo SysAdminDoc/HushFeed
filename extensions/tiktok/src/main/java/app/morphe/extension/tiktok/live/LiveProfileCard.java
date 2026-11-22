@@ -211,11 +211,17 @@ public final class LiveProfileCard {
     /**
      * Called with each themed LIVE panel as it asks for its inflater. True when it's the profile
      * card and a color is picked: the card is colored here from its first layout on, and Dark
-     * LIVE panels leaves it as TikTok draws it.
+     * LIVE panels leaves it as TikTok draws it. With nothing picked, or Hushfeed paused, a card
+     * still wearing colors from an earlier open is watched too, so they go back: TikTok keeps a
+     * room's card views and opens them in a new window each time.
      */
     public static boolean colorCard(Object panel) {
         try {
-            if (panel == null || !isCard(panel) || !colorsPicked()) return false;
+            if (panel == null || !isCard(panel)) return false;
+            if (!colorsPicked()) {
+                if (anyChanged()) watch(panel, 0);
+                return false;
+            }
             watch(panel, 0);
             return true;
         } catch (Throwable failure) {
@@ -232,8 +238,10 @@ public final class LiveProfileCard {
             }
             return;
         }
-        if (WATCHED.put(root, Boolean.TRUE) != null) return;
+        boolean known = WATCHED.put(root, Boolean.TRUE) != null;
         paint(root);
+        // A window opened again already has its listener; it only needed this open's colors.
+        if (known) return;
         // The cells bind as the card's data comes in, so each layout gets the colors again.
         root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -339,6 +347,11 @@ public final class LiveProfileCard {
     private static void thinFill(View view, int color, int original) {
         if (!THIN_FILLS.containsKey(view)) THIN_FILLS.put(view, color);
         setFill(view, over(color, original));
+    }
+
+    /** True while some card view still wears a color, a text color or an inked span from Hushfeed. */
+    private static boolean anyChanged() {
+        return !PAINTED.isEmpty() || !THIN_FILLS.isEmpty() || !TEXT_COLORS.isEmpty() || !INKED_TEXTS.isEmpty();
     }
 
     /**

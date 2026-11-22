@@ -553,6 +553,57 @@ public class LiveProfileCardTest {
         }
     }
 
+    /**
+     * On the S22 each open of a room's card is a new window around the views it kept, so the
+     * colors from the last open stayed when nothing was picked any more (2026-11-22).
+     */
+    @Test public void theKeptCardInANewWindowGetsTikToksColorsBackWhenNothingIsPickedOrHushfeedPauses() throws Exception {
+        int[] stops = {0xFFF8F8F8, WHITE};
+        for (String off : new String[] {"off", "pause"}) {
+            LiveProfileCard.resetForTests();
+            GradientSheet sheet = new GradientSheet(context, stops);
+            Set<Integer> bio = spanColors(sheet.bio);
+            Settings.LIVE_CARD_BACKGROUND.save("black");
+            Sheet first = new Sheet();
+            first.view = sheet.window;
+            assertTrue(off, LiveProfileCard.colorCard(first));
+            assertEquals(off, WHITE, sheet.name.getCurrentTextColor());
+
+            if (off.equals("off")) Settings.LIVE_CARD_BACKGROUND.save("off");
+            else pause(HushfeedPause.Reason.SWITCH);
+            Sheet second = new Sheet();
+            second.view = reopen(sheet);
+            assertFalse(off + ": Dark LIVE panels still gets the card", LiveProfileCard.colorCard(second));
+            assertArrayEquals(off, stops, sheet.surfaceFill().getColors());
+            assertEquals(off, TIKTOK_TEXT, sheet.name.getCurrentTextColor());
+            assertEquals(off, bio, spanColors(sheet.bio));
+            assertEquals(off, FAINT_BLACK, fill(sheet.button));
+            assertEquals(off, LEVEL_LAVENDER, shapeColor(sheet.levelFill));
+            assertEquals(off, CHIP_TEXT, sheet.chip.getCurrentTextColor());
+
+            // Opened again in the same window, with no layout pass, it takes the colors back.
+            pause(HushfeedPause.Reason.NONE);
+            Settings.LIVE_CARD_BACKGROUND.save("black");
+            assertTrue(off, LiveProfileCard.colorCard(second));
+            assertArrayEquals(off, new int[] {BLACK, BLACK}, sheet.surfaceFill().getColors());
+            assertEquals(off, WHITE, sheet.name.getCurrentTextColor());
+        }
+    }
+
+    /** Moves the sheet's card into a new window, as TikTok does when the same room's card opens again. */
+    private FrameLayout reopen(GradientSheet sheet) {
+        View rounded = sheet.window.getChildAt(1);
+        sheet.window.removeView(rounded);
+        FrameLayout window = new FrameLayout(context);
+        FrameLayout.LayoutParams bottom = new FrameLayout.LayoutParams(-1, 400);
+        bottom.topMargin = 400;
+        window.addView(rounded, bottom);
+        window.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
+        window.layout(0, 0, 400, 800);
+        return window;
+    }
+
     private static int shapeColor(View view) {
         return ((GradientDrawable) view.getBackground()).getColor().getDefaultColor();
     }

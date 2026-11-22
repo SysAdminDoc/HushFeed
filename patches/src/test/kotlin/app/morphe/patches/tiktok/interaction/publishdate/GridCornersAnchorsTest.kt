@@ -70,7 +70,9 @@ class GridCornersAnchorsTest {
         assertTrue("the grid cells aren't handed over",
             source.contains("ProfileGridHolderBindFingerprint.method.hookGridCorners(ProfileGridHolderBindFingerprint.originalMethod)"))
         assertTrue("the collection folder cells aren't handed over",
-            source.contains("CollectionGridHolderBindFingerprint.method.hookCollectionGridCorners(CollectionGridHolderBindFingerprint.originalMethod)"))
+            source.contains("CollectionGridHolderBindFingerprint.method.hookCollectionGridCorners {"))
+        assertFalse("the collection folder hook reads the patcher's original bind, which Advanced downloads may have hooked",
+            source.contains("hookCollectionGridCorners(CollectionGridHolderBindFingerprint.originalMethod"))
     }
 
     @Test
@@ -86,14 +88,14 @@ class GridCornersAnchorsTest {
             val owner = owners.single()
             val bind = owner.methods.single { CollectionGridHolderBindFingerprint.takes(it, owner) }
             val post = bind.boundPostField()!!
-            assertEquals("$version: the hook's spot", 1, bind.collectionCornersIndex(post))
+            assertEquals("$version: the hook's spot", 1, bind.collectionCornersIndex())
             assertFalse("$version: something jumps to the post check, past the hand-over",
                 1 in bind.implementation!!.targetIndexes())
             val superclassOf: (String) -> String? = { classes[it]?.superclass }
 
             // Corners first, then Advanced downloads: the opening read is still first, so
             // Advanced downloads' fingerprint still takes the bind and reads the same post field.
-            val cornersFirst = MutableMethod(bind).apply { hookCollectionGridCorners(bind, superclassOf) }
+            val cornersFirst = MutableMethod(bind).apply { hookCollectionGridCorners(superclassOf) }
             assertTrue("$version: Advanced downloads' fingerprint no longer takes the bind",
                 CollectionGridHolderBindFingerprint.takes(cornersFirst, owner))
             assertEquals("$version: the post Advanced downloads reads", post.toString(), cornersFirst.boundPostField()?.toString())
@@ -104,9 +106,12 @@ class GridCornersAnchorsTest {
             assertCornersCall("$version, then the picker", cornersFirst, 4)
 
             // Advanced downloads first: the hook still lands right after TikTok's own read, not
-            // inside the picker's hand-over, which reads the same field.
+            // inside the picker's hand-over, which reads the same field. The bind no longer opens
+            // with the post read then, and the patcher's original method is this hooked bind too,
+            // so the hook has only the bind as it is now to go on.
             val pickerFirst = MutableMethod(bind).apply { hookGridPickFromField(superclassOf) }
-            pickerFirst.hookCollectionGridCorners(bind, superclassOf)
+            assertNull("$version: the picker's read of itemView opens the bind", pickerFirst.boundPostField())
+            pickerFirst.hookCollectionGridCorners(superclassOf)
             assertCornersCall("$version, picker first", pickerFirst, 4)
             val picker = pickerFirst.implementation!!.instructions.toList()[2]
             assertEquals("$version: the picker's hand-over was split", Opcode.INVOKE_STATIC, picker.opcode)
@@ -122,9 +127,8 @@ class GridCornersAnchorsTest {
             val owner = container.dexEntryNames.asSequence()
                 .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
                 .single { cls -> cls.methods.any { CollectionGridHolderBindFingerprint.takes(it, cls) } }
-            val post = owner.methods.single { CollectionGridHolderBindFingerprint.takes(it, owner) }.boundPostField()!!
             val constructor = owner.methods.first { it.name == "<init>" }
-            assertNull("$version: the holder's constructor", constructor.collectionCornersIndex(post))
+            assertNull("$version: the holder's constructor", constructor.collectionCornersIndex())
         }
     }
 

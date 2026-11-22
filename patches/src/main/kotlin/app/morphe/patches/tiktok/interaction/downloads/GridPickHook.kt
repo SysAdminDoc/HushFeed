@@ -17,7 +17,7 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 internal const val VIEW_HOLDER = "Landroidx/recyclerview/widget/RecyclerView\$ViewHolder;"
 private const val GRID_PICKER = "Lapp/morphe/extension/tiktok/download/GridPicker;"
-private const val GRID_AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+internal const val GRID_AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val COLLECTION_CONTENT_ASSEM =
     "Lcom/ss/android/ugc/aweme/favorites/business/collection/assem/CollectionContentAssem;"
 
@@ -84,6 +84,16 @@ internal fun Method.gridPickProblem(superclassOf: (String) -> String?): String? 
 internal fun Method.gridPickFieldProblem(superclassOf: (String) -> String?): String? {
     if (AccessFlags.STATIC.isSet(accessFlags)) return "the grid holder's bind is static"
     if (boundPostField() == null) return "the grid holder's bind doesn't read the cell's post first"
+    return holderProblem(superclassOf)
+}
+
+/**
+ * The holder half of those checks alone, for a hook that may come after the picker's, whose own
+ * read of `itemView` is then the bind's first instruction: an instance bind of a
+ * RecyclerView.ViewHolder with two locals.
+ */
+internal fun Method.gridHolderProblem(superclassOf: (String) -> String?): String? {
+    if (AccessFlags.STATIC.isSet(accessFlags)) return "the grid holder's bind is static"
     return holderProblem(superclassOf)
 }
 

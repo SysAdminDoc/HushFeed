@@ -88,8 +88,9 @@ val alwaysShowPublishDatePatch = bytecodePatch(
         ProfileGridHolderBindFingerprint.method.hookGridCorners(ProfileGridHolderBindFingerprint.originalMethod) {
             classDefByOrNull(it)?.superclass
         }
-        // A Favorites collection folder's posts, which have a holder of their own.
-        CollectionGridHolderBindFingerprint.method.hookCollectionGridCorners(CollectionGridHolderBindFingerprint.originalMethod) {
+        // A Favorites collection folder's posts, which have a holder of their own. Advanced
+        // downloads may have hooked this bind already, so the hook reads it as it is now.
+        CollectionGridHolderBindFingerprint.method.hookCollectionGridCorners {
             classDefByOrNull(it)?.superclass
         }
     }

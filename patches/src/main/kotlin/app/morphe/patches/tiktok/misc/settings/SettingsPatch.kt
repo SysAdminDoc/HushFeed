@@ -366,79 +366,78 @@ val settingsPatch = bytecodePatch(
     execute {
         if (isTikTokLite(packageMetadata.packageName)) {
             hostSettingsInOwnActivity()
-            return@execute
-        }
-
-        // First, before any other write: TikTok's own crash recovery would delete what this
-        // screen saves.
-        keepHushfeedPreferenceFiles(
-            LaunchCrashKeepListFingerprint.method,
-            LaunchCrashKeepListFingerprint.classDef.methods,
-        )
-
-        val initializeSettingsMethodDescriptor =
-            "$SETTINGS_EXTENSION_CLASS_DESCRIPTOR->initialize(" +
-                "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;" +
-                ")Z"
-
-        AdPersonalizationActivityOnCreateFingerprint.method.apply {
-            val activityImplementation = implementationOrPatchException("Settings")
-            val invokeSuperIndex = indexOfFirstInstructionOrThrow { opcode == Opcode.INVOKE_SUPER }
-            val invokeSuper = getInstruction(invokeSuperIndex) as? Instruction35c
-                ?: throw PatchException(
-                    "Settings: ${definingClass}->${name} uses an unsupported invoke-super form.",
-                )
-            val initializeSettingsIndex = invokeSuperIndex + 1
-            val thisRegister = invokeSuper.registerC
-            // The highest local. Counting parameters rather than the registers they occupy
-            // put this on top of a wide parameter's upper half on any method holding one.
-            val locals = activityImplementation.registerCount - numberOfParameterRegisters
-            check(locals >= 1) {
-                "Settings: the ad personalisation activity has no free local register."
-            }
-            val usableRegister = locals - 1
-
-            addInstructionsWithLabels(
-                initializeSettingsIndex,
-                """
-                    invoke-static {v$thisRegister}, $initializeSettingsMethodDescriptor
-                    move-result v$usableRegister
-                    if-eqz v$usableRegister, :do_not_open
-                    return-void
-                """,
-                ExternalLabel("do_not_open", getInstruction(initializeSettingsIndex)),
-            )
-        }
-
-        AdPersonalizationActivityOnBackPressedFingerprint.method.apply {
-            requireLocals("Settings", 1)
-            addInstructionsWithLabels(
-                0,
-                """
-                    invoke-static/range {p0 .. p0}, $SETTINGS_EXTENSION_CLASS_DESCRIPTOR->handleBackPressed(Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;)Z
-                    move-result v0
-                    if-eqz v0, :morphe_settings_not_handled
-                    return-void
-                """,
-                ExternalLabel("morphe_settings_not_handled", getInstruction(0)),
-            )
-        }
-
-        // A long press on For You, TikTok's nearest thing to a logo on the feed, opens the page
-        // too. A build where it can't be found keeps everything else and leaves For You alone.
-        hookForYouLongPress()
-
-        // addHushfeedRowAtOpenDebug puts the Hushfeed row into TikTok's settings list by taking over the
-        // Open Debug row. The page doesn't depend on it, since holding Home opens it too, so an
-        // APK or patch mix without that row (#460) still gets the page and every other patch.
-        if (OpenDebugCellVmDefaultStateFingerprint.methodOrNull == null) {
-            println(
-                "[Settings] Left out the Hushfeed row in TikTok's settings on " +
-                    "${packageMetadata.versionName}: the Open Debug row wasn't found. " +
-                    "Holding Home still opens the page.",
-            )
         } else {
-            addHushfeedRowAtOpenDebug()
+            // First, before any other write: TikTok's own crash recovery would delete what this
+            // screen saves.
+            keepHushfeedPreferenceFiles(
+                LaunchCrashKeepListFingerprint.method,
+                LaunchCrashKeepListFingerprint.classDef.methods,
+            )
+
+            val initializeSettingsMethodDescriptor =
+                "$SETTINGS_EXTENSION_CLASS_DESCRIPTOR->initialize(" +
+                    "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;" +
+                    ")Z"
+
+            AdPersonalizationActivityOnCreateFingerprint.method.apply {
+                val activityImplementation = implementationOrPatchException("Settings")
+                val invokeSuperIndex = indexOfFirstInstructionOrThrow { opcode == Opcode.INVOKE_SUPER }
+                val invokeSuper = getInstruction(invokeSuperIndex) as? Instruction35c
+                    ?: throw PatchException(
+                        "Settings: ${definingClass}->${name} uses an unsupported invoke-super form.",
+                    )
+                val initializeSettingsIndex = invokeSuperIndex + 1
+                val thisRegister = invokeSuper.registerC
+                // The highest local. Counting parameters rather than the registers they occupy
+                // put this on top of a wide parameter's upper half on any method holding one.
+                val locals = activityImplementation.registerCount - numberOfParameterRegisters
+                check(locals >= 1) {
+                    "Settings: the ad personalisation activity has no free local register."
+                }
+                val usableRegister = locals - 1
+
+                addInstructionsWithLabels(
+                    initializeSettingsIndex,
+                    """
+                        invoke-static {v$thisRegister}, $initializeSettingsMethodDescriptor
+                        move-result v$usableRegister
+                        if-eqz v$usableRegister, :do_not_open
+                        return-void
+                    """,
+                    ExternalLabel("do_not_open", getInstruction(initializeSettingsIndex)),
+                )
+            }
+
+            AdPersonalizationActivityOnBackPressedFingerprint.method.apply {
+                requireLocals("Settings", 1)
+                addInstructionsWithLabels(
+                    0,
+                    """
+                        invoke-static/range {p0 .. p0}, $SETTINGS_EXTENSION_CLASS_DESCRIPTOR->handleBackPressed(Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;)Z
+                        move-result v0
+                        if-eqz v0, :morphe_settings_not_handled
+                        return-void
+                    """,
+                    ExternalLabel("morphe_settings_not_handled", getInstruction(0)),
+                )
+            }
+
+            // A long press on For You, TikTok's nearest thing to a logo on the feed, opens the page
+            // too. A build where it can't be found keeps everything else and leaves For You alone.
+            hookForYouLongPress()
+
+            // addHushfeedRowAtOpenDebug puts the Hushfeed row into TikTok's settings list by taking over the
+            // Open Debug row. The page doesn't depend on it, since holding Home opens it too, so an
+            // APK or patch mix without that row (#460) still gets the page and every other patch.
+            if (OpenDebugCellVmDefaultStateFingerprint.methodOrNull == null) {
+                println(
+                    "[Settings] Left out the Hushfeed row in TikTok's settings on " +
+                        "${packageMetadata.versionName}: the Open Debug row wasn't found. " +
+                        "Holding Home still opens the page.",
+                )
+            } else {
+                addHushfeedRowAtOpenDebug()
+            }
         }
         registerForBuildDetails("enableSettings")
     }

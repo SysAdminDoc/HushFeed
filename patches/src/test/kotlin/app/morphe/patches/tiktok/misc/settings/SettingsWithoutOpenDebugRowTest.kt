@@ -21,7 +21,8 @@ class SettingsWithoutOpenDebugRowTest {
 
     private val guard = body.indexOf("OpenDebugCellVmDefaultStateFingerprint.methodOrNull == null")
     private val otherwise = body.indexOf("} else {", guard)
-    private val branchesEnd = body.indexOf("\n        }\n", otherwise)
+    // The row check sits in execute's TikTok branch (Lite hosts the page in its own screen).
+    private val branchesEnd = body.indexOf("\n            }\n", otherwise)
 
     @Test
     fun `a missing row ends the row work without failing the patch`() {

@@ -71,8 +71,8 @@ internal val ownSettingsActivityPatch = patch {
  * (the ad personalisation screen, Settings and privacy's Open Debug row, the For You tab), so the
  * page opens in Hushfeed's own screen, and the way in is "Open Hushfeed settings" on the app
  * icon's long-press menu, published as Lite's main screen opens (whichever of its two activities
- * that is). Settings registers last, as on
- * TikTok, so a run that fails partway doesn't list it as applied.
+ * that is). Settings registers after this returns, as execute's last statement for TikTok and
+ * Lite alike, so a run that fails partway doesn't list it as applied.
  */
 internal fun hostSettingsInOwnActivity() {
     OwnSettingsActivityFingerprint.method.returnEarly(true)
@@ -89,7 +89,6 @@ internal fun hostSettingsInOwnActivity() {
             clearer.addInstructionsAtControlFlowLabel(index, "invoke-static {}, $LAUNCHER_SHORTCUT_CLASS->republish()V")
         }
     }
-    registerForBuildDetails("enableSettings")
 }
 
 /**

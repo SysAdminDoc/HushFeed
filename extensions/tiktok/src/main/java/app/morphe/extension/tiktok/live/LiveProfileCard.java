@@ -15,6 +15,10 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -48,9 +52,12 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * color, a colored shape or a gradient that reads as one color) or else the nearest one drawn
  * behind the card, and any layer of the same fill as wide as it, take the background, and the text drawn straight on
  * them takes the text color, white or black when that's left on Automatic, whichever stands out.
- * Anything with a fill of its own (label chips, the event box, badge tiles, the group chat row,
- * buttons) keeps TikTok's fill and its own text color, so it reads the way TikTok drew it on any
- * background. Icons keep their own colors. The card then skips Dark LIVE panels.
+ * Gray color spans in that text (the bio's) take it too, at their own strength. Anything with a
+ * fill of its own (label chips, the event box, badge tiles, the group chat row, buttons), and
+ * anything drawn over a fill beside it (a chip's label), keeps TikTok's fill and its own text
+ * color, so it reads the way TikTok drew it on any background. A round button that is only a
+ * faint tint over the card takes the gray it showed on TikTok's card as its fill. Icons keep their
+ * own colors. The card then skips Dark LIVE panels.
  */
 public final class LiveProfileCard {
     /** TikTok's profile card sheet, a name it keeps. */
@@ -272,23 +279,111 @@ public final class LiveProfileCard {
             } else if (kind != NO_FILL) {
                 // A fill of its own: it and everything on it keep TikTok's colors.
                 return;
+            } else if (fill != 0 && isTintedButton(view, color, surface)) {
+                // TikTok's round buttons are a faint black over the card, gray only on white,
+                // so each takes the gray it showed there and keeps its icon (#487).
+                setFill(view, over(color, original));
+                return;
             }
         }
         if (view instanceof TextView) {
             TextView text = (TextView) view;
             if (text.getCurrentTextColor() != ink) text.setTextColor(ink);
+            inkSpans(text, ink);
         }
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {
+                // Drawn over a fill beside it, a chip's label keeps TikTok's colors like one inside it.
+                if (overSiblingFill(group, i)) continue;
                 paintTree(group.getChildAt(i), surface, original, fill, ink, depth + 1);
             }
         }
     }
 
+    /**
+     * A small view holding others whose fill is a faint tint, too faint to count as a fill of its
+     * own: TikTok's round buttons (5% black on 47.9.3).
+     */
+    private static boolean isTintedButton(View view, Integer color, View surface) {
+        return color != null && Color.alpha(color) > 0 && view instanceof ViewGroup
+                && ((ViewGroup) view).getChildCount() > 0 && view.getWidth() < surface.getWidth() - 1;
+    }
+
+    /** [tint] drawn over the opaque [base], as one opaque color. */
+    static int over(int tint, int base) {
+        int alpha = Color.alpha(tint);
+        return Color.rgb(
+                (Color.red(tint) * alpha + Color.red(base) * (255 - alpha)) / 255,
+                (Color.green(tint) * alpha + Color.green(base) * (255 - alpha)) / 255,
+                (Color.blue(tint) * alpha + Color.blue(base) * (255 - alpha)) / 255);
+    }
+
+    /** Whether an earlier child of [group], drawn before child [index], has a fill under its middle. */
+    private static boolean overSiblingFill(ViewGroup group, int index) {
+        View child = group.getChildAt(index);
+        int x = (child.getLeft() + child.getRight()) / 2;
+        int y = (child.getTop() + child.getBottom()) / 2;
+        for (int i = 0; i < index; i++) {
+            View behind = group.getChildAt(i);
+            if (behind.getVisibility() != View.VISIBLE || PAINTED.containsKey(behind)) continue;
+            if (x < behind.getLeft() || x >= behind.getRight() || y < behind.getTop() || y >= behind.getBottom()) continue;
+            if (fillKind(behind.getBackground()) != NO_FILL) return true;
+        }
+        return false;
+    }
+
+    /**
+     * The text's own gray color spans take the text color at their own strength, since they beat
+     * the view's color: the bio is TikTok's 46% black span (#487). A span of a real color, a link
+     * or a mention, keeps it. A text that can't change in place is set once as one that can, and
+     * TikTok's later texts for the view then come in that way too.
+     */
+    static void inkSpans(TextView view, int ink) {
+        CharSequence text = view.getText();
+        if (!(text instanceof Spanned)) return;
+        Spanned spanned = (Spanned) text;
+        ForegroundColorSpan[] spans = spanned.getSpans(0, spanned.length(), ForegroundColorSpan.class);
+        boolean stale = false;
+        for (ForegroundColorSpan span : spans) {
+            if (inked(span, ink) != null) {
+                stale = true;
+                break;
+            }
+        }
+        if (!stale) return;
+        Spannable target = text instanceof Spannable ? (Spannable) text : new SpannableString(text);
+        for (ForegroundColorSpan span : spans) {
+            Integer color = inked(span, ink);
+            if (color == null) continue;
+            int start = target.getSpanStart(span);
+            int end = target.getSpanEnd(span);
+            int flags = target.getSpanFlags(span);
+            if (start < 0) continue;
+            target.removeSpan(span);
+            target.setSpan(new ForegroundColorSpan(color), start, end, flags);
+        }
+        if (target != text) view.setText(target, TextView.BufferType.SPANNABLE);
+    }
+
+    /** The color a plain gray span takes, or null for one to leave: a real color, or already inked. */
+    private static Integer inked(ForegroundColorSpan span, int ink) {
+        if (span.getClass() != ForegroundColorSpan.class) return null;
+        int color = span.getForegroundColor();
+        int high = Math.max(Color.red(color), Math.max(Color.green(color), Color.blue(color)));
+        int low = Math.min(Color.red(color), Math.min(Color.green(color), Color.blue(color)));
+        if (high - low > MAX_GRADIENT_SPREAD) return null;
+        int target = (ink & 0x00FFFFFF) | (color & 0xFF000000);
+        return target == color ? null : target;
+    }
+
     private static void paintFill(View view, int fill) {
         PAINTED.put(view, Boolean.TRUE);
         if (fill == 0) return;
+        setFill(view, fill);
+    }
+
+    private static void setFill(View view, int fill) {
         Drawable background = view.getBackground();
         Integer now = solidColor(background);
         if (now == null || now == fill) return;

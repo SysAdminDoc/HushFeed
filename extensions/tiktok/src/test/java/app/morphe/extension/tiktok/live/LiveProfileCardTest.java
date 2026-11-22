@@ -12,10 +12,15 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,6 +55,10 @@ public class LiveProfileCardTest {
     private static final int CHIP = 0xFFFE2C55;
     private static final int CHIP_TEXT = 0xFF161823;
     private static final int TIKTOK_TEXT = 0xFF161823;
+    private static final int BIO_GRAY = 0x75000000;
+    private static final int LINK = 0xFF2B5DB9;
+    private static final int CHIP_PINK = 0xFFFFF1F3;
+    private static final int FAINT_BLACK = 0x0D000000;
 
     /** TikTok's card module enum keeps its constant names; these are the ones it has. */
     enum Module { HEADER, LIVE_EVENT, LIVE_PRODUCTS, ECOM, SHOP_EXPERIENCE_SCORE, GROUP_CHAT,
@@ -126,6 +135,16 @@ public class LiveProfileCardTest {
         final FrameLayout card;
         final TextView name;
         final TextView chip;
+        /** The bio: TikTok's text with its 46% black span over it all and a link's color. */
+        final TextView bio;
+        /** A chip drawn as a fill beside its label, both under one frame (the Community chip). */
+        final View chipFill;
+        final TextView chipLabel;
+        /** A round button that is 5% black over the card, with its icon. */
+        final FrameLayout button;
+        final ImageView icon;
+        /** A faint line with nothing on it. */
+        final View divider;
 
         GradientSheet(Context context, int[] stops) {
             window = new FrameLayout(context);
@@ -148,8 +167,30 @@ public class LiveProfileCardTest {
             GradientDrawable shape = new GradientDrawable();
             shape.setColor(CHIP);
             chip.setBackground(shape);
+            bio = Card.text(context);
+            bio.setText(tikTokBio());
+            FrameLayout chipFrame = new FrameLayout(context);
+            chipFill = new View(context);
+            GradientDrawable pink = new GradientDrawable();
+            pink.setColor(CHIP_PINK);
+            chipFill.setBackground(pink);
+            FrameLayout labelFrame = new FrameLayout(context);
+            chipLabel = Card.text(context);
+            labelFrame.addView(chipLabel);
+            chipFrame.addView(chipFill, new FrameLayout.LayoutParams(-1, -1));
+            chipFrame.addView(labelFrame, new FrameLayout.LayoutParams(-1, -1));
+            button = new FrameLayout(context);
+            button.setBackground(new ColorDrawable(FAINT_BLACK));
+            icon = new ImageView(context);
+            button.addView(icon, new FrameLayout.LayoutParams(20, 20));
+            divider = new View(context);
+            divider.setBackground(new ColorDrawable(FAINT_BLACK));
             rows.addView(name, new LinearLayout.LayoutParams(-1, 40));
             rows.addView(chip, new LinearLayout.LayoutParams(100, 40));
+            rows.addView(bio, new LinearLayout.LayoutParams(-1, 40));
+            rows.addView(chipFrame, new LinearLayout.LayoutParams(140, 50));
+            rows.addView(button, new LinearLayout.LayoutParams(50, 50));
+            rows.addView(divider, new LinearLayout.LayoutParams(300, 2));
             card.addView(rows, new FrameLayout.LayoutParams(-1, -1));
             frame.addView(surface, new FrameLayout.LayoutParams(-1, -1));
             frame.addView(card, new FrameLayout.LayoutParams(-1, -1));
@@ -165,6 +206,23 @@ public class LiveProfileCardTest {
         GradientDrawable surfaceFill() {
             return (GradientDrawable) surface.getBackground();
         }
+
+        /** As HeaderCell builds it on 47.9.3, a fresh builder each time the bio view measures. */
+        static CharSequence tikTokBio() {
+            SpannableStringBuilder text = new SpannableStringBuilder("Watch us on YouTube @hotr");
+            text.setSpan(new ForegroundColorSpan(BIO_GRAY), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new ForegroundColorSpan(LINK), 20, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return text;
+        }
+    }
+
+    private static Set<Integer> spanColors(TextView view) {
+        Spanned text = (Spanned) view.getText();
+        Set<Integer> colors = new HashSet<>();
+        for (ForegroundColorSpan span : text.getSpans(0, text.length(), ForegroundColorSpan.class)) {
+            colors.add(span.getForegroundColor());
+        }
+        return colors;
     }
 
     @Before public void setUp() {
@@ -371,6 +429,61 @@ public class LiveProfileCardTest {
         assertEquals(Integer.valueOf(0xFFFBFBFB), LiveProfileCard.solidColor(
                 new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xFFF8F8F8, WHITE})));
         assertNull(LiveProfileCard.solidColor(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, banner)));
+    }
+
+    /** On the S22 the bio went black on black: its gray is a span, which beats the view's color. */
+    @Test public void theBiosGraySpanTakesTheTextColorAtItsOwnStrength() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        LiveProfileCard.paint(sheet.window);
+        Set<Integer> expected = new HashSet<>();
+        expected.add(0x75FFFFFF);
+        expected.add(LINK);
+        assertEquals("the gray takes white at 46%, the link keeps its color", expected, spanColors(sheet.bio));
+
+        // The bio view sets TikTok's text again each time it measures. It now comes in as one
+        // that changes in place, and the next layout inks it there.
+        sheet.bio.setText(GradientSheet.tikTokBio());
+        CharSequence again = sheet.bio.getText();
+        assertTrue(again instanceof Spannable);
+        LiveProfileCard.paint(sheet.window);
+        assertSame("inked in place, not set again", again, sheet.bio.getText());
+        assertEquals(expected, spanColors(sheet.bio));
+
+        LiveProfileCard.resetForTests();
+        GradientSheet yellow = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_TEXT.save("yellow");
+        LiveProfileCard.paint(yellow.window);
+        assertTrue(spanColors(yellow.bio).contains(0x75FFD60A));
+    }
+
+    /** The Community chip's label sits over its pink fill, the two side by side under one frame. */
+    @Test public void aChipsLabelDrawnOverItsFillKeepsItsColor() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        LiveProfileCard.paint(sheet.window);
+        assertEquals(CHIP_PINK, ((GradientDrawable) sheet.chipFill.getBackground()).getColor().getDefaultColor());
+        assertEquals(TIKTOK_TEXT, sheet.chipLabel.getCurrentTextColor());
+        assertEquals("text straight on the card still changes", WHITE, sheet.name.getCurrentTextColor());
+    }
+
+    /** TikTok's round buttons are 5% black, gray on its white card and gone on a black one. */
+    @Test public void aFaintRoundButtonKeepsTheGrayItShowedOnTikToksCard() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        LiveProfileCard.paint(sheet.window);
+        assertEquals("5% black over the sheet's #fbfbfb", 0xFFEEEEEE, fill(sheet.button));
+        assertEquals("a faint line with nothing on it stays as it was", FAINT_BLACK, fill(sheet.divider));
+        LiveProfileCard.paint(sheet.window);
+        assertEquals("the next layout leaves it", 0xFFEEEEEE, fill(sheet.button));
+        assertEquals(0xFFF2F2F2, LiveProfileCard.over(FAINT_BLACK, WHITE));
+
+        LiveProfileCard.resetForTests();
+        GradientSheet textOnly = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("off");
+        Settings.LIVE_CARD_TEXT.save("yellow");
+        LiveProfileCard.paint(textOnly.window);
+        assertEquals("TikTok's card keeps its tint", FAINT_BLACK, fill(textOnly.button));
     }
 
     @Test public void theCardsDarkFixesStepAsideWhileAColorIsPicked() {

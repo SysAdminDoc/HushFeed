@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.TextView;
@@ -43,8 +44,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * taken off the card and the container leaves it out of its spacing.
  *
  * <p>Colors. {@link LivePanelTheme#darkLivePanel} hands each LIVE panel over first. For the card,
- * while a color is picked, the card's own surface, the outermost fill as wide as its window, and
- * any layer of the same fill as wide as it, take the background, and the text drawn straight on
+ * while a color is picked, the card's own surface, the outermost fill as wide as its window (a
+ * color, a colored shape or a gradient that reads as one color) or else the nearest one drawn
+ * behind the card, and any layer of the same fill as wide as it, take the background, and the text drawn straight on
  * them takes the text color, white or black when that's left on Automatic, whichever stands out.
  * Anything with a fill of its own (label chips, the event box, badge tiles, the group chat row,
  * buttons) keeps TikTok's fill and its own text color, so it reads the way TikTok drew it on any
@@ -63,6 +65,8 @@ public final class LiveProfileCard {
     private static final int MIN_FILL_ALPHA = 0x10;
     /** How much of the window's width the card's surface spans. */
     private static final float SURFACE_SHARE = 0.9f;
+    /** How far a gradient's stops may drift, per channel, and still read as one color. */
+    private static final int MAX_GRADIENT_SPREAD = 0x20;
     private static final int NO_FILL = 0;
     private static final int OTHER_FILL = 1;
     private static final int SOLID_FILL = 2;
@@ -76,6 +80,7 @@ public final class LiveProfileCard {
     private static final Map<View, Boolean> PAINTED = Collections.synchronizedMap(new WeakHashMap<>());
     private static volatile boolean rowFailureLogged;
     private static volatile boolean paintFailureLogged;
+    private static volatile boolean surfaceMissLogged;
 
     private LiveProfileCard() {
     }
@@ -229,7 +234,13 @@ public final class LiveProfileCard {
         try {
             if (!colorsPicked()) return;
             View surface = surface(root);
-            if (surface == null) return;
+            if (surface == null) {
+                if (!surfaceMissLogged) {
+                    surfaceMissLogged = true;
+                    Logger.printDebug(() -> "LIVE profile card: no surface around " + root.getClass().getName());
+                }
+                return;
+            }
             Integer original = ORIGINAL_FILLS.get(surface);
             if (original == null) {
                 original = solidColor(surface.getBackground());
@@ -239,7 +250,7 @@ public final class LiveProfileCard {
             int fill = background();
             int card = fill != 0 ? fill : original;
             int ink = text() != 0 ? text() : contrast(card);
-            paintTree(surface, surface, original, fill, ink, 0);
+            paintTree(scope(surface, root), surface, original, fill, ink, 0);
         } catch (Throwable failure) {
             if (!paintFailureLogged) {
                 paintFailureLogged = true;
@@ -284,23 +295,79 @@ public final class LiveProfileCard {
         // A shape's state is shared with every view drawn from it, so it's copied first.
         Drawable own = background.mutate();
         if (own instanceof GradientDrawable) {
-            ((GradientDrawable) own).setColor(fill);
+            GradientDrawable shape = (GradientDrawable) own;
+            // A gradient keeps the shader it last drew with through setColor, so it becomes a
+            // gradient of one color instead, which builds a new one.
+            if (stops(shape) != null) shape.setColors(new int[] {fill, fill});
+            else shape.setColor(fill);
         } else if (own instanceof ColorDrawable) {
             ((ColorDrawable) own).setColor(fill);
         }
     }
 
     /**
-     * The card's surface: the outermost shown view as wide as most of the window with a solid
-     * fill of its own, or the one found before.
+     * The card's surface: the outermost shown view under [root] as wide as most of the window
+     * with a solid fill of its own, else the nearest such view drawn behind [root], or the one
+     * found before. On 47.9.3 the sheet draws the surface beside the card's own view, under the
+     * same parent, so the card's view holds none (#487).
      */
     static View surface(View root) {
         View known = SURFACES.get(root);
         if (known != null && known.isAttachedToWindow()) return known;
         if (root.getWidth() <= 0) return null;
-        View found = findSurface(root, root.getWidth() * SURFACE_SHARE, 0);
+        float width = Math.max(root.getWidth(), root.getRootView().getWidth()) * SURFACE_SHARE;
+        View found = findSurface(root, width, 0);
+        if (found == null) found = findBackdrop(root, width);
         if (found != null) SURFACES.put(root, found);
         return found;
+    }
+
+    /**
+     * The nearest surface behind [root]: under each parent in turn, an earlier child, drawn
+     * before it and level with its top, or else the parent's own fill.
+     */
+    private static View findBackdrop(View root, float width) {
+        View child = root;
+        ViewParent parent = root.getParent();
+        for (int depth = 0; parent instanceof ViewGroup && depth < MAX_TREE_DEPTH; depth++) {
+            ViewGroup group = (ViewGroup) parent;
+            for (int i = group.indexOfChild(child) - 1; i >= 0; i--) {
+                View behind = group.getChildAt(i);
+                if (behind.getTop() > child.getTop() || behind.getBottom() <= child.getTop()) continue;
+                View found = findSurface(behind, width, 0);
+                if (found != null) return found;
+            }
+            if (group.getWidth() >= width && fillKind(group.getBackground()) == SOLID_FILL) return group;
+            child = group;
+            parent = group.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Where painting starts: the surface when the card is drawn in it, else the nearest view
+     * holding both, so the text on the card's view takes the colors too. A surface with nothing
+     * in it is a backdrop, and what's drawn on it is beside it, under its parent.
+     */
+    static View scope(View surface, View root) {
+        if (within(root, surface)) return surface;
+        if (within(surface, root)) {
+            boolean holds = surface instanceof ViewGroup && ((ViewGroup) surface).getChildCount() > 0;
+            ViewParent parent = surface.getParent();
+            return holds || !(parent instanceof View) ? surface : (View) parent;
+        }
+        for (ViewParent parent = surface.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (within(root, (View) parent)) return (View) parent;
+        }
+        return surface;
+    }
+
+    private static boolean within(View view, View ancestor) {
+        if (view == ancestor) return true;
+        for (ViewParent parent = view.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (parent == ancestor) return true;
+        }
+        return false;
     }
 
     private static View findSurface(View view, float width, int depth) {
@@ -324,7 +391,14 @@ public final class LiveProfileCard {
         }
         if (drawable instanceof GradientDrawable) {
             Integer color = solidColor(drawable);
-            return color == null || Color.alpha(color) < MIN_FILL_ALPHA ? NO_FILL : SOLID_FILL;
+            if (color != null) return Color.alpha(color) < MIN_FILL_ALPHA ? NO_FILL : SOLID_FILL;
+            // A gradient that shows is a picture of its own; a shape with no color draws nothing.
+            int[] stops = stops((GradientDrawable) drawable);
+            if (stops == null) return NO_FILL;
+            for (int stop : stops) {
+                if (Color.alpha(stop) >= MIN_FILL_ALPHA) return OTHER_FILL;
+            }
+            return NO_FILL;
         }
         if (drawable instanceof RippleDrawable) {
             RippleDrawable ripple = (RippleDrawable) drawable;
@@ -340,14 +414,51 @@ public final class LiveProfileCard {
         return OTHER_FILL;
     }
 
-    /** A color or colored shape's color, null for anything else. */
+    /**
+     * A color or colored shape's color, the color of a gradient that reads as one (the sheet's
+     * #f8f8f8 to white on 47.9.3), null for anything else.
+     */
     static Integer solidColor(Drawable drawable) {
         if (drawable instanceof ColorDrawable) return ((ColorDrawable) drawable).getColor();
         if (drawable instanceof GradientDrawable && Build.VERSION.SDK_INT >= 24) {
-            android.content.res.ColorStateList colors = ((GradientDrawable) drawable).getColor();
+            GradientDrawable shape = (GradientDrawable) drawable;
+            // A shape draws its gradient over its color when it has both.
+            int[] stops = stops(shape);
+            if (stops != null) return evenColor(stops);
+            android.content.res.ColorStateList colors = shape.getColor();
             return colors != null ? colors.getDefaultColor() : null;
         }
         return null;
+    }
+
+    /** A shape's gradient stops, null when it has none or the system can't say. */
+    private static int[] stops(GradientDrawable shape) {
+        if (Build.VERSION.SDK_INT < 24) return null;
+        int[] stops = shape.getColors();
+        return stops != null && stops.length > 0 ? stops : null;
+    }
+
+    /**
+     * The average of [stops] when every channel stays within {@link #MAX_GRADIENT_SPREAD} across
+     * them, so the gradient reads as one color; null for one that shows.
+     */
+    static Integer evenColor(int[] stops) {
+        int[] low = {255, 255, 255, 255};
+        int[] high = new int[4];
+        int[] sum = new int[4];
+        for (int stop : stops) {
+            int[] channels = {Color.alpha(stop), Color.red(stop), Color.green(stop), Color.blue(stop)};
+            for (int c = 0; c < 4; c++) {
+                low[c] = Math.min(low[c], channels[c]);
+                high[c] = Math.max(high[c], channels[c]);
+                sum[c] += channels[c];
+            }
+        }
+        for (int c = 0; c < 4; c++) {
+            if (high[c] - low[c] > MAX_GRADIENT_SPREAD) return null;
+        }
+        int n = stops.length;
+        return Color.argb(sum[0] / n, sum[1] / n, sum[2] / n, sum[3] / n);
     }
 
     static void resetForTests() {
@@ -357,5 +468,6 @@ public final class LiveProfileCard {
         PAINTED.clear();
         rowFailureLogged = false;
         paintFailureLogged = false;
+        surfaceMissLogged = false;
     }
 }

@@ -1,5 +1,6 @@
 package app.morphe.extension.tiktok.live;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -110,6 +111,59 @@ public class LiveProfileCardTest {
             view.setText("text");
             view.setTextColor(TIKTOK_TEXT);
             return view;
+        }
+    }
+
+    /**
+     * The sheet as 47.9.3 draws it (S22, 2026-11-22): in its own window, a clear rounded shape
+     * holds a frame whose first child is the surface, a plain view with TikTok's two-stop
+     * gradient, and whose second is the card's own view, so the card sits beside its surface.
+     */
+    private static final class GradientSheet {
+        final FrameLayout window;
+        final View touchOutside;
+        final View surface;
+        final FrameLayout card;
+        final TextView name;
+        final TextView chip;
+
+        GradientSheet(Context context, int[] stops) {
+            window = new FrameLayout(context);
+            touchOutside = new View(context);
+            window.addView(touchOutside, new FrameLayout.LayoutParams(-1, -1));
+            FrameLayout rounded = new FrameLayout(context);
+            GradientDrawable clear = new GradientDrawable();
+            clear.setColor(0);
+            clear.setCornerRadius(24);
+            rounded.setBackground(clear);
+            FrameLayout frame = new FrameLayout(context);
+            surface = new View(context);
+            surface.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, stops));
+            card = new FrameLayout(context);
+            LinearLayout rows = new LinearLayout(context);
+            rows.setOrientation(LinearLayout.VERTICAL);
+            name = Card.text(context);
+            chip = Card.text(context);
+            chip.setTextColor(CHIP_TEXT);
+            GradientDrawable shape = new GradientDrawable();
+            shape.setColor(CHIP);
+            chip.setBackground(shape);
+            rows.addView(name, new LinearLayout.LayoutParams(-1, 40));
+            rows.addView(chip, new LinearLayout.LayoutParams(100, 40));
+            card.addView(rows, new FrameLayout.LayoutParams(-1, -1));
+            frame.addView(surface, new FrameLayout.LayoutParams(-1, -1));
+            frame.addView(card, new FrameLayout.LayoutParams(-1, -1));
+            rounded.addView(frame, new FrameLayout.LayoutParams(-1, -1));
+            FrameLayout.LayoutParams bottom = new FrameLayout.LayoutParams(-1, 400);
+            bottom.topMargin = 400;
+            window.addView(rounded, bottom);
+            window.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
+            window.layout(0, 0, 400, 800);
+        }
+
+        GradientDrawable surfaceFill() {
+            return (GradientDrawable) surface.getBackground();
         }
     }
 
@@ -264,6 +318,59 @@ public class LiveProfileCardTest {
         card.layout();
         card.root.getViewTreeObserver().dispatchOnGlobalLayout();
         assertEquals("each layout gets the colors again", WHITE, late.getCurrentTextColor());
+    }
+
+    @Test public void aCardBesideTikToksGradientSurfaceTakesTheColors() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Sheet panel = new Sheet();
+        panel.view = sheet.card;
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        Settings.LIVE_CARD_TEXT.save("yellow");
+        assertTrue(LiveProfileCard.colorCard(panel));
+        // Repainted as a gradient of one color, so a shader TikTok already drew from goes too.
+        assertArrayEquals("the surface beside the card", new int[] {BLACK, BLACK}, sheet.surfaceFill().getColors());
+        assertEquals(YELLOW, sheet.name.getCurrentTextColor());
+        assertEquals("a chip keeps its fill", CHIP, ((GradientDrawable) sheet.chip.getBackground()).getColor().getDefaultColor());
+        assertEquals("and its text", CHIP_TEXT, sheet.chip.getCurrentTextColor());
+        assertNull("the clear rounded shape stays clear", ((GradientDrawable) ((View) sheet.surface.getParent().getParent())
+                .getBackground()).getColors());
+        assertNull("nothing outside the sheet", sheet.touchOutside.getBackground());
+
+        // Starting from the sheet's window finds the same surface.
+        LiveProfileCard.resetForTests();
+        GradientSheet fromWindow = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        LiveProfileCard.paint(fromWindow.window);
+        assertArrayEquals(new int[] {BLACK, BLACK}, fromWindow.surfaceFill().getColors());
+        assertEquals(YELLOW, fromWindow.name.getCurrentTextColor());
+    }
+
+    @Test public void aTextColorAloneOnTheGradientPicksItsOwnContrast() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_TEXT.save("yellow");
+        LiveProfileCard.paint(sheet.card);
+        assertArrayEquals("TikTok's gradient stays", new int[] {0xFFF8F8F8, WHITE}, sheet.surfaceFill().getColors());
+        assertEquals(YELLOW, sheet.name.getCurrentTextColor());
+
+        LiveProfileCard.resetForTests();
+        GradientSheet dark = new GradientSheet(context, new int[] {0xFF101010, 0xFF1E1E1E});
+        Settings.LIVE_CARD_TEXT.save("off");
+        Settings.LIVE_CARD_BACKGROUND.save("light_gray");
+        LiveProfileCard.paint(dark.card);
+        assertArrayEquals(new int[] {0xFFE6E6E6, 0xFFE6E6E6}, dark.surfaceFill().getColors());
+        assertEquals("Automatic picks black on light gray", BLACK, dark.name.getCurrentTextColor());
+    }
+
+    @Test public void aGradientThatShowsIsNotTheSurface() {
+        int[] banner = {0xFFFE2C55, 0xFF25F4EE};
+        GradientSheet sheet = new GradientSheet(context, banner);
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        LiveProfileCard.paint(sheet.card);
+        assertArrayEquals("a two-color banner is a picture of its own", banner, sheet.surfaceFill().getColors());
+        assertEquals(TIKTOK_TEXT, sheet.name.getCurrentTextColor());
+
+        assertEquals(Integer.valueOf(0xFFFBFBFB), LiveProfileCard.solidColor(
+                new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xFFF8F8F8, WHITE})));
+        assertNull(LiveProfileCard.solidColor(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, banner)));
     }
 
     @Test public void theCardsDarkFixesStepAsideWhileAColorIsPicked() {

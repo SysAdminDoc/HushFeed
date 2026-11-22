@@ -9,6 +9,9 @@
     Every patch has to declare the same versions: the bundle is held to each of them, and a
     patch that left one out would be missing from that build in the Manager without a word.
     PackageVersions lists them oldest first; PackageVersion is the newest, for one-line text.
+    The target is the one package every patch declares. Some patches also declare TikTok Lite
+    (com.zhiliaoapp.musically.go, #48); that's a second app those patches apply to, never the
+    bundle's target, so its versions don't count here.
 #>
 
 . (Join-Path $PSScriptRoot 'patch-report.ps1')
@@ -22,6 +25,7 @@ function Get-PatchTarget {
 
     $targets = @{}
     $versionSets = @{}
+    $declaringPatches = @{}
     foreach ($patch in $patches) {
         if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
         $nameProperty = $patch.PSObject.Properties['name']
@@ -44,20 +48,27 @@ function Get-PatchTarget {
             if ($versions.Count -eq 0) {
                 throw "$patchName has no exact compatible version for $($property.Name)."
             }
-            if (-not $targets.ContainsKey($property.Name)) { $targets[$property.Name] = @() }
+            if (-not $targets.ContainsKey($property.Name)) {
+                $targets[$property.Name] = @()
+                $versionSets[$property.Name] = @{}
+                $declaringPatches[$property.Name] = 0
+            }
             $targets[$property.Name] += $versions
+            $declaringPatches[$property.Name]++
             $set = (@($versions | Sort-Object -Unique) -join ', ')
-            if (-not $versionSets.ContainsKey($set)) { $versionSets[$set] = $patchName }
+            if (-not $versionSets[$property.Name].ContainsKey($set)) { $versionSets[$property.Name][$set] = $patchName }
         }
     }
 
-    $packages = @($targets.Keys | Sort-Object)
+    $packages = @($targets.Keys | Where-Object { $declaringPatches[$_] -eq $patches.Count } | Sort-Object)
     if ($packages.Count -ne 1) {
-        throw "Expected one compatible package, found $($packages -join ', ')."
+        $all = @($targets.Keys | Sort-Object)
+        throw "Expected one package that every patch declares, found $(if ($packages.Count) { $packages -join ', ' } else { 'none' }) among $($all -join ', ')."
     }
     $packageName = $packages[0]
-    if ($versionSets.Count -ne 1) {
-        $sets = @($versionSets.Keys | Sort-Object | ForEach-Object { "$($versionSets[$_]) declares $_" })
+    $packageSets = $versionSets[$packageName]
+    if ($packageSets.Count -ne 1) {
+        $sets = @($packageSets.Keys | Sort-Object | ForEach-Object { "$($packageSets[$_]) declares $_" })
         throw "Expected every patch to declare the same versions of ${packageName}: $($sets -join '; ')."
     }
     $versions = @($targets[$packageName] | Sort-Object -Unique | Sort-Object { [version]$_ })

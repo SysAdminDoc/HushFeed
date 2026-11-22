@@ -693,10 +693,13 @@ public class Settings extends BaseSettings {
     /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
     public static final StringSetting TRANSLATE_INTO = new StringSetting("translate_into", "");
     /**
-     * TikTok's own translate button in the comment header (#85). No restart: the header asks its
-     * gates each time a comment sheet opens.
+     * TikTok's own translate button in the comment header (#85). Takes a restart: since 47.9.3
+     * TikTok keeps one comment sheet for the whole feed and asks the button's gates only when it
+     * builds that sheet's header (seen on Login2, 2026-11-21: switched off, the next video's
+     * comments still showed the button until TikTok restarted).
      */
-    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON = new BooleanSetting("comment_translate_button", FALSE);
+    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON =
+            new BooleanSetting("comment_translate_button", FALSE, true);
     /**
      * Whether the toggle behind that button was last turned on by the button Hushfeed showed. No
      * row of its own: it is how turning the switch off knows to answer that toggle off, rather

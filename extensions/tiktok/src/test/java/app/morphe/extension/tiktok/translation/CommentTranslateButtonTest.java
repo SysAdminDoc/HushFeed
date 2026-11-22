@@ -71,7 +71,8 @@ public class CommentTranslateButtonTest {
     @Test public void theSwitchStartsOffAndPauseHandsTheGatesBack() {
         assertEquals(Boolean.FALSE, Settings.COMMENT_TRANSLATE_BUTTON.defaultValue);
         assertEquals(CommentTranslateButton.SWITCH_KEY, Settings.COMMENT_TRANSLATE_BUTTON.key);
-        assertFalse("the header asks again on every comment sheet", Settings.COMMENT_TRANSLATE_BUTTON.rebootApp);
+        assertTrue("TikTok keeps one comment sheet and asks only when it builds its header",
+                Settings.COMMENT_TRANSLATE_BUTTON.rebootApp);
         assertFalse(CommentTranslateButton.isOn());
 
         Settings.COMMENT_TRANSLATE_BUTTON.save(true);

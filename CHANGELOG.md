@@ -51,6 +51,8 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).
+* `Translate button in comments` now offers the restart button when you flip it. TikTok keeps one comment sheet for the whole feed and only checks for the button when it builds that sheet, so the change waited for a restart anyway.
 * `Remove feed ads` takes another kind of search ad out of the results. Some search ads carry their video tucked inside the card rather than on it, and TikTok itself doesn't call them ads when asked, so they stayed in the grid (#484).
 * With `Floating bottom bar` and `Hide the bottom tab names` on, the bar lines each tab up by its icon, and an empty box inside a tab doesn't count as the icon anymore. TikTok's Create tab can carry one, and lining up by it could leave the + sitting higher than the other icons (#474).
 * TikTok doesn't freeze and crash anymore with thousands of offline videos saved. Every few minutes TikTok checked how many saved videos were still unwatched by loading all of them, and with a big `Custom offline videos limit` that filled its memory. It asks the database for the number now (#482).

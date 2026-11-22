@@ -2979,6 +2979,13 @@ Gifter level,送礼等级
 SecUID,SecUID
 Unknown (TikTok didn't send it),未知 (TikTok 未发送)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
+Show the room ID and your connection,显示直播间 ID 和你的连接
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.",在直播间加一行小字，显示直播间 ID 以及你自己到直播流的连接状况，数据来自 TikTok 播放器自己的测量：Ping 值、延迟和下载速度。点按这一行可复制直播间 ID.
+Room ID %1$s,直播间 ID %1$s
+Ping %1$s ms,Ping %1$s 毫秒
+Latency %1$s s,延迟 %1$s 秒
+Room ID copied,已复制直播间 ID
+LIVE room ID,直播间 ID
 Hide playable games,隐藏可玩的游戏
 Hide the mini games you can play right in the For You feed.,隐藏可以直接在“为你推荐”信息流里玩的小游戏.
 Playable games,可玩的游戏

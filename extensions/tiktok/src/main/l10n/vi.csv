@@ -2979,6 +2979,13 @@ Gifter level,Cấp độ người tặng quà
 SecUID,SecUID
 Unknown (TikTok didn't send it),Không rõ (TikTok không gửi)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
+Show the room ID and your connection,Hiện ID phòng và kết nối của bạn
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Thêm một dòng nhỏ vào phòng LIVE với ID phòng và tình trạng kết nối của chính bạn tới luồng phát, theo đo đạc của trình phát TikTok: ping, độ trễ và tốc độ tải xuống. Nhấn vào dòng để sao chép ID phòng."
+Room ID %1$s,ID phòng %1$s
+Ping %1$s ms,Ping %1$s ms
+Latency %1$s s,Độ trễ %1$s giây
+Room ID copied,Đã sao chép ID phòng
+LIVE room ID,ID phòng LIVE
 Hide playable games,Ẩn trò chơi có thể chơi
 Hide the mini games you can play right in the For You feed.,Ẩn các trò chơi nhỏ mà bạn có thể chơi ngay trên bảng tin Dành cho bạn.
 Playable games,Trò chơi có thể chơi

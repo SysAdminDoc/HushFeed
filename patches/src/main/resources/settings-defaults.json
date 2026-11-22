@@ -590,6 +590,7 @@
       "hide_live_service_plus",
       "hide_live_ai_summary",
       "show_exact_live_viewers",
+      "live_room_info",
       "offer_live_quality",
       "remember_live_quality",
       "offer_live_clear_screen",
@@ -3430,6 +3431,12 @@
       "key": "live_record_source",
       "type": "string",
       "default": "stream"
+    },
+    "live_room_info": {
+      "field": "LIVE_ROOM_INFO",
+      "key": "live_room_info",
+      "type": "boolean",
+      "default": false
     },
     "live_under_status_bar": {
       "field": "LIVE_UNDER_STATUS_BAR",

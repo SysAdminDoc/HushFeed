@@ -3139,6 +3139,14 @@ Gifter level	Livello donatore
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Sconosciuto (TikTok non l'ha inviato)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Il menu di condivisione di un profilo riceve un pulsante Info sull'account. Mostra ciò che TikTok ha già inviato sull'account: quando si è iscritto, la regione e la lingua, il livello donatore e il SecUID, quando nome utente e nome visualizzato sono cambiati l'ultima volta, se è privato e se i video a cui ha messo Mi piace sono pubblici. Non viene scaricato nient'altro.
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	Mostra l'ID della stanza e la tua connessione
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Aggiunge una piccola riga alle stanze LIVE con l'ID della stanza e lo stato della tua connessione allo stream, come lo misura il player di TikTok: ping, latenza e velocità di download. Tocca la riga per copiare l'ID della stanza.
+Room ID %1$s	ID stanza %1$s
+Ping %1$s ms	Ping %1$s ms
+Latency %1$s s	Latenza %1$s s
+Room ID copied	ID stanza copiato
+LIVE room ID	ID della stanza LIVE
 Hide playable games	Nascondi i giochi giocabili
 Hide the mini games you can play right in the For You feed.	Nascondi i minigiochi che puoi giocare direttamente nel feed “Per te”.
 Playable games	Giochi giocabili

@@ -3340,6 +3340,14 @@ Gifter level	Уровень дарителя
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	Показывать ID комнаты и ваше соединение
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Добавляет в комнаты LIVE небольшую строку с ID комнаты и состоянием вашего собственного соединения с трансляцией, как его измеряет плеер TikTok: пинг, задержка и скорость загрузки. Нажмите на строку, чтобы скопировать ID комнаты.
+Room ID %1$s	ID комнаты %1$s
+Ping %1$s ms	Пинг %1$s мс
+Latency %1$s s	Задержка %1$s с
+Room ID copied	ID комнаты скопирован
+LIVE room ID	ID комнаты LIVE
 Hide playable games	Скрывать игры, в которые можно играть
 Hide the mini games you can play right in the For You feed.	Скрывать мини-игры, в которые можно играть прямо в ленте Рекомендации.
 Playable games	Игры, в которые можно играть

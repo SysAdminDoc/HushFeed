@@ -3410,6 +3410,14 @@ Gifter level	مستوى الإهداء
 SecUID	SecUID
 Unknown (TikTok didn't send it)	غير معروف (لم يرسله TikTok)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	تحصل ورقة مشاركة الملف الشخصي على زر حقائق الحساب. يعرض ما أرسله TikTok بالفعل عن الحساب: تاريخ انضمامه، ومنطقته ولغته، ومستوى الإهداء ومعرّف SecUID، وآخر تغيير لاسم المستخدم واسم العرض، وما إذا كان خاصًا وما إذا كانت مقاطع الفيديو التي أعجبته عامة. لا يتم جلب أي شيء إضافي.
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	إظهار معرّف الغرفة واتصالك
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	يضيف سطرًا صغيرًا إلى غرف LIVE فيه معرّف الغرفة وحالة اتصالك أنت بالبث، كما يقيسها مشغّل TikTok: البينغ والتأخير وسرعة التنزيل. اضغط على السطر لنسخ معرّف الغرفة.
+Room ID %1$s	معرّف الغرفة %1$s
+Ping %1$s ms	البينغ %1$s مللي ث
+Latency %1$s s	التأخير %1$s ث
+Room ID copied	تم نسخ معرّف الغرفة
+LIVE room ID	معرّف غرفة LIVE
 Hide playable games	إخفاء الألعاب القابلة للعب
 Hide the mini games you can play right in the For You feed.	إخفاء الألعاب الصغيرة التي يمكنك لعبها مباشرة في خلاصة لك.
 Playable games	ألعاب قابلة للعب

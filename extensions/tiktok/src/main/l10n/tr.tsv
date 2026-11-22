@@ -3139,6 +3139,14 @@ Gifter level	Hediye veren seviyesi
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Bilinmiyor (TikTok göndermedi)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, hediye veren seviyesini ve SecUID'sini, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	Oda kimliğini ve bağlantını göster
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	LIVE odalarına, oda kimliğini ve yayına olan kendi bağlantının durumunu TikTok oynatıcısının ölçtüğü şekliyle gösteren küçük bir satır ekler: ping, gecikme ve indirme hızı. Oda kimliğini kopyalamak için satıra dokun.
+Room ID %1$s	Oda kimliği %1$s
+Ping %1$s ms	Ping %1$s ms
+Latency %1$s s	Gecikme %1$s sn
+Room ID copied	Oda kimliği kopyalandı
+LIVE room ID	LIVE oda kimliği
 Hide playable games	Oynanabilir oyunları gizle
 Hide the mini games you can play right in the For You feed.	Senin İçin akışında doğrudan oynayabileceğin mini oyunları gizle.
 Playable games	Oynanabilir oyunlar

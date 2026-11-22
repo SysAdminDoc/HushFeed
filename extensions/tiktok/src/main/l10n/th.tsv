@@ -3142,6 +3142,14 @@ Gifter level	ระดับผู้ให้ของขวัญ
 SecUID	SecUID
 Unknown (TikTok didn't send it)	ไม่ทราบ (TikTok ไม่ได้ส่งมา)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	แผ่นเมนูแชร์ของโปรไฟล์จะมีปุ่ม "ข้อมูลบัญชี" เพิ่มเข้ามา ซึ่งจะแสดงสิ่งที่ TikTok ส่งมาเกี่ยวกับบัญชีอยู่แล้ว ได้แก่ วันที่เข้าร่วม ภูมิภาคและภาษา ระดับผู้ให้ของขวัญและ SecUID เวลาที่ชื่อผู้ใช้และชื่อที่แสดงเปลี่ยนแปลงล่าสุด บัญชีเป็นแบบส่วนตัวหรือไม่ และวิดีโอที่ถูกใจเป็นสาธารณะหรือไม่ ไม่มีการดึงข้อมูลเพิ่มเติมใดๆ
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	แสดง ID ห้องและการเชื่อมต่อของคุณ
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	เพิ่มบรรทัดเล็กๆ ในห้อง LIVE ที่แสดง ID ห้องและสถานะการเชื่อมต่อของคุณเองกับสตรีม ตามที่เครื่องเล่นของ TikTok วัดได้ ได้แก่ ปิง ความหน่วง และความเร็วในการดาวน์โหลด แตะที่บรรทัดเพื่อคัดลอก ID ห้อง
+Room ID %1$s	ID ห้อง %1$s
+Ping %1$s ms	ปิง %1$s มิลลิวินาที
+Latency %1$s s	ความหน่วง %1$s วินาที
+Room ID copied	คัดลอก ID ห้องแล้ว
+LIVE room ID	ID ห้อง LIVE
 Hide playable games	ซ่อนเกมที่เล่นได้
 Hide the mini games you can play right in the For You feed.	ซ่อนมินิเกมที่คุณเล่นได้ทันทีในฟีดสำหรับคุณ
 Playable games	เกมที่เล่นได้

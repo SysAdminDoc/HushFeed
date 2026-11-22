@@ -2981,6 +2981,13 @@ Gifter level,Level pemberi hadiah
 SecUID,SecUID
 Unknown (TikTok didn't send it),Tidak diketahui (TikTok tidak mengirimnya)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Lembar bagikan profil mendapat tombol Fakta akun. Tombol ini menampilkan apa yang sudah dikirim TikTok tentang akun itu: kapan bergabung, wilayah dan bahasanya, level pemberi hadiah dan SecUID-nya, kapan nama pengguna dan nama tampilannya terakhir diubah, apakah akunnya privat, dan apakah video yang disukainya publik. Tidak ada data tambahan yang diambil."
+Show the room ID and your connection,Tampilkan ID ruang dan koneksimu
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Menambahkan baris kecil di ruang LIVE berisi ID ruang dan kondisi koneksimu sendiri ke siaran, sesuai ukuran pemutar TikTok: ping, latensi, dan kecepatan unduh. Ketuk baris itu untuk menyalin ID ruang."
+Room ID %1$s,ID ruang %1$s
+Ping %1$s ms,Ping %1$s md
+Latency %1$s s,Latensi %1$s d
+Room ID copied,ID ruang disalin
+LIVE room ID,ID ruang LIVE
 Hide playable games,Sembunyikan game yang bisa dimainkan
 Hide the mini games you can play right in the For You feed.,Sembunyikan game mini yang bisa kamu mainkan langsung di feed Untuk Kamu.
 Playable games,Game yang bisa dimainkan

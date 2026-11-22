@@ -2973,6 +2973,13 @@ val liveControlsPatch = bytecodePatch(
             0,
             "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
         )
+        // The room ID and connection line (#487) follows the same room pages, and reads the
+        // current player's stats by the route TikTok's own LIVE debug panel takes.
+        LivePlayFragmentResumeFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range {p0 .. p0}, $LIVE_ROOM_INFO_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
+        )
+        installLiveRoomInfoBridge(livePlayerStatsReads(LiveDebugInfoTextFingerprint.originalMethod))
         // Each message a LIVE room gets, for the name alert, before TikTok hands it out (#424).
         LiveMessageDispatchFingerprint.method.addInstruction(
             0,

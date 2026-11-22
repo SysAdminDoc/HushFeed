@@ -360,6 +360,21 @@ val commentToolsPatch = bytecodePatch(
             },
             { CaptionRowFingerprint.method.resolveCaptionRow() },
             {
+                // The caption row draws the caption as posted, where the feed follows TikTok's
+                // translation (#488). The row's bind hands its video over first and binds a copy
+                // carrying the translation the feed would show, read off TikTok's own cache.
+                val native = captionTranslationNative(
+                    CaptionRichTranslationFingerprint.originalMethod,
+                    CaptionPlainTranslationFingerprint.originalMethod,
+                ) { classDefByOrNull(it) }
+                val row = CaptionRowViewBindFingerprint.method.resolveCaptionRowTranslation()
+                val write: CommentToolsWrite = {
+                    row()
+                    installCaptionTranslationBridges(native)
+                }
+                write
+            },
+            {
                 // Block this commenter in the menu a long press on a comment opens (#169). The
                 // finished rows pass through the extension on their way into the panel's adapter,
                 // and the row's icon is TikTok's own block glyph in the menu's icon style.

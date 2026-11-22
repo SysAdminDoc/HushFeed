@@ -98,4 +98,28 @@ public class Aweme {
     public RecReasonsStruct getRecReasonsStruct() {
         throw new UnsupportedOperationException("Stub");
     }
+
+    /** The caption as posted, in the author's language. */
+    public String getDesc() {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    public void setDesc(String desc) {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    /** The caption's hashtag and mention spans, each a {@code TextExtraStruct}. */
+    public List getTextExtra() {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    public void setTextExtra(List textExtra) {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    /** TikTok's own copy of the video model. */
+    @Override
+    public Aweme clone() {
+        throw new UnsupportedOperationException("Stub");
+    }
 }

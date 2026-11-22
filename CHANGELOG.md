@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* With `More opens the comments` or `Caption above comments` on, the caption at the top of the comments now shows in the language the feed shows it in. If TikTok translates the caption (Always translate, or See translation on that video), the comments get TikTok's own translation, hashtags and mentions included, and See original keeps it as posted. A translation TikTok hasn't fetched yet leaves the caption as posted until the next time you open the comments (#488).
 * `Exit with one Back` is new on the Feed tabs page. One Back on Home leaves TikTok, with no "Tap again to exit" toast. From any other tab, Back still goes to Home first, or to the tab `Open TikTok on` picks. It starts off and doesn't need a restart (#489).
 * `Hide the pause icon` is new on the Feed screen page. A tap still pauses and plays the video, but the big play icon doesn't pop up over it anymore. It starts off and doesn't need a restart (#489).
 * `Hide playable games` is new under Feed filter. It takes the mini games tagged Playable out of For You before they show. A creator on your exceptions list keeps theirs. It starts off and needs a restart (#486).

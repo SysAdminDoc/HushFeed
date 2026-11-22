@@ -63,6 +63,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Copy the link with one press on Share` on, TalkBack now says Share copies the link as soon as a video shows. Before, it read TikTok's usual Share until you'd pressed the button once.
 * Searching for a product no longer logs an error, or shows an error toast with diagnostic logging on, when TikTok or the videos themselves mark every result on a page as an advert. The page still shows as TikTok sent it, and the diagnostic report says why. A page where every card carries an advert's shape still counts as an error, since that points at a broken check.
 * On a tablet held sideways, opening a profile from search or a picture in the comments no longer flips the screen to portrait. The new `Turn profiles and comment pictures on tablets` patch has both turn with the rest of TikTok wherever TikTok's own check lets its main screen turn. Phones aren't affected (#490).
 * With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).

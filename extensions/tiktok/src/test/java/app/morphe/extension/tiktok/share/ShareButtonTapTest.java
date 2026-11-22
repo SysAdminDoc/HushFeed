@@ -169,6 +169,16 @@ public class ShareButtonTapTest {
         assertEquals("Share, 1.2K", button.createAccessibilityNodeInfo().getContentDescription());
     }
 
+    /** The hook hands over whatever register held the view, typed as TikTok typed it. */
+    @Test public void bindTakesAnyViewAndSkipsTheRest() {
+        android.widget.LinearLayout row = new android.widget.LinearLayout(controller.get());
+        ShareButtonTap.bind((Object) row);
+        assertTrue(row.getAccessibilityDelegate() instanceof ShareButtonTap.CopyLabel);
+        ShareButtonTap.bind("not a view");
+        ShareButtonTap.bind(null);
+        assertNull(ShadowToast.getTextOfLatestToast());
+    }
+
     private CharSequence clickLabel() {
         AccessibilityNodeInfo info = button.createAccessibilityNodeInfo();
         CharSequence label = null;

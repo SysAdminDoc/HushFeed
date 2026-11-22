@@ -14,7 +14,9 @@ import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -26,6 +28,7 @@ internal const val SHARE_BUTTON_TAP = "Lapp/morphe/extension/tiktok/share/ShareB
 private const val REUSED_ASSEM = "Lcom/bytedance/assem/arch/reused/ReusedAssem;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val CLICK_SETTER = "Landroid/view/View\$OnClickListener;"
+private const val PLATFORM_DELEGATE = "Landroid/view/View\$AccessibilityDelegate;"
 
 /** The feed's Share button is its assem's own click listener: this is the press. */
 internal object ShareButtonClickFingerprint : Fingerprint(
@@ -72,22 +75,59 @@ internal fun Method.shareItemRead(): ShareItemRead? {
     return null
 }
 
-/** The calls in onViewCreated that set the assem as a view's click listener, by index. */
-internal fun Method.clickListenerSites(): List<Int> =
-    implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
-        instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
-            it.returnType == "V" && it.parameterTypes.map(CharSequence::toString) == listOf(CLICK_SETTER, "Landroid/view/View;")
-        } == true
-    }?.map { it.index } ?: emptyList()
+/** A call in onViewCreated that hands a view to something, by index, with the view's register. */
+internal data class ViewSite(val index: Int, val view: Int, val listener: Int? = null)
+
+/**
+ * The calls in onViewCreated that set the assem as a view's click listener: TikTok's outlined
+ * two-argument setters, listener first (`(OnClickListener, View)`, the content view and the root)
+ * or view first (`(LinearLayout, OnClickListener)` and one more per view type, the views inside).
+ * Every one of those views copies the link when pressed, since the press lands in [onClick].
+ */
+internal fun Method.clickListenerSites(): List<ViewSite> =
+    implementation?.instructions?.withIndex()?.mapNotNull { (index, instruction) ->
+        if (instruction.opcode != Opcode.INVOKE_STATIC) return@mapNotNull null
+        val call = instruction as? FiveRegisterInstruction ?: return@mapNotNull null
+        val reference = instruction.getReference<MethodReference>() ?: return@mapNotNull null
+        val parameters = reference.parameterTypes.map(CharSequence::toString)
+        if (reference.returnType != "V" || parameters.size != 2 || parameters.count { it == CLICK_SETTER } != 1 ||
+            parameters.any { !it.startsWith("L") }
+        ) return@mapNotNull null
+        if (parameters[0] == CLICK_SETTER) ViewSite(index, call.registerD, call.registerC)
+        else ViewSite(index, call.registerC, call.registerD)
+    } ?: emptyList()
+
+/**
+ * The calls in onViewCreated that give a view a screen reader delegate through androidx's
+ * ViewCompat: a static `(View, AccessibilityDelegateCompat)` call, the compat class told by the
+ * platform delegate it holds ([isDelegateCompat]). 47.9.3 sets one on the Share button after
+ * listening to it, which dropped the label the listener site gave it.
+ */
+internal fun Method.accessibilityDelegateSites(isDelegateCompat: (String) -> Boolean): List<ViewSite> =
+    implementation?.instructions?.withIndex()?.mapNotNull { (index, instruction) ->
+        if (instruction.opcode != Opcode.INVOKE_STATIC) return@mapNotNull null
+        val call = instruction as? FiveRegisterInstruction ?: return@mapNotNull null
+        val reference = instruction.getReference<MethodReference>() ?: return@mapNotNull null
+        val parameters = reference.parameterTypes.map(CharSequence::toString)
+        if (reference.returnType != "V" || parameters.size != 2 || parameters[0] != "Landroid/view/View;" ||
+            !isDelegateCompat(parameters[1])
+        ) return@mapNotNull null
+        ViewSite(index, call.registerC)
+    } ?: emptyList()
+
+/** androidx's AccessibilityDelegateCompat, by the platform delegate it keeps in an instance field. */
+internal fun ClassDef?.isAccessibilityDelegateCompat(): Boolean =
+    this?.fields?.any { it.type == PLATFORM_DELEGATE && !AccessFlags.STATIC.isSet(it.accessFlags) } == true
 
 private fun FieldReference.smali() = "$definingClass->$name:$type"
 
 /**
  * Copy the link with one press on Share. The press asks the extension first, with the cell's own
  * item, before TikTok's method-id push, so a press Hushfeed takes leaves TikTok's bookkeeping as
- * it was. Each view the assem listens to also gets the screen reader label.
+ * it was. Each view the assem listens to also gets the screen reader label, and so does a view
+ * TikTok hands its own screen reader delegate afterwards (the bind wraps whatever is there).
  */
-internal fun hookShareButtonTap() {
+internal fun hookShareButtonTap(classDefByOrNull: (String) -> ClassDef?) {
     ShareButtonClickFingerprint.method.apply {
         val read = shareItemRead()
             ?: throw PatchException("Share sheet tools: the Share button no longer reads the video it shares")
@@ -111,12 +151,19 @@ internal fun hookShareButtonTap() {
             ExternalLabel("share_sheet", getInstruction(0)),
         )
     }
-    ShareButtonViewCreatedFingerprint.method.apply {
-        val sites = clickListenerSites()
-        if (sites.isEmpty()) throw PatchException("Share sheet tools: the Share button no longer sets its click listener")
-        sites.reversed().forEach { index ->
-            val view = getInstruction<FiveRegisterInstruction>(index).registerD
-            addInstruction(index + 1, "invoke-static/range { v$view .. v$view }, $SHARE_BUTTON_TAP->bind(Landroid/view/View;)V")
-        }
+    ShareButtonViewCreatedFingerprint.method.bindShareLabels { classDefByOrNull(it).isAccessibilityDelegateCompat() }
+}
+
+/** onViewCreated: label each view right after the assem listens to it and after each ViewCompat delegate set. */
+internal fun MutableMethod.bindShareLabels(isDelegateCompat: (String) -> Boolean) {
+    val listened = clickListenerSites()
+    if (listened.isEmpty()) throw PatchException("Share sheet tools: the Share button no longer sets its click listener")
+    val delegated = accessibilityDelegateSites(isDelegateCompat)
+    // From the last site up, so each insert leaves the earlier indexes where they were.
+    (listened + delegated).sortedByDescending { it.index }.forEach { site ->
+        addInstruction(
+            site.index + 1,
+            "invoke-static/range { v${site.view} .. v${site.view} }, $SHARE_BUTTON_TAP->bind(Ljava/lang/Object;)V",
+        )
     }
 }

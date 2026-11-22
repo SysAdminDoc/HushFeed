@@ -78,13 +78,16 @@ public final class ShareButtonTap {
     }
 
     /**
-     * Called for each view TikTok makes the Share button's click listener of, so a screen reader
-     * says the press copies the link while the switch is on. Android 10 and newer only: an older
-     * one can't hand back a delegate TikTok set, and replacing it would drop what TikTok reads out.
+     * Called for each view TikTok makes the Share button's click listener of, and again after
+     * TikTok gives one its own screen reader delegate, so a screen reader says the press copies the
+     * link while the switch is on. Android 10 and newer only: an older one can't hand back a
+     * delegate TikTok set, and replacing it would drop what TikTok reads out. Takes Object because
+     * TikTok's registers name the views by their own types (LinearLayout, its text and icon views).
      */
-    public static void bind(@Nullable View button) {
+    public static void bind(@Nullable Object view) {
         try {
-            if (button == null || Build.VERSION.SDK_INT < 29) return;
+            if (!(view instanceof View) || Build.VERSION.SDK_INT < 29) return;
+            View button = (View) view;
             View.AccessibilityDelegate current = button.getAccessibilityDelegate();
             if (current instanceof CopyLabel) return;
             button.setAccessibilityDelegate(new CopyLabel(current));

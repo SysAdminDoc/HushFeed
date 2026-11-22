@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.sharesheet
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.util.addInstruction
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -39,7 +40,7 @@ val shareSheetToolsPatch = bytecodePatch(
         hookNewGroupButtonToggle()
         hookSharePanel()
         addOwnedShareAction(SHARE_BLOCK_AUTHOR)
-        hookShareButtonTap()
+        hookShareButtonTap { classDefByOrNull(it) }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +

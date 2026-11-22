@@ -28,39 +28,84 @@ private fun missing(why: String): Nothing = throw PatchException("UI scale: $why
 private fun Method.code(): List<Instruction> = implementation?.instructions?.toList() ?: emptyList()
 
 /**
- * The factor read in each of [manager]'s density rewrites, the methods that end in
- * Resources.updateConfiguration (LIZLLL(Context) and LJFF(Activity) on 47.9.3, each
- * `invoke-static LIZ()F; move-result v0` and then a div-float by v0). A manager with no rewrite,
- * a rewrite that reads the factor other than once, or one that uses it as anything but a float
- * is a [PatchException]: scaling a value that also went somewhere else would change that too.
+ * Every read of the text size factor that becomes a display density.
+ *
+ * [manager]'s startup rewrites are the methods that end in Resources.updateConfiguration
+ * (LIZLLL(Context) and LJFF(Activity) on 47.9.3). Each reads the factor once,
+ * `invoke-static LIZ()F; move-result v0`, and divides by it, and that read names the factor.
+ * Activities don't take their density from those: each activity's context is rebuilt from the
+ * same factor somewhere else (X.03Ji.invoke on 47.9.3, which reads it twice and hands the result
+ * to Context.createConfigurationContext). So every method in [manager] or [classes] that reads
+ * the factor and hands Android a configuration counts. With only the manager's reads scaled,
+ * nothing on screen changed (#477).
+ *
+ * Each of these is a [PatchException]: a manager with no startup rewrite, one that reads a factor
+ * other than once, rewrites that read different factors, no activity context built from the
+ * factor, or a read whose value goes anywhere but float math (scaling a value that also went
+ * somewhere else would change that too).
  */
-internal fun densityFactorReads(manager: ClassDef): List<FactorRead> {
-    val rewrites = manager.methods.filter { method ->
-        method.code().any { instruction ->
-            instruction.getReference<MethodReference>()?.let {
-                it.definingClass == RESOURCES && it.name == "updateConfiguration"
-            } == true
-        }
-    }
-    if (rewrites.isEmpty()) missing("${manager.type} rewrites no density")
-    return rewrites.map { method ->
-        val where = "${manager.type}->${method.name}"
+internal fun densityFactorReads(manager: ClassDef, classes: Sequence<ClassDef>): List<FactorRead> {
+    val startup = manager.methods.filter { method -> method.code().any { it.updatesResources() } }
+    if (startup.isEmpty()) missing("${manager.type} rewrites no density")
+    val factors = startup.map { method ->
         val code = method.code()
         val reads = code.indices.filter { index ->
             code[index].opcode == Opcode.INVOKE_STATIC && code[index].getReference<MethodReference>()?.let {
                 it.definingClass == manager.type && it.returnType == "F" && it.parameterTypes.isEmpty()
             } == true
         }
-        val read = reads.singleOrNull() ?: missing("$where reads the factor ${reads.size} times")
-        val kept = code.getOrNull(read + 1)?.takeIf { it.opcode == Opcode.MOVE_RESULT } as? OneRegisterInstruction
-            ?: missing("$where doesn't keep the factor it reads")
-        val register = kept.registerA
-        val uses = method.literalReads(read + 1)
-        if (uses.isEmpty() || uses.any { !method.readsRegisterAsFloat(it, register) }) {
-            missing("$where uses the factor as more than a float")
-        }
-        FactorRead(method, read + 2, register)
+        val read = reads.singleOrNull() ?: missing("${manager.type}->${method.name} reads the factor ${reads.size} times")
+        code[read].getReference<MethodReference>()!!.name
     }
+    val factor = factors.distinct().singleOrNull() ?: missing("${manager.type}'s rewrites read different factors $factors")
+    val readsFactor = { instruction: Instruction ->
+        instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
+            it.definingClass == manager.type && it.name == factor && it.returnType == "F" && it.parameterTypes.isEmpty()
+        } == true
+    }
+
+    val rewrites = (sequenceOf(manager) + classes.filter { it.type != manager.type })
+        .flatMap { it.methods.asSequence() }
+        .filter { method ->
+            val instructions = method.implementation?.instructions ?: return@filter false
+            instructions.any(readsFactor) && instructions.any { it.updatesResources() || it.createsConfigurationContext() }
+        }
+        .toList()
+    if (rewrites.none { method -> method.code().any { it.createsConfigurationContext() } }) {
+        missing("no activity builds its context from ${manager.type}->$factor")
+    }
+    return rewrites.flatMap { method ->
+        val where = "${method.definingClass}->${method.name}"
+        val code = method.code()
+        code.indices.filter { readsFactor(code[it]) }.map { read ->
+            val kept = code.getOrNull(read + 1)?.takeIf { it.opcode == Opcode.MOVE_RESULT } as? OneRegisterInstruction
+                ?: missing("$where doesn't keep the factor it reads")
+            val register = kept.registerA
+            val uses = method.literalReads(read + 1)
+            if (uses.isEmpty() || uses.any { !method.readsRegisterAsFloat(it, register) }) {
+                missing("$where uses the factor as more than a float")
+            }
+            FactorRead(method, read + 2, register)
+        }
+    }
+}
+
+private fun Instruction.updatesResources(): Boolean = getReference<MethodReference>()?.let {
+    it.definingClass == RESOURCES && it.name == "updateConfiguration"
+} == true
+
+/** Context.createConfigurationContext(Configuration), whatever Context subclass the call names. */
+private fun Instruction.createsConfigurationContext(): Boolean = getReference<MethodReference>()?.let {
+    it.name == "createConfigurationContext" && it.returnType == "Landroid/content/Context;" &&
+        it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/res/Configuration;")
+} == true
+
+/**
+ * Scales every read, each in the method [mutable] gives for it, last read first in each method so
+ * an insert never moves a read still to come.
+ */
+internal fun List<FactorRead>.scaleAll(mutable: (Method) -> MutableMethod) {
+    sortedByDescending { it.index }.forEach { read -> read.copy(method = mutable(read.method)).scale() }
 }
 
 /** Scales the read factor by the UI size, before anything uses it. */

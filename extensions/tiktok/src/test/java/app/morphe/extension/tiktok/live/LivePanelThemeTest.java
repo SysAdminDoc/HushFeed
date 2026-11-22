@@ -538,6 +538,95 @@ public class LivePanelThemeTest {
         assertEquals("a label on its own light chip", 0xFF161823, onChip.getCurrentTextColor());
     }
 
+    /**
+     * #362: a page's ink is looked at before every frame, and a state list, the background LIVE's
+     * buttons carry, doesn't hand its color filter back, so a lit outline on one was lit again, and
+     * its button drawn again, on every frame. Once lit, an outline is left alone.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void aLitOutlineIsntLitAgainOnEveryFrame() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        LivePanelTheme.darkLivePanel(admin, tiktok);
+
+        android.widget.LinearLayout root = new android.widget.LinearLayout(dark);
+        GradientDrawable outline = new GradientDrawable();
+        outline.setStroke(6, 0xFF161823);
+        outline.setCornerRadius(12);
+        android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
+        states.addState(new int[0], outline);
+        int[] redraws = {0};
+        FrameLayout button = new FrameLayout(dark) {
+            @Override
+            public void invalidate() {
+                redraws[0]++;
+                super.invalidate();
+            }
+        };
+        button.setBackground(states);
+        root.addView(button, new android.widget.LinearLayout.LayoutParams(200, 60));
+
+        ManageList page = new ManageList();
+        page.parent = admin;
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(page, tiktok));
+        page.view = root;
+        Dialog shown = dialogWith(root);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(shown);
+        assertNotNull("the outline is lit", states.getCurrent().getColorFilter());
+
+        int lit = redraws[0];
+        nextFrame(shown);
+        nextFrame(shown);
+        assertEquals("the frames after it don't draw it again", lit, redraws[0]);
+    }
+
+    /**
+     * #362: the Muted, Blocked and Moderation lists bind rows as they scroll, and a list lays out
+     * what it binds on its own then, with no layout pass of the window. Rows found only on a
+     * layout kept the fixed dark ink of whatever they first showed, so rows read black on black
+     * and the lit ones moved around as the list recycled them. A row the list adds and a button a
+     * row shows as it binds are lit by the next frame, with no layout in between.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void rowsAPageListBindsWhileScrollingAreLitWithoutALayout() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        LivePanelTheme.darkLivePanel(admin, tiktok);
+
+        android.widget.LinearLayout root = new android.widget.LinearLayout(dark);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        TextView first = text(dark, 0xFF161823);
+        root.addView(first);
+        TextView hidden = text(dark, 0xFF161823);
+        hidden.setVisibility(View.GONE);
+        root.addView(hidden);
+
+        ManageList page = new ManageList();
+        page.parent = admin;
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(page, tiktok));
+        page.view = root;
+        Dialog shown = dialogWith(root);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(shown);
+        assertEquals("a row shown from the start", Color.WHITE, first.getCurrentTextColor());
+
+        // Scrolling: the list adds a row and binds a row's button visible, and lays both out
+        // itself. The looper isn't run, so the window sees no layout before the next frame.
+        TextView added = text(dark, 0xFF161823);
+        root.addView(added);
+        added.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(60, View.MeasureSpec.EXACTLY));
+        added.layout(0, 200, 400, 260);
+        hidden.setVisibility(View.VISIBLE);
+        nextFrame(shown);
+
+        assertEquals("a row the list added while scrolling", Color.WHITE, added.getCurrentTextColor());
+        assertEquals("a button a row showed as it bound", Color.WHITE, hidden.getCurrentTextColor());
+    }
+
     /** #362: the gift guide bubble is white, so over a darkened room it inflates over the room's light theme. */
     @Test public void theGiftGuideBubbleOverADarkenedRoomTakesTheRoomsLightTheme() {
         RuntimeEnvironment.setQualifiers("+night");

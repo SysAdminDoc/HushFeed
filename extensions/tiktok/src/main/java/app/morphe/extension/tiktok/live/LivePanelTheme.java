@@ -1092,8 +1092,8 @@ public final class LivePanelTheme {
      * in TikTok's fixed #161823, which no theme reaches, so on the dark sheet they read dark on
      * dark (#362). The page's view doesn't exist yet when its inflater is asked for, so it's
      * looked for on the next frames. While it's on screen its dark gray text and one-ink icons go
-     * white before each frame, and so does a button's dark outline. Anything on a light chip of
-     * its own keeps its ink.
+     * white before each frame, its list rows included, and so does a button's dark outline.
+     * Anything on a light chip of its own keeps its ink.
      */
     static void inkPage(Object page) {
         new Handler(Looper.getMainLooper()).post(() -> inkPage(page, 0));
@@ -1123,13 +1123,16 @@ public final class LivePanelTheme {
     }
 
     /**
-     * Keeps a page's ink light while the page is on screen: gathered again on each layout, since
-     * its lists bind rows as they scroll, and lit again before each frame, since TikTok sets the
-     * fixed colors back as it rebinds. It only listens while the page is in a window, so a page
-     * that was closed is let go.
+     * Keeps a page's ink light while the page is on screen: gathered and lit again before each
+     * frame. A list lays out the rows it binds while it scrolls on its own, with no layout pass
+     * of the window, so rows gathered only on a layout kept the fixed dark ink of whatever they
+     * first showed, read dark on the dark sheet and lit rows moved around as they were recycled
+     * (#362). TikTok also sets the fixed colors back as it binds a row again. Judging a view is
+     * cheap once its background was judged, and lighting writes only what TikTok changed back.
+     * It only listens while the page is in a window, so a page that was closed is let go.
      */
     private static final class PageInk implements View.OnAttachStateChangeListener,
-            ViewTreeObserver.OnGlobalLayoutListener, ViewTreeObserver.OnPreDrawListener {
+            ViewTreeObserver.OnPreDrawListener {
         private final View page;
         private final List<View> ink = new ArrayList<>();
         private final List<View> outlines = new ArrayList<>();
@@ -1140,21 +1143,15 @@ public final class LivePanelTheme {
 
         @Override
         public void onViewAttachedToWindow(View view) {
-            ViewTreeObserver observer = view.getViewTreeObserver();
-            observer.addOnGlobalLayoutListener(this);
-            observer.addOnPreDrawListener(this);
-            onGlobalLayout();
+            view.getViewTreeObserver().addOnPreDrawListener(this);
         }
 
         @Override
         public void onViewDetachedFromWindow(View view) {
-            ViewTreeObserver observer = view.getViewTreeObserver();
-            observer.removeOnGlobalLayoutListener(this);
-            observer.removeOnPreDrawListener(this);
+            view.getViewTreeObserver().removeOnPreDrawListener(this);
         }
 
-        @Override
-        public void onGlobalLayout() {
+        private void gather() {
             try {
                 ink.clear();
                 outlines.clear();
@@ -1166,6 +1163,8 @@ public final class LivePanelTheme {
                     }
                 }
             } catch (Throwable failure) {
+                ink.clear();
+                outlines.clear();
                 if (!pageFailureLogged) {
                     pageFailureLogged = true;
                     Logger.printException(() -> "Could not find a LIVE panel page's ink", failure);
@@ -1175,6 +1174,7 @@ public final class LivePanelTheme {
 
         @Override
         public boolean onPreDraw() {
+            gather();
             try {
                 for (View view : ink) {
                     lightInk(view);
@@ -1247,7 +1247,7 @@ public final class LivePanelTheme {
         int[] pixels = backgroundPixels(background, viewWidth, viewHeight, width, height);
         int middle = pixels[(height / 2) * width + width / 2];
         boolean outline = Color.alpha(middle) < MIN_INK_ALPHA && darkMonochrome(pixels);
-        OUTLINES.put(view, new OutlineCheck(background, outline));
+        OUTLINES.put(view, new OutlineCheck(background, outline, false));
         return outline;
     }
 
@@ -1272,22 +1272,36 @@ public final class LivePanelTheme {
     /** Draws a judged dark outline white, once per background TikTok gives the view. */
     private static void lightOutline(View view) {
         Drawable background = view.getBackground();
-        if (background == null || !darkOutline(view) || background.getColorFilter() == WHITE_INK) {
+        if (background == null || background.getColorFilter() == WHITE_INK || litOutline(view, background)
+                || !darkOutline(view)) {
             return;
         }
         Drawable own = background.mutate();
         own.setColorFilter(WHITE_INK);
-        OUTLINES.put(view, new OutlineCheck(own, true));
+        OUTLINES.put(view, new OutlineCheck(own, true, true));
         view.invalidate();
+    }
+
+    /**
+     * True once {@link #lightOutline} drew this view's background white. A state list or a layered
+     * background doesn't hand its color filter back, and LIVE's buttons carry state lists, so a lit
+     * one is remembered: lighting it again on every frame drew the page again on every frame.
+     */
+    private static boolean litOutline(View view, Drawable background) {
+        OutlineCheck seen = OUTLINES.get(view);
+        return seen != null && seen.lit && seen.drawable.get() == background;
     }
 
     private static final class OutlineCheck {
         final WeakReference<Drawable> drawable;
         final boolean outline;
+        /** Drawn white by lightOutline. */
+        final boolean lit;
 
-        OutlineCheck(Drawable drawable, boolean outline) {
+        OutlineCheck(Drawable drawable, boolean outline, boolean lit) {
             this.drawable = new WeakReference<>(drawable);
             this.outline = outline;
+            this.lit = lit;
         }
     }
 

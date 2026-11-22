@@ -4483,6 +4483,74 @@ public final class Probe extends Instrumentation {
                                 + " size " + clickable.getWidth() + 'x' + clickable.getHeight() + " handled=" + handled);
                         break;
                     }
+                    case "a11y": {
+                        // What a screen reader is handed for one shown view (-e find <id name>): the
+                        // node TikTok's and Hushfeed's accessibility delegates build for the view, its
+                        // nearest clickable ancestor and every clickable view inside it, with each
+                        // action's label. TalkBack reads a click action's label as "Double-tap to
+                        // <label>", so this checks a renamed click without turning TalkBack on.
+                        String find = intent.getStringExtra("find");
+                        if (find == null) throw new IllegalArgumentException("-e find is required");
+                        android.content.res.Resources resources = app.getResources();
+                        List<android.view.View> matches = new ArrayList<>();
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
+                        while (!queue.isEmpty()) {
+                            android.view.View view = queue.removeFirst();
+                            if (!view.isShown()) continue;
+                            android.graphics.Rect onScreen = new android.graphics.Rect();
+                            if (find.equals(idName(view, resources)) && view.getGlobalVisibleRect(onScreen)
+                                    && !onScreen.isEmpty()) {
+                                matches.add(view);
+                            }
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) queue.add(group.getChildAt(i));
+                            }
+                        }
+                        if (matches.isEmpty()) throw new IllegalStateException("no shown view matches");
+                        StringBuilder out = new StringBuilder();
+                        for (android.view.View match : matches) {
+                            int[] where = new int[2];
+                            match.getLocationOnScreen(where);
+                            out.append("\nmatch at=").append(where[0]).append(',').append(where[1]);
+                            List<android.view.View> nodes = new ArrayList<>();
+                            android.view.View up = match;
+                            while (up != null && !up.isClickable()) {
+                                up = up.getParent() instanceof android.view.View ? (android.view.View) up.getParent() : null;
+                            }
+                            if (up != null && up != match) nodes.add(up);
+                            java.util.ArrayDeque<android.view.View> inside = new java.util.ArrayDeque<>();
+                            inside.add(match);
+                            while (!inside.isEmpty()) {
+                                android.view.View view = inside.removeFirst();
+                                if (view == match || view.isClickable()) nodes.add(view);
+                                if (view instanceof android.view.ViewGroup) {
+                                    android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                    for (int i = 0; i < group.getChildCount(); i++) inside.add(group.getChildAt(i));
+                                }
+                            }
+                            for (android.view.View view : nodes) {
+                                android.view.accessibility.AccessibilityNodeInfo info = view.createAccessibilityNodeInfo();
+                                android.view.View.AccessibilityDelegate delegate = view.getAccessibilityDelegate();
+                                out.append("\n  ").append(idName(view, resources))
+                                        .append(" is=").append(view.getClass().getSimpleName())
+                                        .append(" clickable=").append(view.isClickable())
+                                        .append(" desc=\"").append(info.getContentDescription())
+                                        .append("\" text=\"").append(info.getText())
+                                        .append("\" delegate=").append(delegate == null ? "none" : delegate.getClass().getName())
+                                        .append(" actions=[");
+                                for (android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction labelled : info.getActionList()) {
+                                    out.append(labelled.getId());
+                                    if (labelled.getLabel() != null) out.append(":\"").append(labelled.getLabel()).append('"');
+                                    out.append(' ');
+                                }
+                                out.append(']');
+                                info.recycle();
+                            }
+                        }
+                        Log.i(TAG, "ok a11y" + out);
+                        break;
+                    }
                     case "edittext": {
                         // Reads the focused text field (or the only shown one) with every character
                         // outside printable ASCII written as U+XXXX, so a check can see what a field

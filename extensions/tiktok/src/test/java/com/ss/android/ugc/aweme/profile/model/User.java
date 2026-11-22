@@ -18,6 +18,9 @@ public class User {
     public int nickNameModifyTs;
     public boolean isSecret;
     public boolean hasOpenFavorite;
+    public String secUid;
+    /** pay_grade in the profile response. */
+    public UserHonor userHonor;
     /** A UrlModel in TikTok; here anything with a urlList, which is all the avatar saver reads. */
     public Object avatar300;
 

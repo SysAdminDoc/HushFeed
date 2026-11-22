@@ -2042,11 +2042,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 1 filtered out	กรองออกแล้ว 1 รายการ
 %1$d filtered out	กรองออกแล้ว %1$d รายการ
 Account facts on profiles	ข้อมูลบัญชีบนโปรไฟล์
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	แผ่นเมนูแชร์ของโปรไฟล์จะมีปุ่ม "ข้อมูลบัญชี" เพิ่มเข้ามา ซึ่งจะแสดงสิ่งที่ TikTok ส่งมาเกี่ยวกับบัญชีอยู่แล้ว ได้แก่ วันที่เข้าร่วม ภูมิภาคและภาษา เวลาที่ชื่อผู้ใช้และชื่อที่แสดงเปลี่ยนแปลงล่าสุด บัญชีเป็นแบบส่วนตัวหรือไม่ และวิดีโอที่ถูกใจเป็นสาธารณะหรือไม่ ไม่มีการดึงข้อมูลเพิ่มเติมใดๆ
 Account facts	ข้อมูลบัญชี
 TikTok account facts	ข้อมูลบัญชี TikTok
 Account facts copied	คัดลอกข้อมูลบัญชีแล้ว
-Not sent	ไม่ได้ส่งข้อมูล
 Joined	เข้าร่วมเมื่อ
 Account region	ภูมิภาคของบัญชี
 Language	ภาษา
@@ -3139,6 +3137,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	ทำมุมโค้งบนตารางโปรไฟล์
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	ทำให้มุมของแต่ละวิดีโอบนตารางโปรไฟล์โค้งมน ทั้งในโปรไฟล์ของคุณ และในที่ถูกใจและรายการโปรดด้วย
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	ระดับผู้ให้ของขวัญ
+SecUID	SecUID
+Unknown (TikTok didn't send it)	ไม่ทราบ (TikTok ไม่ได้ส่งมา)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	แผ่นเมนูแชร์ของโปรไฟล์จะมีปุ่ม "ข้อมูลบัญชี" เพิ่มเข้ามา ซึ่งจะแสดงสิ่งที่ TikTok ส่งมาเกี่ยวกับบัญชีอยู่แล้ว ได้แก่ วันที่เข้าร่วม ภูมิภาคและภาษา ระดับผู้ให้ของขวัญและ SecUID เวลาที่ชื่อผู้ใช้และชื่อที่แสดงเปลี่ยนแปลงล่าสุด บัญชีเป็นแบบส่วนตัวหรือไม่ และวิดีโอที่ถูกใจเป็นสาธารณะหรือไม่ ไม่มีการดึงข้อมูลเพิ่มเติมใดๆ
 Hide playable games	ซ่อนเกมที่เล่นได้
 Hide the mini games you can play right in the For You feed.	ซ่อนมินิเกมที่คุณเล่นได้ทันทีในฟีดสำหรับคุณ
 Playable games	เกมที่เล่นได้

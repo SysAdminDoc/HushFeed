@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,9 +37,11 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * Account facts: what TikTok's own account model already holds about a profile, shown from a
  * button on the profile's share sheet beside the copy buttons. Nothing is fetched. The fields
  * are filled from the profile response (create_time, region, account_region, language,
- * unique_id_modify_time, nick_name_modify_ts, secret and has_open_favorite, the last being what
- * the profile's own tab pager reads to show the liked videos tab) and read by their real names.
- * A date or name the server didn't send says so rather than guessing. secret and
+ * pay_grade, unique_id_modify_time, nick_name_modify_ts, secret, has_open_favorite and sec_uid,
+ * has_open_favorite being what the profile's own tab pager reads to show the liked videos tab)
+ * and read by their real names. pay_grade becomes the model's userHonor, whose level is the
+ * gifter level LIVE shows; nothing in TikTok's own screens reads it off this model (#487).
+ * A date, name or level the server didn't send says Unknown rather than guessing. secret and
  * has_open_favorite can't say that, so they only get a line when they're true. When the
  * profile's model lacks the join date, region or language, the same account's author model on
  * one of the videos behind the sheet gives it. A join date no model holds comes from the
@@ -47,7 +50,7 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 public final class AccountFacts {
     static final String SHOW_FACTS = "Account facts";
     static final String FACTS_COPIED = "Account facts copied";
-    static final String NOT_SENT = "Not sent";
+    static final String UNKNOWN = "Unknown (TikTok didn't send it)";
     /** A seconds value past this is really milliseconds; it's the year 5138 in seconds. */
     private static final long LARGEST_SECONDS = 100_000_000_000L;
     static final String AWEME = "com.ss.android.ugc.aweme.feed.model.Aweme";
@@ -97,9 +100,12 @@ public final class AccountFacts {
             facts.add(new Fact("Account region", country(accountRegion, locale)));
         }
         facts.add(new Fact("Language", language(text(sources, "language"), locale)));
+        facts.add(new Fact("Gifter level", level(gifterLevel(sources), locale)));
         // A video's author model has unique_id_modify_time set to when the response was made
         // (Login2 47.4.3: 73 models of different accounts shared one second), so the change
-        // dates come from the profile's own model only.
+        // dates come from the profile's own model only. Nothing here or in TikTok's client drops
+        // an old change: the JSON adapter copies the two keys as they came, so a change date
+        // missing for an older rename is the profile response leaving it out (#487).
         facts.add(new Fact("Username last changed",
                 date(seconds(Reflect.readField(user, "uniqueIdModifyTime")), locale, zone)));
         facts.add(new Fact("Display name last changed",
@@ -114,6 +120,9 @@ public final class AccountFacts {
         if (Boolean.TRUE.equals(Reflect.readField(user, "hasOpenFavorite"))) {
             facts.add(new Fact("Liked videos", L10n.t("Public")));
         }
+        // Last, as it's long and only useful copied.
+        String secUid = text(sources, "secUid");
+        facts.add(new Fact("SecUID", secUid == null ? L10n.t(UNKNOWN) : secUid));
         return facts;
     }
 
@@ -169,8 +178,25 @@ public final class AccountFacts {
         return seconds > 0 ? seconds : null;
     }
 
+    /**
+     * The gifter level in the first model holding pay_grade, or null when none does. A level of 0
+     * is what the server sent and is shown as it came.
+     */
+    @Nullable
+    static Integer gifterLevel(List<Object> sources) {
+        for (Object source : sources) {
+            Object level = Reflect.readField(Reflect.readField(source, "userHonor"), "level");
+            if (level instanceof Number) return ((Number) level).intValue();
+        }
+        return null;
+    }
+
+    static String level(@Nullable Integer level, Locale locale) {
+        return level == null ? L10n.t(UNKNOWN) : NumberFormat.getIntegerInstance(locale).format(level);
+    }
+
     static String date(@Nullable Long seconds, Locale locale, TimeZone zone) {
-        if (seconds == null) return L10n.t(NOT_SENT);
+        if (seconds == null) return L10n.t(UNKNOWN);
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
         format.setTimeZone(zone);
         return format.format(new Date(seconds * 1000L));
@@ -178,7 +204,7 @@ public final class AccountFacts {
 
     /** A region code with its country's name in the phone's language: "Germany (DE)". */
     static String country(@Nullable String code, Locale locale) {
-        if (code == null) return L10n.t(NOT_SENT);
+        if (code == null) return L10n.t(UNKNOWN);
         String upper = code.toUpperCase(Locale.ROOT);
         String name = new Locale("", upper).getDisplayCountry(locale);
         // A code with no country behind it (ZZ, or a user-assigned one) gets the same generic
@@ -191,7 +217,7 @@ public final class AccountFacts {
 
     /** A language tag with its name in the phone's language: "German (de)". */
     static String language(@Nullable String tag, Locale locale) {
-        if (tag == null) return L10n.t(NOT_SENT);
+        if (tag == null) return L10n.t(UNKNOWN);
         String name = Locale.forLanguageTag(tag.replace('_', '-')).getDisplayName(locale);
         return name.isEmpty() || name.equalsIgnoreCase(tag) ? tag : name + " (" + tag + ")";
     }

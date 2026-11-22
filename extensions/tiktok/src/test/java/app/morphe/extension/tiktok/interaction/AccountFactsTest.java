@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import com.ss.android.ugc.aweme.profile.model.User;
+import com.ss.android.ugc.aweme.profile.model.UserHonor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +37,14 @@ import app.morphe.extension.shared.Utils;
 public class AccountFactsTest {
     private static final Locale LOCALE = Locale.US;
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+    private static final String UNKNOWN = "Unknown (TikTok didn't send it)";
+    private static final String SEC_UID = "MS4wLjABAAAAv7iSuuXDJGDvJkmH_vz1qkDZYo1apxgzaxdBSeIuPiM";
+
+    private static UserHonor honor(int level) {
+        UserHonor honor = new UserHonor();
+        honor.level = level;
+        return honor;
+    }
 
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
@@ -66,27 +75,43 @@ public class AccountFactsTest {
         user.nickNameModifyTs = 1_690_000_000;
         user.isSecret = true;
         user.hasOpenFavorite = true;
+        user.userHonor = honor(12);
+        user.secUid = SEC_UID;
 
         assertEquals(List.of(
                 "Joined=" + when(1_615_819_200L),
                 "Region=Germany (DE)",
                 "Language=German (de)",
+                "Gifter level=12",
                 "Username last changed=" + when(1_700_000_000L),
                 "Display name last changed=" + when(1_690_000_000L),
                 "Private account=Yes",
-                "Liked videos=Public"
+                "Liked videos=Public",
+                "SecUID=" + SEC_UID
         ), lines(user));
     }
 
-    @Test public void whatTheServerLeftOutSaysSo() {
+    @Test public void whatTheServerLeftOutSaysItsUnknown() {
         // secret and hasOpenFavorite are plain booleans, so left out they read false and say nothing.
         assertEquals(List.of(
-                "Joined=Not sent",
-                "Region=Not sent",
-                "Language=Not sent",
-                "Username last changed=Not sent",
-                "Display name last changed=Not sent"
+                "Joined=" + UNKNOWN,
+                "Region=" + UNKNOWN,
+                "Language=" + UNKNOWN,
+                "Gifter level=" + UNKNOWN,
+                "Username last changed=" + UNKNOWN,
+                "Display name last changed=" + UNKNOWN,
+                "SecUID=" + UNKNOWN
         ), lines(new User()));
+    }
+
+    @Test public void aGifterLevelOfZeroIsWhatTheServerSent() {
+        User user = new User();
+        user.userHonor = honor(0);
+        assertTrue(lines(user).toString(), lines(user).contains("Gifter level=0"));
+        user.userHonor = null;
+        assertTrue(lines(user).toString(), lines(user).contains("Gifter level=" + UNKNOWN));
+        user.secUid = "   ";
+        assertTrue("a blank SecUID is no SecUID", lines(user).contains("SecUID=" + UNKNOWN));
     }
 
     @Test public void onlyATrueFlagGetsALine() {
@@ -122,7 +147,7 @@ public class AccountFactsTest {
         sent.registerTime = 1_500_000_000L;
         assertEquals("a time the server sent still wins", "Joined=" + when(1_500_000_000L), lines(sent).get(0));
 
-        assertEquals("musical.ly's short IDs carry no time", "Joined=Not sent", lines(account("107955")).get(0));
+        assertEquals("musical.ly's short IDs carry no time", "Joined=" + UNKNOWN, lines(account("107955")).get(0));
         assertNull(AccountFacts.madeAt(null));
         assertEquals(Long.valueOf(1_579_000_000L), AccountFacts.madeAt("6781753360689441741"));
     }
@@ -190,6 +215,8 @@ public class AccountFactsTest {
         author._createTime = 1_425_000_000L;
         author.region = "AU";
         author.language = "en";
+        author.userHonor = honor(7);
+        author.secUid = SEC_UID;
         // A video's author carries the response's own time here, not a real change date.
         author.uniqueIdModifyTime = 1_792_501_129L;
         GridAdapter adapter = new GridAdapter();
@@ -211,9 +238,11 @@ public class AccountFactsTest {
                 "Joined=" + when(1_425_000_000L),
                 "Region=Australia (AU)",
                 "Language=English (en)",
-                "Username last changed=Not sent",
-                "Display name last changed=Not sent",
-                "Private account=Yes"
+                "Gifter level=7",
+                "Username last changed=" + UNKNOWN,
+                "Display name last changed=" + UNKNOWN,
+                "Private account=Yes",
+                "SecUID=" + SEC_UID
         ), lines);
     }
 
@@ -221,9 +250,11 @@ public class AccountFactsTest {
         User profile = account("7");
         profile.region = "de";
         profile.registerTime = 1_500_000_000L;
+        profile.userHonor = honor(3);
         User author = account("7");
         author.region = "AU";
         author._createTime = 1_400_000_000L;
+        author.userHonor = honor(9);
         List<String> lines = new ArrayList<>();
         for (AccountFacts.Fact fact : AccountFacts.of(profile, List.of(author), LOCALE, UTC)) {
             lines.add(fact.label + "=" + fact.value);
@@ -231,6 +262,7 @@ public class AccountFactsTest {
         // The real join time beats the profile's register time stand-in.
         assertEquals("Joined=" + when(1_400_000_000L), lines.get(0));
         assertEquals("Region=Germany (DE)", lines.get(1));
+        assertTrue(lines.toString(), lines.contains("Gifter level=3"));
     }
 
     @Test public void withNothingBehindTheSheetThereAreNoCopies() {
@@ -241,6 +273,7 @@ public class AccountFactsTest {
 
     @Test public void anUnknownCodeIsShownAsItCame() {
         assertEquals("ZZ", AccountFacts.country("zz", LOCALE));
-        assertEquals("Not sent", AccountFacts.country(null, LOCALE));
+        assertEquals(UNKNOWN, AccountFacts.country(null, LOCALE));
+        assertEquals(UNKNOWN, AccountFacts.language(null, LOCALE));
     }
 }

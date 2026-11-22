@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Account facts on profiles` shows two more lines, the account's gifter level and its SecUID, both from what TikTok already sent with the profile. A detail TikTok left out now says Unknown (TikTok didn't send it) in place of Not sent. Hushfeed shows the username and display name change dates exactly as TikTok sends them, so when an older change has no date, it's TikTok that left it out (#487).
 * `Round the corners on profile grids`, with the other profile grid options under Interface, gives each video on a profile grid 8dp rounded corners. It works on your own profile, anyone else's, and the Liked and Favorites tabs. The videos inside a Favorites collection keep square corners for now. It starts off and turns on or off as the grid scrolls, no restart needed (#487).
 * With `More opens the comments` or `Caption above comments` on, the caption at the top of the comments now shows in the language the feed shows it in. If TikTok translates the caption (Always translate, or See translation on that video), the comments get TikTok's own translation, hashtags and mentions included, and See original keeps it as posted. A translation TikTok hasn't fetched yet leaves the caption as posted until the next time you open the comments (#488).
 * `Exit with one Back` is new on the Feed tabs page. One Back on Home leaves TikTok, with no "Tap again to exit" toast. From any other tab, Back still goes to Home first, or to the tab `Open TikTok on` picks. It starts off and doesn't need a restart (#489).

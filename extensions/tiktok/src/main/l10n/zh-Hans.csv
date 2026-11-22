@@ -150,7 +150,6 @@ A message is already on its way,一条消息已经在路上
 A name of your own under this tab's icon. Leave it empty to keep TikTok's.,此选项卡图标下有你自己的名称。将其留空以保留 TikTok.
 A port is a whole number from 1 to 65535,端口是 1 到 65535 之间的整数
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,按视频下的“共享”会复制其链接，而不是打开共享表。之后再次按“共享”即可打开工作表.
-"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.",屏幕的布局被记录。导出诊断报告以发送它，或点击以记录另一个报告.
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.",信息流上的一个小标签显示了今天预算剩余的分钟或视频，以接近耗尽的为准.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,当“为你推荐”显示时，点击“主页”或“为你推荐”选项卡不再重新加载它。你正在观看的视频将保留.
@@ -1177,7 +1176,6 @@ Not requested in this process yet,在此过程中尚未请求
 Not saved yet,尚未保存
 Not seen,没见过
 Not seen yet,还没见过
-Not sent,未发送
 "Nothing has been checked yet, so there's nothing to report.",尚未检查任何内容，因此没有任何可报告的内容.
 "Nothing has been looked up yet. Use the app for a moment, then come back.",还没有查到什么。使用该应用程序一会儿，然后再回来.
 Nothing hidden.,没有什么隐藏的.
@@ -2977,6 +2975,10 @@ Keep the video full size under comments,评论打开时保持视频原大小
 "The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.",打开评论时视频保持原来的大小，评论盖住视频的下半部分，而不是把视频推到上方的小框里.
 Round the corners on profile grids,个人资料网格显示圆角
 "Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.",让个人资料网格中每个视频的边角变圆，你自己的主页以及喜欢和收藏里也一样.
+Gifter level,送礼等级
+SecUID,SecUID
+Unknown (TikTok didn't send it),未知 (TikTok 未发送)
+"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
 Hide playable games,隐藏可玩的游戏
 Hide the mini games you can play right in the For You feed.,隐藏可以直接在“为你推荐”信息流里玩的小游戏.
 Playable games,可玩的游戏

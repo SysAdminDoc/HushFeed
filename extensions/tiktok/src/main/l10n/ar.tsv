@@ -2266,11 +2266,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 %1$d filtered out|few	%1$d عناصر تمت تصفيتها
 %1$d filtered out|many	%1$d عنصرا تمت تصفيته
 Account facts on profiles	حقائق الحساب في الملفات الشخصية
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	تحصل ورقة مشاركة الملف الشخصي على زر حقائق الحساب. يعرض ما أرسله TikTok بالفعل عن الحساب: تاريخ انضمامه، ومنطقته ولغته، وآخر تغيير لاسم المستخدم واسم العرض، وما إذا كان خاصًا وما إذا كانت مقاطع الفيديو التي أعجبته عامة. لا يتم جلب أي شيء إضافي.
 Account facts	حقائق الحساب
 TikTok account facts	حقائق حساب TikTok
 Account facts copied	تم نسخ حقائق الحساب
-Not sent	لم يرسل
 Joined	انضم
 Account region	منطقة الحساب
 Language	اللغة
@@ -3407,6 +3405,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	تدوير الزوايا في شبكات الملف الشخصي
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	يجعل زوايا كل فيديو في شبكات الملف الشخصي مستديرة، في ملفك الشخصي وفي الإعجابات والمفضلة أيضًا.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	مستوى الإهداء
+SecUID	SecUID
+Unknown (TikTok didn't send it)	غير معروف (لم يرسله TikTok)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	تحصل ورقة مشاركة الملف الشخصي على زر حقائق الحساب. يعرض ما أرسله TikTok بالفعل عن الحساب: تاريخ انضمامه، ومنطقته ولغته، ومستوى الإهداء ومعرّف SecUID، وآخر تغيير لاسم المستخدم واسم العرض، وما إذا كان خاصًا وما إذا كانت مقاطع الفيديو التي أعجبته عامة. لا يتم جلب أي شيء إضافي.
 Hide playable games	إخفاء الألعاب القابلة للعب
 Hide the mini games you can play right in the For You feed.	إخفاء الألعاب الصغيرة التي يمكنك لعبها مباشرة في خلاصة لك.
 Playable games	ألعاب قابلة للعب

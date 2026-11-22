@@ -145,7 +145,6 @@ A message is already on its way,Tin nhắn đang được gửi đi
 A name of your own under this tab's icon. Leave it empty to keep TikTok's.,Tên riêng của bạn hiển thị dưới biểu tượng của thẻ này. Để trống nếu muốn giữ nguyên tên của TikTok.
 A port is a whole number from 1 to 65535,Cổng là số nguyên từ 1 đến 65535
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,Nhấn vào nút Chia sẻ dưới video sẽ sao chép liên kết thay vì mở bảng chia sẻ. Nhấn lại nút Chia sẻ ngay sau đó để mở bảng chia sẻ.
-"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.",Bố cục màn hình đã được ghi lại. Hãy xuất báo cáo chẩn đoán để gửi hoặc chạm để ghi lại bố cục khác.
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","Một nhãn nhỏ trên bảng tin hiển thị số phút hoặc số video còn lại trong ngân sách hôm nay, tùy theo cái nào sắp hết trước."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,Chạm vào nút Trang chủ hoặc thẻ Dành cho bạn khi thẻ này đang hiển thị sẽ không còn tải lại trang nữa. Video bạn đang xem sẽ được giữ nguyên.
@@ -1317,7 +1316,6 @@ Not requested in this process yet,Chưa được yêu cầu trong tiến trình 
 Not saved yet,Chưa lưu
 Not seen,Chưa xem
 Not seen yet,Chưa thấy
-Not sent,Chưa gửi
 "Nothing has been checked yet, so there's nothing to report.",Chưa có thông tin nào được kiểm tra nên không có gì để báo cáo.
 Nothing has been kept,Không có tin nhắn nào được giữ lại
 "Nothing has been looked up yet. Use the app for a moment, then come back.",Chưa có dữ liệu nào được tra cứu. Hãy sử dụng ứng dụng một lúc rồi quay lại.
@@ -2977,6 +2975,10 @@ Keep the video full size under comments,Giữ video ở kích thước đầy đ
 "The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.","Video giữ nguyên kích thước khi bạn mở bình luận, và phần bình luận che phần dưới của video thay vì đẩy video lên một khung nhỏ hơn."
 Round the corners on profile grids,Bo tròn góc trên lưới trang cá nhân
 "Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.","Bo tròn góc của từng video trên lưới trang cá nhân, trên trang của bạn và cả trong Đã thích và Yêu thích."
+Gifter level,Cấp độ người tặng quà
+SecUID,SecUID
+Unknown (TikTok didn't send it),Không rõ (TikTok không gửi)
+"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
 Hide playable games,Ẩn trò chơi có thể chơi
 Hide the mini games you can play right in the For You feed.,Ẩn các trò chơi nhỏ mà bạn có thể chơi ngay trên bảng tin Dành cho bạn.
 Playable games,Trò chơi có thể chơi

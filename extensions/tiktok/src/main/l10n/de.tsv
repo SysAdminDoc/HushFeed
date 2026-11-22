@@ -2042,11 +2042,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 1 filtered out	1 herausgefiltert
 %1$d filtered out	%1$d herausgefiltert
 Account facts on profiles	Kontofakten auf Profilen
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche Kontofakten. Sie zeigt, was TikTok über das Konto ohnehin geschickt hat: wann es beigetreten ist, Region und Sprache, wann Nutzername und Anzeigename zuletzt geändert wurden, ob es privat ist und ob die gelikten Videos öffentlich sind. Es wird nichts zusätzlich abgerufen.
 Account facts	Kontofakten
 TikTok account facts	TikTok-Kontofakten
 Account facts copied	Kontofakten kopiert
-Not sent	Nicht gesendet
 Joined	Beigetreten
 Account region	Kontoregion
 Language	Sprache
@@ -3139,6 +3137,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	Ecken im Profilraster abrunden
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Gibt jedem Video im Profilraster abgerundete Ecken, auf deinem eigenen Profil und auch bei „Gefällt mir“ und Favoriten.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Gifter-Level
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Unbekannt (TikTok hat es nicht geschickt)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche Kontofakten. Sie zeigt, was TikTok über das Konto ohnehin geschickt hat: wann es beigetreten ist, Region und Sprache, Gifter-Level und SecUID, wann Nutzername und Anzeigename zuletzt geändert wurden, ob es privat ist und ob die gelikten Videos öffentlich sind. Es wird nichts zusätzlich abgerufen.
 Hide playable games	Spielbare Games ausblenden
 Hide the mini games you can play right in the For You feed.	Minispiele ausblenden, die du direkt im Feed „Für dich“ spielen kannst.
 Playable games	Spielbare Games

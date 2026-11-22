@@ -2039,11 +2039,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 1 filtered out	1 filtrato
 %1$d filtered out	%1$d filtrati
 Account facts on profiles	Info sull'account nei profili
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Il menu di condivisione di un profilo riceve un pulsante Info sull'account. Mostra ciò che TikTok ha già inviato sull'account: quando si è iscritto, la regione e la lingua, quando nome utente e nome visualizzato sono cambiati l'ultima volta, se è privato e se i video a cui ha messo Mi piace sono pubblici. Non viene scaricato nient'altro.
 Account facts	Info sull'account
 TikTok account facts	Info sull'account TikTok
 Account facts copied	Info sull'account copiate
-Not sent	Non inviato
 Joined	Iscritto
 Account region	Regione dell'account
 Language	Lingua
@@ -3136,6 +3134,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	Arrotonda gli angoli nella griglia del profilo
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Arrotonda gli angoli di ogni video nella griglia del profilo, sul tuo profilo e anche in Mi piace e Preferiti.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Livello donatore
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Sconosciuto (TikTok non l'ha inviato)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Il menu di condivisione di un profilo riceve un pulsante Info sull'account. Mostra ciò che TikTok ha già inviato sull'account: quando si è iscritto, la regione e la lingua, il livello donatore e il SecUID, quando nome utente e nome visualizzato sono cambiati l'ultima volta, se è privato e se i video a cui ha messo Mi piace sono pubblici. Non viene scaricato nient'altro.
 Hide playable games	Nascondi i giochi giocabili
 Hide the mini games you can play right in the For You feed.	Nascondi i minigiochi che puoi giocare direttamente nel feed “Per te”.
 Playable games	Giochi giocabili

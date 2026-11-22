@@ -1280,7 +1280,8 @@ class TikTokPatchAnchorsMatchFixturesTest {
                     it.name == getter && it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/String;"
                 })
             }
-            // Account facts reads these by their real names; a renamed or retyped one says Not sent.
+            // Account facts reads these by their real names; a renamed or retyped one says Unknown.
+            val honor = "Lcom/ss/android/ugc/aweme/profile/model/UserHonor;"
             val accountFields = classes.getValue(user).fields.associate { it.name to it.type }
             for ((name, type) in listOf(
                 "_createTime" to "Ljava/lang/Long;",
@@ -1292,9 +1293,12 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 "nickNameModifyTs" to "I",
                 "isSecret" to "Z",
                 "hasOpenFavorite" to "Z",
+                "secUid" to "Ljava/lang/String;",
+                "userHonor" to honor,
             )) {
                 assertEquals("the account's $name", type, accountFields[name])
             }
+            assertEquals("the gifter level", 1, classes.getValue(honor).fields.count { it.name == "level" && it.type == "I" })
         }
     }
 

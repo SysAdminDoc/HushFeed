@@ -2039,11 +2039,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 1 filtered out	1 filtrelendi
 %1$d filtered out	%1$d filtrelendi
 Account facts on profiles	Profillerde hesap bilgileri
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
 Account facts	Hesap bilgileri
 TikTok account facts	TikTok hesap bilgileri
 Account facts copied	Hesap bilgileri kopyalandı
-Not sent	Gönderilmedi
 Joined	Katıldı
 Account region	Hesap bölgesi
 Language	Dil
@@ -3136,6 +3134,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	Profil ızgarasında köşeleri yuvarla
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Profil ızgarasındaki her videonun köşelerini yuvarlar; kendi profilinde, Beğenilenler ve Favoriler'de de.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Hediye veren seviyesi
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Bilinmiyor (TikTok göndermedi)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, hediye veren seviyesini ve SecUID'sini, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
 Hide playable games	Oynanabilir oyunları gizle
 Hide the mini games you can play right in the For You feed.	Senin İçin akışında doğrudan oynayabileceğin mini oyunları gizle.
 Playable games	Oynanabilir oyunlar

@@ -2039,11 +2039,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 1 filtered out	1 süzüldü
 %1$d filtered out	%1$d süzüldü
 Account facts on profiles	Profillərdə hesab faktları
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Profilin paylaşma panelinə Hesab faktları düyməsi əlavə olunur. O, TikTok-un hesab haqqında artıq göndərdiklərini göstərir: nə vaxt qoşulduğunu, regionunu və dilini, istifadəçi adının və görünən adının sonuncu dəfə nə vaxt dəyişdiyini, hesabın gizli olub-olmadığını və bəyəndiyi videoların açıq olub-olmadığını. Əlavə heç nə yüklənmir.
 Account facts	Hesab faktları
 TikTok account facts	TikTok hesab faktları
 Account facts copied	Hesab faktları kopyalandı
-Not sent	Göndərilməyib
 Joined	Qoşulub
 Account region	Hesab regionu
 Language	Dil
@@ -3136,6 +3134,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	Profil şəbəkəsində küncləri yumrulaşdırın
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Profil şəbəkəsində hər videonun künclərini yumru edir, öz profilinizdə, Bəyənilənlərdə və Seçilmişlərdə də.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Hədiyyəçi səviyyəsi
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Naməlum (TikTok göndərmədi)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Profilin paylaşma panelinə Hesab faktları düyməsi əlavə olunur. O, TikTok-un hesab haqqında artıq göndərdiklərini göstərir: nə vaxt qoşulduğunu, regionunu və dilini, hədiyyəçi səviyyəsini və SecUID-ni, istifadəçi adının və görünən adının sonuncu dəfə nə vaxt dəyişdiyini, hesabın gizli olub-olmadığını və bəyəndiyi videoların açıq olub-olmadığını. Əlavə heç nə yüklənmir.
 Hide playable games	Oynanıla bilən oyunları gizlədin
 Hide the mini games you can play right in the For You feed.	Sənin üçün lentində birbaşa oynaya biləcəyiniz mini oyunları gizlədin.
 Playable games	Oynanıla bilən oyunlar

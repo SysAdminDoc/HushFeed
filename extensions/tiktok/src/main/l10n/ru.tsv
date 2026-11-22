@@ -2207,11 +2207,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 %1$d filtered out|few	Отфильтровано: %1$d
 %1$d filtered out|many	Отфильтровано: %1$d
 Account facts on profiles	Сведения об аккаунте в профилях
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 Account facts	Сведения об аккаунте
 TikTok account facts	Сведения об аккаунте TikTok
 Account facts copied	Сведения об аккаунте скопированы
-Not sent	Не прислано
 Joined	Создан
 Account region	Регион аккаунта
 Language	Язык
@@ -3337,6 +3335,11 @@ The video keeps its size when you open the comments, and the comments cover its 
 # context: Always show publish date grid switch; rounds each profile grid cell's corners
 Round the corners on profile grids	Скруглять углы в сетке профиля
 Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Скругляет углы каждого видео в сетке профиля, в вашем профиле, а также в понравившихся и в избранном.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Уровень дарителя
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 Hide playable games	Скрывать игры, в которые можно играть
 Hide the mini games you can play right in the For You feed.	Скрывать мини-игры, в которые можно играть прямо в ленте Рекомендации.
 Playable games	Игры, в которые можно играть

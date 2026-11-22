@@ -83,6 +83,7 @@ Every Hushfeed release, newest first.
 * The country and date line doesn't get cut off anymore when you open a long caption, and the caption above it keeps every line after you open or close it with more and less (#457).
 * `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
 * A sorted profile grid loads up to 1,000 videos on its own before it sorts, up from 300, so a long profile's oldest and longest videos make it into the order. On a long profile that takes around 35 seconds. Tap the loading grid to see the order it has right away, and your scrolling loads the rest. A slow connection stops after 45 seconds the same way. The notes under the profile and sound page sort settings say 1,000 now too, where they still said 300 (#180).
+* With `Dark LIVE panels in dark mode` on, the Unmute and Remove buttons in a LIVE's Muted and Blocked lists show their label in white. The buttons are a see-through gray on the dark sheet and the label stayed dark gray on them, so you could barely read it (#362).
 
 ### Build
 

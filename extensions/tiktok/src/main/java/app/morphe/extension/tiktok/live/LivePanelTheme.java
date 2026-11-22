@@ -807,28 +807,39 @@ public final class LivePanelTheme {
      * showing one of those.
      */
     static boolean ownBackdrop(Drawable background) {
+        return ownBackdrop(background, false);
+    }
+
+    /**
+     * {@link #ownBackdrop(Drawable)}, where with {@code seeThroughDark} a fill less than half opaque
+     * counts as dark too. A page under a darkened panel sits on the panel's dark sheet, so such a
+     * fill reads dark there whatever its color: the Muted and Blocked lists' Unmute and Remove
+     * buttons are TikTok's white at 12% under a fixed #161823 label, which stayed dark on the
+     * dark gray button (#362).
+     */
+    private static boolean ownBackdrop(Drawable background, boolean seeThroughDark) {
         if (background == null) {
             return false;
         }
         if (background instanceof DrawableContainer) {
             Drawable current = background.getCurrent();
-            return current != background && ownBackdrop(current);
+            return current != background && ownBackdrop(current, seeThroughDark);
         }
         if (background instanceof ColorDrawable) {
-            return !darkBackdrop(((ColorDrawable) background).getColor());
+            return !darkBackdrop(((ColorDrawable) background).getColor(), seeThroughDark);
         }
         if (background instanceof GradientDrawable && Build.VERSION.SDK_INT >= 24) {
             GradientDrawable shape = (GradientDrawable) background;
             ColorStateList color = shape.getColor();
             if (color != null) {
-                return !darkBackdrop(color.getDefaultColor());
+                return !darkBackdrop(color.getDefaultColor(), seeThroughDark);
             }
             int[] stops = shape.getColors();
             if (stops == null) {
                 return false;
             }
             for (int stop : stops) {
-                if (!darkBackdrop(stop)) {
+                if (!darkBackdrop(stop, seeThroughDark)) {
                     return true;
                 }
             }
@@ -846,8 +857,12 @@ public final class LivePanelTheme {
         return true;
     }
 
-    private static boolean darkBackdrop(int color) {
-        return Color.alpha(color) == 0 || (Color.alpha(color) >= MIN_FILL_ALPHA && !isLight(color));
+    private static boolean darkBackdrop(int color, boolean seeThroughDark) {
+        int alpha = Color.alpha(color);
+        if (alpha == 0) {
+            return true;
+        }
+        return alpha < MIN_FILL_ALPHA ? seeThroughDark : !isLight(color);
     }
 
     /**
@@ -1179,8 +1194,9 @@ public final class LivePanelTheme {
 
     /**
      * Gathers a page's text and icon views, and the views drawing a dark outline as their
-     * background. A view on a backdrop of its own, other than such an outline, keeps the ink it
-     * was picked for, and so does anything marked to stay light.
+     * background. A view on a backdrop of its own, other than such an outline or a see-through
+     * fill over the dark sheet, keeps the ink it was picked for, and so does anything marked to
+     * stay light.
      */
     private static void gatherPage(View view, List<View> ink, List<View> outlines, int depth) {
         if (view.getVisibility() != View.VISIBLE || KEEP_LIGHT.containsKey(view) || depth > MAX_TREE_DEPTH) {
@@ -1190,7 +1206,7 @@ public final class LivePanelTheme {
         if (background != null) {
             if (darkOutline(view)) {
                 outlines.add(view);
-            } else if (ownBackdrop(background)) {
+            } else if (ownBackdrop(background, true)) {
                 return;
             }
         }

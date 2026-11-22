@@ -498,6 +498,46 @@ public class LivePanelThemeTest {
         assertEquals(0xFF161823, stockTitle.getCurrentTextColor());
     }
 
+    /**
+     * #362: the Muted and Blocked lists' Unmute and Remove buttons are TikTok's white at 12% with a
+     * fixed #161823 label. Over the panel's dark sheet that fill is a dark gray, so the label read
+     * dark on dark; it goes white like the page's other dark ink, while a label on an opaque
+     * light chip keeps its own.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void aPageButtonOnASeeThroughFillHasItsDarkLabelLit() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        LivePanelTheme.darkLivePanel(admin, tiktok);
+
+        android.widget.LinearLayout root = new android.widget.LinearLayout(dark);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        GradientDrawable button = new GradientDrawable();
+        button.setColor(0x1EFFFFFF);
+        button.setStroke(3, 0x00FFFFFF);
+        button.setCornerRadius(6);
+        TextView unmute = text(dark, 0xFF161823);
+        unmute.setBackground(button);
+        root.addView(unmute, new android.widget.LinearLayout.LayoutParams(250, 80));
+        GradientDrawable white = new GradientDrawable();
+        white.setColor(Color.WHITE);
+        TextView onChip = text(dark, 0xFF161823);
+        onChip.setBackground(white);
+        root.addView(onChip, new android.widget.LinearLayout.LayoutParams(250, 80));
+
+        ManageList page = new ManageList();
+        page.parent = admin;
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(page, tiktok));
+        page.view = root;
+        Dialog shown = dialogWith(root);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(shown);
+
+        assertEquals("the Unmute label on its see-through fill", Color.WHITE, unmute.getCurrentTextColor());
+        assertEquals("a label on its own light chip", 0xFF161823, onChip.getCurrentTextColor());
+    }
+
     /** #362: the gift guide bubble is white, so over a darkened room it inflates over the room's light theme. */
     @Test public void theGiftGuideBubbleOverADarkenedRoomTakesTheRoomsLightTheme() {
         RuntimeEnvironment.setQualifiers("+night");

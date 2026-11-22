@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Bug Fixes
+
+* `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
+
 ### Build
 
 * The release tools name only global TikTok's version in the README, the Manager text and the update steps. With TikTok Lite declared too, v0.84.0 went out saying "TikTok 47.8.2 and 47.9.3", and the README still pointed at 47.8.3.

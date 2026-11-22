@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -130,12 +131,26 @@ public final class FeedOverlayControls {
     public static String feedComponent(String type, String containerType) {
         feedComponentBuilt(containerType == null || type == null || type.equals(containerType)
                 ? containerType : containerType + " (" + type + ")");
-        if (containerType == null || !(isInterestFeedback(type) || isInterestFeedback(containerType))) {
+        if (containerType == null) return null;
+        if (isBrandZone(type) || isBrandZone(containerType)) {
+            // Issue #484: a search's top "Ad" block (a brand's banner, its videos and a Follow
+            // button) is built here from a hybrid template, and its search card has no ad field.
+            boolean hideAd = Settings.REMOVE_ADS.get();
+            HookStatus.bound("search brand zone", hideAd ? "component skipped" : "component left");
+            if (!hideAd) return containerType;
+            FeedFilterCounters.removedItems("SearchBrandZone", 1, "brandZone");
+            return "";
+        }
+        if (!(isInterestFeedback(type) || isInterestFeedback(containerType))) {
             return containerType;
         }
         boolean hide = Settings.HIDE_FEED_SURVEYS.get();
         HookStatus.bound("interest buttons", hide ? "component skipped" : "component left");
         return hide ? "" : containerType;
+    }
+
+    private static boolean isBrandZone(String name) {
+        return name != null && name.toLowerCase(Locale.ROOT).contains("brand_zone");
     }
 
     private static boolean isInterestFeedback(String name) {

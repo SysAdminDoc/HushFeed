@@ -2993,6 +2993,19 @@ Hide the pause icon,隐藏暂停图标
 "A tap still pauses and plays the video, but the big play icon doesn't show over it.",轻点仍会暂停和播放视频，但视频上不会显示大的播放图标.
 Exit with one Back,按一次返回即退出
 "Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.",在首页按返回会立即离开 TikTok，不再显示“再按一次退出”。在其他标签页，按返回仍会先回到首页，或回到“打开 TikTok 于”所选的标签页.
+LIVE profile card background,LIVE 个人资料卡背景
+"Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.",为在 LIVE 直播间点按名字时打开的卡片上色。卡片上的标签、按钮和方框保留各自的颜色，选了颜色后这张卡片不再使用深色 LIVE 面板.
+LIVE profile card text,LIVE 个人资料卡文字
+"Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.",为卡片本身上的文字上色。“自动”会选白色或黑色，哪种在卡片上更醒目就用哪种.
+Hide rows on LIVE profile cards,隐藏 LIVE 个人资料卡上的行
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.,选择要从 LIVE 直播间点按名字时打开的卡片上去掉的行。其余的保持原位.
+Upcoming LIVE events,即将开始的 LIVE 活动
+Products in the LIVE,LIVE 中的商品
+Shop rating,店铺评分
+Group chat,群聊
+Bulletin board,公告板
+Gift gallery,礼物展馆
+Festival honors,节日荣誉
 Smaller text sizes,更小的文字大小
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.",在 TikTok 自带的“文字大小”滑块（“设置与隐私 > 辅助功能”）上，在最小字号之下再加三档。在那里选一档，然后重启 TikTok.
 UI size,界面大小

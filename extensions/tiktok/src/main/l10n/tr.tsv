@@ -3154,6 +3154,20 @@ Hide the pause icon	Duraklatma simgesini gizle
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	Dokunmak videoyu yine duraklatır ve oynatır, ama büyük oynatma simgesi videonun üstünde görünmez.
 Exit with one Back	Tek Geri ile çık
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Ana Sayfa'da Geri, TikTok'tan hemen çıkar ve "Çıkmak için tekrar dokun" mesajı çıkmaz. Başka bir sekmede Geri seni yine önce Ana Sayfa'ya ya da TikTok'u şu sayfada aç ayarının seçtiği sekmeye götürür.
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	LIVE profil kartı arka planı
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	LIVE odasında bir ada dokununca açılan kartı renklendirir. Üzerindeki etiketler, düğmeler ve kutular kendi renklerini korur ve bir renk seçiliyken kart koyu LIVE panellerini kullanmaz.
+LIVE profile card text	LIVE profil kartı yazısı
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	Kartın kendi üzerindeki yazıyı renklendirir. Otomatik, kartta hangisi daha iyi seçiliyorsa beyazı ya da siyahı seçer.
+Hide rows on LIVE profile cards	LIVE profil kartlarında satırları gizle
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	LIVE odasında bir ada dokununca açılan karttan kaldırılacak satırları seç. Gerisi yerinde kalır.
+Upcoming LIVE events	Yaklaşan LIVE etkinlikleri
+Products in the LIVE	LIVE'daki ürünler
+Shop rating	Mağaza puanı
+Group chat	Grup sohbeti
+Bulletin board	Duyuru panosu
+Gift gallery	Hediye galerisi
+Festival honors	Festival onurları
 # context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
 Smaller text sizes	Daha küçük metin boyutları
 Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	TikTok'un Ayarlar ve gizlilik > Erişilebilirlik bölümündeki kendi Metin boyutu kaydırıcısına en küçük boyutun altında üç kademe ekler. Oradan birini seç, sonra TikTok'u yeniden başlat.

@@ -3157,6 +3157,20 @@ Hide the pause icon	ซ่อนไอคอนหยุดชั่วครา
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	การแตะยังคงหยุดและเล่นวิดีโอได้ แต่ไอคอนเล่นขนาดใหญ่จะไม่แสดงทับวิดีโอ
 Exit with one Back	ออกด้วยการกดกลับครั้งเดียว
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	การกดกลับที่หน้าแรกจะออกจาก TikTok ทันที โดยไม่มีข้อความ "แตะอีกครั้งเพื่อออก" จากแท็บอื่น การกดกลับยังคงพาคุณไปที่หน้าแรกก่อน หรือไปที่แท็บที่เลือกไว้ในเปิด TikTok ที่
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	พื้นหลังการ์ดโปรไฟล์ใน LIVE
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	เปลี่ยนสีการ์ดที่เปิดขึ้นเมื่อแตะชื่อในห้อง LIVE ป้าย ปุ่ม และกล่องบนการ์ดยังคงสีเดิม และขณะที่เลือกสีไว้ การ์ดจะไม่ใช้พาเนล LIVE สีมืด
+LIVE profile card text	ข้อความบนการ์ดโปรไฟล์ใน LIVE
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	เปลี่ยนสีข้อความบนตัวการ์ดเอง อัตโนมัติจะเลือกสีขาวหรือสีดำ แล้วแต่สีไหนเห็นชัดกว่าบนการ์ด
+Hide rows on LIVE profile cards	ซ่อนแถวบนการ์ดโปรไฟล์ใน LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	เลือกแถวที่จะเอาออกจากการ์ดที่เปิดขึ้นเมื่อแตะชื่อในห้อง LIVE แถวอื่นยังอยู่ที่เดิม
+Upcoming LIVE events	อีเวนต์ LIVE ที่กำลังจะมา
+Products in the LIVE	สินค้าใน LIVE
+Shop rating	คะแนนร้านค้า
+Group chat	แชทกลุ่ม
+Bulletin board	กระดานประกาศ
+Gift gallery	แกลเลอรีของขวัญ
+Festival honors	เกียรติยศจากเทศกาล
 # context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
 Smaller text sizes	ขนาดข้อความที่เล็กลง
 Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	เพิ่มอีกสามระดับที่เล็กกว่าขนาดเล็กสุดให้แถบเลื่อน ขนาดข้อความ ของ TikTok เอง ใน การตั้งค่าและความเป็นส่วนตัว > การเข้าถึง เลือกหนึ่งระดับที่นั่น จากนั้นรีสตาร์ท TikTok

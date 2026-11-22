@@ -3157,6 +3157,20 @@ Hide the pause icon	Pausensymbol ausblenden
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	Ein Tippen pausiert und startet das Video weiterhin, aber das große Wiedergabesymbol erscheint nicht darüber.
 Exit with one Back	Mit einem Zurück beenden
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Zurück auf der Startseite verlässt TikTok sofort, ohne die Meldung „Zum Beenden erneut tippen“. Auf einem anderen Tab führt Zurück weiterhin zuerst zur Startseite oder zu dem Tab, den „TikTok öffnen mit“ auswählt.
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	Hintergrund der LIVE-Profilkarte
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	Färbt die Karte, die sich in einem LIVE-Raum beim Tippen auf einen Namen öffnet. Chips, Schaltflächen und Kästen darauf behalten ihre eigenen Farben, und solange eine Farbe gewählt ist, lässt die Karte die dunklen LIVE-Fenster aus.
+LIVE profile card text	Text der LIVE-Profilkarte
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	Färbt den Text, der direkt auf der Karte steht. Automatisch nimmt Weiß oder Schwarz, je nachdem, was sich besser von der Karte abhebt.
+Hide rows on LIVE profile cards	Zeilen auf LIVE-Profilkarten ausblenden
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	Wähle die Zeilen, die von der Karte verschwinden sollen, die sich in einem LIVE-Raum beim Tippen auf einen Namen öffnet. Der Rest bleibt, wo er ist.
+Upcoming LIVE events	Anstehende LIVE-Events
+Products in the LIVE	Produkte im LIVE
+Shop rating	Shop-Bewertung
+Group chat	Gruppenchat
+Bulletin board	Pinnwand
+Gift gallery	Geschenkgalerie
+Festival honors	Festival-Auszeichnungen
 # context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
 Smaller text sizes	Kleinere Textgrößen
 Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	Fügt TikToks eigenem Regler Textgröße unter Einstellungen und Datenschutz > Barrierefreiheit drei Stufen unterhalb der kleinsten Größe hinzu. Wähle dort eine aus und starte TikTok neu.

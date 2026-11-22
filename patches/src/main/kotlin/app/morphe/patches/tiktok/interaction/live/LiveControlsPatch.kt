@@ -2980,6 +2980,8 @@ val liveControlsPatch = bytecodePatch(
             "invoke-static/range {p0 .. p0}, $LIVE_ROOM_INFO_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
         )
         installLiveRoomInfoBridge(livePlayerStatsReads(LiveDebugInfoTextFingerprint.originalMethod))
+        // The profile card's rows (#487): each cell's answer to its container, by TikTok's module name.
+        hookLiveProfileCardRows()
         // Each message a LIVE room gets, for the name alert, before TikTok hands it out (#424).
         LiveMessageDispatchFingerprint.method.addInstruction(
             0,

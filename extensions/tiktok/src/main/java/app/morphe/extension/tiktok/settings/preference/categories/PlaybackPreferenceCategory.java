@@ -20,8 +20,11 @@ import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
+import app.morphe.extension.tiktok.settings.preference.SwitchListPreference;
 import app.morphe.extension.tiktok.speed.HoldSpeedHud;
 import app.morphe.extension.tiktok.speed.PlaybackSpeedPatch;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @SuppressWarnings("deprecation")
@@ -166,6 +169,31 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "With TikTok in dark mode, a LIVE room still opens its share menu, fan club "
                             + "and other panels in light colors. This opens them dark.",
                     Settings.DARK_LIVE_PANELS));
+            // The card a tap on a name opens in a room (#487).
+            addPreference(new ChoicePreference(context, "LIVE profile card background", Settings.LIVE_CARD_BACKGROUND,
+                    new String[]{"TikTok's color", "Black", "Dark gray", "Light gray", "White"},
+                    new String[]{"off", "black", "dark_gray", "light_gray", "white"})
+                    .withNote("Colors the card a tap on a name opens in a LIVE room. Chips, buttons and "
+                            + "boxes on it keep their own colors, and while a color is picked the card skips "
+                            + "Dark LIVE panels."));
+            addPreference(new ChoicePreference(context, "LIVE profile card text", Settings.LIVE_CARD_TEXT,
+                    new String[]{"Automatic", "White", "Light gray", "Black", "Yellow"},
+                    new String[]{"off", "white", "light_gray", "black", "yellow"})
+                    .withNote("Colors the text drawn on the card itself. Automatic picks white or black, "
+                            + "whichever stands out from the card."));
+            List<SwitchListPreference.Item> cardRows = new ArrayList<>();
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Upcoming LIVE events"), Settings.HIDE_LIVE_CARD_EVENTS));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Products in the LIVE"), Settings.HIDE_LIVE_CARD_PRODUCTS));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Shop"), Settings.HIDE_LIVE_CARD_SHOP));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Shop rating"), Settings.HIDE_LIVE_CARD_SHOP_RATING));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Group chat"), Settings.HIDE_LIVE_CARD_GROUP_CHAT));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Bulletin board"), Settings.HIDE_LIVE_CARD_BULLETIN_BOARD));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Gift gallery"), Settings.HIDE_LIVE_CARD_GIFT_GALLERY));
+            cardRows.add(new SwitchListPreference.Item(L10n.t(context, "Festival honors"), Settings.HIDE_LIVE_CARD_FEST_HONORS));
+            addPreference(new SwitchListPreference(context, "live_card_hidden_rows",
+                    "Hide rows on LIVE profile cards",
+                    "Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.",
+                    cardRows));
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.",
                     Settings.RECORD_LIVE));

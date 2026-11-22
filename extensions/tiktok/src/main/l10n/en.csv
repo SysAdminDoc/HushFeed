@@ -408,6 +408,7 @@ Browse,Browse
 Budgets and reminders,Budgets and reminders
 Build details,Build details
 Build details copied to the clipboard,Build details copied to the clipboard
+Bulletin board,Bulletin board
 Burn-in guard,Burn-in guard
 Buttons on videos,Buttons on videos
 Camera and microphone in use,Camera and microphone in use
@@ -485,7 +486,9 @@ Close with Back or a tap outside,Close with Back or a tap outside
 Collapsed,Collapsed
 Collections aren't available for this video,Collections aren't available for this video
 Color commenter names,Color commenter names
+"Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.","Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels."
 "Colors the description, the author's name and the post date on videos.","Colors the description, the author's name and the post date on videos."
+"Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.","Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card."
 Colors these settings and Hushfeed's own pop-ups.,Colors these settings and Hushfeed's own pop-ups.
 "Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 Comment export failed,Comment export failed
@@ -776,6 +779,7 @@ Feed filter,Feed filter
 Feed screen,Feed screen
 Feed tabs,Feed tabs
 Feed tabs to keep,Feed tabs to keep
+Festival honors,Festival honors
 "Field %1$s can't be changed on this build. Take it out of the override, or reset the override.","Field %1$s can't be changed on this build. Take it out of the override, or reset the override."
 Field edits were discarded,Field edits were discarded
 Field edits weren't saved,Field edits weren't saved
@@ -862,6 +866,7 @@ Generated defaults,Generated defaults
 Gestures,Gestures
 Ghost mode,Ghost mode
 Ghost mode diagnostics,Ghost mode diagnostics
+Gift gallery,Gift gallery
 Gifter level,Gifter level
 "Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.","Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow."
 Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.,Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.
@@ -872,6 +877,7 @@ Glass opacity,Glass opacity
 Go to the screen. Recording in %1$d seconds.,Go to the screen. Recording in %1$d seconds.
 Got it,Got it
 Gray,Gray
+Group chat,Group chat
 Group likes per comment,Group likes per comment
 H.264 only,H.264 only
 "HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR.","HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR."
@@ -978,6 +984,7 @@ Hide reply previews,Hide reply previews
 Hide root,Hide root
 Hide root status and details about root tools from TikTok.,Hide root status and details about root tools from TikTok.
 Hide rows by title,Hide rows by title
+Hide rows on LIVE profile cards,Hide rows on LIVE profile cards
 Hide search result tabs,Hide search result tabs
 Hide search rewards,Hide search rewards
 Hide search suggestions above comments,Hide search suggestions above comments
@@ -1261,6 +1268,8 @@ LIVE feed,LIVE feed
 LIVE feed countries,LIVE feed countries
 LIVE followers range,LIVE followers range
 LIVE name alerts,LIVE name alerts
+LIVE profile card background,LIVE profile card background
+LIVE profile card text,LIVE profile card text
 LIVE recording quality,LIVE recording quality
 LIVE recording saved to %1$s,LIVE recording saved to %1$s
 LIVE recording source,LIVE recording source
@@ -1708,6 +1717,7 @@ Pick the buttons to take off the column. The rest stay where they are.,Pick the 
 "Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time.","Pick the export TikTok sends from Settings and privacy > Account > Download your data, in JSON format. The videos it lists as liked or favorited are saved like picked videos, up to %1$s at a time."
 "Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.","Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra."
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked."
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.,Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.
 "Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.","Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too."
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 "Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.","Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this."
@@ -1779,6 +1789,7 @@ Private account,Private account
 Private videos,Private videos
 Problem detected.,Problem detected.
 Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.,Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.
+Products in the LIVE,Products in the LIVE
 Profile,Profile
 Profile background,Profile background
 Profile banner,Profile banner
@@ -2149,6 +2160,7 @@ Shazam is busy. Try again later.,Shazam is busy. Try again later.
 Shop,Shop
 Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.,Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.
 Shop posts,Shop posts
+Shop rating,Shop rating
 Shop tab name,Shop tab name
 Short,Short
 Short date,Short date
@@ -2805,6 +2817,7 @@ Unsent messages,Unsent messages
 Up and down,Up and down
 "Up to %1$d speeds from %2$s to %3$s, separated by commas. Example: 0.5, 1, 1.5, 2, 2.5, 3. Leave empty for TikTok's list. Restart TikTok to apply this.","Up to %1$d speeds from %2$s to %3$s, separated by commas. Example: 0.5, 1, 1.5, 2, 2.5, 3. Leave empty for TikTok's list. Restart TikTok to apply this."
 Up to %1$s,Up to %1$s
+Upcoming LIVE events,Upcoming LIVE events
 Update,Update
 "Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption.","Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption."
 "Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.","Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling."

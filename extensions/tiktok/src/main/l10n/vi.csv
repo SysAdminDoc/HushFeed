@@ -2993,6 +2993,19 @@ Hide the pause icon,Ẩn biểu tượng tạm dừng
 "A tap still pauses and plays the video, but the big play icon doesn't show over it.","Chạm vẫn tạm dừng và phát video, nhưng biểu tượng phát lớn không hiện đè lên video."
 Exit with one Back,Thoát bằng một lần Quay lại
 "Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.","Quay lại ở Trang chủ sẽ thoát TikTok ngay, không có thông báo ""Chạm lần nữa để thoát"". Ở tab khác, Quay lại vẫn đưa bạn về Trang chủ trước, hoặc về tab mà Mở TikTok tại đã chọn."
+LIVE profile card background,Nền thẻ hồ sơ trong LIVE
+"Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.","Tô màu thẻ mở ra khi chạm vào tên trong phòng LIVE. Nhãn, nút và hộp trên thẻ giữ màu riêng, và khi đã chọn màu thì thẻ không dùng bảng LIVE tối."
+LIVE profile card text,Chữ trên thẻ hồ sơ trong LIVE
+"Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.","Tô màu chữ nằm ngay trên thẻ. Tự động sẽ chọn trắng hoặc đen, màu nào nổi hơn trên thẻ."
+Hide rows on LIVE profile cards,Ẩn các hàng trên thẻ hồ sơ trong LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.,Chọn các hàng cần bỏ khỏi thẻ mở ra khi chạm vào tên trong phòng LIVE. Các hàng còn lại giữ nguyên chỗ.
+Upcoming LIVE events,Sự kiện LIVE sắp tới
+Products in the LIVE,Sản phẩm trong LIVE
+Shop rating,Điểm đánh giá cửa hàng
+Group chat,Trò chuyện nhóm
+Bulletin board,Bảng tin
+Gift gallery,Bộ sưu tập quà tặng
+Festival honors,Danh hiệu lễ hội
 Smaller text sizes,Cỡ chữ nhỏ hơn
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Thêm ba mức nhỏ hơn cỡ nhỏ nhất vào thanh trượt Cỡ chữ của chính TikTok, trong Cài đặt và quyền riêng tư > Trợ năng. Chọn một mức ở đó, sau đó khởi động lại TikTok."
 UI size,Kích thước giao diện

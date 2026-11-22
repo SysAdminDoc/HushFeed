@@ -597,6 +597,16 @@
       "keep_live_clear_screen",
       "offer_live_full_screen",
       "dark_live_panels",
+      "live_card_background",
+      "live_card_text",
+      "hide_live_card_events",
+      "hide_live_card_products",
+      "hide_live_card_shop",
+      "hide_live_card_shop_rating",
+      "hide_live_card_group_chat",
+      "hide_live_card_bulletin_board",
+      "hide_live_card_gift_gallery",
+      "hide_live_card_fest_honors",
       "record_live",
       "auto_record_live",
       "live_record_quality",
@@ -2669,6 +2679,54 @@
       "type": "boolean",
       "default": false
     },
+    "hide_live_card_bulletin_board": {
+      "field": "HIDE_LIVE_CARD_BULLETIN_BOARD",
+      "key": "hide_live_card_bulletin_board",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_events": {
+      "field": "HIDE_LIVE_CARD_EVENTS",
+      "key": "hide_live_card_events",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_fest_honors": {
+      "field": "HIDE_LIVE_CARD_FEST_HONORS",
+      "key": "hide_live_card_fest_honors",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_gift_gallery": {
+      "field": "HIDE_LIVE_CARD_GIFT_GALLERY",
+      "key": "hide_live_card_gift_gallery",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_group_chat": {
+      "field": "HIDE_LIVE_CARD_GROUP_CHAT",
+      "key": "hide_live_card_group_chat",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_products": {
+      "field": "HIDE_LIVE_CARD_PRODUCTS",
+      "key": "hide_live_card_products",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_shop": {
+      "field": "HIDE_LIVE_CARD_SHOP",
+      "key": "hide_live_card_shop",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_card_shop_rating": {
+      "field": "HIDE_LIVE_CARD_SHOP_RATING",
+      "key": "hide_live_card_shop_rating",
+      "type": "boolean",
+      "default": false
+    },
     "hide_live_entrance": {
       "field": "HIDE_LIVE_ENTRANCE",
       "key": "hide_live_entrance",
@@ -3348,6 +3406,18 @@
       "key": "live_buttons_in_menu",
       "type": "boolean",
       "default": false
+    },
+    "live_card_background": {
+      "field": "LIVE_CARD_BACKGROUND",
+      "key": "live_card_background",
+      "type": "string",
+      "default": "off"
+    },
+    "live_card_text": {
+      "field": "LIVE_CARD_TEXT",
+      "key": "live_card_text",
+      "type": "string",
+      "default": "off"
     },
     "live_feed_countries": {
       "field": "LIVE_FEED_COUNTRIES",

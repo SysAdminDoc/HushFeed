@@ -231,6 +231,10 @@ public final class LivePanelTheme {
             return inflater;
         }
         try {
+            // The profile card with colors picked for it is colored there instead (#487).
+            if (LiveProfileCard.colorCard(panel)) {
+                return inflater;
+            }
             Context context = inflater.getContext();
             if (!LiveControls.darkLivePanels(context)) {
                 return inflater;
@@ -1682,6 +1686,14 @@ public final class LivePanelTheme {
     }
 
     /**
+     * Whether the profile card's own parts get their dark fixes: Dark LIVE panels on in dark mode,
+     * and no colors picked for the card, which then keeps TikTok's light parts (#487).
+     */
+    static boolean cardPartsDark(Context context) {
+        return LiveControls.darkLivePanels(context) && !LiveProfileCard.colorsPicked();
+    }
+
+    /**
      * Called by the LIVE profile card with the color it picked for a translated bio's "See
      * original" link and the bio's view. The card's theme already gives the dark theme's light
      * link color, but the link is drawn through a replacement span, which skips color spans and
@@ -1689,9 +1701,10 @@ public final class LivePanelTheme {
      * on the dark card (#159). While Dark LIVE panels is on in dark mode, the view's text color
      * becomes the link color. The bio's own text keeps the color its span gives it.
      */
+
     public static void bioLinkColor(int color, Object bio) {
         try {
-            if (bio instanceof TextView && LiveControls.darkLivePanels(((TextView) bio).getContext())) {
+            if (bio instanceof TextView && cardPartsDark(((TextView) bio).getContext())) {
                 ((TextView) bio).setTextColor(color);
             }
         } catch (Throwable failure) {
@@ -1711,7 +1724,7 @@ public final class LivePanelTheme {
     public static void cardLabels(Object labels, Object strip) {
         try {
             if (!(labels instanceof Iterable) || !(strip instanceof View)
-                    || !LiveControls.darkLivePanels(((View) strip).getContext())) {
+                    || !cardPartsDark(((View) strip).getContext())) {
                 return;
             }
             // The chips stay light on purpose, so the fill pass leaves the strip alone.
@@ -1788,7 +1801,7 @@ public final class LivePanelTheme {
      */
     public static void eventBox(Object box) {
         try {
-            if (!(box instanceof ViewGroup) || !LiveControls.darkLivePanels(((View) box).getContext())) {
+            if (!(box instanceof ViewGroup) || !cardPartsDark(((View) box).getContext())) {
                 return;
             }
             Drawable background = ((View) box).getBackground();
@@ -1815,7 +1828,7 @@ public final class LivePanelTheme {
     public static void badgeTile(View tile, Drawable background) {
         Drawable shown = background;
         try {
-            if (background instanceof GradientDrawable && LiveControls.darkLivePanels(tile.getContext())) {
+            if (background instanceof GradientDrawable && cardPartsDark(tile.getContext())) {
                 Drawable.ConstantState shape = background.getConstantState();
                 if (shape != null) {
                     // Copies with their own state, so the tile's shape keeps its fill and border.

@@ -3154,6 +3154,20 @@ Hide the pause icon	Nascondi l'icona di pausa
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	Un tocco mette ancora in pausa e riproduce il video, ma l'icona grande di riproduzione non compare sopra.
 Exit with one Back	Esci con un solo Indietro
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Indietro nella Home chiude subito TikTok, senza il messaggio “Tocca di nuovo per uscire”. Da un'altra scheda, Indietro ti porta comunque prima alla Home, o alla scheda scelta in Apri TikTok con.
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	Sfondo della scheda profilo nelle LIVE
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	Colora la scheda che si apre toccando un nome in una stanza LIVE. Etichette, pulsanti e riquadri mantengono i loro colori, e finché è scelto un colore la scheda non usa i pannelli LIVE scuri.
+LIVE profile card text	Testo della scheda profilo nelle LIVE
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	Colora il testo scritto sulla scheda stessa. Automatico sceglie bianco o nero, quello che risalta di più sulla scheda.
+Hide rows on LIVE profile cards	Nascondi righe nelle schede profilo delle LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	Scegli le righe da togliere dalla scheda che si apre toccando un nome in una stanza LIVE. Le altre restano dove sono.
+Upcoming LIVE events	Prossimi eventi LIVE
+Products in the LIVE	Prodotti nella LIVE
+Shop rating	Valutazione del negozio
+Group chat	Chat di gruppo
+Bulletin board	Bacheca
+Gift gallery	Galleria dei regali
+Festival honors	Riconoscimenti dei festival
 # context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
 Smaller text sizes	Dimensioni del testo più piccole
 Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	Aggiunge tre livelli sotto la dimensione più piccola al cursore Dimensione del testo di TikTok, in Impostazioni e privacy > Accessibilità. Scegline uno lì, poi riavvia TikTok.

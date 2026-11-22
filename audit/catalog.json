@@ -11059,6 +11059,12 @@
     "row": "Show exact LIVE viewer counts"
    },
    {
+    "key": "live_room_info",
+    "default": false,
+    "type": "bool",
+    "row": "Show the room ID and your connection"
+   },
+   {
     "key": "offer_live_quality",
     "default": false,
     "type": "bool",
@@ -11075,6 +11081,66 @@
     "default": false,
     "type": "bool",
     "row": "Dark LIVE panels in dark mode"
+   },
+   {
+    "key": "live_card_background",
+    "default": "off",
+    "type": "string",
+    "row": "LIVE profile card background"
+   },
+   {
+    "key": "live_card_text",
+    "default": "off",
+    "type": "string",
+    "row": "LIVE profile card text"
+   },
+   {
+    "key": "hide_live_card_events",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Upcoming LIVE events"
+   },
+   {
+    "key": "hide_live_card_products",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Products in the LIVE"
+   },
+   {
+    "key": "hide_live_card_shop",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Shop"
+   },
+   {
+    "key": "hide_live_card_shop_rating",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Shop rating"
+   },
+   {
+    "key": "hide_live_card_group_chat",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Group chat"
+   },
+   {
+    "key": "hide_live_card_bulletin_board",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Bulletin board"
+   },
+   {
+    "key": "hide_live_card_gift_gallery",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Gift gallery"
+   },
+   {
+    "key": "hide_live_card_fest_honors",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE profile card rows: Festival honors"
    },
    {
     "key": "remember_live_quality",

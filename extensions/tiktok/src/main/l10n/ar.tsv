@@ -3425,6 +3425,20 @@ Hide the pause icon	إخفاء أيقونة الإيقاف المؤقت
 A tap still pauses and plays the video, but the big play icon doesn't show over it.	لا يزال النقر يوقف الفيديو مؤقتاً ويشغّله، لكن أيقونة التشغيل الكبيرة لا تظهر فوقه.
 Exit with one Back	الخروج بضغطة رجوع واحدة
 Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	الرجوع في الرئيسية يغلق TikTok فوراً، بدون رسالة "انقر مرة أخرى للخروج". من أي تبويب آخر، لا يزال الرجوع يأخذك إلى الرئيسية أولاً، أو إلى التبويب الذي يختاره إعداد فتح TikTok على.
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	خلفية بطاقة الملف الشخصي في LIVE
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	يلوّن البطاقة التي تفتح عند النقر على اسم في غرفة LIVE. تحتفظ الشارات والأزرار والمربعات عليها بألوانها، وما دام هناك لون مختار لا تستخدم البطاقة لوحات LIVE الداكنة.
+LIVE profile card text	نص بطاقة الملف الشخصي في LIVE
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	يلوّن النص المكتوب على البطاقة نفسها. يختار «تلقائي» الأبيض أو الأسود، أيهما أوضح على البطاقة.
+Hide rows on LIVE profile cards	إخفاء صفوف في بطاقات الملف الشخصي في LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	اختر الصفوف التي تريد إزالتها من البطاقة التي تفتح عند النقر على اسم في غرفة LIVE. يبقى الباقي في مكانه.
+Upcoming LIVE events	فعاليات LIVE القادمة
+Products in the LIVE	المنتجات في LIVE
+Shop rating	تقييم المتجر
+Group chat	الدردشة الجماعية
+Bulletin board	لوحة الإعلانات
+Gift gallery	معرض الهدايا
+Festival honors	أوسمة المهرجانات
 # context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
 Smaller text sizes	أحجام نص أصغر
 Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	يضيف ثلاث درجات أصغر من أصغر حجم إلى شريط حجم الخط في TikTok نفسه، في الإعدادات والخصوصية > صلاحية الوصول. اختر واحدة منها هناك، ثم أعد تشغيل TikTok.

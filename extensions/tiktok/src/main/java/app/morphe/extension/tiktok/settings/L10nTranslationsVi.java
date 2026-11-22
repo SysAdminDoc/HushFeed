@@ -15,7 +15,7 @@ final class L10nTranslationsVi {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5996);
+        Map<String, String> table = new HashMap<>(6022);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -66,6 +66,7 @@ final class L10nTranslationsVi {
         fill47(table);
         fill48(table);
         fill49(table);
+        fill50(table);
         return table;
     }
 
@@ -906,6 +907,8 @@ final class L10nTranslationsVi {
                 "Chi tiết bản dựng");
         table.put("Build details copied to the clipboard",
                 "Đã sao chép chi tiết bản dựng vào bộ nhớ tạm");
+        table.put("Bulletin board",
+                "Bảng tin");
         table.put("Burn-in guard",
                 "Chống lưu ảnh màn hình (Burn-in)");
         table.put("Buttons on videos",
@@ -926,11 +929,11 @@ final class L10nTranslationsVi {
                 "Đã hủy");
         table.put("Caption above comments",
                 "Phụ đề phía trên bình luận");
-        table.put("Caption background",
-                "Nền phụ đề");
     }
 
     private static void fill7(Map<String, String> table) {
+        table.put("Caption background",
+                "Nền phụ đề");
         table.put("Caption boldness",
                 "Độ đậm phụ đề");
         table.put("Caption height",
@@ -1049,11 +1052,11 @@ final class L10nTranslationsVi {
                 "Đang xóa, cho đến nay đã được %1$d");
         table.put("Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.",
                 "Xóa tìm kiếm tin nhắn của TikTok và thêm lại mọi tin nhắn đã lưu trên điện thoại này, bắt đầu từ tin mới nhất. Vẫn chạy tiếp sau khi bạn rời trang tìm kiếm.");
-        table.put("Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above.",
-                "Xóa các sự kiện gần đây, báo cáo sự cố đã lưu, bố cục màn hình được ghi lại và kết quả trạng thái Hook ở trên.");
     }
 
     private static void fill8(Map<String, String> table) {
+        table.put("Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above.",
+                "Xóa các sự kiện gần đây, báo cáo sự cố đã lưu, bố cục màn hình được ghi lại và kết quả trạng thái Hook ở trên.");
         table.put("Close",
                 "Đóng");
         table.put("Close TikTok after",
@@ -1066,8 +1069,12 @@ final class L10nTranslationsVi {
                 "Bộ sưu tập không khả dụng cho video này");
         table.put("Color commenter names",
                 "Đổi màu tên người bình luận");
+        table.put("Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.",
+                "Tô màu thẻ mở ra khi chạm vào tên trong phòng LIVE. Nhãn, nút và hộp trên thẻ giữ màu riêng, và khi đã chọn màu thì thẻ không dùng bảng LIVE tối.");
         table.put("Colors the description, the author's name and the post date on videos.",
                 "Tô màu phần mô tả, tên tác giả và ngày đăng trên video.");
+        table.put("Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.",
+                "Tô màu chữ nằm ngay trên thẻ. Tự động sẽ chọn trắng hoặc đen, màu nào nổi hơn trên thẻ.");
         table.put("Colors these settings and Hushfeed's own pop-ups.",
                 "Tô màu các cài đặt này và cửa sổ bật lên của Hushfeed.");
         table.put("Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.",
@@ -1168,15 +1175,15 @@ final class L10nTranslationsVi {
                 "Không thể thay đổi cài đặt Lab. Vui lòng thử lại.");
         table.put("Couldn't change the icon. Try again.",
                 "Không đổi được biểu tượng. Hãy thử lại.");
+    }
+
+    private static void fill9(Map<String, String> table) {
         table.put("Couldn't check who follows you back. Try again.",
                 "Không thể kiểm tra ai theo dõi lại bạn. Hãy thử lại.");
         table.put("Couldn't clear seen videos. Try again.",
                 "Không thể xóa các video đã xem. Vui lòng thử lại.");
         table.put("Couldn't clear suggestions. Reopen Inbox to retry.",
                 "Không xóa được gợi ý. Mở lại Hộp thư đến để thử lại.");
-    }
-
-    private static void fill9(Map<String, String> table) {
         table.put("Couldn't confirm blocking %1$s. Check their profile.",
                 "Chưa xác nhận đã chặn %1$s. Hãy xem trang cá nhân.");
         table.put("Couldn't confirm unblocking %1$s. Check their profile.",
@@ -1291,15 +1298,15 @@ final class L10nTranslationsVi {
                 "Không thể bắt đầu thay đổi cài đặt. Vui lòng thử lại sau giây lát.");
         table.put("Couldn't stop it. Try again.",
                 "Không dừng được. Vui lòng thử lại.");
+    }
+
+    private static void fill10(Map<String, String> table) {
         table.put("Couldn't tell which LIVE this is. Open it again.",
                 "Không rõ đây là LIVE nào. Hãy mở lại.");
         table.put("Couldn't tell which folder to update. Choose it again.",
                 "Không rõ thư mục cần cập nhật. Hãy chọn lại.");
         table.put("Couldn't translate this draft. Try again.",
                 "Không thể dịch bản nháp này. Vui lòng thử lại.");
-    }
-
-    private static void fill10(Map<String, String> table) {
         table.put("Couldn't translate this message. Try again.",
                 "Không thể dịch tin nhắn này. Vui lòng thử lại.");
         table.put("Couldn't undo that. Try again.",
@@ -1414,15 +1421,15 @@ final class L10nTranslationsVi {
                 "Phần mô tả, phụ đề và chữ trên video giữ nguyên ngôn ngữ gốc, ngay cả khi TikTok bật Luôn dịch. Tính năng Xem bản dịch vẫn hoạt động khi bạn chạm vào. Bình luận có công tắc riêng ở phía trên.");
         table.put("Destination updated",
                 "Đã cập nhật đích đến");
+    }
+
+    private static void fill11(Map<String, String> table) {
         table.put("Details: %1$s",
                 "Chi tiết: %1$s");
         table.put("Deutsch",
                 "Deutsch");
         table.put("Device access",
                 "Quyền truy cập thiết bị");
-    }
-
-    private static void fill11(Map<String, String> table) {
         table.put("Device language, then original",
                 "Ngôn ngữ thiết bị, sau đó đến ngôn ngữ gốc");
         table.put("Diagnostic data cleared. Tap again to put it back.",
@@ -1537,15 +1544,15 @@ final class L10nTranslationsVi {
                 "Đã bật");
         table.put("End",
                 "Cuối");
+    }
+
+    private static void fill12(Map<String, String> table) {
         table.put("English",
                 "English");
         table.put("Enter a JSON object or array",
                 "Nhập đối tượng hoặc mảng JSON");
         table.put("Enter a creator handle or id",
                 "Nhập handle hoặc ID nhà sáng tạo");
-    }
-
-    private static void fill12(Map<String, String> table) {
         table.put("Enter a finite number",
                 "Nhập một số hữu hạn");
         table.put("Enter a number",
@@ -1660,15 +1667,17 @@ final class L10nTranslationsVi {
                 "Thẻ bảng tin");
         table.put("Feed tabs to keep",
                 "Các thẻ bảng tin cần giữ lại");
+    }
+
+    private static void fill13(Map<String, String> table) {
+        table.put("Festival honors",
+                "Danh hiệu lễ hội");
         table.put("Field %1$s can't be changed on this build. Take it out of the override, or reset the override.",
                 "Không thể thay đổi trường %1$s trên bản dựng này. Hãy loại bỏ nó khỏi ghi đè hoặc đặt lại ghi đè.");
         table.put("Field edits were discarded",
                 "Các chỉnh sửa trường đã bị hủy bỏ");
         table.put("Field edits weren't saved",
                 "Các chỉnh sửa trường chưa được lưu");
-    }
-
-    private static void fill13(Map<String, String> table) {
         table.put("Files",
                 "Tệp");
         table.put("Fill a tall screen instead",
@@ -1781,6 +1790,9 @@ final class L10nTranslationsVi {
                 "Đã lưu khung hình vào %1$s");
         table.put("Free data",
                 "Dữ liệu miễn phí");
+    }
+
+    private static void fill14(Map<String, String> table) {
         table.put("Free up space",
                 "Giải phóng dung lượng");
         table.put("Freeze TikTok's experiments",
@@ -1789,9 +1801,6 @@ final class L10nTranslationsVi {
                 "Bạn bè");
         table.put("Friends in the top tabs",
                 "Bạn bè ở các thẻ trên cùng");
-    }
-
-    private static void fill14(Map<String, String> table) {
         table.put("Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
                 "Bạn bè chuyển lên các thẻ ở đầu bảng tin, cạnh Đang theo dõi, và Khám phá thay chỗ nó ở thanh dưới cùng, giống cách TikTok sắp xếp ở một số quốc gia. Khu vực và bảng tin của bạn vẫn giữ nguyên.");
         table.put("Friends tab name",
@@ -1838,6 +1847,8 @@ final class L10nTranslationsVi {
                 "Chế độ ẩn danh");
         table.put("Ghost mode diagnostics",
                 "Chẩn đoán chế độ ẩn danh");
+        table.put("Gift gallery",
+                "Bộ sưu tập quà tặng");
         table.put("Gifter level",
                 "Cấp độ người tặng quà");
         table.put("Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.",
@@ -1858,6 +1869,8 @@ final class L10nTranslationsVi {
                 "Đã hiểu");
         table.put("Gray",
                 "Màu xám");
+        table.put("Group chat",
+                "Trò chuyện nhóm");
         table.put("Group likes per comment",
                 "Gộp lượt thích theo bình luận");
         table.put("H.264 only",
@@ -1900,6 +1913,9 @@ final class L10nTranslationsVi {
                 "Ẩn nút Thêm bạn bè");
         table.put("Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.",
                 "Ẩn số dư khỏi menu mở ra từ nút góc trên bên phải trang cá nhân. Xu và quà tặng của bạn vẫn giữ nguyên.");
+    }
+
+    private static void fill15(Map<String, String> table) {
         table.put("Hide Balance in the profile menu",
                 "Ẩn số dư trong menu trang cá nhân");
         table.put("Hide Bulletin board",
@@ -1912,9 +1928,6 @@ final class L10nTranslationsVi {
                 "Ẩn cảnh báo kiểm tra nguồn tin");
         table.put("Hide Footnotes",
                 "Ẩn chú thích (Footnotes)");
-    }
-
-    private static void fill15(Map<String, String> table) {
         table.put("Hide LIVE replays",
                 "Ẩn bản phát lại LIVE");
         table.put("Hide LIVE videos",
@@ -2023,6 +2036,9 @@ final class L10nTranslationsVi {
                 "Ẩn phim ngắn");
         table.put("Hide new follower notifications",
                 "Ẩn thông báo người theo dõi mới");
+    }
+
+    private static void fill16(Map<String, String> table) {
         table.put("Hide new followers",
                 "Ẩn người theo dõi mới");
         table.put("Hide online status",
@@ -2035,9 +2051,6 @@ final class L10nTranslationsVi {
                 "Ẩn người dùng và tùy chọn theo tên");
         table.put("Hide photo posts",
                 "Ẩn bài đăng dạng ảnh");
-    }
-
-    private static void fill16(Map<String, String> table) {
         table.put("Hide photo posts from the feed.",
                 "Ẩn bài đăng dạng ảnh khỏi bảng tin.");
         table.put("Hide picture comments",
@@ -2076,6 +2089,8 @@ final class L10nTranslationsVi {
                 "Ẩn trạng thái root và thông tin chi tiết về các công cụ root khỏi TikTok.");
         table.put("Hide rows by title",
                 "Ẩn các hàng theo tiêu đề");
+        table.put("Hide rows on LIVE profile cards",
+                "Ẩn các hàng trên thẻ hồ sơ trong LIVE");
         table.put("Hide search result tabs",
                 "Ẩn các tab kết quả tìm kiếm");
         table.put("Hide search rewards",
@@ -2144,6 +2159,9 @@ final class L10nTranslationsVi {
                 "Ẩn các điều khiển xóa hiển thị");
         table.put("Hide the Clear display controls leaves the progress bar in sight, so you can still see and drag it.",
                 "Ẩn các điều khiển xóa hiển thị nhưng vẫn giữ lại thanh tiến trình để bạn có thể nhìn thấy và kéo nó.");
+    }
+
+    private static void fill17(Map<String, String> table) {
         table.put("Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.",
                 "Ẩn vòng tròn Tạo ở đầu hàng tin trên mục Đang theo dõi và trong Hộp thư đến. Tin của bạn vẫn hiện ở đó sau khi bạn đăng.");
         table.put("Hide the Create circle in story rows",
@@ -2158,9 +2176,6 @@ final class L10nTranslationsVi {
                 "Ẩn mục Hushfeed");
         table.put("Hide the Inbox search button",
                 "Ẩn nút tìm kiếm trong Hộp thư đến");
-    }
-
-    private static void fill17(Map<String, String> table) {
         table.put("Hide the LIVE bubble",
                 "Ẩn bong bóng LIVE");
         table.put("Hide the LIVE button",
@@ -2267,6 +2282,9 @@ final class L10nTranslationsVi {
                 "Ẩn các số đếm và chấm đỏ trên mọi thẻ dưới cùng (bao gồm Hộp thư đến và Trang cá nhân), cũng như bong bóng trên Hộp thư đến đếm lượt thích, người theo dõi, bình luận mới và ai đang LIVE. Bản thân hộp thư đến vẫn hiển thị nội dung gửi đến.");
         table.put("Hide the repost chip",
                 "Ẩn nhãn đăng lại");
+    }
+
+    private static void fill18(Map<String, String> table) {
         table.put("Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.",
                 "Ẩn thông báo hạn chế trên trang cá nhân của chính bạn trên điện thoại này. Các hạn chế và khiếu nại của TikTok vẫn giữ nguyên hiệu lực.");
         table.put("Hide the rewards shortcut",
@@ -2281,9 +2299,6 @@ final class L10nTranslationsVi {
                 "Ẩn nút lưu ở cột bên phải. Tích chọn \"Lưu\" trong danh sách phía trên cũng sẽ ẩn nút này.");
         table.put("Hide the save button on the feed",
                 "Ẩn nút lưu trên bảng tin");
-    }
-
-    private static void fill18(Map<String, String> table) {
         table.put("Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.",
                 "Ẩn thanh tìm kiếm ở đầu các video bạn mở từ mục tìm kiếm, trang cá nhân hoặc lịch sử xem. Nút Quay lại vẫn được giữ nguyên.");
         table.put("Hide the search bar below videos",
@@ -2390,6 +2405,9 @@ final class L10nTranslationsVi {
                 "Nhấn giữ một cổng để chọn nhiều mục");
         table.put("Hold a photo story",
                 "Giữ dừng tin (story) ảnh");
+    }
+
+    private static void fill19(Map<String, String> table) {
         table.put("Hold speed bubble style",
                 "Kiểu bong bóng tốc độ nhấn giữ");
         table.put("Hold speed on Comment",
@@ -2404,9 +2422,6 @@ final class L10nTranslationsVi {
                 "Tạm giữ bảng tin sau khi hết ngân sách");
         table.put("Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.",
                 "Giữ cố định đĩa nhạc ở cuối cột bên phải ngay cả khi TikTok làm nó xoay. Tùy chọn này sẽ ghi đè tính năng Xoay đĩa nhạc.");
-    }
-
-    private static void fill19(Map<String, String> table) {
         table.put("Home",
                 "Trang chủ");
         table.put("Home screen shortcuts",
@@ -2513,6 +2528,9 @@ final class L10nTranslationsVi {
                 "Các thẻ được chèn");
         table.put("Install one, then come back here.",
                 "Hãy cài đặt một ứng dụng rồi quay lại đây.");
+    }
+
+    private static void fill20(Map<String, String> table) {
         table.put("Instead of TikTok's Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press.",
                 "Thay cho Lịch sử xem của TikTok. Thao tác chạm bình thường vào Trang cá nhân vẫn hoạt động như cũ. Nếu việc nhấn giữ Trang cá nhân dùng để chuyển đổi tài khoản trên thiết bị của bạn, tính năng này sẽ thay thế cử chỉ đó.");
         table.put("Instead of these settings. The list has a button that brings you back here.",
@@ -2527,9 +2545,6 @@ final class L10nTranslationsVi {
                 "Nằm trong %1$s, mục %2$s. Chạm để đến đó.");
         table.put("Italiano",
                 "Italiano");
-    }
-
-    private static void fill20(Map<String, String> table) {
         table.put("Join Amplify",
                 "Tham gia Amplify");
         table.put("Joined",
@@ -2636,6 +2651,9 @@ final class L10nTranslationsVi {
                 "Số lượng đã giữ lại: %1$d");
         table.put("Kept to %1$s, the nearest value this row allows",
                 "Đặt ở %1$s, mức gần nhất hàng này cho phép");
+    }
+
+    private static void fill21(Map<String, String> table) {
         table.put("Kinds of post",
                 "Các loại bài đăng");
         table.put("LIVE",
@@ -2650,13 +2668,14 @@ final class L10nTranslationsVi {
                 "Bảng tin LIVE");
         table.put("LIVE feed countries",
                 "Quốc gia cho bảng tin LIVE");
-    }
-
-    private static void fill21(Map<String, String> table) {
         table.put("LIVE followers range",
                 "Phạm vi người theo dõi LIVE");
         table.put("LIVE name alerts",
                 "Cảnh báo tên trong LIVE");
+        table.put("LIVE profile card background",
+                "Nền thẻ hồ sơ trong LIVE");
+        table.put("LIVE profile card text",
+                "Chữ trên thẻ hồ sơ trong LIVE");
         table.put("LIVE recording quality",
                 "Chất lượng ghi hình LIVE");
         table.put("LIVE recording saved to %1$s",
@@ -2755,6 +2774,9 @@ final class L10nTranslationsVi {
                 "Cho chủ phòng thấy bạn");
         table.put("Let the last video finish",
                 "Cho phép video cuối cùng phát xong");
+    }
+
+    private static void fill22(Map<String, String> table) {
         table.put("Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.",
                 "Cho phép video tràn xuống đáy màn hình trên bảng tin chính và hiển thị các thẻ đè lên trên mà không có thanh nền phía sau.");
         table.put("Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.",
@@ -2773,9 +2795,6 @@ final class L10nTranslationsVi {
                 "Bỏ giới hạn của ứng dụng đối với các cuộc trò chuyện được ghim trong hộp thư, thường là 5, để bạn ghim được nhiều hơn.");
         table.put("Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.",
                 "Nâng vị trí phụ đề được giữ lại lên trên vị trí thông thường khi bật xóa hiển thị. Nhập 0 để dùng vị trí thông thường, hoặc tối đa %1$d.");
-    }
-
-    private static void fill22(Map<String, String> table) {
         table.put("Light",
                 "Mảnh");
         table.put("Light gray",
@@ -2878,6 +2897,9 @@ final class L10nTranslationsVi {
                 "Đăng xuất");
         table.put("Logging diagnostics until %1$s",
                 "Đang ghi nhật ký chẩn đoán cho đến %1$s");
+    }
+
+    private static void fill23(Map<String, String> table) {
         table.put("Logging until %1$s. Tap to stop now.",
                 "Đang ghi nhật ký cho đến %1$s. Chạm để dừng ngay.");
         table.put("Logging, hook status and reports",
@@ -2896,9 +2918,6 @@ final class L10nTranslationsVi {
                 "Nhấn giữ Hộp thư để bật tắt xác nhận đã đọc");
         table.put("Long-press Profile for Activity center",
                 "Nhấn giữ trang cá nhân để mở Trung tâm hoạt động");
-    }
-
-    private static void fill23(Map<String, String> table) {
         table.put("Long-press Profile for Watch history",
                 "Nhấn giữ trang cá nhân để xem Lịch sử xem");
         table.put("Long-press Profile to switch accounts",
@@ -3001,6 +3020,9 @@ final class L10nTranslationsVi {
                 "Tiêu đề thông báo");
         table.put("Messages, profiles and search still work.",
                 "Tin nhắn, trang cá nhân và tìm kiếm vẫn hoạt động bình thường.");
+    }
+
+    private static void fill24(Map<String, String> table) {
         table.put("Microphone in use",
                 "Đang sử dụng micrô");
         table.put("Mini dramas",
@@ -3019,9 +3041,6 @@ final class L10nTranslationsVi {
                 "Tùy chọn khác");
         table.put("More see-through",
                 "Trong suốt hơn");
-    }
-
-    private static void fill24(Map<String, String> table) {
         table.put("More than %1$d comments were loaded, so the rest aren't in the file.",
                 "Đã tải hơn %1$d bình luận, các bình luận còn lại không có trong tệp.");
         table.put("Most liked first",
@@ -3124,6 +3143,9 @@ final class L10nTranslationsVi {
                 "Chưa có nhà sáng tạo nào bị ẩn. Hãy ẩn một người từ video hoặc thêm handle ở trên.");
         table.put("No current value",
                 "Không có giá trị hiện tại");
+    }
+
+    private static void fill25(Map<String, String> table) {
         table.put("No current value and no active override",
                 "Không có giá trị hiện tại và không có ghi đè nào đang bật");
         table.put("No delay",
@@ -3142,9 +3164,6 @@ final class L10nTranslationsVi {
                 "Dữ liệu cổng không khả dụng. Làm mới các giá trị từ menu để thử lại.");
         table.put("No gate reads were recorded. Use a TikTok feature while recording.",
                 "Chưa ghi lại được dữ liệu đọc cổng nào. Hãy sử dụng một tính năng của TikTok trong khi ghi hình.");
-    }
-
-    private static void fill25(Map<String, String> table) {
         table.put("No gates match this filter.",
                 "Không có cổng nào khớp với bộ lọc này.");
         table.put("No gates match this search and filter.",
@@ -3247,6 +3266,9 @@ final class L10nTranslationsVi {
                 "Chưa có thông tin nào được kiểm tra nên không có gì để báo cáo.");
         table.put("Nothing has been kept",
                 "Không có tin nhắn nào được giữ lại");
+    }
+
+    private static void fill26(Map<String, String> table) {
         table.put("Nothing has been looked up yet. Use the app for a moment, then come back.",
                 "Chưa có dữ liệu nào được tra cứu. Hãy sử dụng ứng dụng một lúc rồi quay lại.");
         table.put("Nothing hidden.",
@@ -3265,9 +3287,6 @@ final class L10nTranslationsVi {
                 "Chưa ghi được gì. Bắt đầu rồi thoát cài đặt.");
         table.put("Nothing to remove",
                 "Không có gì để xóa");
-    }
-
-    private static void fill26(Map<String, String> table) {
         table.put("Nothing to undo yet.",
                 "Chưa có thao tác nào để hoàn tác.");
         table.put("Nothing was recorded",
@@ -3370,6 +3389,9 @@ final class L10nTranslationsVi {
                 "Chỉ các thẻ dưới cùng mà TikTok đã tải trên thiết bị này mới hiển thị ở đây. Tùy chọn này không ép buộc các thẻ không khả dụng xuất hiện.");
         table.put("Only fields the Lab can check and copy safely are shown.",
                 "Chỉ hiển thị các trường mà Lab có thể kiểm tra và sao chép an toàn.");
+    }
+
+    private static void fill27(Map<String, String> table) {
         table.put("Only from these countries",
                 "Chỉ từ các quốc gia này");
         table.put("Only on the sides of the video",
@@ -3388,9 +3410,6 @@ final class L10nTranslationsVi {
                 "Mở cài đặt Hushfeed");
         table.put("Open TikTok on",
                 "Mở TikTok tại");
-    }
-
-    private static void fill27(Map<String, String> table) {
         table.put("Open a share sheet once, then return here to choose its actions.",
                 "Hãy mở bảng chia sẻ một lần rồi quay lại đây để chọn các thao tác cho nó.");
         table.put("Open and close TikTok's screens without their slide. Swipes inside a screen still follow your finger.",
@@ -3493,6 +3512,9 @@ final class L10nTranslationsVi {
                 "Đã tắt các ghi đè. Khởi động lại TikTok để áp dụng.");
         table.put("Overrides enabled. Restart TikTok to apply.",
                 "Đã bật các ghi đè. Khởi động lại TikTok để áp dụng.");
+    }
+
+    private static void fill28(Map<String, String> table) {
         table.put("Own profile counts",
                 "Số liệu trang cá nhân của bạn");
         table.put("Paid partnerships",
@@ -3511,9 +3533,6 @@ final class L10nTranslationsVi {
                 "Tạm dừng video khi đang mở phần bình luận");
         table.put("Paused",
                 "Đã tạm dừng");
-    }
-
-    private static void fill28(Map<String, String> table) {
         table.put("Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.",
                 "Tạm dừng video phía sau bảng bình luận trong khi bạn đọc. Video sẽ tiếp tục phát từ vị trí đó khi đóng bảng bình luận.");
         table.put("People you chat with won't see that you're typing. Needs Ghost mode on.",
@@ -3572,6 +3591,8 @@ final class L10nTranslationsVi {
                 "Chọn điện thoại được báo cho máy chủ hiệu ứng, hoặc nhập bất kỳ mẫu máy nào. Hiệu ứng bị từ chối với điện thoại này có thể mở được với điện thoại khác. Để trống nghĩa là Galaxy S24 Ultra.");
         table.put("Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.",
                 "Chọn các cửa sổ bật lên (popup) muốn chặn. Danh sách lưu các popup mà TikTok đã thử hiển thị trên điện thoại này, do đó popup sẽ xuất hiện tại đây sau lần hiển thị đầu tiên. Màn hình xác thực CAPTCHA, xác minh, đăng nhập, độ tuổi, lệnh cấm và đồng ý pháp lý không bao giờ bị liệt kê hoặc bị chặn.");
+        table.put("Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.",
+                "Chọn các hàng cần bỏ khỏi thẻ mở ra khi chạm vào tên trong phòng LIVE. Các hàng còn lại giữ nguyên chỗ.");
         table.put("Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.",
                 "Chọn các mục cần bỏ khỏi trang Cài đặt và quyền riêng tư của TikTok. Thay đổi có hiệu lực ở lần mở trang tiếp theo, và phần nào không còn mục nào cũng mất luôn tiêu đề.");
         table.put("Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.",
@@ -3614,6 +3635,9 @@ final class L10nTranslationsVi {
                 "Cửa hàng Play Store");
         table.put("Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.",
                 "Phát các video trên bảng tin mà không có âm thanh và giữ nguyên âm lượng điện thoại. Âm nhạc từ ứng dụng khác vẫn tiếp tục phát khi tính năng này bật. Tin nhắn trực tiếp, tin (story) và LIVE vẫn giữ nguyên âm thanh.");
+    }
+
+    private static void fill29(Map<String, String> table) {
         table.put("Play original audio",
                 "Phát âm thanh gốc");
         table.put("Play sounds TikTok pulled",
@@ -3634,9 +3658,6 @@ final class L10nTranslationsVi {
                 "Đang phát ở tốc độ %1$sx");
         table.put("Playlist posts",
                 "Bài đăng trong danh sách phát");
-    }
-
-    private static void fill29(Map<String, String> table) {
         table.put("Plays videos that TikTok covers with a content warning without asking you to tap through first.",
                 "Tự động phát các video bị TikTok che cảnh báo nội dung mà không yêu cầu bạn phải chạm để bỏ qua cảnh báo.");
         table.put("Policy updates",
@@ -3717,6 +3738,8 @@ final class L10nTranslationsVi {
                 "Đã phát hiện sự cố.");
         table.put("Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.",
                 "Đã phát hiện sự cố. Lượt xem tin (story) vẫn có thể bị báo cáo. Hãy kiểm tra chẩn đoán Chế độ ẩn danh. Cảnh báo này sẽ duy trì cho đến khi TikTok khởi động lại.");
+        table.put("Products in the LIVE",
+                "Sản phẩm trong LIVE");
         table.put("Profile",
                 "Trang cá nhân");
         table.put("Profile background",
@@ -3735,6 +3758,9 @@ final class L10nTranslationsVi {
                 "Tên thẻ Trang cá nhân");
         table.put("Promotional music",
                 "Âm nhạc quảng cáo");
+    }
+
+    private static void fill30(Map<String, String> table) {
         table.put("Proof",
                 "Bằng chứng");
         table.put("Protect external pages in TikTok's browser",
@@ -3757,9 +3783,6 @@ final class L10nTranslationsVi {
                 "Tên người dùng proxy");
         table.put("Public",
                 "Công khai");
-    }
-
-    private static void fill30(Map<String, String> table) {
         table.put("Pull down on the grid to load them",
                 "Kéo lưới xuống để tải chúng");
         table.put("Pulling down at the top of For You no longer reloads it.",
@@ -3858,6 +3881,9 @@ final class L10nTranslationsVi {
                 "Đang ghi lại những gì bộ lọc bảng tin giữ lại và ẩn đi. Chạm để dừng và lưu vào %1$s.");
         table.put("Recording. Use a feature, then come back to stop.",
                 "Đang ghi. Dùng một tính năng rồi quay lại để dừng.");
+    }
+
+    private static void fill31(Map<String, String> table) {
         table.put("Recovered recording saved to %1$s",
                 "Đã lưu bản ghi được khôi phục vào %1$s");
         table.put("Refresh values",
@@ -3880,9 +3906,6 @@ final class L10nTranslationsVi {
                 "Xóa tất cả bình luận");
         table.put("Remove all likes",
                 "Xóa tất cả lượt thích");
-    }
-
-    private static void fill31(Map<String, String> table) {
         table.put("Remove all overrides",
                 "Xóa tất cả các ghi đè");
         table.put("Remove all reposts",
@@ -3981,6 +4004,9 @@ final class L10nTranslationsVi {
                 "Quá trình đặt lại chưa hoàn tất. Một số cài đặt vẫn có thể đã bị thay đổi. Sử dụng Hoàn tác để khôi phục lại.");
         table.put("Reset override",
                 "Đặt lại ghi đè");
+    }
+
+    private static void fill32(Map<String, String> table) {
         table.put("Reset position",
                 "Đặt lại vị trí");
         table.put("Reset settings",
@@ -4003,9 +4029,6 @@ final class L10nTranslationsVi {
                 "Khôi phục thất bại. Một số cài đặt vẫn có thể đã bị thay đổi. Sử dụng Hoàn tác để khôi phục lại.");
         table.put("Restore seen history from a file",
                 "Khôi phục lịch sử đã xem từ tệp");
-    }
-
-    private static void fill32(Map<String, String> table) {
         table.put("Restore settings",
                 "Khôi phục cài đặt");
         table.put("Restoring seen history",
@@ -4104,6 +4127,9 @@ final class L10nTranslationsVi {
                 "Lưu mọi bức ảnh trong bài đăng ở kích thước đầy đủ chứ không phải kích thước hiển thị trên màn hình. Mỗi ảnh sẽ được lưu dưới dạng JPEG trừ khi bật Ảnh giữ nguyên định dạng TikTok gửi.");
         table.put("Save field values",
                 "Lưu các giá trị trường");
+    }
+
+    private static void fill33(Map<String, String> table) {
         table.put("Save full report",
                 "Lưu báo cáo đầy đủ");
         table.put("Save in which quality?",
@@ -4126,9 +4152,6 @@ final class L10nTranslationsVi {
                 "Mất Wi-Fi nên đã dừng lưu. Hãy thử lại khi có Wi-Fi.");
         table.put("Save subtitles beside videos",
                 "Lưu phụ đề bên cạnh video");
-    }
-
-    private static void fill33(Map<String, String> table) {
         table.put("Save the cover as well",
                 "Cũng lưu ảnh bìa");
         table.put("Save the feed capture",
@@ -4227,6 +4250,9 @@ final class L10nTranslationsVi {
                 "Các lượt lưu đang thực hiện");
         table.put("Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.",
                 "Lưu tệp phụ đề (SRT) cùng với video. Tệp sẽ lưu vào thư mục Phim (Movies) trên Android 11 trở lên, thư mục Tải xuống (Download) trên Android 10 và thư mục video của bạn trên các bản cũ hơn. Trên Android 11 trở lên nếu bật Lưu chi tiết, video sẽ chuyển sang Tải xuống hoặc Tài liệu còn phụ đề vẫn ở thư mục Phim.");
+    }
+
+    private static void fill34(Map<String, String> table) {
         table.put("Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.",
                 "Lưu các tài khoản theo dõi bạn, hoặc các tài khoản bạn theo dõi, thành tệp CSV trong Download/Hushfeed. Chúng được đọc với tốc độ gần bằng tốc độ cuộn danh sách, tối đa %1$s tài khoản mỗi lần.");
         table.put("Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",
@@ -4249,9 +4275,6 @@ final class L10nTranslationsVi {
                 "Đang lưu %1$s video");
         table.put("Saving %1$s. Tap Save again for the rest.",
                 "Đang lưu %1$s. Nhấn Lưu lần nữa để lưu phần còn lại.");
-    }
-
-    private static void fill34(Map<String, String> table) {
         table.put("Saving and sharing",
                 "Lưu và chia sẻ");
         table.put("Saving frames needs Android 7 or newer",
@@ -4350,6 +4373,9 @@ final class L10nTranslationsVi {
                 "Tua theo");
         table.put("Seek from the edges",
                 "Tua từ mép màn hình");
+    }
+
+    private static void fill35(Map<String, String> table) {
         table.put("Seen",
                 "Đã xem");
         table.put("Seen this session",
@@ -4372,9 +4398,6 @@ final class L10nTranslationsVi {
                 "Đã chọn");
         table.put("Semi-bold",
                 "Hơi đậm");
-    }
-
-    private static void fill35(Map<String, String> table) {
         table.put("Send TikTok through a proxy",
                 "Gửi dữ liệu TikTok qua proxy");
         table.put("Send it now",
@@ -4473,8 +4496,13 @@ final class L10nTranslationsVi {
                 "Cửa hàng (Shop)");
         table.put("Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.",
                 "Cập nhật đơn hàng và tin nhắn phiếu giảm giá không còn chiếm các hàng trong Hộp thư đến. Đơn hàng của bạn vẫn giữ nguyên.");
+    }
+
+    private static void fill36(Map<String, String> table) {
         table.put("Shop posts",
                 "Bài đăng cửa hàng (Shop)");
+        table.put("Shop rating",
+                "Điểm đánh giá cửa hàng");
         table.put("Shop tab name",
                 "Tên thẻ Cửa hàng");
         table.put("Short",
@@ -4495,9 +4523,6 @@ final class L10nTranslationsVi {
                 "Hiển thị \"Xem bản dịch\"");
         table.put("Show Thoughts on profiles and in your inbox, and the prompt to share one, for accounts TikTok hasn't turned them on for. TikTok's servers may still refuse to post one. Restart TikTok to apply this.",
                 "Hiển thị mục Suy nghĩ trên trang cá nhân, trong hộp thư đến và lời nhắc chia sẻ đối với các tài khoản chưa được TikTok bật tính năng này. Máy chủ của TikTok vẫn có thể từ chối đăng bài. Khởi động lại TikTok để áp dụng.");
-    }
-
-    private static void fill36(Map<String, String> table) {
         table.put("Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.",
                 "Hiển thị nút ghi âm bình luận bằng giọng nói của TikTok trên các tài khoản chưa có tính năng này. Tính năng này chưa được thử nghiệm trên tài khoản thực tế nên có thể không hoạt động.");
         table.put("Show TikTok's feed buttons",
@@ -4594,6 +4619,9 @@ final class L10nTranslationsVi {
                 "Hiển thị nút chặn âm thanh");
         table.put("Show the controls",
                 "Hiện các điều khiển");
+    }
+
+    private static void fill37(Map<String, String> table) {
         table.put("Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.",
                 "Hiển thị quốc gia được cài đặt trên tài khoản của người bình luận phía sau mốc thời gian. Các bình luận từ tài khoản mà TikTok không gửi dữ liệu quốc gia sẽ giữ nguyên.");
         table.put("Show the country a video was posted from next to the creator's name.",
@@ -4618,9 +4646,6 @@ final class L10nTranslationsVi {
                 "Hiện ảnh trước khi lưu");
         table.put("Show the progress bar",
                 "Hiển thị thanh tiến trình");
-    }
-
-    private static void fill37(Map<String, String> table) {
         table.put("Show the progress bar thumbnail",
                 "Hiển thị hình thu nhỏ trên thanh tiến trình");
         table.put("Show the room ID and your connection",
@@ -4717,6 +4742,9 @@ final class L10nTranslationsVi {
                 "Bỏ qua các cảnh báo nội dung");
         table.put("Skip the Share to sheet after a save",
                 "Bỏ qua bảng \"Chia sẻ tới\" sau khi lưu");
+    }
+
+    private static void fill38(Map<String, String> table) {
         table.put("Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.",
                 "Bỏ qua câu đố xác minh mà TikTok hiển thị trong lúc bạn lướt xem. Câu đố ngay sau khi bạn thích, theo dõi, bình luận hoặc đăng lại vẫn xuất hiện, cũng như các kiểm tra đăng nhập, SMS và xác minh 2 bước. Nếu gặp lỗi, hãy tắt tùy chọn này.");
         table.put("Skip the splash ad",
@@ -4741,9 +4769,6 @@ final class L10nTranslationsVi {
                 "Trượt qua các thẻ");
         table.put("Slide to change the hold speed",
                 "Trượt để thay đổi tốc độ nhấn giữ");
-    }
-
-    private static void fill38(Map<String, String> table) {
         table.put("Small",
                 "Nhỏ");
         table.put("Smaller text sizes",
@@ -4840,6 +4865,9 @@ final class L10nTranslationsVi {
                 "Bắt đầu ngày mới vào lúc");
         table.put("Start today over",
                 "Bắt đầu lại ngày hôm nay");
+    }
+
+    private static void fill39(Map<String, String> table) {
         table.put("Start typing",
                 "Bắt đầu nhập văn bản");
         table.put("Starts after %1$s other saves",
@@ -4864,9 +4892,6 @@ final class L10nTranslationsVi {
                 "Nhãn dán");
         table.put("Stickers can't be saved to the folder in that file, so your sticker folder was kept",
                 "Không thể lưu nhãn dán vào thư mục trong tệp đó, do đó thư mục nhãn dán của bạn được giữ nguyên");
-    }
-
-    private static void fill39(Map<String, String> table) {
         table.put("Stickers: %1$s",
                 "Nhãn dán: %1$s");
         table.put("Still here. Nothing is waiting.",
@@ -4963,6 +4988,9 @@ final class L10nTranslationsVi {
                 "Đã dừng. Đã xóa %1$d.");
         table.put("Stopped. %1$d unfollowed.",
                 "Đã dừng. Đã bỏ theo dõi %1$d.");
+    }
+
+    private static void fill40(Map<String, String> table) {
         table.put("Stopped. Search carries on later.",
                 "Đã dừng. Tìm kiếm sẽ tiếp tục sau.");
         table.put("Stopping after this file",
@@ -4987,9 +5015,6 @@ final class L10nTranslationsVi {
                 "Bộ nhớ gần đầy. Đã lưu bản ghi vào %1$s");
         table.put("Store TikTok thinks it came from",
                 "Cửa hàng ứng dụng mà TikTok nhận diện nguồn nguồn cài đặt");
-    }
-
-    private static void fill40(Map<String, String> table) {
         table.put("Stores the caption, creator, post date and link inside the video file, where media players can read them. Applies to saves made by Hushfeed.",
                 "Lưu chú thích, nhà sáng tạo, ngày đăng và liên kết trực tiếp vào bên trong tệp video để trình phát phương tiện có thể đọc được. Áp dụng cho các lượt lưu do Hushfeed thực hiện.");
         table.put("Stories",
@@ -5086,6 +5111,9 @@ final class L10nTranslationsVi {
                 "Chạm 2 lần vào biểu tượng thả tim của tin (story) trong %1$d giây. Việc bỏ thích vẫn có hiệu lực ngay lập tức.");
         table.put("Tap a video to remove it",
                 "Chạm vào video để xóa");
+    }
+
+    private static void fill41(Map<String, String> table) {
         table.put("Tap again to follow",
                 "Chạm lần nữa để theo dõi");
         table.put("Tap again to like",
@@ -5110,9 +5138,6 @@ final class L10nTranslationsVi {
                 "Chạm vào \"Xem thêm\" bên dưới video sẽ mở phần bình luận với toàn bộ chú thích hiển thị ở trên cùng thay vì đè lên video. Chạm trực tiếp vào chú thích cũng có tác dụng tương tự. Bài đăng ảnh vẫn giữ nguyên trang mặc định của TikTok cho tính năng này.");
         table.put("Technical details",
                 "Chi tiết kỹ thuật");
-    }
-
-    private static void fill41(Map<String, String> table) {
         table.put("Technical details, %1$s",
                 "Chi tiết kỹ thuật, %1$s");
         table.put("Tells you when your name comes up in a LIVE, in the chat or said out loud in a room with captions on. You get a notification when TikTok's notifications are on, and a banner in the room when they're off.",
@@ -5209,6 +5234,9 @@ final class L10nTranslationsVi {
                 "Hàng Lưu trữ sẽ bị gỡ khỏi Hộp thư đến. Các cuộc trò chuyện đã lưu trữ vẫn được giữ nguyên.");
         table.put("The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.",
                 "Các hàng Bảng thông báo mà TikTok thêm vào Hộp thư đến sẽ bị gỡ khỏi danh sách. Các cuộc trò chuyện và hàng khác giữ nguyên.");
+    }
+
+    private static void fill42(Map<String, String> table) {
         table.put("The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.",
                 "Tên thẻ Đang theo dõi và Dành cho bạn phía trên bảng tin sẽ ẩn đi. Thao tác vuốt giữa các bảng tin và nút tìm kiếm vẫn giữ nguyên.");
         table.put("The Home tab becomes a search button. Its icon and name say Search, and a tap opens TikTok's search instead of For You. TikTok starts on Inbox, or on Profile when Inbox is hidden, so the feed doesn't play when you open it.",
@@ -5233,9 +5261,6 @@ final class L10nTranslationsVi {
                 "Nút Dịch bình luận trong phòng LIVE cần có SIM Nhật Bản. Hãy bật Ghi đè chi tiết SIM trong cài đặt Hushfeed > Khu vực, đặt cấu hình quốc gia SIM thành Japan, NTT DOCOMO (44010), sau đó khởi động lại TikTok.");
         table.put("The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.",
                 "Vòng tròn Tiện ích (Widget) ở cuối khay chứa tin sẽ bị gỡ. Tiện ích màn hình chính của TikTok vẫn hoạt động.");
-    }
-
-    private static void fill42(Map<String, String> table) {
         table.put("The accounts TikTok suggests you follow no longer take up rows in the Inbox.",
                 "Các tài khoản mà TikTok đề xuất bạn theo dõi không còn chiếm các hàng trong Hộp thư đến.");
         table.put("The activity status control leaves the Inbox header. Whether others see you as active is unchanged.",
@@ -5332,6 +5357,9 @@ final class L10nTranslationsVi {
                 "Tệp một phần không thể gỡ bỏ. Vui lòng xóa khỏi thư mục bạn đã chọn.");
         table.put("The port the proxy listens on, like 8080 or 1080.",
                 "Cổng mà proxy lắng nghe, ví dụ 8080 hoặc 1080.");
+    }
+
+    private static void fill43(Map<String, String> table) {
         table.put("The presets couldn't load. Open the Lab again.",
                 "Không thể tải các cấu hình sẵn. Vui lòng mở lại Lab.");
         table.put("The profile picture couldn't be loaded. Try again.",
@@ -5356,9 +5384,6 @@ final class L10nTranslationsVi {
                 "Hàng ảnh đại diện tin ở đầu Hộp thư đến sẽ bị gỡ. Tin (story) vẫn phát bình thường từ bảng tin và trang cá nhân.");
         table.put("The saved-video choice couldn't open. Try again.",
                 "Không thể mở tùy chọn video đã lưu. Vui lòng thử lại.");
-    }
-
-    private static void fill43(Map<String, String> table) {
         table.put("The saved-video choice is still open",
                 "Lựa chọn video đã lưu vẫn đang mở");
         table.put("The screen recording did not finish. Its files can be exported but may not play.",
@@ -5455,6 +5480,9 @@ final class L10nTranslationsVi {
                 "Cấu hình sẵn này không khả dụng cho phiên bản TikTok đã cài đặt của bạn.");
         table.put("This profile picture isn't available to save",
                 "Ảnh đại diện này không khả dụng để lưu");
+    }
+
+    private static void fill44(Map<String, String> table) {
         table.put("This screen recording has no sound",
                 "Bản quay màn hình này không có âm thanh");
         table.put("This setting isn't available. Search for another setting.",
@@ -5479,9 +5507,6 @@ final class L10nTranslationsVi {
                 "Video này không có âm thanh gốc để lưu");
         table.put("This video has no sound of its own",
                 "Video này không có âm thanh riêng");
-    }
-
-    private static void fill44(Map<String, String> table) {
         table.put("This video has no sound to identify",
                 "Video này không có âm thanh để nhận diện");
         table.put("This video is already saved",
@@ -5578,6 +5603,9 @@ final class L10nTranslationsVi {
                 "TikTok nhìn thấy danh sách liên hệ trống thay vì danh sách của bạn. Các tính năng Tìm bạn bè và Người bạn có thể biết sẽ không thể sử dụng danh sách liên hệ của bạn nữa.");
         table.put("TikTok sees an empty list of apps instead of the apps on your phone. Checks for one specific app, such as when TikTok opens an app you tap, still work.",
                 "TikTok nhìn thấy danh sách ứng dụng trống thay vì các ứng dụng trên điện thoại của bạn. Việc kiểm tra một ứng dụng cụ thể (chẳng hạn như khi TikTok mở ứng dụng bạn chạm vào) vẫn hoạt động bình thường.");
+    }
+
+    private static void fill45(Map<String, String> table) {
         table.put("TikTok shows its full screen button only in LIVEs streamed from a computer or a shared screen. This shows it in every other LIVE with a wide video.",
                 "TikTok chỉ hiện nút Toàn màn hình trong các LIVE phát từ máy tính hoặc màn hình được chia sẻ. Tùy chọn này hiện nút đó trong mọi LIVE khác có video ngang.");
         table.put("TikTok slips the videos it saved for offline viewing back into For You when it can't load enough new ones. This takes them all out. Your offline list stays as it is.",
@@ -5602,9 +5630,6 @@ final class L10nTranslationsVi {
                 "Trình tải xuống của TikTok: %1$s");
         table.put("TikTok's hold to speed up",
                 "Tính năng nhấn giữ để tăng tốc của TikTok");
-    }
-
-    private static void fill45(Map<String, String> table) {
         table.put("TikTok's messages didn't start in time. It tries again at %1$s.",
                 "Tin nhắn của TikTok không khởi động kịp thời. Ứng dụng sẽ thử lại lúc %1$s.");
         table.put("TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.",
@@ -5701,6 +5726,9 @@ final class L10nTranslationsVi {
                 "Tắt Xếp chúng phía trên cột bên phải để di chuyển");
         table.put("Turn off double tap to react",
                 "Tắt chạm đúp để thả cảm xúc");
+    }
+
+    private static void fill46(Map<String, String> table) {
         table.put("Turn off haptics",
                 "Tắt phản hồi rung");
         table.put("Turn off push notifications",
@@ -5725,9 +5753,6 @@ final class L10nTranslationsVi {
                 "Xoay đĩa nhạc ở dưới cùng của cột bên phải trong khi phát video, giống như cách TikTok từng làm trước đây.");
         table.put("Turned off %1$d gates",
                 "Đã tắt %1$d cổng");
-    }
-
-    private static void fill46(Map<String, String> table) {
         table.put("Turned off %1$d of %2$d gates",
                 "Đã tắt %1$d trong số %2$d cổng");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
@@ -5820,8 +5845,13 @@ final class L10nTranslationsVi {
                 "Tối đa %1$d mức tốc độ từ %2$s đến %3$s, phân tách bằng dấu phẩy. Ví dụ: 0.5, 1, 1.5, 2, 2.5, 3. Để trống để dùng danh sách mặc định của TikTok. Khởi động lại TikTok để áp dụng.");
         table.put("Up to %1$s",
                 "Đến %1$s");
+        table.put("Upcoming LIVE events",
+                "Sự kiện LIVE sắp tới");
         table.put("Update",
                 "Cập nhật");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption.",
                 "Sử dụng 0 để giữ kích thước mặc định của TikTok, hoặc từ %1$d đến %2$d. Áp dụng cho chú thích tiếp theo.");
         table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.",
@@ -5848,9 +5878,6 @@ final class L10nTranslationsVi {
                 "Sử dụng khóa màn hình");
         table.put("Use system emoji",
                 "Sử dụng biểu tượng cảm xúc của hệ thống");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("Use system font",
                 "Sử dụng phông chữ hệ thống");
         table.put("Use the preset for the region TikTok reports for your account and its shop too. May affect search.",
@@ -5945,6 +5972,9 @@ final class L10nTranslationsVi {
                 "Video của %1$s");
         table.put("Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.",
                 "Video trong kết quả tìm kiếm sẽ hiển thị ảnh bìa và tự phát khi bạn mở. Bảng tin và các video thông thường vẫn phát như cũ.");
+    }
+
+    private static void fill48(Map<String, String> table) {
         table.put("Videos posted from %1$s",
                 "Video được đăng từ %1$s");
         table.put("Videos tagged %1$s",
@@ -5971,9 +6001,6 @@ final class L10nTranslationsVi {
                 "Tính năng chờ một ngày để nới lỏng ngân sách đang bật, do đó Hushfeed tiếp tục hoạt động");
         table.put("Wait before hiding the controls.",
                 "Thời gian chờ trước khi ẩn các điều khiển.");
-    }
-
-    private static void fill48(Map<String, String> table) {
         table.put("Wait for loading to finish",
                 "Đợi quá trình tải hoàn tất");
         table.put("Waiting for Wi-Fi",
@@ -6068,6 +6095,9 @@ final class L10nTranslationsVi {
                 "Với Sang ngang, trượt sang trái hoặc phải để đổi tốc độ và kéo xuống để khóa. Với Lên và xuống, trượt lên để nhanh hơn, trượt xuống để chậm hơn và trượt sang một bên để khóa, nên khi giữ gần mép màn hình bạn vẫn đến được mọi tốc độ.");
         table.put("With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.",
                 "Khi TikTok ở chế độ tối, phòng LIVE vẫn mở menu chia sẻ, câu lạc bộ người hâm mộ và các bảng khác bằng giao diện sáng màu. Tùy chọn này sẽ hiển thị chúng ở chế độ tối.");
+    }
+
+    private static void fill49(Map<String, String> table) {
         table.put("With the SIM changed, TikTok can keep showing videos you've already watched. Turn this on to stop that. Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",
                 "Khi đổi SIM, TikTok có thể liên tục hiện lại các video bạn đã xem. Bật mục này để ngăn điều đó. Tìm kiếm nhãn dán và các phần còn lại của TikTok vẫn sẽ thấy SIM ở trên, trong khi mục Dành cho bạn sẽ yêu cầu các video theo quốc gia và nhà mạng trên SIM thực của điện thoại. Địa chỉ IP và lịch sử tài khoản vẫn được tính.");
         table.put("With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",
@@ -6094,9 +6124,6 @@ final class L10nTranslationsVi {
                 "Ghi ngày của TikTok cạnh tên nhà sáng tạo với ngày đứng trước, như 29.09, kèm năm phía sau cho video cũ hơn. Thời gian như 2 ngày trước vẫn giữ nguyên.");
         table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
                 "Viết ngày của TikTok cạnh tên nhà sáng tạo bằng tên tháng, như Oct 12. Ngày trước tháng sẽ đổi thành 12 Oct.");
-    }
-
-    private static void fill49(Map<String, String> table) {
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Hiển thị định dạng ngày trước thời gian chính xác đến từng giây theo kiểu viết rút gọn của ngôn ngữ bạn đang dùng, ví dụ như 10/7/25.");
         table.put("Writing",
@@ -6191,6 +6218,9 @@ final class L10nTranslationsVi {
                 "gỡ lỗi gỡ lỗi nhật ký ghi nhật ký");
         table.put("dialog popup greeting",
                 "hộp thoại cửa sổ bật lên lời chào");
+    }
+
+    private static void fill50(Map<String, String> table) {
         table.put("download button",
                 "nút tải xuống tải về");
         table.put("expanded",

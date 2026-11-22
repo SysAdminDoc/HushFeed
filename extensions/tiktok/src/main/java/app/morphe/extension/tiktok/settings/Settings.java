@@ -884,6 +884,23 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting DARK_LIVE_PANELS = new BooleanSetting("dark_live_panels", FALSE);
     /**
+     * The LIVE profile card's background (#487): off, or one of the colors in LiveProfileCard; the
+     * LIVE controls patch. Read as each card opens. A picked color takes the card over from Dark
+     * LIVE panels.
+     */
+    public static final StringSetting LIVE_CARD_BACKGROUND = new StringSetting("live_card_background", "off");
+    /** The text drawn on the LIVE profile card itself: off (automatic), or one of the colors in LiveProfileCard. */
+    public static final StringSetting LIVE_CARD_TEXT = new StringSetting("live_card_text", "off");
+    /** Each switch takes one module off the LIVE profile card (#487), named for TikTok's module in LiveProfileCard. */
+    public static final BooleanSetting HIDE_LIVE_CARD_EVENTS = new BooleanSetting("hide_live_card_events", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_PRODUCTS = new BooleanSetting("hide_live_card_products", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_SHOP = new BooleanSetting("hide_live_card_shop", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_SHOP_RATING = new BooleanSetting("hide_live_card_shop_rating", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_GROUP_CHAT = new BooleanSetting("hide_live_card_group_chat", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_BULLETIN_BOARD = new BooleanSetting("hide_live_card_bulletin_board", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_GIFT_GALLERY = new BooleanSetting("hide_live_card_gift_gallery", FALSE);
+    public static final BooleanSetting HIDE_LIVE_CARD_FEST_HONORS = new BooleanSetting("hide_live_card_fest_honors", FALSE);
+    /**
      * Puts a Record button in LIVE rooms (#37); the LIVE controls patch. A recording starts when the
      * button is tapped and ends at Stop or when the room is left. Read as a room resumes and on the
      * chip's once-a-second check, so no restart.

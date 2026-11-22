@@ -2995,6 +2995,19 @@ Hide the pause icon,Sembunyikan ikon jeda
 "A tap still pauses and plays the video, but the big play icon doesn't show over it.","Ketukan tetap menjeda dan memutar video, tapi ikon putar yang besar tidak muncul di atasnya."
 Exit with one Back,Keluar dengan sekali Kembali
 "Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.","Kembali di Beranda langsung keluar dari TikTok, tanpa pesan ""Ketuk lagi untuk keluar"". Dari tab lain, Kembali tetap membawamu ke Beranda dulu, atau ke tab yang dipilih Buka TikTok di."
+LIVE profile card background,Latar kartu profil LIVE
+"Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.","Mewarnai kartu yang terbuka saat nama diketuk di ruang LIVE. Label, tombol, dan kotak di dalamnya tetap memakai warnanya sendiri, dan selama warna dipilih kartu ini tidak memakai panel LIVE gelap."
+LIVE profile card text,Teks kartu profil LIVE
+"Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.","Mewarnai teks yang ada di kartu itu sendiri. Otomatis memilih putih atau hitam, mana yang lebih menonjol di kartu."
+Hide rows on LIVE profile cards,Sembunyikan baris di kartu profil LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.,Pilih baris yang mau dihapus dari kartu yang terbuka saat nama diketuk di ruang LIVE. Sisanya tetap di tempatnya.
+Upcoming LIVE events,Acara LIVE mendatang
+Products in the LIVE,Produk di LIVE
+Shop rating,Rating toko
+Group chat,Obrolan grup
+Bulletin board,Papan pengumuman
+Gift gallery,Galeri hadiah
+Festival honors,Penghargaan festival
 Smaller text sizes,Ukuran teks lebih kecil
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Menambahkan tiga tingkat di bawah ukuran terkecil pada penggeser Ukuran teks milik TikTok, di Pengaturan dan privasi > Aksesibilitas. Pilih salah satunya di sana, lalu mulai ulang TikTok."
 UI size,Ukuran antarmuka

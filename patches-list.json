@@ -7874,6 +7874,96 @@
           "values": null
         },
         {
+          "key": "live_card_background",
+          "title": "Default: live card background",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "live_card_text",
+          "title": "Default: live card text",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "hide_live_card_events",
+          "title": "Default: hide live card events",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_products",
+          "title": "Default: hide live card products",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_shop",
+          "title": "Default: hide live card shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_shop_rating",
+          "title": "Default: hide live card shop rating",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_group_chat",
+          "title": "Default: hide live card group chat",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_bulletin_board",
+          "title": "Default: hide live card bulletin board",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_gift_gallery",
+          "title": "Default: hide live card gift gallery",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_fest_honors",
+          "title": "Default: hide live card fest honors",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "record_live",
           "title": "Default: record live",
           "description": null,

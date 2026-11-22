@@ -776,6 +776,28 @@ public class LivePanelThemeTest {
     }
 
     /**
+     * #362: a pinned comment's card rows inflate from the widget's own context, which a recyclable
+     * widget holds in a MutableContextWrapper around the room. Over a darkened room the rows take
+     * the room's light copy through that wrapper, so their tags resolve the colors they have with
+     * the switch off.
+     */
+    @Test public void aPinnedCommentsRowsOverADarkenedRoomResolveTheRoomsLightColors() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        Context widget = new android.content.MutableContextWrapper(live);
+        assertSame("the switch starts off", widget, LivePanelTheme.lightRoomView(widget));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        Context rows = LivePanelTheme.lightRoomView(widget);
+        assertNotSame(widget, rows);
+        assertSame("the rows still sit in the room", live, LivePanelTheme.roomOf(rows));
+        assertEquals("a row resolves the room's light colors", roomText, textColor(LayoutInflater.from(rows).getContext()));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+    }
+
+    /**
      * #362, S22 2026-11-08: TikTok applies color scheme styles to the room after the room hook took
      * the light copy, so the bubble inflated over a copy missing attributes its text looks up and
      * threw. Every style the room gets afterwards reaches the copy too, with TikTok's force.

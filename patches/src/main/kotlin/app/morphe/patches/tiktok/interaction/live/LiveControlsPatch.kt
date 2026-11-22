@@ -2063,6 +2063,55 @@ internal fun hookWidgetLoader(method: MutableMethod) {
     )
 }
 
+/** The base of LIVE's pinned comment widgets, real-named on 47.8.3 and 47.9.3. */
+internal const val LIVE_PINNED_WIDGET = "Lcom/bytedance/android/live/pin/widget/BaseCommentPinnedWidget;"
+
+/** Every pinned comment widget LIVE ships: the room's, the landscape room's and the extended screen's. */
+internal val LIVE_PINNED_WIDGETS = listOf(
+    "Lcom/bytedance/android/live/pin/widget/MainScreenCommentPinnedWidget;",
+    "Lcom/bytedance/android/live/pin/widget/LandscapeCommentPinnedWidget;",
+    "Lcom/bytedance/android/live/pin/widget/ExtendScreenCommentPinnedWidget;",
+)
+
+/**
+ * Hands each context a pinned comment widget reads from its widget base to make a layout inflater
+ * to the extension first, in that context's own register, and answers how many it found (#362).
+ * The card's rows inflate that way (MainScreenCommentPinnedWidget.C1 and D1 on 47.9.3), from the
+ * widget's context, which is the room's own and not the overlay inflater the widget hook gives a
+ * pinned comment. A row's Pinned and timer tags take their pill color from the row's context
+ * (attr f1o on 47.9.3, ezp on 47.8.3), and LIVE's dark color style, which the darkened room gets,
+ * sets it to white at 50%, so with Dark LIVE panels on the tags sat on pale pills they don't have
+ * with the switch off.
+ */
+internal fun hookPinnedRows(method: MutableMethod): Int {
+    val instructions = method.implementation?.instructions?.toList() ?: return 0
+    val reads = instructions.indices.filter { at ->
+        val read = instructions[at]
+        val field = (read as? ReferenceInstruction)?.reference as? FieldReference
+        val next = instructions.getOrNull(at + 1)
+        val call = (next as? ReferenceInstruction)?.reference as? MethodReference
+        read.opcode == Opcode.IGET_OBJECT && field != null && field.definingClass == LIVE_WIDGET &&
+            field.name == "context" && field.type == "Landroid/content/Context;" &&
+            next?.opcode == Opcode.INVOKE_STATIC && call != null && call.returnType == "Landroid/view/LayoutInflater;" &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;") &&
+            (next as FiveRegisterInstruction).registerC == (read as TwoRegisterInstruction).registerA
+    }
+    reads.reversed().forEach { at ->
+        if (method.isBranchTarget(at + 1)) {
+            throw PatchException("LIVE controls: a pinned comment's row inflater in ${method.name} is a branch target")
+        }
+        val context = (instructions[at] as TwoRegisterInstruction).registerA
+        method.addInstructions(
+            at + 1,
+            """
+                invoke-static/range {v$context .. v$context}, $PANEL_THEME->lightRoomView(Landroid/content/Context;)Landroid/content/Context;
+                move-result-object v$context
+            """,
+        )
+    }
+    return reads.size
+}
+
 private const val ANDROID_THEME = "Landroid/content/res/Resources\$Theme;"
 
 /**
@@ -2853,6 +2902,17 @@ val liveControlsPatch = bytecodePatch(
         }
         if (widgetLoads == 0 || widgetLoaders == 0) {
             throw PatchException("LIVE controls: the widget managers' loads are gone ($widgetLoads, $widgetLoaders)")
+        }
+        // The pinned card's rows, where its Pinned and timer tags are, inflate from the widget's
+        // own context, the darkened room, not that overlay inflater, so the tags kept the dark LIVE
+        // colors' pale pill (#362). Each row inflater takes the room's light copy instead.
+        val pinnedWidgets = LIVE_PINNED_WIDGETS.filter { classDefByOrNull(it) != null }
+        if (pinnedWidgets.isEmpty()) throw PatchException("LIVE controls: the pinned comment widgets are gone")
+        for (widget in pinnedWidgets) {
+            val rows = mutableClassDefBy(widget).methods.sumOf { hookPinnedRows(it) }
+            if (rows == 0) {
+                throw PatchException("LIVE controls: $widget no longer inflates its pinned comment's rows")
+            }
         }
         // That light copy is taken before the room's color scheme styles, the style its base adds
         // in onCreate and TikTok's LIVE color theme, which the room's LIVE fragments apply as

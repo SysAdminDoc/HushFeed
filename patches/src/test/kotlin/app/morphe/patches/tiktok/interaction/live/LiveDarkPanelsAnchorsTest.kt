@@ -724,6 +724,69 @@ class LiveDarkPanelsAnchorsTest {
         }
     }
 
+    /** A static call making a layout inflater from a context, the way LIVE's widgets call LayoutInflater.from. */
+    private fun makesInflater(instruction: com.android.tools.smali.dexlib2.iface.instruction.Instruction): Boolean {
+        val call = called(instruction) ?: return false
+        return instruction.opcode == Opcode.INVOKE_STATIC && call.returnType == "Landroid/view/LayoutInflater;" &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+    }
+
+    /**
+     * #362: a pinned comment's card rows, which hold its Pinned and timer tags, inflate from the
+     * widget's own context, the room, and never through the overlay inflater the widget hook gives
+     * a pinned comment. The tags resolve their pill color on the row's context, and the darkened
+     * room's dark LIVE colors make it white at 50%, so with Dark LIVE panels on the tags sat on pale
+     * pills. On each declared build LIVE's pinned widgets are the three the patch names, every
+     * layout inflater they make reads the widget's context straight into the call, and after the
+     * hook each of those contexts goes to the extension first, back into its own register, with
+     * nothing else moving.
+     */
+    @Test
+    fun `each declared build hands a pinned comment's row context to the extension before it inflates`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            fun pinned(type: String?): Boolean =
+                type != null && (type == LIVE_PINNED_WIDGET || pinned(classes[type]?.superclass))
+            val widgets = classes.values.map { it.type }.filter { it != LIVE_PINNED_WIDGET && pinned(it) }
+            assertEquals("${apk.name}: LIVE's pinned comment widgets", LIVE_PINNED_WIDGETS.sorted(), widgets.sorted())
+
+            for (widget in LIVE_PINNED_WIDGETS) {
+                var rows = 0
+                for (method in classes.getValue(widget).methods) {
+                    val original = method.implementation?.instructions?.filter { it.opcode != Opcode.NOP } ?: continue
+                    val hooked = MutableMethod(method)
+                    val count = hookPinnedRows(hooked)
+                    val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+                    val inflaters = code.indices.filter { makesInflater(code[it]) }
+                    assertEquals("${apk.name}: ${method.name} hooks every inflater it makes", inflaters.size, count)
+                    val added = mutableSetOf<Int>()
+                    inflaters.forEach { at ->
+                        val context = (code[at] as FiveRegisterInstruction).registerC
+                        assertEquals("${apk.name}: ${method.name} asks the extension", "lightRoomView", called(code[at - 2])?.name)
+                        val ask = code[at - 2] as RegisterRangeInstruction
+                        assertEquals("${apk.name}: with the context", listOf(context, 1), listOf(ask.startRegister, ask.registerCount))
+                        assertEquals("${apk.name}: its answer", Opcode.MOVE_RESULT_OBJECT, code[at - 1].opcode)
+                        assertEquals("${apk.name}: back into the context", context, (code[at - 1] as OneRegisterInstruction).registerA)
+                        val read = code[at - 3]
+                        val field = (read as ReferenceInstruction).reference as FieldReference
+                        assertEquals("${apk.name}: the widget's own context", listOf(Opcode.IGET_OBJECT, LIVE_WIDGET, "context", context),
+                            listOf(read.opcode, field.definingClass, field.name, (read as TwoRegisterInstruction).registerA))
+                        added += at - 2
+                        added += at - 1
+                    }
+                    assertEquals("${apk.name}: ${method.name}, nothing else moves", original.map { it.opcode },
+                        code.filterIndexed { at, _ -> at !in added }.map { it.opcode })
+                    if (count > 0) {
+                        assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+                    }
+                    rows += count
+                }
+                assertTrue("${apk.name}: $widget inflates its rows", rows > 0)
+            }
+        }
+        assertEquals("nothing to hook", 0, hookPinnedRows(badgeBind("nop")))
+    }
+
     /**
      * #362: a host's pinned comment lays LIVE's dark overlay over the room's theme, the darkened one
      * with the switch on. On each declared build the pinned comment base keeps its name, the widget

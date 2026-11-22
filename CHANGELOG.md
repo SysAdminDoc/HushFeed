@@ -87,6 +87,7 @@ Every Hushfeed release, newest first.
 * With `Dark LIVE panels in dark mode` on, every row of a LIVE's Muted, Blocked and Moderation lists stays readable as you scroll. Rows the list brought in while scrolling kept their dark gray text on the dark sheet, and the readable ones seemed to jump around as the list reused them (#362).
 * With `Dark LIVE panels in dark mode` on, an outlined button on a LIVE settings page gets a white outline with its label inside it. The white filled the whole button, so the Moderation list's buttons showed up as blank white boxes (#362).
 * With `Dark LIVE panels in dark mode` on, the "Find an open guest spot" bar under a LIVE guest's card reads light on a dark gray bar. TikTok always draws that bar in its light colors, so its text and arrow were black on the black sheet (#362).
+* With `Dark LIVE panels in dark mode` on, a pinned comment's Pinned and timer tags sit right on the video again, the way they look with the switch off. They still had pale see-through pills behind them, because the comment's rows took the colors meant for the dark panels (#362).
 
 ### Build
 

@@ -1417,6 +1417,10 @@ public final class LivePanelTheme {
      * TikTok gave the room since ({@link #roomStyle}) and LIVE's light color overlay where the room
      * took the dark one ({@link #liveColorTheme}). A room the hook never darkened, and anything
      * that fails, keeps TikTok's context.
+     * Also called by a pinned comment widget with its own context right before it makes the
+     * inflater for its card's rows. The rows' Pinned and timer tags resolve their pill color on
+     * that context, and the dark LIVE colors the darkened room got make it white at 50%, so the
+     * tags sat on pale pills they don't have with the switch off (#362).
      */
     public static Context lightRoomView(Context context) {
         try {
@@ -1433,7 +1437,7 @@ public final class LivePanelTheme {
         } catch (Throwable failure) {
             if (!bubbleFailureLogged) {
                 bubbleFailureLogged = true;
-                Logger.printException(() -> "Could not give a LIVE room's gift guide its light theme", failure);
+                Logger.printException(() -> "Could not give a LIVE view its room's light theme", failure);
             }
             return context;
         }

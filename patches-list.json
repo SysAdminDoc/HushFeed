@@ -2305,6 +2305,33 @@
           "values": null
         },
         {
+          "key": "show_comment_expand_button",
+          "title": "Default: show comment expand button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_video_size_under_comments",
+          "title": "Default: keep video size under comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "share_any_comment",
+          "title": "Default: share any comment",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "larger_comment_like_target",
           "title": "Default: larger comment like target",
           "description": null,
@@ -5033,6 +5060,15 @@
         {
           "key": "ghost_hide_live_views",
           "title": "Default: ghost hide live views",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "ghost_local_likes",
+          "title": "Default: ghost local likes",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -10936,6 +10972,15 @@
         {
           "key": "show_join_date",
           "title": "Default: show join date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_profile_changes",
+          "title": "Default: show profile changes",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

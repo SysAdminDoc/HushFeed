@@ -194,6 +194,7 @@ public final class LivePipRecord {
     }
 
     /** Whether {@link #buttons} puts the Record, Stop or saving button in. */
+    @RequiresApi(26)
     static boolean recordShown(List<?> theirs, int state, int room, Rooms rooms) {
         if (state == HIDDEN) return false;
         if (rooms.arrows && room >= 2) return true;

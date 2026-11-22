@@ -386,7 +386,8 @@ public final class LocalLikes {
                 Like like = saved.getValue() instanceof String ? decode((String) saved.getValue()) : null;
                 if (like != null) read.add(new AbstractMap.SimpleEntry<>(saved.getKey(), like));
             }
-            read.sort((a, b) -> Long.compare(a.getValue().likedMs, b.getValue().likedMs));
+            // Collections.sort, not List.sort, which Android 6 doesn't have.
+            Collections.sort(read, (a, b) -> Long.compare(a.getValue().likedMs, b.getValue().likedMs));
             for (Map.Entry<String, Like> entry : read) {
                 liked.put(entry.getKey(), entry.getValue());
                 ids.add(entry.getValue().aid);

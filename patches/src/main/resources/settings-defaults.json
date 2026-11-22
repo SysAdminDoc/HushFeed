@@ -67,6 +67,7 @@
       "publish_date_on_grid",
       "video_length_on_grid",
       "hide_grid_view_count",
+      "rounded_grid_corners",
       "profile_grid_sort",
       "sort_pinned_with_rest",
       "liked_grid_sort",
@@ -4115,6 +4116,12 @@
       "key": "resume_video_after_scroll",
       "type": "boolean",
       "default": true
+    },
+    "rounded_grid_corners": {
+      "field": "ROUNDED_GRID_CORNERS",
+      "key": "rounded_grid_corners",
+      "type": "boolean",
+      "default": false
     },
     "save_cover_button": {
       "field": "SAVE_COVER_BUTTON",

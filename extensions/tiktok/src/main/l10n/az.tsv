@@ -3133,6 +3133,9 @@ Always show the expand button in comments	Şərhlərdə genişləndirmə düymə
 Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.	Şərhləri bütün ekrana yayan düyməni hər videoya qoyur. TikTok onu yalnız bəzi hesablara verir. Hər ikisi yanılıdırsa, Şərhlərdə genişləndirmə düyməsini gizlədin üstün gəlir.
 Keep the video full size under comments	Şərhlərin altında videonu tam ölçüdə saxlayın
 The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.	Şərhləri açanda video öz ölçüsünü saxlayır, şərhlər isə onu yuxarı, daha kiçik bir qutuya itələmək əvəzinə aşağı hissəsini örtür.
+# context: Always show publish date grid switch; rounds each profile grid cell's corners
+Round the corners on profile grids	Profil şəbəkəsində küncləri yumrulaşdırın
+Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Profil şəbəkəsində hər videonun künclərini yumru edir, öz profilinizdə, Bəyənilənlərdə və Seçilmişlərdə də.
 Hide playable games	Oynanıla bilən oyunları gizlədin
 Hide the mini games you can play right in the For You feed.	Sənin üçün lentində birbaşa oynaya biləcəyiniz mini oyunları gizlədin.
 Playable games	Oynanıla bilən oyunlar

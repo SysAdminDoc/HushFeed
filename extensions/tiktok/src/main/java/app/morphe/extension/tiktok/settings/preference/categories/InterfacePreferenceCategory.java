@@ -374,6 +374,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.",
                     Settings.HIDE_GRID_VIEW_COUNT
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Round the corners on profile grids",
+                    "Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.",
+                    Settings.ROUNDED_GRID_CORNERS
+            ));
             if (SettingsStatus.gridSortEnabled) {
                 addPreference(new ChoicePreference(context, "Sort loaded videos on profile grids",
                         Settings.PROFILE_GRID_SORT,

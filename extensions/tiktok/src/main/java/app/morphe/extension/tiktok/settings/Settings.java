@@ -966,6 +966,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
+    /** Rounded corners on every profile grid cell (#487). */
+    public static final BooleanSetting ROUNDED_GRID_CORNERS = new BooleanSetting("rounded_grid_corners", FALSE);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** A sorted grid puts pinned videos in the chosen order with the rest instead of first (#466). */

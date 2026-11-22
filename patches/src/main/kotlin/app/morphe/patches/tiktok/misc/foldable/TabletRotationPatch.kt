@@ -13,6 +13,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -175,5 +176,6 @@ val tabletRotationPatch = bytecodePatch(
         requests.direct.forEach { (method, indexes) ->
             indexes.sortedDescending().forEach { method.requestThroughOverride(it, COMMENT_PHOTO_ACTIVITY) }
         }
+        registerForBuildDetails("enableTabletRotation")
     }
 }

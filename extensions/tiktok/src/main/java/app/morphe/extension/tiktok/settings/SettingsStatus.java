@@ -1034,6 +1034,8 @@ public class SettingsStatus {
     public static void enableSpotifyLoginFix() { spotifyLoginFixEnabled = true; }
     public static boolean runBesideStoreAppEnabled = false;
     public static void enableRunBesideStoreApp() { runBesideStoreAppEnabled = true; }
+    public static boolean tabletRotationEnabled = false;
+    public static void enableTabletRotation() { tabletRotationEnabled = true; }
     public static boolean commentPublishDiagnosticsEnabled = false;
     public static void enableCommentPublishDiagnostics() { commentPublishDiagnosticsEnabled = true; }
     public static boolean commentSendFixEnabled = false;

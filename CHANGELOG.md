@@ -113,7 +113,7 @@ Every Hushfeed release, newest first.
 * The register check that runs after patching accepts the 47.9.3 APK. It still expected 47.9.2's checksum, and moving to a new TikTok build now swaps that checksum along with the version.
 * The scripts that move the patches to a new TikTok build are in `scripts/retarget/` now. `retarget.ps1` takes the old and new fixture folders and runs the whole renaming pass, and concepts/patch-development.md says how to read what it reports.
 * `Custom offline videos limit` stops the patch with an error if TikTok ever puts a branch between its clean-up answer and the return the patch rewrites. The check for that never matched an if or a goto before.
-* The README's advice for a 32-bit Manager now says to leave out `AMOLED dark theme`, where it used to say to pick only one of AMOLED and `Region spoof`. In 1 GB tests on TikTok 47.9.2 every other patch fit together, Region spoof included, while AMOLED ran out of memory even beside Simple mode's patches.
+* The README's advice for a 32-bit Manager now says to patch the bundle and leave out the patches you don't need. It used to say every patch fits once AMOLED dark theme's `Switch in Hushfeed settings` is off, which came from 1 GB tests on a computer. On a phone running a 32-bit Manager 2.7.0 (1.5 GB for the patcher), TikTok 47.9.3's APK ran out of memory about halfway through every patch with that option on or off.
 
 ## 0.83.0 (2026-11-17)
 

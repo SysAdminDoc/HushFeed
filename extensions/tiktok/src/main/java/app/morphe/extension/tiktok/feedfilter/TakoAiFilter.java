@@ -50,6 +50,17 @@ public final class TakoAiFilter {
         logBoundViewHide();
     }
 
+    /**
+     * The Tako icon in the home top bar (PR #475). Asked right after TakoTopIconAssem's super
+     * onCreate: true leaves before the assem adds the config callback that puts the icon up.
+     */
+    public static boolean shouldHideTopIcon() {
+        boolean enabled = Settings.HIDE_TAKO_AI.get();
+        HookStatus.bound(HOOK_FAMILY,
+                "top bar icon " + (enabled ? "hidden" : "left"));
+        return enabled;
+    }
+
     private static final String HOOK_FAMILY = "tako AI";
     private static final AtomicInteger askBarHideLogCount = new AtomicInteger();
 

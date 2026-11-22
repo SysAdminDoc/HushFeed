@@ -46,6 +46,15 @@ public class TakoAskBarTest {
         TakoAiFilter.hideAskBar(null);
     }
 
+    /** PR #475: the Tako icon in the home top bar follows the same switch and shows in the export. */
+    @Test public void theTopBarIconFollowsTheSwitchAndIsNamedInTheExport() {
+        assertFalse("the icon was dropped with the switch off", TakoAiFilter.shouldHideTopIcon());
+        assertTrue(HookStatus.report().toString(), HookStatus.report().toString().contains("tako AI: 1 found"));
+        Settings.HIDE_TAKO_AI.save(true);
+        assertTrue("the icon was set up with the switch on", TakoAiFilter.shouldHideTopIcon());
+        assertTrue(HookStatus.report().toString(), HookStatus.report().toString().contains("tako AI: 2 found"));
+    }
+
     /** Issue #22: the Ask Tako bubble over the search page stayed with Hide Tako AI on. */
     @Test public void theSearchPageEntranceFollowsTheSameSwitchAndIsNamedInTheExport() {
         assertFalse("the entrance was removed with the switch off", TakoAiFilter.shouldHideSearchEntrance());

@@ -798,6 +798,16 @@ internal object TakoAiFeedButtonSetVisibleFingerprint : Fingerprint(
     },
 )
 
+/** The assem behind the home top bar's Tako icon (PR #475); its name has stayed readable since 47.7.1. */
+internal const val TAKO_TOP_ICON_ASSEM = "Lcom/ss/android/ugc/aweme/tako/feed/topicon/TakoTopIconAssem;"
+
+internal object TakoTopIconCreateFingerprint : Fingerprint(
+    definingClass = TAKO_TOP_ICON_ASSEM,
+    name = "onCreate",
+    returnType = "V",
+    parameters = emptyList(),
+)
+
 /**
  * The bind of the Tako "Ask" strip under a video's caption, a bottom slot on the video cell
  * (issue #6). Named {@code hs} on 46.2.3 and {@code onBind} on the three later builds, so it is

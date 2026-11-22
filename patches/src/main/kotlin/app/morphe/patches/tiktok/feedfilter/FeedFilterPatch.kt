@@ -642,6 +642,15 @@ val feedFilterPatch = bytecodePatch(
             "const/4 p1, 0x0",
         )
 
+        // The Tako icon in the home top bar (PR #475, inxomnyaa's hook point). The assem draws no
+        // view of its own: its onCreate adds a callback to TikTok's A/B config manager (the
+        // listener list "FetchAB/ConfigManager" walks after every fetch), and that callback's
+        // onAfterDataSave is what puts the icon up. Asked right after the super call, so the
+        // assem's lifecycle still starts and the callback is never added; onDestroy's remove of a
+        // callback that was never added does nothing. Required on a declared build.
+        val takoTopIcon = if (declaredBuild) TakoTopIconCreateFingerprint.method else TakoTopIconCreateFingerprint.methodOrNull
+        takoTopIcon?.hideTakoTopIconAfterSuper(required = declaredBuild)
+
         // The "Ask" strip under the caption is a slot component bound per video, and it is not
         // the floating button the two hooks above cover (issue #6). Asked at the top of its bind:
         // with the switch on the slot's view is hidden and the bind never fills it.
@@ -1391,6 +1400,36 @@ private fun Instruction.readsProfileAdList(): Boolean =
  * build and one with no return to hook go without the hook: a [PatchException] when [required],
  * the method left as it is otherwise.
  */
+/**
+ * Leaves `TakoTopIconAssem.onCreate` right after its super call when the extension answers true,
+ * so the config callback that puts the home top bar's Tako icon up is never added. The answer
+ * goes to v0, which no verified body can read before writing at that point. A build whose
+ * onCreate no longer opens with the super call, has a try block, or has no local for the answer
+ * goes without the hook: a [PatchException] when [required], the method left as it is otherwise.
+ */
+internal fun MutableMethod.hideTakoTopIconAfterSuper(required: Boolean) {
+    fun skip(why: String) {
+        if (required) throw PatchException("Feed filter: TakoTopIconAssem.onCreate $why")
+    }
+    val code = implementation ?: return skip("has no implementation")
+    val instructions = code.instructions.toList()
+    if (instructions.size < 2 || instructions.first().opcode != Opcode.INVOKE_SUPER) {
+        return skip("no longer opens with its super call")
+    }
+    if (code.tryBlocks.isNotEmpty()) return skip("has a try block")
+    if (code.registerCount - numberOfParameterRegisters < 1) return skip("has no local for the answer")
+    addInstructionsWithLabels(
+        1,
+        """
+            invoke-static {}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->shouldHideTopIcon()Z
+            move-result v0
+            if-eqz v0, :morphe_keep_tako_top_icon
+            return-void
+        """,
+        ExternalLabel("morphe_keep_tako_top_icon", getInstruction(1)),
+    )
+}
+
 internal fun MutableMethod.hideTakoSugCardAtReturns(required: Boolean) {
     fun skip(why: String) {
         if (required) throw PatchException("Feed filter: SearchTakoSugCardAssem.onViewCreated $why")

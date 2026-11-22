@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Hide the Tako bubble` also covers the Tako icon some accounts get in the home top bar. inxomnyaa found where TikTok sets it up and sent the hook in a pull request (#475).
 * Two new Comment tools switches for the comment sheet (#479). `Always show the expand button in comments` gives every video's comments the button that stretches them over the whole screen, which TikTok only hands to some accounts. `Keep the video full size under comments` stops the video from shrinking into a small box when the comments open, so they cover its lower part instead. Both start off and take a TikTok restart.
 * `Share any comment`, under Comments, lets you share a comment or send it to a friend when TikTok says it can't be shared. TikTok's server marks those comments, and with the switch on the long-press menu treats them like any other. The link it shares is the video's link with the comment's id on it, the same kind TikTok makes for every comment. It's part of Comment tools and starts off (#481).
 * On TikTok's own bottom bar, `Glass lens on the current tab` is a thin outline now, white on a dark bar and dark on a light one, with nothing filled inside, so it doesn't sit on the icons like a heavy frame. Sliding across the tabs works the same. The glass, floating and see-through bars keep the glass bubble (#483).

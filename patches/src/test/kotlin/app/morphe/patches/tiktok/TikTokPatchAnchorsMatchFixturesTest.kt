@@ -5,6 +5,7 @@ import app.morphe.takes
 import app.morphe.patches.tiktok.feedfilter.COMMENT_TOP_BAR_BRIDGE_BASE
 import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_BRIDGE
 import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_SERVICE
+import app.morphe.patches.tiktok.feedfilter.TAKO_TOP_ICON_ASSEM
 import app.morphe.patches.tiktok.feedfilter.COLD_START_STORES
 import app.morphe.patches.tiktok.feedfilter.coldStartCall
 import app.morphe.patches.tiktok.feedfilter.coldStartHelperCalls
@@ -85,6 +86,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -275,6 +277,48 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 takoGate.implementation!!.instructions.any {
                     it.opcode == Opcode.CONST_4 && (it as NarrowLiteralInstruction).narrowLiteral == 0
                 })
+        }
+    }
+
+    /**
+     * PR #475. The home top bar's Tako icon assem keeps one onCreate that opens with its super
+     * call, has no try block or branch onto the guard's spot, has a local for the answer, and
+     * still adds its callback to a ConcurrentLinkedDeque, the step the guard skips. onDestroy
+     * removes it again, which is a no-op for a callback that was never added.
+     */
+    @Test
+    fun `the home top bar Tako icon assem keeps a guardable onCreate on every retained fixture`() {
+        val deque = "Ljava/util/concurrent/ConcurrentLinkedDeque;"
+        val apks = fixtures()
+        for (apk in apks) {
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val assem = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .singleOrNull { it.type == TAKO_TOP_ICON_ASSEM }
+            assertNotNull("${apk.name}: no $TAKO_TOP_ICON_ASSEM", assem)
+            val creates = assem!!.methods.filter { it.name == "onCreate" && it.parameterTypes.isEmpty() && it.returnType == "V" }
+            assertEquals("${apk.name}: one onCreate()V", 1, creates.size)
+            val body = creates.single().implementation!!
+            val code = body.instructions.toList()
+            assertEquals("${apk.name}: onCreate opens with its super call", Opcode.INVOKE_SUPER, code.first().opcode)
+            assertTrue("${apk.name}: onCreate has a try block", body.tryBlocks.isEmpty())
+            assertTrue("${apk.name}: onCreate has no local for the guard", body.registerCount - 1 >= 1)
+            val offsets = code.runningFold(0) { at, it -> at + it.codeUnits }
+            val branchTargets = code.withIndex().filter { it.value is OffsetInstruction }
+                .map { offsets[it.index] + (it.value as OffsetInstruction).codeOffset }
+            assertFalse("${apk.name}: something branches onto the instruction after the super call",
+                offsets[1] in branchTargets)
+            assertTrue("${apk.name}: onCreate no longer adds its callback to the config manager's list",
+                code.any {
+                    val target = (it as? ReferenceInstruction)?.reference as? MethodReference
+                    target != null && target.definingClass == deque && target.name == "add"
+                })
+            assertTrue("${apk.name}: onDestroy no longer removes the callback",
+                assem.methods.single { it.name == "onDestroy" && it.parameterTypes.isEmpty() }
+                    .implementation!!.instructions.any {
+                        val target = (it as? ReferenceInstruction)?.reference as? MethodReference
+                        target != null && target.definingClass == deque && target.name == "remove"
+                    })
         }
     }
 

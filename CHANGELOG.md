@@ -85,6 +85,7 @@ Every Hushfeed release, newest first.
 * A sorted profile grid loads up to 1,000 videos on its own before it sorts, up from 300, so a long profile's oldest and longest videos make it into the order. On a long profile that takes around 35 seconds. Tap the loading grid to see the order it has right away, and your scrolling loads the rest. A slow connection stops after 45 seconds the same way. The notes under the profile and sound page sort settings say 1,000 now too, where they still said 300 (#180).
 * With `Dark LIVE panels in dark mode` on, the Unmute and Remove buttons in a LIVE's Muted and Blocked lists show their label in white. The buttons are a see-through gray on the dark sheet and the label stayed dark gray on them, so you could barely read it (#362).
 * With `Dark LIVE panels in dark mode` on, every row of a LIVE's Muted, Blocked and Moderation lists stays readable as you scroll. Rows the list brought in while scrolling kept their dark gray text on the dark sheet, and the readable ones seemed to jump around as the list reused them (#362).
+* With `Dark LIVE panels in dark mode` on, an outlined button on a LIVE settings page gets a white outline with its label inside it. The white filled the whole button, so the Moderation list's buttons showed up as blank white boxes (#362).
 
 ### Build
 

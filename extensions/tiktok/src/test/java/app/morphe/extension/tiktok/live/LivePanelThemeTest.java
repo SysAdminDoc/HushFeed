@@ -627,6 +627,69 @@ public class LivePanelThemeTest {
         assertEquals("a button a row showed as it bound", Color.WHITE, hidden.getCurrentTextColor());
     }
 
+    /**
+     * #362: a page button drawn as a dark outline goes white, but a shape with no fill color of
+     * its own paints all of itself under a color filter, so the white ink made the outline a white
+     * box over the button's lit label, which is how the Moderation list's buttons showed. The
+     * outline goes white and its middle stays clear, on a plain shape and on a state list of
+     * them like LIVE's buttons carry.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void aPageButtonsOutlineGoesWhiteAndStaysOpen() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        LivePanelTheme.darkLivePanel(admin, tiktok);
+
+        android.widget.LinearLayout root = new android.widget.LinearLayout(dark);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        GradientDrawable plain = new GradientDrawable();
+        plain.setStroke(6, 0xFF161823);
+        plain.setCornerRadius(12);
+        FrameLayout remove = new FrameLayout(dark);
+        remove.setBackground(plain);
+        TextView removeLabel = text(dark, 0xFF161823);
+        remove.addView(removeLabel);
+        root.addView(remove, new android.widget.LinearLayout.LayoutParams(200, 60));
+        GradientDrawable state = new GradientDrawable();
+        state.setStroke(6, 0xFF161823);
+        state.setCornerRadius(12);
+        android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
+        states.addState(new int[0], state);
+        FrameLayout add = new FrameLayout(dark);
+        add.setBackground(states);
+        TextView addLabel = text(dark, 0xFF161823);
+        add.addView(addLabel);
+        root.addView(add, new android.widget.LinearLayout.LayoutParams(200, 60));
+
+        ManageList page = new ManageList();
+        page.parent = admin;
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(page, tiktok));
+        page.view = root;
+        Dialog shown = dialogWith(root);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(shown);
+
+        for (FrameLayout button : new FrameLayout[]{remove, add}) {
+            String name = button == remove ? "the plain outline" : "the state list's outline";
+            // A state list hands its filter back only through the state it shows.
+            assertNotNull(name + " is lit", button.getBackground().getCurrent().getColorFilter());
+            android.graphics.Bitmap drawn = android.graphics.Bitmap.createBitmap(200, 60, android.graphics.Bitmap.Config.ARGB_8888);
+            Drawable background = button.getBackground();
+            android.graphics.Rect bounds = background.copyBounds();
+            background.setBounds(0, 0, 200, 60);
+            background.draw(new android.graphics.Canvas(drawn));
+            background.setBounds(bounds);
+            int edge = drawn.getPixel(100, 2);
+            assertTrue(name + " goes white, not " + Integer.toHexString(edge),
+                    Color.alpha(edge) > 0xC0 && Color.red(edge) > 0xF0 && Color.green(edge) > 0xF0 && Color.blue(edge) > 0xF0);
+            int middle = drawn.getPixel(100, 30);
+            assertTrue(name + "'s middle stays clear, not " + Integer.toHexString(middle), Color.alpha(middle) < 0x10);
+        }
+        assertEquals("the label it frames", Color.WHITE, removeLabel.getCurrentTextColor());
+        assertEquals(Color.WHITE, addLabel.getCurrentTextColor());
+    }
+
     /** #362: the gift guide bubble is white, so over a darkened room it inflates over the room's light theme. */
     @Test public void theGiftGuideBubbleOverADarkenedRoomTakesTheRoomsLightTheme() {
         RuntimeEnvironment.setQualifiers("+night");

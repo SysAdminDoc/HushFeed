@@ -1269,7 +1269,13 @@ public final class LivePanelTheme {
         }
     }
 
-    /** Draws a judged dark outline white, once per background TikTok gives the view. */
+    /**
+     * Draws a judged dark outline white, once per background TikTok gives the view. Its middle
+     * stays clear: a shape with no fill color of its own paints all of itself under a color
+     * filter, the way a tint fills LIVE's empty button shapes, so the white ink turned a button's
+     * outline into a white box over its lit label, the Moderation list's buttons among them
+     * (#362). Each such shape takes a clear fill first.
+     */
     private static void lightOutline(View view) {
         Drawable background = view.getBackground();
         if (background == null || background.getColorFilter() == WHITE_INK || litOutline(view, background)
@@ -1277,6 +1283,7 @@ public final class LivePanelTheme {
             return;
         }
         Drawable own = background.mutate();
+        keepMiddleClear(own, 0);
         own.setColorFilter(WHITE_INK);
         OUTLINES.put(view, new OutlineCheck(own, true, true));
         view.invalidate();
@@ -1290,6 +1297,40 @@ public final class LivePanelTheme {
     private static boolean litOutline(View view, Drawable background) {
         OutlineCheck seen = OUTLINES.get(view);
         return seen != null && seen.lit && seen.drawable.get() == background;
+    }
+
+    /**
+     * Gives each shape in a mutated outline that has neither a fill color nor a gradient a clear
+     * fill, the states of a state list and the layers of a layered one included, so a color
+     * filter recolors its stroke and nothing else. One drawn as an outline has no tint filling
+     * it, so its look doesn't change.
+     */
+    private static void keepMiddleClear(Drawable drawable, int depth) {
+        if (drawable == null || depth > MAX_TREE_DEPTH) {
+            return;
+        }
+        if (drawable instanceof DrawableContainer) {
+            Drawable.ConstantState state = drawable.getConstantState();
+            if (state instanceof DrawableContainer.DrawableContainerState) {
+                for (Drawable child : ((DrawableContainer.DrawableContainerState) state).getChildren()) {
+                    keepMiddleClear(child, depth + 1);
+                }
+            } else if (drawable.getCurrent() != drawable) {
+                keepMiddleClear(drawable.getCurrent(), depth + 1);
+            }
+        } else if (drawable instanceof LayerDrawable) {
+            LayerDrawable layers = (LayerDrawable) drawable;
+            for (int i = 0; i < layers.getNumberOfLayers(); i++) {
+                keepMiddleClear(layers.getDrawable(i), depth + 1);
+            }
+        } else if (drawable instanceof GradientDrawable && Build.VERSION.SDK_INT >= 24) {
+            GradientDrawable shape = (GradientDrawable) drawable;
+            if (shape.getColor() == null && shape.getColors() == null) {
+                // Its own copy, so the shape TikTok's other views load stays as it is.
+                shape.mutate();
+                shape.setColor(Color.TRANSPARENT);
+            }
+        }
     }
 
     private static final class OutlineCheck {

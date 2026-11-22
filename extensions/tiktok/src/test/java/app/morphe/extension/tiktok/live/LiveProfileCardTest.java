@@ -9,6 +9,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.settings.BooleanSetting;
+import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -40,6 +42,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +62,7 @@ public class LiveProfileCardTest {
     private static final int LINK = 0xFF2B5DB9;
     private static final int CHIP_PINK = 0xFFFFF1F3;
     private static final int FAINT_BLACK = 0x0D000000;
+    private static final int LEVEL_LAVENDER = 0x33CCD4F1;
 
     /** TikTok's card module enum keeps its constant names; these are the ones it has. */
     enum Module { HEADER, LIVE_EVENT, LIVE_PRODUCTS, ECOM, SHOP_EXPERIENCE_SCORE, GROUP_CHAT,
@@ -140,6 +144,12 @@ public class LiveProfileCardTest {
         /** A chip drawn as a fill beside its label, both under one frame (the Community chip). */
         final View chipFill;
         final TextView chipLabel;
+        /** The gifter level chip: a 20% lavender fill beside its label. */
+        final View levelFill;
+        final TextView levelLabel;
+        /** Join Fan Club: a shape with no color that the view tints red, its white label inside. */
+        final FrameLayout fanButton;
+        final TextView fanLabel;
         /** A round button that is 5% black over the card, with its icon. */
         final FrameLayout button;
         final ImageView icon;
@@ -179,6 +189,20 @@ public class LiveProfileCardTest {
             labelFrame.addView(chipLabel);
             chipFrame.addView(chipFill, new FrameLayout.LayoutParams(-1, -1));
             chipFrame.addView(labelFrame, new FrameLayout.LayoutParams(-1, -1));
+            FrameLayout levelFrame = new FrameLayout(context);
+            levelFill = new View(context);
+            GradientDrawable lavender = new GradientDrawable();
+            lavender.setColor(LEVEL_LAVENDER);
+            levelFill.setBackground(lavender);
+            levelLabel = Card.text(context);
+            levelFrame.addView(levelFill, new FrameLayout.LayoutParams(-1, -1));
+            levelFrame.addView(levelLabel, new FrameLayout.LayoutParams(-1, -1));
+            fanButton = new FrameLayout(context);
+            fanButton.setBackground(new GradientDrawable());
+            fanButton.setBackgroundTintList(ColorStateList.valueOf(CHIP));
+            fanLabel = Card.text(context);
+            fanLabel.setTextColor(WHITE);
+            fanButton.addView(fanLabel, new FrameLayout.LayoutParams(-1, -1));
             button = new FrameLayout(context);
             button.setBackground(new ColorDrawable(FAINT_BLACK));
             icon = new ImageView(context);
@@ -189,6 +213,8 @@ public class LiveProfileCardTest {
             rows.addView(chip, new LinearLayout.LayoutParams(100, 40));
             rows.addView(bio, new LinearLayout.LayoutParams(-1, 40));
             rows.addView(chipFrame, new LinearLayout.LayoutParams(140, 50));
+            rows.addView(levelFrame, new LinearLayout.LayoutParams(140, 50));
+            rows.addView(fanButton, new LinearLayout.LayoutParams(240, 50));
             rows.addView(button, new LinearLayout.LayoutParams(50, 50));
             rows.addView(divider, new LinearLayout.LayoutParams(300, 2));
             card.addView(rows, new FrameLayout.LayoutParams(-1, -1));
@@ -232,7 +258,8 @@ public class LiveProfileCardTest {
         LiveProfileCard.resetForTests();
     }
 
-    @After public void tearDown() {
+    @After public void tearDown() throws Exception {
+        pause(HushfeedPause.Reason.NONE);
         LiveProfileCard.resetForTests();
         Settings.LIVE_CARD_BACKGROUND.resetToDefault();
         Settings.LIVE_CARD_TEXT.resetToDefault();
@@ -243,6 +270,12 @@ public class LiveProfileCardTest {
 
     private static int fill(View view) {
         return ((ColorDrawable) view.getBackground()).getColor();
+    }
+
+    private static void pause(HushfeedPause.Reason why) throws Exception {
+        Method pause = HushfeedPause.class.getDeclaredMethod("pauseForTests", HushfeedPause.Reason.class);
+        pause.setAccessible(true);
+        pause.invoke(null, why);
     }
 
     @Test public void everyOfferedRowHasItsOwnSwitchThatStartsOff() {
@@ -465,6 +498,63 @@ public class LiveProfileCardTest {
         assertEquals(CHIP_PINK, ((GradientDrawable) sheet.chipFill.getBackground()).getColor().getDefaultColor());
         assertEquals(TIKTOK_TEXT, sheet.chipLabel.getCurrentTextColor());
         assertEquals("text straight on the card still changes", WHITE, sheet.name.getCurrentTextColor());
+    }
+
+    /** The level chip is 20% lavender, pale on TikTok's white card, and its dark label needs it pale on a black one too. */
+    @Test public void aThinChipFillKeepsTheColorItShowedOnTikToksCard() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("black");
+        LiveProfileCard.paint(sheet.window);
+        assertEquals("20% lavender over the sheet's #fbfbfb", 0xFFF1F3F9, shapeColor(sheet.levelFill));
+        assertEquals(TIKTOK_TEXT, sheet.levelLabel.getCurrentTextColor());
+        assertEquals("a solid chip keeps its own color", CHIP_PINK, shapeColor(sheet.chipFill));
+        LiveProfileCard.paint(sheet.window);
+        assertEquals("the next layout leaves it", 0xFFF1F3F9, shapeColor(sheet.levelFill));
+
+        LiveProfileCard.resetForTests();
+        GradientSheet textOnly = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("off");
+        Settings.LIVE_CARD_TEXT.save("yellow");
+        LiveProfileCard.paint(textOnly.window);
+        assertEquals("TikTok's card keeps it thin", LEVEL_LAVENDER, shapeColor(textOnly.levelFill));
+    }
+
+    /** TikTok's Join Fan Club label is white on the red its button is tinted, whatever the card. */
+    @Test public void aTintedButtonsLabelKeepsItsColor() {
+        GradientSheet sheet = new GradientSheet(context, new int[] {0xFFF8F8F8, WHITE});
+        Settings.LIVE_CARD_BACKGROUND.save("white");
+        LiveProfileCard.paint(sheet.window);
+        assertEquals(WHITE, sheet.fanLabel.getCurrentTextColor());
+        assertEquals("text straight on the card still changes", BLACK, sheet.name.getCurrentTextColor());
+        assertEquals("the button stays red", CHIP, sheet.fanButton.getBackgroundTintList().getDefaultColor());
+    }
+
+    /** TikTok keeps a room's card for each time it opens, so turning the colors off or pausing puts its own back. */
+    @Test public void theKeptCardGetsTikToksColorsBackWhenNothingIsPickedOrHushfeedPauses() throws Exception {
+        int[] stops = {0xFFF8F8F8, WHITE};
+        GradientSheet sheet = new GradientSheet(context, stops);
+        Set<Integer> bio = spanColors(sheet.bio);
+        for (String off : new String[] {"off", "pause"}) {
+            Settings.LIVE_CARD_BACKGROUND.save("black");
+            LiveProfileCard.paint(sheet.window);
+            assertEquals(off, WHITE, sheet.name.getCurrentTextColor());
+            assertEquals(off, 0xFFEEEEEE, fill(sheet.button));
+
+            if (off.equals("off")) Settings.LIVE_CARD_BACKGROUND.save("off");
+            else pause(HushfeedPause.Reason.SWITCH);
+            LiveProfileCard.paint(sheet.window);
+            assertArrayEquals(off, stops, sheet.surfaceFill().getColors());
+            assertEquals(off, TIKTOK_TEXT, sheet.name.getCurrentTextColor());
+            assertEquals(off, bio, spanColors(sheet.bio));
+            assertEquals(off, FAINT_BLACK, fill(sheet.button));
+            assertEquals(off, LEVEL_LAVENDER, shapeColor(sheet.levelFill));
+            assertEquals(off, CHIP_TEXT, sheet.chip.getCurrentTextColor());
+            pause(HushfeedPause.Reason.NONE);
+        }
+    }
+
+    private static int shapeColor(View view) {
+        return ((GradientDrawable) view.getBackground()).getColor().getDefaultColor();
     }
 
     /** TikTok's round buttons are 5% black, gray on its white card and gone on a black one. */

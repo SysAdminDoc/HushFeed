@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.live;
 
 import android.app.Dialog;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,7 +27,9 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -55,9 +58,11 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * Gray color spans in that text (the bio's) take it too, at their own strength. Anything with a
  * fill of its own (label chips, the event box, badge tiles, the group chat row, buttons), and
  * anything drawn over a fill beside it (a chip's label), keeps TikTok's fill and its own text
- * color, so it reads the way TikTok drew it on any background. A round button that is only a
- * faint tint over the card takes the gray it showed on TikTok's card as its fill. Icons keep their
- * own colors. The card then skips Dark LIVE panels.
+ * color, so it reads the way TikTok drew it on any background, a button tinted from its view
+ * included. A thin fill (the level chip) and a round button that is only a faint tint over the
+ * card take the color they showed on TikTok's card. Icons keep their own colors. The card then
+ * skips Dark LIVE panels. TikTok keeps a room's card for each time it opens, so once nothing is
+ * picked or Hushfeed is paused, the card gets back each fill, text color and span it had.
  */
 public final class LiveProfileCard {
     /** TikTok's profile card sheet, a name it keeps. */
@@ -83,8 +88,19 @@ public final class LiveProfileCard {
     /** Each card root's surface and the fill it had before it was colored. */
     private static final Map<View, View> SURFACES = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Map<View, Integer> ORIGINAL_FILLS = Collections.synchronizedMap(new WeakHashMap<>());
-    /** The views colored as the card's surface, the outermost and the layers like it. */
-    private static final Map<View, Boolean> PAINTED = Collections.synchronizedMap(new WeakHashMap<>());
+    /**
+     * The views colored as the card's surface, the outermost and the layers like it, with their
+     * own fill: a gradient's stops, or one color.
+     */
+    private static final Map<View, int[]> PAINTED = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Thin fills given the color they showed on TikTok's card, with their own. */
+    private static final Map<View, Integer> THIN_FILLS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Texts given the text color, with their own colors. */
+    private static final Map<TextView, ColorStateList> TEXT_COLORS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Texts whose gray spans were given the text color. */
+    private static final Map<TextView, Boolean> INKED_TEXTS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** The spans put in for TikTok's gray ones, with each gray span's color. */
+    private static final Map<ForegroundColorSpan, Integer> SPAN_COLORS = Collections.synchronizedMap(new WeakHashMap<>());
     private static volatile boolean rowFailureLogged;
     private static volatile boolean paintFailureLogged;
     private static volatile boolean surfaceMissLogged;
@@ -239,7 +255,10 @@ public final class LiveProfileCard {
     /** Colors the card under [root]: its surface, the layers like it and the text on them. */
     static void paint(View root) {
         try {
-            if (!colorsPicked()) return;
+            if (!colorsPicked()) {
+                restore(root);
+                return;
+            }
             View surface = surface(root);
             if (surface == null) {
                 if (!surfaceMissLogged) {
@@ -269,26 +288,32 @@ public final class LiveProfileCard {
     private static void paintTree(View view, View surface, int original, int fill, int ink, int depth) {
         if (view == null || depth > MAX_TREE_DEPTH) return;
         if (view == surface || PAINTED.containsKey(view)) {
-            paintFill(view, fill);
+            paintFill(view, fill, original);
         } else {
-            int kind = fillKind(view.getBackground());
+            int kind = fillKind(view);
             Integer color = solidColor(view.getBackground());
             if (kind == SOLID_FILL && color != null && color == original
                     && view.getWidth() >= surface.getWidth() - 1) {
-                paintFill(view, fill);
+                paintFill(view, fill, original);
             } else if (kind != NO_FILL) {
-                // A fill of its own: it and everything on it keep TikTok's colors.
+                // A fill of its own: it and everything on it keep TikTok's colors. One laid thin
+                // over the card takes the color it showed on TikTok's own, or its label would sit
+                // on whatever the new card makes of it (the gifter level chip, #487).
+                if (fill != 0 && color != null && Color.alpha(color) < 0xFF) thinFill(view, color, original);
                 return;
             } else if (fill != 0 && isTintedButton(view, color, surface)) {
                 // TikTok's round buttons are a faint black over the card, gray only on white,
                 // so each takes the gray it showed there and keeps its icon (#487).
-                setFill(view, over(color, original));
+                thinFill(view, color, original);
                 return;
             }
         }
         if (view instanceof TextView) {
             TextView text = (TextView) view;
-            if (text.getCurrentTextColor() != ink) text.setTextColor(ink);
+            if (text.getCurrentTextColor() != ink) {
+                TEXT_COLORS.put(text, text.getTextColors());
+                text.setTextColor(ink);
+            }
             inkSpans(text, ink);
         }
         if (view instanceof ViewGroup) {
@@ -310,6 +335,47 @@ public final class LiveProfileCard {
                 && ((ViewGroup) view).getChildCount() > 0 && view.getWidth() < surface.getWidth() - 1;
     }
 
+    /** Gives a thin [color] the opaque color it showed over TikTok's [original] card. */
+    private static void thinFill(View view, int color, int original) {
+        if (!THIN_FILLS.containsKey(view)) THIN_FILLS.put(view, color);
+        setFill(view, over(color, original));
+    }
+
+    /**
+     * Puts back what the card in [root]'s window had before it was colored, once nothing is
+     * picked or Hushfeed is paused. TikTok keeps a room's card for each time it opens, so the
+     * colors would otherwise stay.
+     */
+    static void restore(View root) {
+        View window = root.getRootView();
+        for (View view : keys(PAINTED)) {
+            if (view.getRootView() != window) continue;
+            int[] own = PAINTED.remove(view);
+            if (own != null) putBack(view, own);
+        }
+        for (View view : keys(THIN_FILLS)) {
+            if (view.getRootView() != window) continue;
+            Integer own = THIN_FILLS.remove(view);
+            if (own != null) setFill(view, own);
+        }
+        for (TextView text : keys(TEXT_COLORS)) {
+            if (text.getRootView() != window) continue;
+            ColorStateList own = TEXT_COLORS.remove(text);
+            if (own != null) text.setTextColor(own);
+        }
+        for (TextView text : keys(INKED_TEXTS)) {
+            if (text.getRootView() != window) continue;
+            INKED_TEXTS.remove(text);
+            swapSpans(text, SPAN_COLORS::get);
+        }
+    }
+
+    private static <K> List<K> keys(Map<K, ?> map) {
+        synchronized (map) {
+            return new ArrayList<>(map.keySet());
+        }
+    }
+
     /** [tint] drawn over the opaque [base], as one opaque color. */
     static int over(int tint, int base) {
         int alpha = Color.alpha(tint);
@@ -328,7 +394,7 @@ public final class LiveProfileCard {
             View behind = group.getChildAt(i);
             if (behind.getVisibility() != View.VISIBLE || PAINTED.containsKey(behind)) continue;
             if (x < behind.getLeft() || x >= behind.getRight() || y < behind.getTop() || y >= behind.getBottom()) continue;
-            if (fillKind(behind.getBackground()) != NO_FILL) return true;
+            if (fillKind(behind) != NO_FILL) return true;
         }
         return false;
     }
@@ -340,30 +406,42 @@ public final class LiveProfileCard {
      * TikTok's later texts for the view then come in that way too.
      */
     static void inkSpans(TextView view, int ink) {
+        if (swapSpans(view, span -> inked(span, ink))) INKED_TEXTS.put(view, Boolean.TRUE);
+    }
+
+    private interface SpanColor {
+        /** The color [span] takes, or null to leave it. */
+        Integer of(ForegroundColorSpan span);
+    }
+
+    /**
+     * Swaps each of [view]'s color spans that [recolor] gives a color for, keeping each first
+     * span's color for {@link #restore}. Answers whether any changed.
+     */
+    private static boolean swapSpans(TextView view, SpanColor recolor) {
         CharSequence text = view.getText();
-        if (!(text instanceof Spanned)) return;
+        if (!(text instanceof Spanned)) return false;
         Spanned spanned = (Spanned) text;
-        ForegroundColorSpan[] spans = spanned.getSpans(0, spanned.length(), ForegroundColorSpan.class);
-        boolean stale = false;
-        for (ForegroundColorSpan span : spans) {
-            if (inked(span, ink) != null) {
-                stale = true;
-                break;
-            }
-        }
-        if (!stale) return;
-        Spannable target = text instanceof Spannable ? (Spannable) text : new SpannableString(text);
-        for (ForegroundColorSpan span : spans) {
-            Integer color = inked(span, ink);
+        Spannable target = null;
+        for (ForegroundColorSpan span : spanned.getSpans(0, spanned.length(), ForegroundColorSpan.class)) {
+            Integer color = recolor.of(span);
             if (color == null) continue;
+            if (target == null) target = text instanceof Spannable ? (Spannable) text : new SpannableString(text);
             int start = target.getSpanStart(span);
+            if (start < 0) continue;
             int end = target.getSpanEnd(span);
             int flags = target.getSpanFlags(span);
-            if (start < 0) continue;
+            Integer first = SPAN_COLORS.remove(span);
+            ForegroundColorSpan swapped = new ForegroundColorSpan(color);
             target.removeSpan(span);
-            target.setSpan(new ForegroundColorSpan(color), start, end, flags);
+            target.setSpan(swapped, start, end, flags);
+            if (color != (first != null ? first : span.getForegroundColor())) {
+                SPAN_COLORS.put(swapped, first != null ? first : span.getForegroundColor());
+            }
         }
+        if (target == null) return false;
         if (target != text) view.setText(target, TextView.BufferType.SPANNABLE);
+        return true;
     }
 
     /** The color a plain gray span takes, or null for one to leave: a real color, or already inked. */
@@ -377,10 +455,28 @@ public final class LiveProfileCard {
         return target == color ? null : target;
     }
 
-    private static void paintFill(View view, int fill) {
-        PAINTED.put(view, Boolean.TRUE);
+    private static void paintFill(View view, int fill, int original) {
+        if (!PAINTED.containsKey(view)) PAINTED.put(view, look(view, original));
         if (fill == 0) return;
         setFill(view, fill);
+    }
+
+    /** [view]'s fill as it is: its gradient's stops, else [color]. */
+    private static int[] look(View view, int color) {
+        Drawable background = view.getBackground();
+        int[] stops = background instanceof GradientDrawable ? stops((GradientDrawable) background) : null;
+        return stops != null ? stops.clone() : new int[] {color};
+    }
+
+    private static void putBack(View view, int[] look) {
+        if (look.length == 1) {
+            setFill(view, look[0]);
+            return;
+        }
+        Drawable background = view.getBackground();
+        if (background == null) return;
+        Drawable own = background.mutate();
+        if (own instanceof GradientDrawable) ((GradientDrawable) own).setColors(look.clone());
     }
 
     private static void setFill(View view, int fill) {
@@ -478,6 +574,20 @@ public final class LiveProfileCard {
         return null;
     }
 
+    /**
+     * [view]'s fill, its background tint included: TikTok's Join Fan Club button is a shape with
+     * no color of its own that the view tints red (#487).
+     */
+    static int fillKind(View view) {
+        Drawable background = view.getBackground();
+        int kind = fillKind(background);
+        if (kind != NO_FILL || background == null) return kind;
+        ColorStateList tint = view.getBackgroundTintList();
+        if (tint == null) return NO_FILL;
+        int color = tint.getColorForState(view.getDrawableState(), tint.getDefaultColor());
+        return Color.alpha(color) < MIN_FILL_ALPHA ? NO_FILL : OTHER_FILL;
+    }
+
     /** No fill, a solid one (a color or a colored shape) or some other picture. */
     static int fillKind(Drawable drawable) {
         if (drawable == null) return NO_FILL;
@@ -561,6 +671,10 @@ public final class LiveProfileCard {
         SURFACES.clear();
         ORIGINAL_FILLS.clear();
         PAINTED.clear();
+        THIN_FILLS.clear();
+        TEXT_COLORS.clear();
+        INKED_TEXTS.clear();
+        SPAN_COLORS.clear();
         rowFailureLogged = false;
         paintFailureLogged = false;
         surfaceMissLogged = false;

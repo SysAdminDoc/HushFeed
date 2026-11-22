@@ -32,7 +32,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 
 Hushfeed v0.83.0 contains 151 patches for TikTok 47.8.3. New in this one: TikTok moves to 47.8.3. You can watch LIVEs unseen, remove all your comments at once, play mini dramas in their original audio and pick Hushfeed's own language and theme. It needs Morphe Manager 2.6.0 or newer.
 
-The main branch contains 154 patches, v0.83.0's set plus `Report a newer phone to game LIVE`, `Smaller text sizes` and `UI scale`.
+The main branch contains 155 patches, v0.83.0's set plus `Report a newer phone to game LIVE`, `Smaller text sizes`, `Turn profiles and comment pictures on tablets` and `UI scale`.
 
 ## What it changes
 
@@ -289,6 +289,7 @@ Simple mode in Morphe Manager selects 133 of these patches. Each row says what t
 | `Trust user certificates` | Lets TikTok trust security certificates you install yourself, so a tool like mitmproxy can show what the app sends. The risk: anyone who gets a certificate onto your phone can read TikTok's traffic too. Use it only on a test phone. |
 | `Turn off haptics` | Stops the little vibrations TikTok makes when you tap or hold things. Your keyboard and your phone's own vibrations stay. Starts off. Turn it on in Hushfeed settings > App. |
 | `Turn off screen transitions` | Opens and closes TikTok's screens without the sliding animation, so moving around feels quicker. Swipes still follow your finger. Starts off. Turn it on in Hushfeed settings > App. |
+| `Turn profiles and comment pictures on tablets` | On a tablet where TikTok lets its main screen turn, a profile opened from search and a comment's picture turn with it instead of flipping the screen to portrait. Works as soon as you patch it in, with no switch. |
 | `UI scale` | Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. Starts at 100%, which changes nothing. Pick a size in Hushfeed settings > App, then restart TikTok. |
 | `Use non-personalized search` | Shows search results that aren't tailored to your account. Starts off. Turn it on in Hushfeed settings > App. |
 | `Use system font` | Shows TikTok's text in your phone's own font or in a .ttf or .otf font file you import, instead of TikTok's, and can use your phone's emoji too. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |

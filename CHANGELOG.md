@@ -62,6 +62,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* On a tablet held sideways, opening a profile from search or a picture in the comments no longer flips the screen to portrait. The new `Turn profiles and comment pictures on tablets` patch has both turn with the rest of TikTok wherever TikTok's own check lets its main screen turn. Phones aren't affected (#490).
 * With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).
 * `Translate button in comments` now offers the restart button when you flip it. TikTok keeps one comment sheet for the whole feed and only checks for the button when it builds that sheet, so the change waited for a restart anyway.
 * `Remove feed ads` takes another kind of search ad out of the results. Some search ads carry their video tucked inside the card rather than on it, and TikTok itself doesn't call them ads when asked, so they stayed in the grid (#484).

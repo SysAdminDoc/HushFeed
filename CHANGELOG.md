@@ -63,6 +63,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* Searching for a product no longer logs an error, or shows an error toast with diagnostic logging on, when TikTok or the videos themselves mark every result on a page as an advert. The page still shows as TikTok sent it, and the diagnostic report says why. A page where every card carries an advert's shape still counts as an error, since that points at a broken check.
 * On a tablet held sideways, opening a profile from search or a picture in the comments no longer flips the screen to portrait. The new `Turn profiles and comment pictures on tablets` patch has both turn with the rest of TikTok wherever TikTok's own check lets its main screen turn. Phones aren't affected (#490).
 * With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).
 * `Translate button in comments` now offers the restart button when you flip it. TikTok keeps one comment sheet for the whole feed and only checks for the button when it builds that sheet, so the change waited for a restart anyway.

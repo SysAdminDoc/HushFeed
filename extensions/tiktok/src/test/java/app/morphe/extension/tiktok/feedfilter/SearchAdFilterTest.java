@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import android.util.Log;
+
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -28,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 /**
  * Search result cards are not Awemes, so the card's own verdict is the reliable test. The
@@ -233,6 +236,51 @@ public class SearchAdFilterTest {
         FeedItemsFilter.filterSearchAds(result);
 
         assertSame(items, result.mItems);
+    }
+
+    @Test
+    public void aPageMatchedOnlyOnTikToksVerdictOrItsVideosIsLeftAloneWithoutAnError() {
+        // A product search: TikTok calls one card an advert and the other wraps a video whose
+        // own ad evidence matches, but no card carries an advert shape. Not a broken hook.
+        Card verdict = plain();
+        verdict.adOrContainAd = true;
+        Card evidence = plain();
+        evidence.aweme = video(true);
+
+        List items = new ArrayList<>(Arrays.asList(verdict, evidence));
+        Result result = new Result(items);
+        ShadowLog.clear();
+        FeedItemsFilter.filterSearchAds(result);
+
+        assertSame(items, result.mItems);
+        assertFalse("An evidence-only page was logged as an error",
+                logged(Log.ERROR, "Every search result"));
+        assertTrue("The log doesn't say why the page stayed",
+                logged(Log.INFO, "marked as an advert by TikTok or by its video"));
+    }
+
+    @Test
+    public void anAdvertShapeOnEveryCardStillRaisesTheError() {
+        Card first = plain();
+        first.multiAdCard = new Object();
+        Card second = plain();
+        second.multiAdCard = new Object();
+
+        List items = new ArrayList<>(Arrays.asList(first, second));
+        Result result = new Result(items);
+        ShadowLog.clear();
+        FeedItemsFilter.filterSearchAds(result);
+
+        assertSame(items, result.mItems);
+        assertTrue("A page of advert shapes no longer reads as a broken shape",
+                logged(Log.ERROR, "Every search result looked like an advert or a Shop card"));
+    }
+
+    private static boolean logged(int level, String text) {
+        for (ShadowLog.LogItem item : ShadowLog.getLogs()) {
+            if (item.type == level && item.msg != null && item.msg.contains(text)) return true;
+        }
+        return false;
     }
 
     @Test

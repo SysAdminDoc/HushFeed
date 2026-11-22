@@ -842,11 +842,16 @@ public final class FeedItemsFilter {
         ArrayList kept = new ArrayList(items.size());
         int adsRemoved = 0;
         int shopRemoved = 0;
+        // Cards that matched on a shape (an advert field, a precise ad, a Shop shape) rather
+        // than on what TikTok or the wrapped video says about itself.
+        int shapeMatched = 0;
         for (Object card : items) {
             if (ads && isSearchAd(card)) {
                 adsRemoved++;
+                if (hasSearchAdShape(card) || (shop && isSearchShopProduct(card))) shapeMatched++;
             } else if (shop && isSearchShopProduct(card)) {
                 shopRemoved++;
+                shapeMatched++;
             } else {
                 kept.add(card);
             }
@@ -862,8 +867,15 @@ public final class FeedItemsFilter {
             // When the adverts alone would have left cards, it is the Shop shapes that emptied
             // the page, so only the adverts go, as they did before the Shop switch existed;
             // otherwise the page is left alone.
+            // A page matched only on TikTok's verdict or the videos' own ad evidence isn't a
+            // broken shape: a product search serves pages where nearly every video carries a
+            // commission disclosure. It's left alone all the same, and logged as information.
             if (adsRemoved == 0 || adsRemoved == items.size()) {
-                Logger.printException(() -> "Every search result looked like an advert or a Shop card, so none were removed");
+                if (shapeMatched == 0) {
+                    Logger.printInfo(() -> "Every search result on this page was marked as an advert by TikTok or by its video, so none were removed");
+                } else {
+                    Logger.printException(() -> "Every search result looked like an advert or a Shop card, so none were removed");
+                }
                 captureSearchPage(items, items, ads, shop, "every-card-matched-page-left-alone");
                 return;
             }
@@ -998,14 +1010,18 @@ public final class FeedItemsFilter {
         // The card's own answer, with no other shape to fall back on, so a build that renamed it
         // leaves search ads unfiltered and the report has to say so.
         if (Boolean.TRUE.equals(Reflect.required(card, "isAdOrContainAd"))) return true;
-
-        for (String name : SEARCH_AD_FIELDS) {
-            if (Reflect.readField(card, name) != null) return true;
-        }
-        if (isPreciseAd(card)) return true;
+        if (hasSearchAdShape(card)) return true;
 
         Object aweme = Reflect.readField(card, "aweme");
         return aweme instanceof Aweme && getFilterReason(AD_ONLY_FILTERS, (Aweme) aweme) != null;
+    }
+
+    /** True when the card carries one of the bought advert shapes or is a precise ad. */
+    static boolean hasSearchAdShape(Object card) {
+        for (String name : SEARCH_AD_FIELDS) {
+            if (Reflect.readField(card, name) != null) return true;
+        }
+        return isPreciseAd(card);
     }
 
     /**

@@ -68,7 +68,7 @@ public class LaunchCrashCleanupTest {
         assertEquals(Arrays.asList("morphe_prefs", "morphe_feature_gate_lab",
                         "hushfeed_release_notes", "hushfeed_device_identity", "hushfeed_group_chats",
                         "hushfeed_sticker_recents", "hushfeed_new_dots", "hushfeed_story_reads",
-                        "hushfeed_picture_in_picture", "hushfeed_local_likes"),
+                        "hushfeed_picture_in_picture", "hushfeed_local_likes", "hushfeed_profile_changes"),
                 Arrays.asList(kept).subList(TIKTOK_KEEPS.length, kept.length));
         assertArrayEquals(LaunchCrashCleanup.HUSHFEED_FILES, LaunchCrashCleanup.keepHushfeedFiles(null));
     }
@@ -90,6 +90,7 @@ public class LaunchCrashCleanupTest {
         expected.put("misc/RemoteConfigFreeze.java", Arrays.asList("Setting.PREFERENCES_NAME"));
         expected.put("playback/PictureInPicture.java", Arrays.asList("STATE"));
         expected.put("privacy/DeviceIdentity.java", Arrays.asList("PREFERENCES", "PREFERENCES"));
+        expected.put("profile/ProfileChanges.java", Arrays.asList("PREFS_NAME"));
         expected.put("translation/DmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("translation/ReceivedDmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("shared/settings/EarlySwitch.java", Arrays.asList("Setting.PREFERENCES_NAME"));
@@ -114,6 +115,7 @@ public class LaunchCrashCleanupTest {
         assertTrue(kept.contains(app.morphe.extension.tiktok.ghostmode.StoryReads.PREFS_NAME));
         assertTrue(kept.contains(app.morphe.extension.tiktok.playback.PictureInPicture.STATE));
         assertTrue(kept.contains(app.morphe.extension.tiktok.ghostmode.LocalLikes.PREFS_NAME));
+        assertTrue(kept.contains(app.morphe.extension.tiktok.profile.ProfileChanges.PREFS_NAME));
         assertFalse("TikTok's store-region file stays off Hushfeed's list",
                 kept.contains(constant(app.morphe.extension.tiktok.spoof.sim.ImageLoads.class, "STORE_PREFS")));
     }

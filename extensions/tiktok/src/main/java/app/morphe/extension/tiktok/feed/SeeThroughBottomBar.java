@@ -1180,13 +1180,16 @@ final class SeeThroughBottomBar {
         }
     }
 
-    /** The plain floating pill with the lens behind the selected tab (#416). */
+    /**
+     * The plain floating pill with the lens behind the selected tab (#416), drawn as the thin
+     * outline (#483): the frosted bubble read as a gray block on the see-through pill.
+     */
     static final class FloatingLensBackground extends FloatingBackground implements LensCarrier {
         private final TabLens lens;
 
         FloatingLensBackground(float density) {
             super(density);
-            lens = new TabLens(density, this, null);
+            lens = new TabLens(density, this, null, true);
         }
 
         @Override

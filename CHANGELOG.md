@@ -8,6 +8,10 @@ Every Hushfeed release, newest first.
 
 * `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
 
+### Features
+
+* On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
+
 ### Build
 
 * The release tools name only global TikTok's version in the README, the Manager text and the update steps. With TikTok Lite declared too, v0.84.0 went out saying "TikTok 47.8.2 and 47.9.3", and the README still pointed at 47.8.3.

@@ -156,6 +156,33 @@ public class GlassPillDrawingTest {
         return new int[]{count, most};
     }
 
+    /**
+     * The floating pill's lens (#483): the thin outline TikTok's own bar wears, with the pill's
+     * see-through fill left as it was inside it, so the video shows through the lens the way it
+     * does beside it. The frosted bubble read as a gray block on the see-through pill.
+     */
+    @Test
+    public void theLensIsAThinOutlineOnTheFloatingPill() {
+        SeeThroughBottomBar.FloatingBackground plain = new SeeThroughBottomBar.FloatingBackground(1f);
+        barWearing(plain);
+        Bitmap without = drawn(plain);
+        SeeThroughBottomBar.FloatingLensBackground floating = new SeeThroughBottomBar.FloatingLensBackground(1f);
+        barWearing(floating);
+        Bitmap with = drawn(floating);
+        assertEquals("the lens filled its inside on the floating pill",
+                without.getPixel(W / 2, H / 2), with.getPixel(W / 2, H / 2));
+        int count = 0, brightest = 0;
+        for (int x = W / 2; x < W; x++) {
+            int before = without.getPixel(x, H / 2), after = with.getPixel(x, H / 2);
+            if (before == after) continue;
+            count++;
+            brightest = Math.max(brightest, light(after) - light(before));
+        }
+        assertTrue("no outline on the floating pill", count > 0);
+        assertTrue("the outline is thicker than a line: " + count, count <= 2);
+        assertTrue("the outline on the floating pill is dim: " + brightest, brightest > 150);
+    }
+
     /** The clear bar's lens (#416): the video untouched around it, lighter behind the selected tab. */
     @Test
     public void theLensShowsOnTheClearBar() {

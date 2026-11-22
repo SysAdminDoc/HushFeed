@@ -903,6 +903,9 @@
     "Turn off screen transitions": [
       "turn_off_screen_transitions"
     ],
+    "UI scale": [
+      "ui_scale_percent"
+    ],
     "Use non-personalized search": [
       "enable_non_personalized_search"
     ],
@@ -4825,6 +4828,14 @@
       "key": "turn_off_screen_transitions",
       "type": "boolean",
       "default": false
+    },
+    "ui_scale_percent": {
+      "field": "UI_SCALE_PERCENT",
+      "key": "ui_scale_percent",
+      "type": "integer",
+      "default": 100,
+      "minimum": 50,
+      "maximum": 100
     },
     "uncap_refresh_rate": {
       "field": "UNCAP_REFRESH_RATE",

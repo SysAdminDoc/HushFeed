@@ -134,6 +134,9 @@ public class Settings extends BaseSettings {
      */
     public static final IntegerSetting SMALLER_TEXT_SIZE_LEVEL =
             new IntegerSetting("smaller_text_size_level", 0).withRange(0, 3);
+    /** TikTok's whole interface in percent of its own size (#477). 100 leaves it alone. */
+    public static final IntegerSetting UI_SCALE_PERCENT =
+            new IntegerSetting("ui_scale_percent", 100, true).withRange(50, 100);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
     // Use system font's hook draws TikTok's text in the imported font file while this is on and

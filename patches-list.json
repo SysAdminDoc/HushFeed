@@ -12408,6 +12408,55 @@
       ]
     },
     {
+      "name": "UI scale",
+      "description": "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. Starts at 100%, which changes nothing. Pick a size in Hushfeed settings > App, then restart TikTok.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709030,
+                "ARMEABI_V7A": 2024709030,
+                "X86": 2024709030,
+                "X86_64": 2024709030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "ui_scale_percent",
+          "title": "Default: ui scale percent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Use non-personalized search",
       "description": "Shows search results that aren't tailored to your account. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Search",

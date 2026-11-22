@@ -2997,3 +2997,5 @@ Exit with one Back,Keluar dengan sekali Kembali
 "Back on Home leaves TikTok right away, with no ""Tap again to exit"" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.","Kembali di Beranda langsung keluar dari TikTok, tanpa pesan ""Ketuk lagi untuk keluar"". Dari tab lain, Kembali tetap membawamu ke Beranda dulu, atau ke tab yang dipilih Buka TikTok di."
 Smaller text sizes,Ukuran teks lebih kecil
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Menambahkan tiga tingkat di bawah ukuran terkecil pada penggeser Ukuran teks milik TikTok, di Pengaturan dan privasi > Aksesibilitas. Pilih salah satunya di sana, lalu mulai ulang TikTok."
+UI size,Ukuran antarmuka
+"Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.","Membuat seluruh antarmuka TikTok lebih kecil, teks maupun tombolnya, agar lebih banyak yang muat di layar. Nilai 100 membiarkannya seperti semula. Mulai ulang TikTok untuk melihat perubahannya."

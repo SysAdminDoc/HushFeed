@@ -909,6 +909,9 @@
       "SMALLER_TEXT_SIZES",
       "SMALLER_TEXT_SIZE_LEVEL"
     ],
+    "UI scale": [
+      "UI_SCALE_PERCENT"
+    ],
     "Account cleanup": [
       "TAP_TO_REMOVE"
     ]

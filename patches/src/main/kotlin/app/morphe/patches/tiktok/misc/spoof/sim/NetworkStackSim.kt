@@ -14,6 +14,23 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 /** TTNet's app provider: what it answers here is what the native network stack routes by. */
 internal const val TTNET_ADAPTER = "Lcom/bytedance/ttnet/cronet/AbsCronetDependAdapter;"
 
+/** The two TTNet interfaces the adapter implements itself, on TikTok and TikTok Lite alike. */
+internal val TTNET_ADAPTER_INTERFACES = listOf(
+    "Lcom/bytedance/frameworks/baselib/network/http/cronet/ICronetDepend;",
+    "Lcom/bytedance/frameworks/baselib/network/http/cronet/ICronetAppProvider;",
+)
+
+/**
+ * TTNet's app provider adapter. TikTok keeps its name. TikTok Lite (#502) renames it (`LX/21g;`
+ * on 47.8.2), so there it's the one abstract class that implements both of TTNet's app
+ * interfaces itself, as TikTok's does. Null when it's gone or more than one class fits.
+ */
+internal fun ttnetAdapter(classes: Sequence<ClassDef>, classOf: (String) -> ClassDef?): ClassDef? =
+    classOf(TTNET_ADAPTER) ?: classes.filter {
+        AccessFlags.ABSTRACT.isSet(it.accessFlags) && !AccessFlags.INTERFACE.isSet(it.accessFlags) &&
+            it.interfaces.containsAll(TTNET_ADAPTER_INTERFACES)
+    }.toList().singleOrNull()
+
 /** Chromium's telephony bridge inside TTNet, which native code calls for the carrier code. */
 internal const val TTNET_NETWORK_LIBRARY = "Lcom/ttnet/org/chromium/net/AndroidNetworkLibrary;"
 
@@ -41,11 +58,11 @@ private fun Method.isStringGetter() =
     parameterTypes.isEmpty() && returnType == STRING && implementation != null &&
         !AccessFlags.ABSTRACT.isSet(accessFlags)
 
-private fun extendsAdapter(definition: ClassDef, classOf: (String) -> ClassDef?): Boolean {
+private fun extendsAdapter(definition: ClassDef, adapter: String, classOf: (String) -> ClassDef?): Boolean {
     val seen = mutableSetOf<String>()
     var type = definition.superclass
     while (type != null && seen.add(type)) {
-        if (type == TTNET_ADAPTER) return true
+        if (type == adapter) return true
         type = classOf(type)?.superclass
     }
     return false
@@ -59,14 +76,18 @@ private fun extendsAdapter(definition: ClassDef, classOf: (String) -> ClassDef?)
  * preset country's. Every answer of every one of them, in the adapter and each class under it,
  * goes through the extension, which puts the real SIM back while the rest of the app keeps the
  * preset. Throws before anything is written when TTNet's shape moved.
+ *
+ * <p>TikTok Lite renames the adapter and leaves its region getters to the classes under it, so
+ * the adapter itself only has to answer the two carrier codes. Every getter still has to be
+ * answered somewhere in the adapter's tree.
  */
 internal fun planNetworkStackHooks(classes: Sequence<ClassDef>, classOf: (String) -> ClassDef?): List<NetworkStackHook> {
-    val adapter = classOf(TTNET_ADAPTER)
+    val adapter = ttnetAdapter(classes, classOf)
         ?: throw PatchException("SIM spoof: TTNet's app provider adapter is gone")
     val library = classOf(TTNET_NETWORK_LIBRARY)
         ?: throw PatchException("SIM spoof: TTNet's network library is gone")
 
-    val owners = listOf(adapter) + classes.filter { it.type != TTNET_ADAPTER && extendsAdapter(it, classOf) }
+    val owners = listOf(adapter) + classes.filter { it.type != adapter.type && extendsAdapter(it, adapter.type, classOf) }
     val providerHooks = owners.flatMap { owner ->
         owner.methods.filter {
             it.isStringGetter() && it.name in NETWORK_STACK_BRIDGES && !AccessFlags.STATIC.isSet(it.accessFlags)
@@ -76,14 +97,14 @@ internal fun planNetworkStackHooks(classes: Sequence<ClassDef>, classOf: (String
         it.isStringGetter() && it.name in LIBRARY_GETTERS && AccessFlags.STATIC.isSet(it.accessFlags)
     }.map { NetworkStackHook(it, NETWORK_STACK_BRIDGES.getValue(it.name)) }
 
-    val adapterNames = providerHooks.filter { it.method.definingClass == TTNET_ADAPTER }.map { it.method.name }.toSet()
-    val missing = NETWORK_STACK_BRIDGES.keys - adapterNames
+    val adapterNames = providerHooks.filter { it.method.definingClass == adapter.type }.map { it.method.name }.toSet()
+    val missing = (LIBRARY_GETTERS - adapterNames) + (NETWORK_STACK_BRIDGES.keys - providerHooks.map { it.method.name }.toSet())
     if (missing.isNotEmpty()) {
         throw PatchException("SIM spoof: TTNet's adapter no longer has ${missing.sorted()}")
     }
-    // The adapter's own region getters answer "". The app's provider is what reads the SIM.
+    // The adapter's own region getters answer "", or aren't there. The app's provider is what reads the SIM.
     for (name in listOf("getCarrierRegion", "getRegion", "getAppInitialRegionInfo")) {
-        if (providerHooks.none { it.method.name == name && it.method.definingClass != TTNET_ADAPTER }) {
+        if (providerHooks.none { it.method.name == name && it.method.definingClass != adapter.type }) {
             throw PatchException("SIM spoof: no TTNet provider answers $name")
         }
     }

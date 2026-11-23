@@ -8,6 +8,7 @@ package app.morphe.patches.tiktok.misc.spoof.sim
 import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.anyInstruction
 import app.morphe.patcher.methodCall
@@ -20,6 +21,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -144,12 +146,14 @@ val simSpoofPatch = bytecodePatch(
         settingsPatch,
     )
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
+        // TikTok Lite (#502) has no startup SIM change task, so there's no report to skip.
+        val simChangeTask = if (isTikTokLite(packageMetadata.packageName)) null else CheckSimChangeTaskFingerprint.method
         // Checked before the first write: the SIM change task's injection writes v0 and then
         // falls into TikTok's own first instruction, so v0 has to be a local.
-        CheckSimChangeTaskFingerprint.method.requireLocals("SIM spoof", 1)
+        simChangeTask?.requireLocals("SIM spoof", 1)
         // The IMAGE LOADS report's two hooks are worked out before the first write as well, so
         // a build that moved Fresco's network producer fails SIM spoof by name with nothing
         // written. They sit here because grey covers with a spoofed SIM are what they're for.
@@ -226,7 +230,7 @@ val simSpoofPatch = bytecodePatch(
         // count does not: it comes from SubscriptionManager rather than TelephonyManager, and
         // the event still says the hardware moved. Nothing else in the app reads what the task
         // stores, so with the preset on it does not run.
-        CheckSimChangeTaskFingerprint.method.apply {
+        simChangeTask?.apply {
             addInstructionsWithLabels(
                 0,
                 """

@@ -45,7 +45,17 @@ class ImageLoadsAnchorsTest {
 
     @Test
     fun `each declared build hands every image fetch and failure to the IMAGE LOADS report`() {
-        Fixtures.forEachDeclared { apk ->
+        Fixtures.forEachDeclared { checkProducer(it) }
+    }
+
+    /** #502: TikTok Lite's Fresco producer has the same shape, so SIM spoof's report counts there too. */
+    @Test
+    fun `TikTok Lite hands every image fetch and failure to the IMAGE LOADS report`() {
+        checkProducer(Fixtures.liteApk())
+    }
+
+    private fun checkProducer(apk: java.io.File) {
+        run {
             val producers = classes(apk).values.flatMap { owner ->
                 owner.methods.filter { it.returnType == "V" && it.loads(expired) && it.loads("NetworkFetchProducer") }
                     .map { owner to it }

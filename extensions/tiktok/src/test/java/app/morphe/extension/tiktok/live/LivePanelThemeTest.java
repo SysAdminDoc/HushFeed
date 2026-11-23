@@ -119,6 +119,7 @@ public class LivePanelThemeTest {
         ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "DARK_PANELS").clear();
         // A Spark page asked with no activity looks for any darkened room, so none carries over.
         ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "LIGHT_ROOMS").clear();
+        ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "LIGHT_SCREENS").clear();
     }
 
     private static int textColor(Context context) {
@@ -873,6 +874,49 @@ public class LivePanelThemeTest {
         LivePanelTheme.liveColorTheme(null, false);
         LivePanelTheme.liveColorTheme(RuntimeEnvironment.getApplication(), false);
         assertTrue(!LivePanelTheme.askingStock());
+    }
+
+    /**
+     * #362, 2026-11-23: a LIVE opened from a search result plays inside the search's video feed,
+     * a screen the room hook never sees, so the pinned comment's Pinned and timer tags kept LIVE's
+     * pale dark-color pills there. The first time TikTok's LIVE color theme runs on such a screen,
+     * the screen's theme is kept as it is before LIVE's dark colors go on, and the pinned rows
+     * inflate over that copy.
+     */
+    @Test public void aLiveInsideAnotherScreenGetsThatScreensThemeFromBeforeItsDarkColors() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity feed = room();
+        int before = textColor(feed);
+        Context widget = new android.content.MutableContextWrapper(feed);
+        LivePanelTheme.liveColorTheme(feed, false);
+        assertSame("the switch starts off", widget, LivePanelTheme.lightRoomView(widget));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.liveColorTheme(feed, false);
+        // Then TikTok's color theme puts LIVE's dark colors on the screen.
+        feed.getTheme().applyStyle(android.R.style.Theme_Black, true);
+        assertTrue(before != textColor(feed));
+
+        Context rows = LivePanelTheme.lightRoomView(widget);
+        assertNotSame(widget, rows);
+        assertSame("the rows still sit in the screen", feed, LivePanelTheme.roomOf(rows));
+        assertEquals("a row resolves the screen's colors from before LIVE's dark ones", before, textColor(rows));
+        assertTrue("the screen itself keeps TikTok's colors", before != textColor(feed));
+
+        // Later runs keep the first copy: by then the screen has the dark colors.
+        LivePanelTheme.liveColorTheme(feed, false);
+        assertEquals(before, textColor(LivePanelTheme.lightRoomView(widget)));
+        assertTrue(!LivePanelTheme.askingStock());
+
+        // A context with a theme of its own, and a room the room hook darkened, keep to their own paths.
+        Activity other = room();
+        LivePanelTheme.liveColorTheme(new ContextThemeWrapper(other, PARTIAL_OVERLAY), false);
+        assertSame(other, LivePanelTheme.lightRoomView(other));
+        Activity live = room();
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        LivePanelTheme.liveColorTheme(live, false);
+        assertNull("a darkened room isn't a screen", ReflectionHelpers.<Map<Activity, Resources.Theme>>getStaticField(
+                LivePanelTheme.class, "LIGHT_SCREENS").get(live));
     }
 
     /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */

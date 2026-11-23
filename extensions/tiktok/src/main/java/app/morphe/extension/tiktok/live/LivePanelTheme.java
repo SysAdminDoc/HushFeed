@@ -90,6 +90,12 @@ public final class LivePanelTheme {
     static volatile boolean stockSeen;
     /** Each darkened room's theme as it was before TikTok's dark app theme went on. */
     private static final Map<Activity, Resources.Theme> LIGHT_ROOMS = Collections.synchronizedMap(new WeakHashMap<>());
+    /**
+     * Each screen that shows a LIVE room without being the room activity, with its theme as it was
+     * before LIVE's dark colors went on it: a LIVE opened from a search result plays inside the
+     * search's video feed, where the room hook never runs (#362).
+     */
+    private static final Map<Activity, Resources.Theme> LIGHT_SCREENS = Collections.synchronizedMap(new WeakHashMap<>());
     /** Set once a panel has been darkened, so until then no fragment walks up its parents for one. */
     static volatile boolean panelSeen;
     /** Each darkened panel with the dark context its views inflated through. */
@@ -1431,7 +1437,7 @@ public final class LivePanelTheme {
             if (context == null || !LiveControls.darkLivePanels(context)) {
                 return context;
             }
-            Resources.Theme light = lightRoom(context);
+            Resources.Theme light = lightRoomOrScreen(context);
             if (light == null) {
                 return context;
             }
@@ -1527,7 +1533,7 @@ public final class LivePanelTheme {
             if (!LiveControls.darkLivePanels(context)) {
                 return inflater;
             }
-            Resources.Theme light = lightRoom(context);
+            Resources.Theme light = lightRoomOrScreen(context);
             if (light == null) {
                 return inflater;
             }
@@ -1630,11 +1636,16 @@ public final class LivePanelTheme {
      * light one: the creator's DM tip and the gift guide bubble take their text color from these
      * overlays, and the dark one's is white, on their white bubbles (#362, Login2, 2026-11-13).
      * So before TikTok styles the room, its color theme runs once on the room's light copy, with
-     * the dark theme answer left to TikTok as in light mode. Every other context is TikTok's alone.
+     * the dark theme answer left to TikTok as in light mode. A screen that shows a room without
+     * being the room activity gets its copy here the first time ({@link #lightScreenCopy}). Every
+     * other context is TikTok's alone.
      */
     public static void liveColorTheme(Context context, boolean force) {
         try {
             Context light = lightColorTheme(context);
+            if (light == null) {
+                light = lightScreenCopy(context);
+            }
             if (light == null) {
                 return;
             }
@@ -2177,6 +2188,53 @@ public final class LivePanelTheme {
     static Resources.Theme lightRoom(Context context) {
         Activity room = roomOf(context);
         return room == null ? null : LIGHT_ROOMS.get(room);
+    }
+
+    /**
+     * The light theme kept for the room activity under the context, or for the screen showing a
+     * LIVE there ({@link #lightScreenCopy}), or null.
+     */
+    static Resources.Theme lightRoomOrScreen(Context context) {
+        Activity screen = roomOf(context);
+        if (screen == null) {
+            return null;
+        }
+        Resources.Theme room = LIGHT_ROOMS.get(screen);
+        return room != null ? room : LIGHT_SCREENS.get(screen);
+    }
+
+    /**
+     * Called through {@link #liveColorTheme} when TikTok's LIVE color theme is about to run on a
+     * context that isn't a darkened room's. A room can play inside another screen: one opened from
+     * a search result plays in the search's video feed (DetailActivity on 47.9.3), which the room
+     * hook never sees, so its pinned comment's Pinned and timer tags kept LIVE's pale dark-color
+     * pills (#362, 2026-11-23). While Dark LIVE panels is on in dark mode, the first run on such a
+     * screen's own theme keeps a copy of it as it is now, before LIVE's dark colors go on, and
+     * answers a context over that copy, so the color theme runs once more on it with TikTok's own
+     * answer, as on a room's copy. Later runs find the screen kept and leave it, since by then its
+     * theme has the dark colors. Null for anything else.
+     */
+    static Context lightScreenCopy(Context context) {
+        if (context == null || !LiveControls.darkLivePanels(context)) {
+            return null;
+        }
+        Activity screen = roomOf(context);
+        if (screen == null || LIGHT_ROOMS.containsKey(screen)) {
+            return null;
+        }
+        Resources.Theme theme = context.getTheme();
+        if (theme != screen.getTheme()) {
+            return null;
+        }
+        synchronized (LIGHT_SCREENS) {
+            if (LIGHT_SCREENS.containsKey(screen)) {
+                return null;
+            }
+            Resources.Theme copy = screen.getResources().newTheme();
+            copy.setTo(theme);
+            LIGHT_SCREENS.put(screen, copy);
+            return new ContextThemeWrapper(context, copy);
+        }
     }
 
     /** The activity under the context, or null. */

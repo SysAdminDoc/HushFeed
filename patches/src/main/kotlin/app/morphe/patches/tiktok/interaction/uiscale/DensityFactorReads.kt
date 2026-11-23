@@ -9,6 +9,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import app.morphe.util.literalReads
+import app.morphe.util.readOnly
 import app.morphe.util.readsRegisterAsFloat
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -43,9 +44,13 @@ private fun Method.code(): List<Instruction> = implementation?.instructions?.toL
  * other than once, rewrites that read different factors, no activity context built from the
  * factor, or a read whose value goes anywhere but float math (scaling a value that also went
  * somewhere else would change that too).
+ *
+ * Every method is read through [readOnly]: by now earlier patches have made thousands of classes
+ * mutable, and reading their bodies plainly built and kept an editable copy of each one, the
+ * largest part of a full run's heap (#497).
  */
 internal fun densityFactorReads(manager: ClassDef, classes: Sequence<ClassDef>): List<FactorRead> {
-    val startup = manager.methods.filter { method -> method.code().any { it.updatesResources() } }
+    val startup = manager.methods.map(Method::readOnly).filter { method -> method.code().any { it.updatesResources() } }
     if (startup.isEmpty()) missing("${manager.type} rewrites no density")
     val factors = startup.map { method ->
         val code = method.code()
@@ -65,7 +70,7 @@ internal fun densityFactorReads(manager: ClassDef, classes: Sequence<ClassDef>):
     }
 
     val rewrites = (sequenceOf(manager) + classes.filter { it.type != manager.type })
-        .flatMap { it.methods.asSequence() }
+        .flatMap { it.methods.asSequence().map(Method::readOnly) }
         .filter { method ->
             val instructions = method.implementation?.instructions ?: return@filter false
             instructions.any(readsFactor) && instructions.any { it.updatesResources() || it.createsConfigurationContext() }

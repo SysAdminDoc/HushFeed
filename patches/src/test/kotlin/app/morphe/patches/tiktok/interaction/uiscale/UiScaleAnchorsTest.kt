@@ -7,11 +7,14 @@ package app.morphe.patches.tiktok.interaction.uiscale
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.interaction.textsize.TextSizeModeLoadFingerprint
 import app.morphe.takes
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.bodyIsBuilt
+import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
@@ -191,6 +194,46 @@ class UiScaleAnchorsTest {
         }
     }
 
+    /**
+     * By the time UI scale runs, earlier patches have made thousands of TikTok's classes mutable,
+     * and the patcher keeps every method body anything reads off one of those until it writes the
+     * dex. The scan reads every method TikTok has, so reading them plainly kept most of a full run's
+     * heap and Morphe Manager ran out of memory on 4 GB phones (#497, #460, #310). The scan has to
+     * find the same reads in mutable classes and build only the bodies it then scales.
+     */
+    @Test
+    fun `the scan builds no body in classes earlier patches made mutable, only the ones it scales`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val text = Manager(apk, version)
+            val plain = densityFactorReads(text.manager, text.build.classes)
+            // The manager, every class a read is in, and a few thousand others, as earlier patches
+            // leave them.
+            val holders = plain.map { it.method.definingClass }.toSet() + text.manager.type
+            val chosen = text.build.classes.filter { it.type in holders } +
+                text.build.classes.filter { it.type !in holders }.take(3000)
+            val mutable = chosen.associate { it.type to MutableClass(it) }
+            val classes = text.build.classes.map { mutable[it.type] ?: it }
+
+            val reads = densityFactorReads(mutable.getValue(text.manager.type), classes)
+            assertEquals("$version: reads found in mutable classes", plain.map { it.key() }.toSet(), reads.map { it.key() }.toSet())
+            val methods = mutable.values.flatMap { it.methods }
+            assertTrue(
+                "$version: this patcher no longer says whether a body was built, so reads build them again",
+                methods.all { bodyIsBuilt(it) != null },
+            )
+            assertEquals("$version: bodies the scan built", emptyList<String>(), methods.filter { bodyIsBuilt(it) == true }.map { it.toString() })
+
+            reads.scaleAll { mutable.getValue(it.definingClass).findMutableMethodOf(it) }
+            val scaled = plain.map { "${it.method.definingClass}->${it.method.name}" }.toSet()
+            assertEquals(
+                "$version: bodies built once the reads are scaled",
+                scaled,
+                methods.filter { bodyIsBuilt(it) == true }.map { "${it.definingClass}->${it.name}" }.toSet(),
+            )
+        }
+    }
+
     private fun assertRefused(text: Manager, manager: ClassDef, why: String) {
         val refused = assertThrows(PatchException::class.java) { densityFactorReads(manager, text.build.classes) }
         assertTrue("expected '$why' in: ${refused.message}", refused.message!!.contains(why))
@@ -235,6 +278,9 @@ class UiScaleAnchorsTest {
 }
 
 private fun Method.body(): List<Instruction> = implementation?.instructions?.toList() ?: emptyList()
+
+/** A read by where it is: the method's signature, the index the scale goes in at and the register. */
+private fun FactorRead.key() = "$method@$index/v$register"
 
 /** A call that gives Android a configuration: Resources.updateConfiguration or Context.createConfigurationContext. */
 private fun Instruction.isConfigurationHandOff(): Boolean = getReference<MethodReference>()?.let {

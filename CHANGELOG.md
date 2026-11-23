@@ -12,6 +12,7 @@ Every Hushfeed release, newest first.
 ### Features
 
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
+* When the diagnostic report says the phone destroyed TikTok's main screen, it now says why it might have. Either Don't keep activities is on in Developer options, or it gives how full TikTok's memory was, since Android closes an app's screens in the background once three quarters of it is used (#419).
 
 ### Build
 

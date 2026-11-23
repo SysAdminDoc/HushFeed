@@ -94,6 +94,30 @@ public class MainScreenRestartsTest {
         assertFalse("the link's path stays out of the report", report.contains("someone"));
     }
 
+    /**
+     * The reporter's phone destroyed the main screen under a profile video, ten times in eight
+     * minutes, with the app still running. Developer options' Don't keep activities does exactly
+     * that, so the line says when it's on.
+     */
+    @Test public void aScreenDestroyedWithDontKeepActivitiesOnSaysSo() {
+        android.provider.Settings.Global.putInt(RuntimeEnvironment.getApplication().getContentResolver(),
+                android.provider.Settings.Global.ALWAYS_FINISH_ACTIVITIES, 1);
+        try {
+            ActivityController<Main> first = main(new Intent(Intent.ACTION_MAIN));
+            ActivityController<Detail> video = Robolectric.buildActivity(Detail.class).setup();
+            first.pause().stop().destroy();
+            video.pause().stop().destroy();
+            main(new Intent(Intent.ACTION_MAIN));
+
+            String report = LogBufferManager.buildExportText();
+            assertTrue(report, report.contains("2nd this run: the one before was destroyed by the system "
+                    + "(Don't keep activities is on in Developer options) "));
+        } finally {
+            android.provider.Settings.Global.putInt(RuntimeEnvironment.getApplication().getContentResolver(),
+                    android.provider.Settings.Global.ALWAYS_FINISH_ACTIVITIES, 0);
+        }
+    }
+
     @Test public void aScreenTheSystemTookDownForAConfigurationChangeSaysWhich() {
         String line = MainScreenRestarts.describe(3, MainScreenRestarts.CONFIGURATION, true,
                 ActivityInfo.CONFIG_UI_MODE | ActivityInfo.CONFIG_SCREEN_SIZE, 1500, "android.intent.action.MAIN, flags 0x0");
@@ -103,6 +127,23 @@ public class MainScreenRestartsTest {
         assertTrue(MainScreenRestarts.describe(11, MainScreenRestarts.DESTROYED, true, 0, -1, "none")
                 .startsWith("TikTok's main screen started over, 11th this run: the one before was destroyed by the "
                         + "system, restoring"));
+    }
+
+    /** Without Don't keep activities, the line gives the heap, and says when it's past Android's 3/4. */
+    @Test public void aScreenDestroyedWithAFullHeapSaysHowFull() {
+        long mb = 1024 * 1024;
+        assertEquals("Java heap 400 of 512 MB, past the three quarters where Android closes background screens",
+                MainScreenRestarts.destroyedWhy(false, 400 * mb, 512 * mb));
+        assertEquals("Java heap 100 of 512 MB", MainScreenRestarts.destroyedWhy(false, 100 * mb, 512 * mb));
+        assertEquals("Don't keep activities is on in Developer options",
+                MainScreenRestarts.destroyedWhy(true, 400 * mb, 512 * mb));
+        assertEquals(null, MainScreenRestarts.destroyedWhy(false, 1, 0));
+        assertTrue(MainScreenRestarts.describe(4, MainScreenRestarts.DESTROYED, true, 0, 1300, "none",
+                        MainScreenRestarts.destroyedWhy(false, 400 * mb, 512 * mb))
+                .contains("the one before was destroyed by the system (Java heap 400 of 512 MB, past the three "
+                        + "quarters where Android closes background screens) 1.3 s earlier, restoring"));
+        assertTrue("a finished screen gets no reason", MainScreenRestarts.describe(4, MainScreenRestarts.FINISHED,
+                false, 0, 1300, "none", "Java heap 1 of 2 MB").contains("was finished 1.3 s earlier"));
     }
 
     @Test public void everyConfigurationPartHasAName() {

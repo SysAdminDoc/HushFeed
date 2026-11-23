@@ -43,6 +43,8 @@ public final class MainScreenRestarts {
     private static String lastEnd;
     private static long lastEndAt;
     private static Configuration lastConfiguration;
+    /** Why the system may have destroyed the last screen, or null when nothing points anywhere. */
+    private static String lastWhy;
 
     private static final Application.ActivityLifecycleCallbacks CALLBACKS = new Application.ActivityLifecycleCallbacks() {
         @Override public void onActivityCreated(Activity created, Bundle state) { created(created, state); }
@@ -84,12 +86,13 @@ public final class MainScreenRestarts {
                 int changes = lastConfiguration == null || now == null ? 0 : lastConfiguration.diff(now);
                 long ago = lastEnd == null ? -1 : SystemClock.uptimeMillis() - lastEndAt;
                 String line = describe(started, stillOpen ? null : lastEnd, state != null, changes, ago,
-                        intentOf(activity));
+                        intentOf(activity), stillOpen ? null : lastWhy);
                 Logger.printInfo(() -> line);
             }
             last = new WeakReference<>(activity);
             lastEnd = null;
             lastConfiguration = null;
+            lastWhy = null;
         } catch (Throwable error) {
             Logger.printException(() -> "Could not note TikTok's main screen starting", error);
         }
@@ -103,9 +106,37 @@ public final class MainScreenRestarts {
             lastEndAt = SystemClock.uptimeMillis();
             Configuration then = activity.getResources().getConfiguration();
             lastConfiguration = then == null ? null : new Configuration(then);
+            if (DESTROYED.equals(lastEnd)) {
+                Runtime runtime = Runtime.getRuntime();
+                lastWhy = destroyedWhy(dontKeepActivities(activity),
+                        runtime.totalMemory() - runtime.freeMemory(), runtime.maxMemory());
+            }
         } catch (Throwable error) {
             Logger.printException(() -> "Could not note TikTok's main screen closing", error);
         }
+    }
+
+    /** Developer options' Don't keep activities, which destroys every screen the moment it's left. */
+    private static boolean dontKeepActivities(Activity activity) {
+        try {
+            return android.provider.Settings.Global.getInt(activity.getContentResolver(),
+                    android.provider.Settings.Global.ALWAYS_FINISH_ACTIVITIES, 0) != 0;
+        } catch (RuntimeException unreadable) {
+            return false;
+        }
+    }
+
+    /**
+     * Why a screen the app didn't finish was destroyed with the app still running (#419). Android
+     * does it for Don't keep activities, and when the app's Java heap passes three quarters of its
+     * limit, when it closes the app's screens in the background to free memory.
+     */
+    static String destroyedWhy(boolean dontKeepActivities, long heapUsed, long heapMax) {
+        if (dontKeepActivities) return "Don't keep activities is on in Developer options";
+        if (heapMax <= 0 || heapUsed < 0) return null;
+        String heap = "Java heap " + heapUsed / (1024 * 1024) + " of " + heapMax / (1024 * 1024) + " MB";
+        return heapUsed * 4 >= heapMax * 3 ? heap + ", past the three quarters where Android closes background screens"
+                : heap;
     }
 
     /**
@@ -129,6 +160,12 @@ public final class MainScreenRestarts {
      * {@code ago} is how long before this one started, -1 when unknown.
      */
     static String describe(int count, String end, boolean restored, int changes, long ago, String intent) {
+        return describe(count, end, restored, changes, ago, intent, null);
+    }
+
+    /** The same, with {@code why} from {@link #destroyedWhy} for a screen the system destroyed. */
+    static String describe(int count, String end, boolean restored, int changes, long ago, String intent,
+                           String why) {
         StringBuilder line = new StringBuilder("TikTok's main screen started over, ")
                 .append(ordinal(count)).append(" this run: ");
         if (end == null) {
@@ -141,6 +178,7 @@ public final class MainScreenRestarts {
                 line.append("finished");
             } else {
                 line.append("destroyed by the system");
+                if (why != null) line.append(" (").append(why).append(')');
             }
             if (ago >= 0) line.append(' ').append(String.format(Locale.US, "%.1f", ago / 1000.0)).append(" s earlier");
             List<String> names = configurationNames(changes);
@@ -191,6 +229,7 @@ public final class MainScreenRestarts {
         lastEnd = null;
         lastEndAt = 0;
         lastConfiguration = null;
+        lastWhy = null;
         if (application != null) application.unregisterActivityLifecycleCallbacks(CALLBACKS);
     }
 }

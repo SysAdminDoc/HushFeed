@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
@@ -97,6 +98,24 @@ public class SaveSignInTest {
         save(client, "https://p0-tiktok-dm-private.tiktokv.eu/obj/b.jpeg");
         assertEquals("sessionid=abc; tt_csrf_token=xyz", opened.get(0).getRequestProperty("Cookie"));
         assertEquals("sessionid=abc; tt_csrf_token=xyz", opened.get(1).getRequestProperty("Cookie"));
+    }
+
+    /**
+     * A followed private account's photos on TikTok's US host answered every save with 403
+     * (#504), through the fetch a video of the photos makes for each photo.
+     */
+    @Test public void aPrivateAccountsPhotoOnTheUsHostCarriesItThroughThePhotoVideoFetch() throws Exception {
+        CookieHandler.setDefault(new AnyHostCookies());
+        File photo = File.createTempFile("signin-504", ".tmp");
+        try {
+            assertEquals("png", RemoteMedia.fetch(List.of(
+                    "https://p0-pu-private-useast8.tiktokv.us/tos-useast8-i-photomode-tx2/photo~tplv-photomode-image.jpeg"),
+                    photo, RemoteMedia.Kind.IMAGE, client(null)));
+            assertEquals("sessionid=abc; tt_csrf_token=xyz", opened.get(0).getRequestProperty("Cookie"));
+            assertEquals("p0-pu-private-useast8.tiktokv.us", asked.get(0).getHost());
+        } finally {
+            assertTrue(photo.delete());
+        }
     }
 
     @Test public void aCdnOrAnotherSiteGetsNoCookieAndIsNeverAskedAbout() throws Exception {

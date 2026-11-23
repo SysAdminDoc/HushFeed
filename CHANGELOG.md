@@ -37,7 +37,7 @@ Every Hushfeed release, newest first.
 * With `Hide suggested accounts` on, following someone on a profile you opened from a video no longer leaves an empty "Suggested accounts" box under the buttons, and `Keep suggestions on profiles` now shows the suggestions there too. Both only worked on a profile opened on its own page (#462).
 * With `Dark LIVE panels in dark mode` on, a pinned comment's Pinned and timer tags look the same in a LIVE you open from a search result as in any other room. That LIVE plays inside the search's video feed, which never got the room's light colors, so the tags sat on pale pills there (#362).
 * `Hide Balance in the profile menu` no longer leaves a thin empty card where Balance was. Balance sits in a card of its own in that menu, and hiding its only row left the card's edges behind (#194).
-* Photo saves from TikTok's own servers now send the sign-in TikTok's app sends there. Photos from a friend's story were refused without it, every copy, while TikTok showed them fine. No other site gets a cookie (#464).
+* Photo saves from TikTok's own servers now send the sign-in TikTok's app sends there. Photos from a friend's story were refused without it, every copy, while TikTok showed them fine, and so were photos from private accounts you follow. No other site gets a cookie (#464, #504).
 * Patching takes a lot less memory with most patches selected. All of them together now fit in a 1 GB patcher heap, where they used to run out at 1.5 GB. On a phone where Manager runs 32-bit, every patch now fits with TikTok's bundle, where they ran out halfway before. Several patches only look through TikTok's code, but every look made the patcher keep an editable copy of the method until the end (#497, #460, #310, #441).
 
 ### Build

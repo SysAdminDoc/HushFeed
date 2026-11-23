@@ -9,14 +9,17 @@ package app.morphe.extension.tiktok.download;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +31,50 @@ final class MediaTransport {
     static final Client DEFAULT = new Client(InetAddress::getAllByName, PinnedMediaConnection::open);
 
     private MediaTransport() { }
+
+    /** TikTok's own API domains, the only ones a save sends TikTok's sign-in to. */
+    private static final String[] SIGN_IN_DOMAINS = {"tiktokv.com", "tiktokv.us", "tiktokv.eu"};
+
+    /**
+     * TikTok's sign-in cookies for an address on its own API domains, as TikTok's own image loads
+     * send them, or null. A save dials a checked IP literal, so the platform's cookie lookup saw
+     * that literal and sent nothing, and friends-only story photos on image-sg.tiktokv.com
+     * answered every save with 403 while TikTok showed them (#464). The lookup goes to TikTok's
+     * own cookie store, by the photo's real address. A CDN, or a site the in-app browser holds
+     * cookies for, gets none.
+     */
+    static String signIn(URL url) {
+        if (url == null || !"https".equalsIgnoreCase(url.getProtocol()) || !signInHost(url.getHost())) {
+            return null;
+        }
+        try {
+            CookieHandler store = CookieHandler.getDefault();
+            if (store == null) return null;
+            Map<String, List<String>> found = store.get(url.toURI(), Collections.emptyMap());
+            List<String> values = found == null ? null : found.get("Cookie");
+            if (values == null) return null;
+            StringBuilder joined = new StringBuilder();
+            for (String value : values) {
+                // A line break would start a header of its own.
+                if (value == null || value.isEmpty() || value.indexOf('\r') >= 0 || value.indexOf('\n') >= 0) continue;
+                if (joined.length() > 0) joined.append("; ");
+                joined.append(value);
+            }
+            return joined.length() == 0 ? null : joined.toString();
+        } catch (IOException | URISyntaxException | RuntimeException unavailable) {
+            return null;
+        }
+    }
+
+    /** Whether the host is under one of TikTok's API domains, never a look-alike that only ends in one. */
+    static boolean signInHost(String host) {
+        if (host == null) return false;
+        String lower = host.toLowerCase(Locale.ROOT);
+        for (String domain : SIGN_IN_DOMAINS) {
+            if (lower.endsWith("." + domain)) return true;
+        }
+        return false;
+    }
 
     /**
      * Verdicts for the addresses asked about last. Playback quality asks about the same gears'
@@ -161,6 +208,8 @@ final class MediaTransport {
                     if (userAgent != null && !userAgent.isEmpty()) {
                         connection.setRequestProperty("User-Agent", userAgent);
                     }
+                    String signIn = signIn(target.url);
+                    if (signIn != null) connection.setRequestProperty("Cookie", signIn);
                     MediaBudget.check(deadline);
                     int statusCode = connection.getResponseCode();
                     MediaBudget.recordRetryAfter(connection.getHeaderField("Retry-After"), deadline);

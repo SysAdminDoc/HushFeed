@@ -54,6 +54,7 @@ public class CaptionLineTest {
     private static final int POST_TIME_ID = 0x7f0a0102;
     private static final int DESC_ID = 0x7f0a0103;
     private static final int POST_TIME_COLOR = 0xB3FFFFFF;
+    private static final int NAME_COLOR = 0xFFFFFFFF;
 
     /** TikTok's caption block, which opens and closes on "more". */
     static final class CaptionBlock extends LinearLayout {
@@ -99,6 +100,7 @@ public class CaptionLineTest {
             name = new TextView(context);
             name.setId(NAME_ID);
             name.setText(creator);
+            name.setTextColor(NAME_COLOR);
             postTime = new TextView(context);
             postTime.setId(POST_TIME_ID);
             postTime.setText("· 4h ago");
@@ -214,7 +216,8 @@ public class CaptionLineTest {
         assertSame(cell.block, cell.column.getChildAt(0));
         assertSame(cell.caption, cell.block.getChildAt(1));
         assertEquals(13f, line.getTextSize(), 0f);
-        assertEquals(POST_TIME_COLOR, line.getCurrentTextColor());
+        // White like the name and caption, not the post time's grey (#498).
+        assertEquals(NAME_COLOR, line.getCurrentTextColor());
 
         // Every layout pass runs this, so it must not stack lines or lose the date.
         CaptionLine.show(cell.name, cell.root, "Azerbaijan");
@@ -396,6 +399,38 @@ public class CaptionLineTest {
     }
 
     @Test
+    public void theLineTakesTheCaptionsGapAboveTheProgressBar() {
+        // TikTok keeps the caption off the progress bar with a bottom margin on the caption's
+        // frame, 20 px on 47.9.3. A line put in after that margin sat on the bar (#498), so the
+        // line goes right under the caption and keeps the same gap under itself.
+        Cell cell = new Cell(context, "dallas", true);
+        ((LinearLayout.LayoutParams) cell.descRoot.getLayoutParams()).bottomMargin = 20;
+        cell.caption.setHeight(106);
+
+        assertTrue(CaptionLine.show(cell.name, cell.root, "United States"));
+        TextView line = cell.line();
+        line.setMinHeight(56);
+        layOutColumn(cell);
+        int twoDp = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+                context.getResources().getDisplayMetrics()));
+        assertEquals(cell.descRoot.getBottom() + twoDp, line.getTop());
+        assertEquals(20, cell.overlay.getHeight() - line.getBottom());
+        assertEquals(20, ((LinearLayout.LayoutParams) cell.descRoot.getLayoutParams()).bottomMargin);
+
+        // A rebind that changes the caption's gap moves the line's with it.
+        ((LinearLayout.LayoutParams) cell.descRoot.getLayoutParams()).bottomMargin = 11;
+        assertTrue(CaptionLine.show(cell.name, cell.root, "United States"));
+        layOutColumn(cell);
+        assertEquals(cell.descRoot.getBottom() + twoDp, line.getTop());
+        assertEquals(11, cell.overlay.getHeight() - line.getBottom());
+
+        // With the line gone the caption keeps its own gap.
+        CaptionLine.clear();
+        layOutColumn(cell);
+        assertEquals(11, cell.overlay.getHeight() - cell.descRoot.getBottom());
+    }
+
+    @Test
     public void eachCellGetsItsOwnLineAndOnlyTheVideosShows() {
         try (ActivityController<Activity> controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = controller.get();
@@ -533,6 +568,12 @@ public class CaptionLineTest {
         Method onPlaying = CurrentVideoAuthor.class.getDeclaredMethod("onPlaying", String.class);
         onPlaying.setAccessible(true);
         onPlaying.invoke(null, clip.aid);
+    }
+
+    private static void layOutColumn(Cell cell) {
+        cell.overlay.measure(View.MeasureSpec.makeMeasureSpec(821, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        cell.overlay.layout(0, 0, 821, cell.overlay.getMeasuredHeight());
     }
 
     private static void layOut(View root) {

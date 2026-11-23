@@ -119,7 +119,8 @@ public final class CaptionLine {
             postTime.setText("");
         }
         Line line = lineAfter(host, holder);
-        style(line, postTime != null ? postTime : caption instanceof TextView ? (TextView) caption : null);
+        keepGapOf(line, holder);
+        style(line, postTime != null ? postTime : caption instanceof TextView ? (TextView) caption : null, name);
         if (!text.contentEquals(line.getText())) {
             line.setText(text);
         }
@@ -292,23 +293,45 @@ public final class CaptionLine {
         line.setSingleLine(true);
         line.setEllipsize(TextUtils.TruncateAt.END);
         line.setTextDirection(View.TEXT_DIRECTION_LOCALE);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.topMargin = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
-                host.getResources().getDisplayMetrics()));
-        host.addView(line, at + 1, params);
+        host.addView(line, at + 1, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         LINES.add(line);
         return line;
     }
 
-    /** Dressed like the post time it carries, so it reads as TikTok's own small print. */
-    private static void style(Line line, TextView source) {
+    /**
+     * Puts the line 2dp under {@code holder} and gives it the gap TikTok leaves under the holder.
+     * On a video with no search bar under the caption, that bottom margin is all that keeps the
+     * caption off the progress bar, and a line put in after it sat on the bar (#498). The holder's
+     * own margin is left alone and cancelled by the line's top one, so taking the line out leaves
+     * TikTok's layout as it was. Only a change sets the params, since every layout pass runs this.
+     */
+    private static void keepGapOf(Line line, View holder) {
+        ViewGroup.LayoutParams held = holder.getLayoutParams();
+        int gap = held instanceof ViewGroup.MarginLayoutParams ? ((ViewGroup.MarginLayoutParams) held).bottomMargin : 0;
+        int top = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+                line.getResources().getDisplayMetrics())) - gap;
+        ViewGroup.LayoutParams params = line.getLayoutParams();
+        if (!(params instanceof LinearLayout.LayoutParams)) return;
+        LinearLayout.LayoutParams own = (LinearLayout.LayoutParams) params;
+        if (own.topMargin != top || own.bottomMargin != gap) {
+            own.topMargin = top;
+            own.bottomMargin = gap;
+            line.setLayoutParams(own);
+        }
+    }
+
+    /**
+     * Sized like the post time it carries, so it reads as TikTok's own small print, and white
+     * like the name above it rather than the post time's grey (#498).
+     */
+    private static void style(Line line, TextView source, TextView colorOf) {
+        if (line.getCurrentTextColor() != colorOf.getCurrentTextColor()) {
+            line.setTextColor(colorOf.getCurrentTextColor());
+        }
         if (source == null) return;
         if (line.getTextSize() != source.getTextSize()) {
             line.setTextSize(TypedValue.COMPLEX_UNIT_PX, source.getTextSize());
-        }
-        if (line.getCurrentTextColor() != source.getCurrentTextColor()) {
-            line.setTextColor(source.getCurrentTextColor());
         }
         if (line.getTypeface() != source.getTypeface()) {
             line.setTypeface(source.getTypeface());

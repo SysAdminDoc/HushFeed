@@ -3036,3 +3036,5 @@ Tap brings the controls back,点按恢复控件
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.",适用于 OLED 屏幕。5 秒没有触摸后，视频上的按钮、标题和选项卡会变暗到下方设置的程度，你的下一次触摸会将它们恢复。Shift 还会每 2 分钟将信息流上的所有内容移动几个像素.
 Burn-in guard dim level,老化防护变暗程度
 "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.",变暗时按钮、标题和选项卡的不透明程度，从 %1$d 到 %2$d。数值越低越暗.
+Fade the controls out,淡出控件
+"The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.",按钮、标题和选项卡会逐渐淡出，而不是一下子消失，淡出时触摸屏幕会让它们恢复。关闭 Android 动画时，它们仍会立即消失.

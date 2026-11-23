@@ -162,6 +162,9 @@ public class Settings extends BaseSettings {
     /** A tap on a video the automatic clear hid the controls of brings them back instead of pausing (#501). */
     public static final BooleanSetting TAP_SHOWS_CLEARED_CONTROLS = new BooleanSetting("tap_shows_cleared_controls",
             FALSE, false, Setting.parent(AUTOMATIC_CLEAR_DISPLAY));
+    /** The controls fade away before the automatic clear hides them, instead of vanishing at once (#501). */
+    public static final BooleanSetting CLEAR_DISPLAY_FADE_OUT = new BooleanSetting("clear_display_fade_out",
+            FALSE, false, Setting.parent(AUTOMATIC_CLEAR_DISPLAY));
     public static final StringSetting PLAYBACK_QUALITY = new StringSetting("playback_quality", "auto");
     public static final StringSetting PLAYBACK_QUALITY_METERED = new StringSetting("playback_quality_metered", "off");
     /** The heaviest video to play, in Mb/s, or "off" (#454). */

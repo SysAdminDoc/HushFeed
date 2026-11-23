@@ -765,6 +765,7 @@ Exported %1$d loaded values,Exported %1$d loaded values
 Exported 1 loaded value,Exported 1 loaded value
 Extra bold,Extra bold
 "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.","Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10."
+Fade the controls out,Fade the controls out
 Fade the feed out before the hold,Fade the feed out before the hold
 "Fade the name, date and caption","Fade the name, date and caption"
 Fade the video controls,Fade the video controls
@@ -2562,6 +2563,7 @@ The already-saved check failed. Try again.,The already-saved check failed. Try a
 The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.,The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.
 The backup wasn't saved. Back up again when the file app is ready.,The backup wasn't saved. Back up again when the file app is ready.
 The banner at the top of the Inbox that invites you to start a group chat stops showing. Groups you're already in are unchanged.,The banner at the top of the Inbox that invites you to start a group chat stops showing. Groups you're already in are unchanged.
+"The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.","The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once."
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.,The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.,The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.
 The cover couldn't be saved. Try again.,The cover couldn't be saved. Try again.

@@ -286,6 +286,8 @@ public class FeedScreenCoverageTest {
         // The tap comes through the list panel's message handler, which the opened post's panel
         // inherits (#501).
         put("tap_shows_cleared_controls", YES, YES, NONE);
+        // The fade runs where the automatic clear does, in the window of the video it clears (#501).
+        put("clear_display_fade_out", YES, YES, NONE);
         put("remember_clear_display_on_scroll", YES, YES, NONE);
         put("hide_clear_display_controls", YES, YES, NONE);
         put("keep_clear_display_seek_bar", YES, YES, NONE);

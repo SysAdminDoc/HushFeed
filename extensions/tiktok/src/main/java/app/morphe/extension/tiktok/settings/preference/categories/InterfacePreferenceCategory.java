@@ -872,6 +872,9 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "%1$s millisecond", "%1$s milliseconds");
             delay.zeroMeans("No delay");
             addPreference(delay);
+            addPreference(new TogglePreference(context, "Fade the controls out",
+                    "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.",
+                    Settings.CLEAR_DISPLAY_FADE_OUT));
             addPreference(new TogglePreference(context, "Tap brings the controls back",
                     L10n.f(context, "A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.",
                             (int) (RememberClearDisplayPatch.TAP_SHOW_MS / 1000)),

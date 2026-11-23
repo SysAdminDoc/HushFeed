@@ -727,6 +727,7 @@
     "Remember clear display": [
       "AUTOMATIC_CLEAR_DISPLAY",
       "AUTOMATIC_CLEAR_DISPLAY_DELAY",
+      "CLEAR_DISPLAY_FADE_OUT",
       "REMEMBER_CLEAR_DISPLAY_ON_SCROLL",
       "CLEAR_DISPLAY"
     ],

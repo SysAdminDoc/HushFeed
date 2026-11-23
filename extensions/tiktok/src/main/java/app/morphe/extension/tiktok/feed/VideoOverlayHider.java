@@ -447,6 +447,12 @@ public final class VideoOverlayHider {
      */
     private static final Map<View, float[]> FADED_TO = new WeakHashMap<>();
     /**
+     * Views Fade the controls out (#501) is taking down ahead of the automatic Clear display, until
+     * it gives each its opacity back. The passes here leave them alone meanwhile: they read a value
+     * they didn't write as TikTok's and fade it again, and the two fades compound.
+     */
+    private static final Map<View, Boolean> CLEAR_FADING = new WeakHashMap<>();
+    /**
      * When each view still held at the whole level stopped being asked for it. A control TikTok
      * rests below full opacity after Clear display (or hides by opacity) never reaches 1, so the
      * hold lets go after {@link #WHOLE_HOLD_MS} either way, well past TikTok's restore animation.
@@ -1146,7 +1152,7 @@ public final class VideoOverlayHider {
         int corrected = 0;
         for (Map.Entry<View, Float> entry : FADED_HERE.entrySet()) {
             View view = entry.getKey();
-            if (view == null || !view.isAttachedToWindow()) continue;
+            if (view == null || !view.isAttachedToWindow() || CLEAR_FADING.containsKey(view)) continue;
             float nativeAlpha = view.getAlpha();
             if (nativeAlpha == 0f) continue;
             entry.setValue(nativeAlpha);
@@ -1156,7 +1162,7 @@ public final class VideoOverlayHider {
         for (Map.Entry<View, float[]> entry : FADED_TO.entrySet()) {
             View view = entry.getKey();
             float[] held = entry.getValue();
-            if (view == null || !view.isAttachedToWindow()) continue;
+            if (view == null || !view.isAttachedToWindow() || CLEAR_FADING.containsKey(view)) continue;
             // A hold past its time is let go here too, though TikTok wrote nothing since.
             boolean holding = held[3] != 0f && held[4] == 0f;
             if (view.getAlpha() == held[1] && !holding) continue;
@@ -1815,6 +1821,58 @@ public final class VideoOverlayHider {
     private static View bottomBar(Activity activity, View root) {
         int barId = identifier(activity, activity.getPackageName(), BOTTOM_TABS_IDS[0]);
         return barId != 0 ? root.findViewById(barId) : null;
+    }
+
+    /**
+     * What Fade the controls out (#501) takes down in {@code activity}'s window before the
+     * automatic Clear display: the widget layer of the cell its pager has settled on (TikTok's
+     * InteractAreaRootLayout, which stays VISIBLE in Clear display while TikTok hides what's in
+     * it), the top tab strip, the bottom tabs, and an opened video's comment or message bar, each
+     * only while it's on screen. A view inside one already taken goes with it. An opened video's
+     * search box and Back button stay: Clear display leaves their bar up (see TOP_SEARCH_BAR_IDS),
+     * so faded to nothing they'd only pop back.
+     */
+    public static List<View> clearFadeTargets(@Nullable Activity activity) {
+        List<View> out = new ArrayList<>();
+        Window window = activity == null ? null : activity.getWindow();
+        View root = window == null ? null : window.peekDecorView();
+        if (root == null) return out;
+        String packageName = activity.getPackageName();
+        int cellId = identifier(activity, packageName, CELL_ROOT_ID);
+        int layerId = identifier(activity, packageName, WIDGET_LAYER_ID);
+        int[] barIds = {firstIdentifier(activity, TAB_STRIP_IDS), firstIdentifier(activity, BOTTOM_TABS_IDS),
+                firstIdentifier(activity, DETAIL_COMMENT_BAR_IDS), firstIdentifier(activity, DETAIL_MESSAGE_BAR_IDS)};
+        collectClearFadeTargets(root, cellId, layerId, barIds, new Rect(), out);
+        return out;
+    }
+
+    private static void collectClearFadeTargets(View view, int cellId, int layerId, int[] barIds, Rect shown,
+                                                List<View> out) {
+        if (view.getVisibility() != View.VISIBLE) return;
+        int id = view.getId();
+        boolean wanted = false;
+        if (id != View.NO_ID && id != 0) {
+            if (id == layerId) {
+                wanted = inSettledCell(view, cellId);
+            } else {
+                for (int barId : barIds) {
+                    if (barId == id) {
+                        wanted = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (wanted && view.getAlpha() > 0f && view.isShown() && view.getGlobalVisibleRect(shown)
+                && shown.width() > 0 && shown.height() > 0) {
+            out.add(view);
+            return;
+        }
+        if (!(view instanceof ViewGroup)) return;
+        ViewGroup group = (ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            collectClearFadeTargets(group.getChildAt(i), cellId, layerId, barIds, shown, out);
+        }
     }
 
     /** The id of the widget layer each cell holds, 0 where this build has none. */
@@ -3031,6 +3089,8 @@ public final class VideoOverlayHider {
         if (view == null) {
             return;
         }
+        // Fade the controls out is taking it down: the value now is the clear fade's, not TikTok's.
+        if (CLEAR_FADING.containsKey(view)) return;
         float[] held = FADED_TO.get(view);
         if (percent >= 100) {
             if (held != null) {
@@ -3085,11 +3145,29 @@ public final class VideoOverlayHider {
      * in. Asked on every finger down, so it reads the live state rather than the last pass's.
      */
     static boolean tapsGoThroughNow() {
+        return keepsControlsInClearDisplay() && (RememberClearDisplayPatch.isClearDisplayNow()
+                || RememberClearDisplayPatch.isCarryingClear());
+    }
+
+    /**
+     * Whether Clear display keeps the controls in sight at the fade's level (#84) rather than taking
+     * them away: Keep faded controls in Clear display on, the fade between 0 and 100, not paused,
+     * and the overlay patch in. Fade the controls out (#501) has nothing to take down then.
+     */
+    public static boolean keepsControlsInClearDisplay() {
         if (HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled) return false;
         if (!Settings.FADE_IN_CLEAR_DISPLAY.get()) return false;
         int level = Settings.FADE_CONTROLS_OPACITY.get();
-        return level > 0 && level < 100 && (RememberClearDisplayPatch.isClearDisplayNow()
-                || RememberClearDisplayPatch.isCarryingClear());
+        return level > 0 && level < 100;
+    }
+
+    /** Leaves {@code view} to Fade the controls out (#501) until {@link #releaseFromClearFade}. */
+    static void holdForClearFade(View view) {
+        CLEAR_FADING.put(view, Boolean.TRUE);
+    }
+
+    static void releaseFromClearFade(View view) {
+        CLEAR_FADING.remove(view);
     }
 
     /** TikTok's Clear display, live or carried across a swipe, whatever Pause says. */

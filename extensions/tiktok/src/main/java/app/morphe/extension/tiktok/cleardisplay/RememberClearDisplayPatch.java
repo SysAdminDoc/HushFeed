@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feed.ClearDisplayFadeOut;
 import app.morphe.extension.tiktok.feed.VideoOverlayHider;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -22,6 +23,7 @@ import app.morphe.extension.tiktok.wellbeing.FeedLock;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -170,7 +172,8 @@ public final class RememberClearDisplayPatch {
     private static WeakReference<View> window = new WeakReference<>(null);
     private static final SharedPreferences.OnSharedPreferenceChangeListener PREFERENCES = (preferences, key) -> {
         if (key == null || key.equals(Settings.AUTOMATIC_CLEAR_DISPLAY.key)
-                || key.equals(Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.key)) cancelOnMain();
+                || key.equals(Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.key)
+                || key.equals(Settings.CLEAR_DISPLAY_FADE_OUT.key)) cancelOnMain();
     };
     private static final ViewTreeObserver.OnWindowFocusChangeListener FOCUS = focused -> {
         if (!focused) cancel();
@@ -227,6 +230,7 @@ public final class RememberClearDisplayPatch {
                 return;
             }
             observeWindow(((Activity) activity).getWindow().getDecorView());
+            fadeWindow = new WeakReference<>((Activity) activity);
             Object aweme = readCurrentAweme(player);
             if (currentController.get() != player || currentModel.get() != aweme) {
                 cancel();
@@ -398,29 +402,92 @@ public final class RememberClearDisplayPatch {
         return Math.max(0, Math.min(30000, Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get()));
     }
 
-    /** The automatic clear of video {@code id}, {@code delay} from now unless something comes first. */
+    /**
+     * The automatic clear of video {@code id}, {@code delay} from now unless something comes first.
+     * With Fade the controls out on, the controls fade first and the clear goes out once they're
+     * gone, if it still should then (#501).
+     */
     private static void armAutomaticClear(String id, Condition stillCurrent, ClearEvent event, long delay) {
         long attempt = generation;
         pending = () -> {
             if (attempt != generation) return;
-            pending = null;
-            if (Settings.AUTOMATIC_CLEAR_DISPLAY.get() && id.equals(currentId) && stillCurrent.holds()
-                    && !SessionBudget.isLocked() && !FeedLock.covers()) {
-                if (emit(event, true)) {
-                    applied = true;
-                    automaticHidden = true;
-                    awaitingNative = false;
-                    setCarrying(true);
-                    Logger.printDebug(() -> "Clear display: automatic clear landed");
-                } else {
-                    if (attempt == generation) awaitingNative = true;
-                    Logger.printDebug(() -> "Clear display: TikTok's clear-mode panel didn't take the automatic clear");
-                }
-            } else {
+            if (!automaticClearWanted(id, stillCurrent)) {
+                pending = null;
                 Logger.printDebug(() -> "Clear display: automatic clear skipped, the video or its window isn't current");
+                return;
             }
+            // pending stays set while the controls fade, so a new video's start doesn't arm a
+            // second clear over it; cancel() ends the fade with the rest.
+            if (fadeFirst(attempt, id, stillCurrent, event)) return;
+            pending = null;
+            landAutomaticClear(attempt, event);
         };
         MAIN.postDelayed(pending, delay);
+    }
+
+    /** Whether the automatic clear of video {@code id} should go out now. */
+    private static boolean automaticClearWanted(String id, Condition stillCurrent) {
+        return Settings.AUTOMATIC_CLEAR_DISPLAY.get() && id.equals(currentId) && stillCurrent.holds()
+                && !SessionBudget.isLocked() && !FeedLock.covers();
+    }
+
+    private static boolean landAutomaticClear(long attempt, ClearEvent event) {
+        if (emit(event, true)) {
+            applied = true;
+            automaticHidden = true;
+            awaitingNative = false;
+            setCarrying(true);
+            Logger.printDebug(() -> "Clear display: automatic clear landed");
+            return true;
+        }
+        if (attempt == generation) awaitingNative = true;
+        Logger.printDebug(() -> "Clear display: TikTok's clear-mode panel didn't take the automatic clear");
+        return false;
+    }
+
+    /**
+     * Fade the controls out (#501): takes the controls to nothing before the clear goes out. False
+     * when the switch is off, when the faded Clear display keeps them in sight anyway, or when
+     * there's nothing on screen to fade; the clear then goes out at once, as without the switch.
+     * When the fade ends the clear's conditions are checked again, so a video that stopped being
+     * current gets its controls back instead. A touch during the fade keeps the controls, and the
+     * clear waits again as after a tap that brings them back.
+     */
+    private static boolean fadeFirst(long attempt, String id, Condition stillCurrent, ClearEvent event) {
+        if (!Settings.CLEAR_DISPLAY_FADE_OUT.get() || VideoOverlayHider.keepsControlsInClearDisplay()) return false;
+        Activity on = fadeWindow.get();
+        List<View> views;
+        try {
+            views = fadeTargets.find(on);
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Could not find the controls to fade", error);
+            return false;
+        }
+        return ClearDisplayFadeOut.start(on, views, new ClearDisplayFadeOut.Listener() {
+            @Override
+            public void ended() {
+                if (attempt != generation) {
+                    ClearDisplayFadeOut.stop();
+                    return;
+                }
+                pending = null;
+                if (!automaticClearWanted(id, stillCurrent)) {
+                    ClearDisplayFadeOut.stop();
+                    Logger.printDebug(() -> "Clear display: the fade ended on a video that isn't current, controls given back");
+                    return;
+                }
+                if (landAutomaticClear(attempt, event)) ClearDisplayFadeOut.restoreAfterClear();
+                else ClearDisplayFadeOut.stop();
+            }
+
+            @Override
+            public void touched() {
+                if (attempt != generation) return;
+                cancel();
+                Logger.printDebug(() -> "Clear display: a touch during the fade kept the controls");
+                armAutomaticClear(id, stillCurrent, event, Math.max(TAP_SHOW_MS, automaticDelay()));
+            }
+        });
     }
 
     /** The least time controls a tap brought back stay up, whatever the delay (#501). */
@@ -451,6 +518,15 @@ public final class RememberClearDisplayPatch {
 
     /** Where a tap's change is posted; a test stands in its own. */
     static ClearEvent tapEvent = RememberClearDisplayPatch::postClear;
+
+    /** What Fade the controls out takes down in a window; a test stands in its own views. */
+    interface FadeTargets {
+        List<View> find(Activity window);
+    }
+
+    /** The activity of the player whose first frame came last: where the controls fade (#501). */
+    static WeakReference<Activity> fadeWindow = new WeakReference<>(null);
+    static FadeTargets fadeTargets = VideoOverlayHider::clearFadeTargets;
 
     /**
      * The daily hold went up over a cleared screen. Its panel says messages, profiles and search
@@ -512,6 +588,8 @@ public final class RememberClearDisplayPatch {
         progressQueued.set(false);
         readerPost = RememberClearDisplayPatch::postAsReader;
         tapEvent = RememberClearDisplayPatch::postClear;
+        fadeWindow = new WeakReference<>(null);
+        fadeTargets = VideoOverlayHider::clearFadeTargets;
     }
 
     /** Whether the controls are hidden right now, automatically or by the user. */
@@ -649,6 +727,8 @@ public final class RememberClearDisplayPatch {
         awaitingNative = false;
         if (pending != null) MAIN.removeCallbacks(pending);
         pending = null;
+        // A fade going now, or one waiting at 0 for its frame, gives the controls back (#501).
+        ClearDisplayFadeOut.stop();
     }
 
     public static void rememberClearDisplayEvent(Object event) {

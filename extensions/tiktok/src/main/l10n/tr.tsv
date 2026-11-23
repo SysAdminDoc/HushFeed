@@ -3200,3 +3200,6 @@ A tap shows the hidden controls again instead of pausing the video. They hide ag
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	OLED ekranlar için. 5 saniye dokunulmazsa videonun üzerindeki düğmeler, açıklama ve sekmeler aşağıdaki seviyeye kadar kararır, bir sonraki dokunuşun onları geri getirir. Kaydırma ayrıca akıştaki her şeyi 2 dakikada bir birkaç piksel kaydırır.
 Burn-in guard dim level	Ekran yanması koruması karartma seviyesi
 How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Karartılmışken düğmelerin, açıklamanın ve sekmelerin ne kadar dolgun olduğu, %1$d ile %2$d arası. Düşük değer onları daha çok karartır.
+# context: #501 Fade the controls out, a switch under Automatic Clear display
+Fade the controls out	Kontrolleri yavaşça gizle
+The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.	Düğmeler, açıklama ve sekmeler bir anda kaybolmak yerine yavaşça solar, solma sırasında bir dokunuş onları geri getirir. Android animasyonları kapalıysa yine bir anda kaybolurlar.

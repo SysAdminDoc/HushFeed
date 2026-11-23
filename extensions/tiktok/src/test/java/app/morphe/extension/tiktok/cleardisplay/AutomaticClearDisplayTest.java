@@ -1642,8 +1642,8 @@ public class AutomaticClearDisplayTest {
             int heading = titles.indexOf("Clear display");
             assertTrue(titles.toString(), heading >= 0);
             assertEquals(List.of("Clear display", "Automatic Clear display", "Clear display delay",
-                    "Tap brings the controls back", "Hide the Clear display controls"),
-                    titles.subList(heading, heading + 5));
+                    "Fade the controls out", "Tap brings the controls back", "Hide the Clear display controls"),
+                    titles.subList(heading, heading + 6));
             assertEquals(1, titles.stream().filter("Hide the Clear display controls"::equals).count());
 
             // The row belongs to the overlay patch, so a bundle without the automatic one still

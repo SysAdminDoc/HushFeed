@@ -3200,3 +3200,6 @@ A tap shows the hidden controls again instead of pausing the video. They hide ag
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Per schermi OLED. Dopo 5 secondi senza tocchi, i pulsanti, la didascalia e le schede sopra il video si attenuano al livello qui sotto, e il tocco successivo li riporta. Sposta muove anche tutto il feed di qualche pixel ogni 2 minuti.
 Burn-in guard dim level	Livello di attenuazione della protezione dal burn-in
 How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Quanto restano pieni pulsanti, didascalia e schede mentre sono attenuati, da %1$d a %2$d. Un valore più basso li attenua di più.
+# context: #501 Fade the controls out, a switch under Automatic Clear display
+Fade the controls out	Dissolvi i controlli
+The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.	I pulsanti, la didascalia e le schede svaniscono gradualmente invece di sparire di colpo, e un tocco durante la dissolvenza li riporta. Con le animazioni di Android disattivate spariscono comunque di colpo.

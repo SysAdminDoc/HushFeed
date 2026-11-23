@@ -840,6 +840,15 @@
           "values": null
         },
         {
+          "key": "publish_date_instead_of_age",
+          "title": "Default: publish date instead of age",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "publish_date_on_grid",
           "title": "Default: publish date on grid",
           "description": null,
@@ -6894,6 +6903,15 @@
           "values": null
         },
         {
+          "key": "burn_in_guard_level",
+          "title": "Default: burn in guard level",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 25,
+          "values": null
+        },
+        {
           "key": "hide_share_guide",
           "title": "Default: hide share guide",
           "description": null,
@@ -9386,6 +9404,15 @@
           "values": null
         },
         {
+          "key": "hold_speed_hud_size",
+          "title": "Default: hold speed hud size",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
+          "values": null
+        },
+        {
           "key": "hide_speed_toasts",
           "title": "Default: hide speed toasts",
           "description": null,
@@ -9688,6 +9715,24 @@
           "required": false,
           "type": "kotlin.Int",
           "default": 1000,
+          "values": null
+        },
+        {
+          "key": "tap_shows_cleared_controls",
+          "title": "Default: tap shows cleared controls",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "clear_display_fade_out",
+          "title": "Default: clear display fade out",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         },
         {
@@ -10932,6 +10977,33 @@
         {
           "key": "country_date_under_caption",
           "title": "Default: country date under caption",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "country_date_text_size",
+          "title": "Default: country date text size",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "country_date_opacity",
+          "title": "Default: country date opacity",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
+          "values": null
+        },
+        {
+          "key": "country_date_shadow",
+          "title": "Default: country date shadow",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

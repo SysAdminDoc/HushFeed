@@ -17,6 +17,7 @@ import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.releaseResourceTable
 import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.Opcode
 import org.w3c.dom.Document
@@ -63,6 +64,7 @@ internal val ownSettingsActivityPatch = patch {
     execute {
         if (!isTikTokLite(packageMetadata.packageName)) return@execute
         document("AndroidManifest.xml").use { xml -> declareOwnSettingsActivity(xml) }
+        releaseResourceTable()
     }
 }
 

@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.misc.settings
 import app.morphe.patcher.patch.document
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
+import app.morphe.util.releaseResourceTable
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -40,5 +41,6 @@ internal fun declareManagerQuery(xml: Document) {
 internal val managerQueryPatch = patch {
     execute {
         document("AndroidManifest.xml").use { xml -> declareManagerQuery(xml) }
+        releaseResourceTable()
     }
 }

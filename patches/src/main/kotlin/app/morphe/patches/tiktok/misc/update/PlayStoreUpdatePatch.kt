@@ -15,6 +15,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildChoice
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildChoicePatch
+import app.morphe.util.releaseResourceTable
 
 private const val MAX_VERSION_CODE = Int.MAX_VALUE
 
@@ -50,5 +51,6 @@ val hidePlayStoreUpdatePatch = patch(
                 ?.nodeValue == MAX_VERSION_CODE.toString()) { "Raised TikTok version code was not saved" }
         }
         BuildDetails.raisedVersionCode(resourceFile(BUILD_DETAILS_ASSET))
+        releaseResourceTable()
     }
 }

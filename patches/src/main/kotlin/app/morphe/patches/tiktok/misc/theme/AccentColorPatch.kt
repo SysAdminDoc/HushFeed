@@ -19,6 +19,7 @@ import app.morphe.patches.tiktok.misc.branding.readXml
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
+import app.morphe.util.releaseResourceTable
 import java.io.File
 import java.util.Locale
 import java.util.zip.CRC32
@@ -211,6 +212,7 @@ val accentColorPatch = patch(
         }
         for ((file, bytes) in reactionPictures) file.writeBytes(bytes)
         BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "accentColor")
+        releaseResourceTable()
     }
 }
 

@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.interaction.live
 import app.morphe.patcher.patch.document
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
+import app.morphe.util.releaseResourceTable
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -59,5 +60,6 @@ internal fun declareScreenRecording(xml: Document) {
 internal val screenRecordManifestPatch = patch {
     execute {
         document("AndroidManifest.xml").use { xml -> declareScreenRecording(xml) }
+        releaseResourceTable()
     }
 }

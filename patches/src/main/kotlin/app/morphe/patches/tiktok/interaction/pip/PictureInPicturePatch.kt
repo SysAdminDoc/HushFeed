@@ -26,6 +26,7 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.releaseResourceTable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -400,6 +401,7 @@ internal fun MutableMethod.keepLiveWindowSwitch(switch: LiveWindowSwitch) {
 private val pictureInPictureManifestPatch = patch {
     execute {
         document("AndroidManifest.xml").use { xml -> allowPictureInPicture(xml) }
+        releaseResourceTable()
     }
 }
 

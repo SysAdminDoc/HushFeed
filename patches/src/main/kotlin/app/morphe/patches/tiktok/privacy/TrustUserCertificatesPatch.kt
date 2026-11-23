@@ -22,6 +22,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import app.morphe.patches.tiktok.misc.theme.decodedPackageRoots
 import app.morphe.patches.tiktok.misc.theme.decodedResourceDirectories
 import app.morphe.patches.tiktok.misc.theme.renamedPathCollisions
+import app.morphe.util.releaseResourceTable
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -73,6 +74,7 @@ val trustUserCertificatesPatch = patch(
             document(file.relativeTo(resourceFile(".")).invariantSeparatorsPath).use { trustUserCertificates(it) }
         }
         BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "trustUserCertificates")
+        releaseResourceTable()
     }
 }
 

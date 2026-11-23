@@ -21,6 +21,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.BuildChoice
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildChoicePatch
 import app.morphe.patches.tiktok.misc.settings.configurableResourcePatch as resourcePatch
+import app.morphe.util.releaseResourceTable
 import java.io.File
 import java.util.TreeSet
 import javax.xml.parsers.DocumentBuilderFactory
@@ -67,6 +68,7 @@ val amoledThemePatch = resourcePatch(
     execute {
         paintAmoledResources(background)
         BuildDetails.amoled(resourceFile(BUILD_DETAILS_ASSET), amoledColor(background))
+        releaseResourceTable()
     }
 }
 

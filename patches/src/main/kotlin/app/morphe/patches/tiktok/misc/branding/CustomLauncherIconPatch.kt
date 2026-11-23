@@ -22,6 +22,7 @@ import app.morphe.patches.tiktok.misc.theme.appendColorEntries
 import app.morphe.patches.tiktok.misc.theme.decodedPackageRoots
 import app.morphe.patches.tiktok.misc.theme.decodedResourceDirectories
 import app.morphe.patches.tiktok.misc.theme.renamedPathCollisions
+import app.morphe.util.releaseResourceTable
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Locale
@@ -279,6 +280,7 @@ val customLauncherIconPatch = patch(
                 .writeText(HUSHFEED_STATUS_ICON, Charsets.UTF_8)
         }
         BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "customLauncherIcon")
+        releaseResourceTable()
     }
 }
 

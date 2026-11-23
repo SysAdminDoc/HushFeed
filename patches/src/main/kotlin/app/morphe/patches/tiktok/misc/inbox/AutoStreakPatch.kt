@@ -18,6 +18,7 @@ import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getReference
+import app.morphe.util.releaseResourceTable
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -152,6 +153,7 @@ private val autoStreakManifestPatch = patch {
                 "android.intent.action.TIMEZONE_CHANGED",
             ).forEach { action -> filter.child("action", mapOf("android:name" to action)) }
         }
+        releaseResourceTable()
     }
 }
 

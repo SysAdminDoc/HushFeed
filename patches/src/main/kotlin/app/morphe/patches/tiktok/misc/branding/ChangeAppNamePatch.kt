@@ -13,6 +13,7 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
+import app.morphe.util.releaseResourceTable
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
@@ -46,6 +47,7 @@ val changeAppNamePatch = patch(
         val name = checkedAppName(appName)
         document("AndroidManifest.xml").use { xml -> renameApp(xml, name) }
         BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "changeAppName")
+        releaseResourceTable()
     }
 }
 

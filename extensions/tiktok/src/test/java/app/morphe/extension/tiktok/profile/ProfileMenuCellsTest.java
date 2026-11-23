@@ -125,6 +125,80 @@ public class ProfileMenuCellsTest {
         }
     }
 
+    /**
+     * #194: the menu as TikTok lays it out. A slot (with the section's margins) holds the
+     * section's card (its background and padding), the card holds a slot for its cell list, and
+     * hiding the list's only cell leaves that slot gone. The whole section collapses then, so no
+     * empty sliver is left where Balance was, and comes back once its cell shows again.
+     */
+    @Test public void aSectionLeftEmptyByAHiddenCellCollapses() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            var activity = controller.get();
+            android.widget.LinearLayout menu = new android.widget.LinearLayout(activity);
+            android.widget.FrameLayout balanceSlot = new android.widget.FrameLayout(activity);
+            android.widget.LinearLayout balanceCard = new android.widget.LinearLayout(activity);
+            android.widget.FrameLayout balanceList = new android.widget.FrameLayout(activity);
+            balanceList.addView(new android.widget.TextView(activity));
+            balanceCard.addView(balanceList);
+            balanceSlot.addView(balanceCard);
+            android.widget.FrameLayout otherSlot = new android.widget.FrameLayout(activity);
+            android.widget.LinearLayout otherCard = new android.widget.LinearLayout(activity);
+            android.widget.FrameLayout otherList = new android.widget.FrameLayout(activity);
+            android.widget.FrameLayout loading = new android.widget.FrameLayout(activity);
+            otherList.addView(new android.widget.TextView(activity));
+            otherCard.addView(otherList);
+            otherCard.addView(loading);
+            otherSlot.addView(otherCard);
+            menu.addView(balanceSlot);
+            menu.addView(otherSlot);
+            activity.setContentView(menu);
+
+            ProfileMenuCells.section(balanceCard);
+            ProfileMenuCells.section(otherCard);
+            ProfileMenuCells.section(otherCard);
+            assertEquals("the card's slot", balanceSlot, ProfileMenuCells.slotOf(balanceCard));
+            assertEquals("a section that isn't alone in its parent is its own slot", menu, ProfileMenuCells.slotOf(menu.getChildAt(0)).getParent());
+
+            Settings.HIDE_PROFILE_MENU_BALANCE.save(true);
+            balanceList.setVisibility(android.view.View.GONE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("the emptied section is gone, margins and all", android.view.View.GONE, balanceSlot.getVisibility());
+            assertEquals("a section with a cell stays", android.view.View.VISIBLE, otherSlot.getVisibility());
+
+            otherList.setVisibility(android.view.View.GONE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("a section still loading (an empty slot showing) stays", android.view.View.VISIBLE, otherSlot.getVisibility());
+
+            balanceList.setVisibility(android.view.View.VISIBLE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("its cell back, the section is back", android.view.View.VISIBLE, balanceSlot.getVisibility());
+
+            balanceList.setVisibility(android.view.View.GONE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals(android.view.View.GONE, balanceSlot.getVisibility());
+            Settings.HIDE_PROFILE_MENU_BALANCE.save(false);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("both switches off, TikTok's own menu", android.view.View.VISIBLE, balanceSlot.getVisibility());
+
+            balanceList.setVisibility(android.view.View.VISIBLE);
+            otherSlot.setVisibility(android.view.View.GONE);
+            Settings.HIDE_PROFILE_MENU_MINIS_ICONS.save(true);
+            otherList.setVisibility(android.view.View.VISIBLE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("a slot TikTok hid itself stays hidden", android.view.View.GONE, otherSlot.getVisibility());
+
+            assertEquals(android.view.View.VISIBLE, balanceSlot.getVisibility());
+            menu.removeView(balanceSlot);
+            Settings.HIDE_PROFILE_MENU_BALANCE.save(true);
+            balanceList.setVisibility(android.view.View.GONE);
+            menu.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("a section off screen isn't watched", android.view.View.VISIBLE, balanceSlot.getVisibility());
+
+            String report = String.join(" ", HookStatus.report());
+            assertTrue(report, report.contains("profile menu sections"));
+        }
+    }
+
     @Test public void aPausedHushfeedLeavesTheMenuAlone() {
         Settings.HIDE_PROFILE_MENU_BALANCE.save(true);
         PausedProcess.set(true);

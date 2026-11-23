@@ -96,7 +96,9 @@ val hideProfileShortcutsPatch = bytecodePatch(
         }
         // Balance in your profile's menu (#194), held the same way by ProfileMenuCellsAnchorsTest.
         val menuCells = try {
-            ProfileMenuCellFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
+            val cells = ProfileMenuCellFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
+            // The menu's sections, so one left empty by a hidden cell collapses too.
+            cells to ProfileMenuSectionViewFingerprint.method
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Hide Balance in the profile menu on ${packageMetadata.versionName}: ${problem.message}")
@@ -141,7 +143,9 @@ val hideProfileShortcutsPatch = bytecodePatch(
             )
         }
         if (menuCells != null) {
-            menuCells.hideProfileMenuCells(PATCH_NAME)
+            val (cells, sections) = menuCells
+            cells.hideProfileMenuCells(PATCH_NAME)
+            sections.watchProfileMenuSections()
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileMenuCells()V",

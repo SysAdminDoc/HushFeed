@@ -8,6 +8,7 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
+import app.morphe.util.addInstruction
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -49,6 +50,27 @@ internal fun isProfileMenuCellQuestion(method: Method): Boolean {
         } == true
     } == true
 }
+
+/** Every section of your profile's menu is one of these. The class keeps its real name. */
+internal const val PROFILE_SIDEBAR_SECTION = "Lcom/ss/android/ugc/aweme/sidebar/components/SideBarSectionComponent;"
+
+/**
+ * A section of your profile's menu making its view (#194): the rounded card around its cells, in
+ * a slot with its own margins. A section whose only cell is hidden left that card behind empty.
+ */
+internal object ProfileMenuSectionViewFingerprint : Fingerprint(
+    definingClass = PROFILE_SIDEBAR_SECTION,
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;"),
+    custom = { _, classDef -> classDef.type == PROFILE_SIDEBAR_SECTION },
+)
+
+/** Hands each section's view (p1) to the extension as it's made, so an emptied section collapses. */
+internal fun MutableMethod.watchProfileMenuSections() = addInstruction(
+    0,
+    "invoke-static/range { p1 .. p1 }, $PROFILE_MENU_CELLS->section(Landroid/view/View;)V",
+)
 
 /**
  * Asks the extension about the cell's id (p1) before TikTok does. A hidden cell is answered false,

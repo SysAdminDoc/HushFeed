@@ -93,6 +93,46 @@ class ProfileMenuCellsAnchorsTest {
         }
     }
 
+    /**
+     * #194: the menu's sections, so one left empty by a hidden cell collapses. The section class
+     * keeps its real name, makes its view in onViewCreated, and the hook hands that view (p1) to
+     * the extension before anything else runs, leaving TikTok's code as it was.
+     */
+    @Test
+    fun `each menu section hands its view to the extension as it is made`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val taken = mutableListOf<Method>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    for (method in classDef.methods) {
+                        if (ProfileMenuSectionViewFingerprint.takes(method, classDef)) taken += method
+                    }
+                }
+            }
+            assertEquals("$version: section views ${taken.map { it.definingClass }}", 1, taken.size)
+            val native = taken.single()
+            assertEquals(PROFILE_SIDEBAR_SECTION, native.definingClass)
+            assertFalse("$version: onViewCreated is static", AccessFlags.STATIC.isSet(native.accessFlags))
+            val registers = native.implementation!!.registerCount
+            val before = native.implementation!!.instructions.toList()
+            val patched = MutableMethod(native)
+            patched.watchProfileMenuSections()
+            val after = patched.implementation!!.instructions.toList()
+            assertEquals("$version: the hook", Opcode.INVOKE_STATIC_RANGE, after[0].opcode)
+            val call = after[0].getReference<MethodReference>()!!
+            assertEquals("Lapp/morphe/extension/tiktok/profile/ProfileMenuCells;", call.definingClass)
+            assertEquals("section", call.name)
+            assertEquals(listOf("Landroid/view/View;"), call.parameterTypes.map { it.toString() })
+            assertEquals("V", call.returnType)
+            val view = after[0] as RegisterRangeInstruction
+            assertEquals("$version: the view is p1", registers - 1, view.startRegister)
+            assertEquals(1, view.registerCount)
+            assertEquals(before.map { it.opcode }, after.drop(1).map { it.opcode })
+        }
+    }
+
     @Test
     fun `only a static question that asks a cell provider is taken`() {
         assertTrue("the question", isProfileMenuCellQuestion(question(static = true, asks = PROFILE_SIDEBAR_CELL_PROVIDER)))

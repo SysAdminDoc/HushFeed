@@ -3448,3 +3448,5 @@ Makes TikTok's whole interface smaller, text and buttons alike, so more fits on 
 Show how long a LIVE has been on	إظهار مدة بث LIVE
 Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	يضيف سطرًا صغيرًا إلى غرف LIVE يبيّن منذ متى والمضيف في بث مباشر، محسوبًا من بدء الغرفة. وإذا كان معرّف الغرفة مفعّلًا أيضًا، يظهر تحته.
 LIVE for %1$s	مدة LIVE %1$s
+Show exact LIVE battle scores	إظهار نتائج معارك LIVE الدقيقة
+In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	في معركة LIVE، يقيّد TikTok النتائج الكبيرة التي يراها المشاهدون بينما يرى المضيف الرقم كاملًا. يعرض هذا النتيجة كاملة في شريط المعركة ونوافذ المضيفين المشاركين.

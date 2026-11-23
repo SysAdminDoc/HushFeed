@@ -11059,6 +11059,12 @@
     "row": "Show exact LIVE viewer counts"
    },
    {
+    "key": "show_exact_battle_scores",
+    "default": false,
+    "type": "bool",
+    "row": "Show exact LIVE battle scores"
+   },
+   {
     "key": "live_room_info",
     "default": false,
     "type": "bool",

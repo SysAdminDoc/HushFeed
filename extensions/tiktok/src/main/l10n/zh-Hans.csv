@@ -3013,3 +3013,5 @@ UI size,界面大小
 Show how long a LIVE has been on,显示 LIVE 已开播多久
 "Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.",在直播间加一行小字，显示主播已经直播了多久，从直播间开始时算起。如果也开着直播间 ID，这一行在它下面.
 LIVE for %1$s,已直播 %1$s
+Show exact LIVE battle scores,显示准确的 LIVE PK 分数
+"In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.",在 LIVE PK 中，TikTok 会限制观众看到的高分，而主播能看到完整数字。开启后，PK 进度条和连麦窗口都会显示完整分数.

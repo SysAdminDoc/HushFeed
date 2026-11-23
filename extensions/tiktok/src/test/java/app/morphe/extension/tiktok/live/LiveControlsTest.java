@@ -43,6 +43,7 @@ public class LiveControlsTest {
         Settings.HIDE_LIVE_SERVICE_PLUS.save(Settings.HIDE_LIVE_SERVICE_PLUS.defaultValue);
         Settings.HIDE_LIVE_AI_SUMMARY.save(Settings.HIDE_LIVE_AI_SUMMARY.defaultValue);
         Settings.SHOW_EXACT_LIVE_VIEWERS.save(Settings.SHOW_EXACT_LIVE_VIEWERS.defaultValue);
+        Settings.SHOW_EXACT_BATTLE_SCORES.save(Settings.SHOW_EXACT_BATTLE_SCORES.defaultValue);
         Settings.OFFER_LIVE_QUALITY.save(Settings.OFFER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBERED_LIVE_QUALITY.save(Settings.REMEMBERED_LIVE_QUALITY.defaultValue);
@@ -467,6 +468,36 @@ public class LiveControlsTest {
         LiveControls.noteViewerCount(5000);
         assertEquals("5,000", LiveControls.viewerCountText("5K+"));
         assertEquals("5K+", LiveControls.viewerCountText("5K+"));
+    }
+
+    /** #495: a battle's scores past the server's cap show whole only while the switch is on. */
+    @Test public void battleScoresShowWholeOnlyWhileTheSwitchIsOn() {
+        assertFalse(Settings.SHOW_EXACT_BATTLE_SCORES.defaultValue);
+        assertTrue("TikTok's cap was lifted with the switch off", LiveControls.battleScoreCap(1));
+        assertFalse(LiveControls.battleScoreCap(0));
+        assertFalse("a viewer's score showed whole with the switch off", LiveControls.battleScoreWhole(0));
+        assertTrue("the host's own whole score", LiveControls.battleScoreWhole(1));
+
+        Settings.SHOW_EXACT_BATTLE_SCORES.save(true);
+        assertFalse("the cap is lifted", LiveControls.battleScoreCap(1));
+        assertFalse(LiveControls.battleScoreCap(0));
+        assertTrue("every writer shows the score whole", LiveControls.battleScoreWhole(0));
+        assertTrue(LiveControls.battleScoreWhole(1));
+
+        setPaused(true);
+        assertTrue("paused, TikTok's cap is back", LiveControls.battleScoreCap(1));
+        assertFalse(LiveControls.battleScoreWhole(0));
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertTrue("a saved switch did something without its patch", LiveControls.battleScoreCap(1));
+        assertFalse(LiveControls.battleScoreWhole(0));
+    }
+
+    /** The hooks hand TikTok's booleans over as ints: anything non-zero is yes. */
+    @Test public void battleScoreFlagsReadAnyNonZeroAsYes() {
+        assertTrue(LiveControls.battleScoreCap(2));
+        assertTrue(LiveControls.battleScoreCap(-1));
+        assertTrue(LiveControls.battleScoreWhole(255));
     }
 
     private static String shown(long count, String tiktokText) {

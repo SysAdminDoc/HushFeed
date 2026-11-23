@@ -3177,3 +3177,5 @@ Makes TikTok's whole interface smaller, text and buttons alike, so more fits on 
 Show how long a LIVE has been on	Bir LIVE'ın ne kadardır yayında olduğunu göster
 Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	LIVE odalarına, sunucunun ne kadardır canlı yayında olduğunu odanın başladığı andan itibaren sayan küçük bir satır ekler. Oda kimliği de açıksa onun altında durur.
 LIVE for %1$s	%1$s süredir LIVE
+Show exact LIVE battle scores	Tam LIVE savaş puanlarını göster
+In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	Bir LIVE savaşında TikTok, izleyicilerin gördüğü yüksek puanları sınırlar, sunucu ise sayının tamamını görür. Bu, tam puanı savaş çubuğunda ve ortak sunucu pencerelerinde gösterir.

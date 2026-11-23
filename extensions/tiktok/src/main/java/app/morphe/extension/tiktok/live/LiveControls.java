@@ -359,4 +359,31 @@ public final class LiveControls {
         }
         return NumberFormat.getIntegerInstance().format(count);
     }
+
+    /**
+     * True while a LIVE battle's scores should show whole past the server's high score cap
+     * (#495). Paused, the switch answers off.
+     */
+    static boolean exactBattleScores() {
+        return SettingsStatus.liveControlsEnabled && Settings.SHOW_EXACT_BATTLE_SCORES.get();
+    }
+
+    /**
+     * Called with TikTok's answer to whether a battle's high score cap applies, non-zero for yes:
+     * as the cap every score view reads is built, and as the high score notice picks its text.
+     * Capped, a viewer sees "1M+" (or the cap with a + after it) where the host sees the number.
+     * While the switch is on the answer is no, so the score is written whole; otherwise TikTok's
+     * answer stands.
+     */
+    public static boolean battleScoreCap(int capped) {
+        return capped != 0 && !exactBattleScores();
+    }
+
+    /**
+     * Called with a score writer's own answer to whether the score shows whole, non-zero for yes
+     * (TikTok says yes for the host). While the switch is on the answer is yes for everyone.
+     */
+    public static boolean battleScoreWhole(int whole) {
+        return whole != 0 || exactBattleScores();
+    }
 }

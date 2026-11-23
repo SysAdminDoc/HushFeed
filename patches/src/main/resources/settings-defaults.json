@@ -590,6 +590,7 @@
       "hide_live_service_plus",
       "hide_live_ai_summary",
       "show_exact_live_viewers",
+      "show_exact_battle_scores",
       "live_room_info",
       "live_running_time",
       "offer_live_quality",
@@ -4503,6 +4504,12 @@
     "show_engagement_rate": {
       "field": "SHOW_ENGAGEMENT_RATE",
       "key": "show_engagement_rate",
+      "type": "boolean",
+      "default": false
+    },
+    "show_exact_battle_scores": {
+      "field": "SHOW_EXACT_BATTLE_SCORES",
+      "key": "show_exact_battle_scores",
       "type": "boolean",
       "default": false
     },

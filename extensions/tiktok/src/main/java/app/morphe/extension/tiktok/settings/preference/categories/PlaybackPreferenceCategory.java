@@ -133,6 +133,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "A LIVE room shows how many people are watching as a rounded number like 1.2K. "
                             + "This shows the exact count instead.",
                     Settings.SHOW_EXACT_LIVE_VIEWERS));
+            addPreference(new TogglePreference(context, "Show exact LIVE battle scores",
+                    "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the "
+                            + "whole number. This shows the whole score in the battle bar and the co-host windows.",
+                    Settings.SHOW_EXACT_BATTLE_SCORES));
             addPreference(new TogglePreference(context, "Show the room ID and your connection",
                     "Adds a small line to LIVE rooms with the room's ID and how your own connection "
                             + "to the stream is doing, as TikTok's player measures it: ping, latency and "

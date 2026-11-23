@@ -828,6 +828,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SHOW_EXACT_LIVE_VIEWERS = new BooleanSetting("show_exact_live_viewers", FALSE);
     /**
+     * Shows a LIVE battle's scores whole past the server's high score cap ("1M+") in the battle
+     * bar, the co-host windows and the high score notice (#495); the LIVE controls patch. Read
+     * each time a score is written and as a battle takes its cap, so no restart.
+     */
+    public static final BooleanSetting SHOW_EXACT_BATTLE_SCORES = new BooleanSetting("show_exact_battle_scores", FALSE);
+    /**
      * A small line in a LIVE room with the room's ID and your own connection to the stream as
      * TikTok's player measures it (#487); the LIVE controls patch. Read every second, so no restart.
      */

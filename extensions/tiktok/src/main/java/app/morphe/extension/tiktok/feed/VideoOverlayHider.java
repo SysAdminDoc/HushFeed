@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -916,6 +917,11 @@ public final class VideoOverlayHider {
                     View tabs = floatingBarNow ? bottomTabs : null;
                     int rise = tabs != null && tabs.isShown() ? SeeThroughBottomBar.riseOver(tabs) : 0;
                     pillRiseNow = rise;
+                    // Over a page that stops at the bar's top, Home's Community grid or another
+                    // tab's, the strip the pill stands in is painted, so the pill stays inside the
+                    // bottom area (#436). Over the feed's video it stays clear.
+                    SeeThroughBottomBar.paintRiseStrip(tabs, rise > 0 && !(seeThroughBar
+                            && FeedVisibility.isOnFeed(activity) && feedCellOnScreen(root, cellId)));
                     // The feed goes on under the gesture bar too, while it's the page in front: the
                     // tab host's other pages keep the room TikTok gives them (#408).
                     VideoUnderGestureBar.FEED.apply(activity, bottomTabs,
@@ -1924,6 +1930,25 @@ public final class VideoOverlayHider {
         for (View block : new ArrayList<>(LIVE_CAPTIONS_LIFTED.keySet())) {
             if (!lifts.containsKey(block)) offsetOwned(LIVE_CAPTIONS_LIFTED, block, 0f);
         }
+    }
+
+    /**
+     * Whether a feed cell is on screen at least half the window wide. Home's Community grid is a
+     * page of the same top-tab pager, so the feed is still the selected tab there, but its cells
+     * sit off screen beside it (#436). With no cell id resolved, the answer is yes, as before.
+     */
+    static boolean feedCellOnScreen(View root, int cellId) {
+        if (cellId == 0) return true;
+        List<View> cells = new ArrayList<>();
+        collectCells(root, cellId, 0, cells);
+        Rect shown = new Rect();
+        for (View cell : cells) {
+            if (cell.isShown() && cell.getGlobalVisibleRect(shown) && shown.height() > 0
+                    && shown.width() * 2 >= root.getWidth()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** The feed's cells under [view], looked for a few levels down as the widget layers are. */

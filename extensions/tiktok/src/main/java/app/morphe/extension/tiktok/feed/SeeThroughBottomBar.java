@@ -139,6 +139,35 @@ final class SeeThroughBottomBar {
     }
 
     /**
+     * The pill stands {@link #PILL_RISE_DP} above the bar, which over the video only covers
+     * picture. A page that stops at the bar's top, Home's Community grid or another tab's page,
+     * showed the pill's top edge over its last row (#436), so with {@code paint} the strip the pill
+     * stands in is painted the color around the bar ({@link #stripColor}) and the pill sits inside
+     * the bottom area. Without it the strip is left clear.
+     */
+    static void paintRiseStrip(View bar, boolean paint) {
+        if (bar == null || !(bar.getBackground() instanceof FloatingBackground)) return;
+        ((FloatingBackground) bar.getBackground()).setStrip(paint ? stripColor(bar) : 0);
+    }
+
+    /**
+     * The color around {@code bar} where the page stops at its top: TikTok's own bar color when
+     * it's a solid one, otherwise white under dark tabs and black under light ones.
+     */
+    static int stripColor(View bar) {
+        Drawable theirs = BACKGROUNDS.get(bar);
+        Integer color = null;
+        if (theirs instanceof ColorDrawable) {
+            color = ((ColorDrawable) theirs).getColor();
+        } else if (theirs instanceof GradientDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            android.content.res.ColorStateList colors = ((GradientDrawable) theirs).getColor();
+            if (colors != null) color = colors.getDefaultColor();
+        }
+        if (color != null && Color.alpha(color) == 0xFF) return color;
+        return bar instanceof ViewGroup && tabsOnLight((ViewGroup) bar) ? Color.WHITE : Color.BLACK;
+    }
+
+    /**
      * The corner radius Pill corners gives the pill, or the lens with {@code lens}, for a shape
      * {@code height} tall: 12dp and 8dp for "standard", 20dp and 14dp for "rounder", and half the
      * height otherwise, which is never passed.
@@ -329,6 +358,12 @@ final class SeeThroughBottomBar {
         private String height, corners;
         /** True while the pill is painted for TikTok's light bar ({@link #tabsOnLight}, #436). */
         boolean onLight;
+        /**
+         * The color the strip the pill stands in above the bar is painted, or 0 to leave it
+         * clear over the video ({@link #paintRiseStrip}, #436).
+         */
+        private int strip;
+        private final Paint stripPaint = new Paint();
         private final FrameWatch watch = new FrameWatch(this::beforeFrame);
 
         FloatingBackground(float density) {
@@ -379,8 +414,23 @@ final class SeeThroughBottomBar {
                 placeTabs(bar, pillRect, density);
                 followTabs(bar);
             }
+            Rect bounds = getBounds();
+            if (strip != 0 && pillRect.top < bounds.top) {
+                stripPaint.setColor(strip);
+                canvas.drawRect(bounds.left, pillRect.top, bounds.right, bounds.top, stripPaint);
+            }
             drawBehindPill(canvas);
             super.draw(canvas);
+        }
+
+        void setStrip(int color) {
+            if (strip == color) return;
+            strip = color;
+            invalidateSelf();
+        }
+
+        int strip() {
+            return strip;
         }
 
         /**

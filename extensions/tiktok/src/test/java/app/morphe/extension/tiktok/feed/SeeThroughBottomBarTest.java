@@ -1529,6 +1529,18 @@ public class SeeThroughBottomBarTest {
             assertEquals("the progress line rides on the pill's top",
                     -(rise + Math.round(4 * activity.getResources().getDisplayMetrics().density)),
                     seekBar.getTranslationY(), 0f);
+            assertEquals("the strip over the video was painted", 0,
+                    ((SeeThroughBottomBar.FloatingBackground) bar.getBackground()).strip());
+            // Home's Community grid: the feed's cells sit beside the page in front, which stops at
+            // the bar's top, so the strip the pill stands in takes the bar's color (#436).
+            column.setTranslationX(root.getWidth());
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the pill stood over the grid's last row", Color.BLACK,
+                    ((SeeThroughBottomBar.FloatingBackground) bar.getBackground()).strip());
+            column.setTranslationX(0f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the strip stayed over the video", 0,
+                    ((SeeThroughBottomBar.FloatingBackground) bar.getBackground()).strip());
             Settings.FLOATING_BOTTOM_BAR.save(false);
             VideoOverlayHider.applyTo(activity);
             VideoOverlayHider.applyTo(activity);
@@ -1546,6 +1558,48 @@ public class SeeThroughBottomBarTest {
             VideoOverlayHider.resolveForTests("viewpager_container", 0);
             VideoOverlayHider.resolveForTests("widget_container", 0);
         }
+    }
+
+    /**
+     * #436: a painted strip fills the band the pill stands in above the bar, the bar's whole
+     * width, and nothing over it; TikTok's own solid bar color is the strip's, white or black by
+     * the tabs' ink without one.
+     */
+    @Test
+    public void aPaintedStripFillsTheBandThePillStandsIn() {
+        SeeThroughBottomBar.FloatingBackground background = new SeeThroughBottomBar.FloatingBackground(2f);
+        background.setBounds(0, 40, 400, 140);
+        int rise = Math.round(SeeThroughBottomBar.PILL_RISE_DP * 2f);
+        java.util.List<float[]> strips = new java.util.ArrayList<>();
+        android.graphics.Canvas recorder = new android.graphics.Canvas() {
+            @Override
+            public void drawRect(float left, float top, float right, float bottom, android.graphics.Paint paint) {
+                if (bottom == 40f) strips.add(new float[]{left, top, right, bottom, paint.getColor()});
+            }
+        };
+        background.draw(recorder);
+        assertTrue("an unpainted strip was drawn", strips.isEmpty());
+        background.setStrip(Color.WHITE);
+        background.draw(recorder);
+        assertEquals(1, strips.size());
+        assertTrue(Arrays.toString(strips.get(0)), Arrays.equals(
+                new float[]{0f, 40f - rise, 400f, 40f, (float) Color.WHITE}, strips.get(0)));
+
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout bar = new FrameLayout(activity);
+        bar.setBackgroundColor(0xFF161823);
+        SeeThroughBottomBar.setBackgroundClear(bar, true, true);
+        assertEquals("TikTok's bar color", 0xFF161823, SeeThroughBottomBar.stripColor(bar));
+        FrameLayout seeThrough = new FrameLayout(activity);
+        seeThrough.setBackgroundColor(0x40FFFFFF);
+        SeeThroughBottomBar.setBackgroundClear(seeThrough, true, true);
+        assertEquals("light tabs on a see-through bar", Color.BLACK, SeeThroughBottomBar.stripColor(seeThrough));
+        SeeThroughBottomBar.paintRiseStrip(bar, true);
+        assertEquals(0xFF161823, ((SeeThroughBottomBar.FloatingBackground) bar.getBackground()).strip());
+        SeeThroughBottomBar.paintRiseStrip(bar, false);
+        assertEquals(0, ((SeeThroughBottomBar.FloatingBackground) bar.getBackground()).strip());
+        SeeThroughBottomBar.setBackgroundClear(bar, false, false);
+        SeeThroughBottomBar.setBackgroundClear(seeThrough, false, false);
     }
 
     private static final int LIVE_NAME_ID = 0x7f0a0c27;

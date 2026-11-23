@@ -23,6 +23,7 @@ Every Hushfeed release, newest first.
 * `Hold TikTok's save button to download` works wherever you press on the save button. TikTok gives some accounts a check that only starts the long press when the press lands right on the icon or its count, and a hold beside them did nothing at all (#499).
 * Record in a LIVE's small window used to do nothing when the room it belonged to had gone away in the meantime. Now it says "No stream found to record. Reopen the LIVE." and writes which part was missing to the log (#413).
 * A translated caption at the top of the comments showed TikTok's raw tags around its hashtags and mentions, like `<h id="288">#flowers</h>`. It shows the plain text now, with the hashtags and mentions where TikTok draws them (#488).
+* With the floating bottom bar, the top of the pill stuck up over the last row of Home's Community grid. On a page that ends at the bar, like that grid or the other tabs, the strip above the bar now matches the bottom area, so the pill sits inside it. Over videos it still stands a little above the bar (#436).
 
 ### Build
 

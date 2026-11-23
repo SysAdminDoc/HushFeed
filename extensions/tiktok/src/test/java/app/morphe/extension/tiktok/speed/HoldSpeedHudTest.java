@@ -741,6 +741,33 @@ public class HoldSpeedHudTest {
         assertEquals(density, new HoldSpeedHud.Circle(owner.get(), GRID).unit, 0f);
     }
 
+    /** #452: a large font made the bubble too big, so the size setting scales all of it. */
+    @Test
+    @Config(sdk = 28, fontScale = 1.3f)
+    public void theSizeSettingScalesTheBubbleOnTopOfTheFontSize() {
+        try {
+            assertEquals(100, (int) Settings.HOLD_SPEED_HUD_SIZE.defaultValue);
+            Settings.HOLD_SPEED_HUD_SIZE.save(70);
+            HoldSpeedHud.Bubble pill = new HoldSpeedHud.Bubble(owner.get(), GRID);
+            assertEquals(1.3f * 0.7f * density, pill.unit, 0.001f);
+            pill.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            assertEquals(Math.round(44 * pill.unit), pill.getMeasuredHeight());
+            assertEquals(18 * pill.unit, pill.text.getTextSize(), 0.01f);
+
+            Settings.HOLD_SPEED_HUD_SIZE.save(150);
+            HoldSpeedHud.Circle circle = new HoldSpeedHud.Circle(owner.get(), GRID);
+            assertEquals(1.3f * 1.5f * density, circle.unit, 0.001f);
+            circle.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            assertEquals(Math.round(HoldSpeedHud.Circle.DIAMETER_DP * circle.unit), circle.getMeasuredWidth());
+
+            Settings.HOLD_SPEED_HUD_SIZE.save(10);
+            assertEquals("held to the smallest size", 1.3f * 0.5f * density,
+                    new HoldSpeedHud.Bubble(owner.get(), GRID).unit, 0.001f);
+        } finally {
+            Settings.HOLD_SPEED_HUD_SIZE.resetToDefault();
+        }
+    }
+
     @Test
     @Config(sdk = 28, fontScale = 1.3f)
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -823,6 +850,15 @@ public class HoldSpeedHudTest {
             assertFalse("the style waits for the slide", Settings.HOLD_SPEED_HUD_STYLE.isAvailable());
             Settings.HOLD_SPEED_SLIDE.save(true);
             assertTrue(Settings.HOLD_SPEED_HUD_STYLE.isAvailable());
+
+            Preference size = screen.findPreference(Settings.HOLD_SPEED_HUD_SIZE.key);
+            assertEquals("Hold speed bubble size", String.valueOf(size.getTitle()));
+            assertTrue(String.valueOf(size.getSummary()), String.valueOf(size.getSummary()).contains("from 50 to 150"));
+            assertEquals("right under the slide direction",
+                    keys.indexOf(Settings.HOLD_SPEED_SLIDE_AXIS.key) + 1, keys.indexOf(Settings.HOLD_SPEED_HUD_SIZE.key));
+            Settings.HOLD_SPEED_SLIDE.save(false);
+            assertFalse("the size waits for the slide", Settings.HOLD_SPEED_HUD_SIZE.isAvailable());
+            Settings.HOLD_SPEED_SLIDE.save(true);
         } finally {
             SettingsStatus.playbackSpeedEnabled = speed;
             Utils.setContext(owner.get());

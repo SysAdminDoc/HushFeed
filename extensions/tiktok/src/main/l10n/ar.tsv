@@ -1641,6 +1641,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	أدخل سرعة واحدة من %1$s إلى %2$s
 Slide to change the hold speed	اسحب لتغيير سرعة الضغط المطول
 Hold speed bubble style	نمط فقاعة سرعة التثبيت
+Hold speed bubble size	حجم فقاعة سرعة التثبيت
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	حجم رسم الفقاعة، من %1$d إلى %2$d. القيمة 100 هي الحجم العادي، وهو يكبر أصلًا مع حجم خط هاتفك.
 Pill	كبسولة
 Circle	دائرة
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	الكبسولة هي الفقاعة العريضة مع صف من النقاط تحت السرعة. الدائرة هي قرص صغير مستدير مع شق لكل سرعة حول حافتها.

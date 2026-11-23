@@ -1478,6 +1478,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	Digite uma velocidade de %1$s a %2$s
 Slide to change the hold speed	Deslize para mudar a velocidade ao segurar
 Hold speed bubble style	Estilo da bolha de velocidade ao segurar
+Hold speed bubble size	Tamanho da bolha de velocidade ao segurar
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	O tamanho em que a bolha é desenhada, de %1$d a %2$d. 100 é o tamanho normal, que já cresce com o tamanho da fonte do seu celular.
 Pill	Pílula
 Circle	Círculo
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pílula é a bolha larga com uma fileira de pontos abaixo da velocidade. Círculo é um pequeno mostrador redondo com uma marca para cada velocidade na borda.

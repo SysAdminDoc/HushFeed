@@ -552,6 +552,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                                     + "With Up and down, slide up for faster and down for slower, and slide to the side "
                                     + "to lock it, so a hold near the edge still reaches every speed."));
                 }
+                addPreference(new NumberInputPreference(context, "Hold speed bubble size",
+                        L10n.f(context, "How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, "
+                                        + "which already grows with your phone's font size.",
+                                Settings.HOLD_SPEED_HUD_SIZE.minimum(), Settings.HOLD_SPEED_HUD_SIZE.maximum()),
+                        Settings.HOLD_SPEED_HUD_SIZE, "%1$s%%"));
             }
             if (SettingsStatus.hideSpeedToastsEnabled) {
                 addPreference(new TogglePreference(context, "Hide speed messages",

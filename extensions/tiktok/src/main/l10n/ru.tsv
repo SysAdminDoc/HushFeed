@@ -1598,6 +1598,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	Введите одну скорость от %1$s до %2$s
 Slide to change the hold speed	Смена скорости удержания свайпом
 Hold speed bubble style	Вид пузыря скорости удержания
+Hold speed bubble size	Размер пузыря скорости удержания
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	Насколько крупным рисуется пузырь, от %1$d до %2$d. 100 — обычный размер, который и так растёт вместе с размером шрифта вашего телефона.
 Pill	Капсула
 Circle	Круг
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Капсула: широкий пузырь с рядом точек под скоростью. Круг: маленький круглый циферблат с отметкой для каждой скорости по краю.

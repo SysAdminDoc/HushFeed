@@ -1478,6 +1478,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	%1$s ile %2$s arasında bir hız girin
 Slide to change the hold speed	Basılı tutma hızını kaydırarak değiştir
 Hold speed bubble style	Basılı tutma hızı balonunun stili
+Hold speed bubble size	Basılı tutma hızı balonunun boyutu
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	Balonun ne kadar büyük çizileceği, %1$d ile %2$d arası. 100 normal boyuttur ve zaten telefonunun yazı boyutuyla birlikte büyür.
 Pill	Hap
 Circle	Daire
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Hap, hızın altında bir sıra nokta olan geniş balondur. Daire, kenarında her hız için bir çentik olan küçük yuvarlak bir kadrandır.

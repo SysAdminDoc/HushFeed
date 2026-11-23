@@ -509,13 +509,15 @@ public final class HoldSpeedHud {
         /**
          * {@code labelSp} is the speed's size. The padlock, the dots and the dial around them
          * scale with it, since a larger label in the same 44dp would clip, and at the default
-         * font size {@link #unit} is exactly one dp.
+         * font size {@link #unit} is exactly one dp. {@link Settings#HOLD_SPEED_HUD_SIZE} grows or
+         * shrinks all of it on top of that, since a large font made the bubble too big for some (#452).
          */
         Bubble(Context context, float[] steps, float labelSp) {
             super(context);
             this.steps = steps.clone();
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            unit = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, labelSp, metrics) / labelSp;
+            unit = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, labelSp, metrics) / labelSp
+                    * Settings.HOLD_SPEED_HUD_SIZE.get() / 100f;
             fill.setColor(0xB3000000);
             text.setColor(0xFFFFFFFF);
             text.setTextAlign(Paint.Align.LEFT);

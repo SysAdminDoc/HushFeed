@@ -1478,6 +1478,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	%1$s ilə %2$s arasında bir sürət daxil edin
 Slide to change the hold speed	Saxlama sürətini sürüşdürərək dəyiş
 Hold speed bubble style	Saxlama sürəti balonunun üslubu
+Hold speed bubble size	Saxlama sürəti balonunun ölçüsü
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	Balonun nə qədər böyük çəkildiyi, %1$d ilə %2$d arasında. 100 adi ölçüdür və o, artıq telefonunuzun şrift ölçüsü ilə böyüyür.
 Pill	Kapsul
 Circle	Dairə
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Kapsul sürətin altında bir sıra nöqtə olan geniş balondur. Dairə kənarında hər sürət üçün bir çentik olan kiçik dəyirmi siferblatdır.

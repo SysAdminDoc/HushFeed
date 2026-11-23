@@ -1478,6 +1478,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	Inserisci una velocità da %1$s a %2$s
 Slide to change the hold speed	Scorri per cambiare la velocità di pressione
 Hold speed bubble style	Stile della bolla della velocità di pressione
+Hold speed bubble size	Dimensione della bolla della velocità di pressione
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	Quanto è grande la bolla, da %1$d a %2$d. 100 è la dimensione normale, che cresce già con la dimensione del carattere del tuo telefono.
 Pill	Pillola
 Circle	Cerchio
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pillola è la bolla larga con una fila di punti sotto la velocità. Cerchio è un piccolo quadrante rotondo con una tacca per ogni velocità sul bordo.

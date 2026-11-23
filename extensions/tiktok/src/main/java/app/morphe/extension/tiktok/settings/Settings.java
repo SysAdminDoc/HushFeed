@@ -1065,6 +1065,9 @@ public class Settings extends BaseSettings {
     /** How that bubble looks: the pill, or the round dial adapted from OmerKurdi79's fork (#248). */
     public static final StringSetting HOLD_SPEED_HUD_STYLE = new StringSetting(
             "hold_speed_hud_style", "pill", false, Setting.parent(HOLD_SPEED_SLIDE));
+    /** How big that bubble is drawn, in percent of its size at the phone's font size (#452). */
+    public static final IntegerSetting HOLD_SPEED_HUD_SIZE = new IntegerSetting(
+            "hold_speed_hud_size", 100, false, Setting.parent(HOLD_SPEED_SLIDE)).withRange(50, 150);
     /** Which way that slide goes: sideways with TikTok's pull-down lock, or up and down with a sideways lock (#248). */
     public static final StringSetting HOLD_SPEED_SLIDE_AXIS = new StringSetting(
             "hold_speed_slide_axis", "sideways", false, Setting.parent(HOLD_SPEED_SLIDE));

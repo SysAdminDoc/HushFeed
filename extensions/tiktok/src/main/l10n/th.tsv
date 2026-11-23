@@ -1481,6 +1481,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	ป้อนความเร็วหนึ่งค่าตั้งแต่ %1$s ถึง %2$s
 Slide to change the hold speed	เลื่อนนิ้วเพื่อเปลี่ยนความเร็วในการกดค้าง
 Hold speed bubble style	สไตล์ฟองแสดงความเร็วในการกดค้าง
+Hold speed bubble size	ขนาดฟองแสดงความเร็วในการกดค้าง
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	ขนาดที่ใช้วาดฟอง ตั้งแต่ %1$d ถึง %2$d โดย 100 คือขนาดปกติ ซึ่งจะใหญ่ขึ้นตามขนาดฟอนต์ของโทรศัพท์คุณอยู่แล้ว
 Pill	เม็ดยา
 Circle	วงกลม
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	เม็ดยาคือฟองแบบกว้างที่มีแถวจุดอยู่ใต้ความเร็ว วงกลมคือหน้าปัดกลมขนาดเล็กที่มีรอยบากสำหรับแต่ละระดับความเร็วรอบขอบ

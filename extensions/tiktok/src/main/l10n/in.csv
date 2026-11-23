@@ -1457,6 +1457,8 @@ Custom hold speed,Kecepatan tahan sendiri
 Enter one speed from %1$s to %2$s,Masukkan satu kecepatan dari %1$s hingga %2$s
 Slide to change the hold speed,Geser untuk mengubah kecepatan tahan
 Hold speed bubble style,Gaya gelembung kecepatan tahan
+Hold speed bubble size,Ukuran gelembung kecepatan tahan
+"How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.","Seberapa besar gelembung digambar, dari %1$d sampai %2$d. 100 adalah ukuran normal, yang sudah ikut membesar mengikuti ukuran font ponselmu."
 Pill,Pil
 Circle,Lingkaran
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Pil adalah gelembung lebar dengan sederet titik di bawah kecepatan. Lingkaran adalah dial bulat kecil dengan tanda untuk setiap kecepatan di tepinya.

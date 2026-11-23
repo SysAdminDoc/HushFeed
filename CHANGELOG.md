@@ -15,6 +15,7 @@ Every Hushfeed release, newest first.
 * `Show the country and date under the caption` has three settings of its own under Feed screen now: a text size (0 keeps the post date's size, or pick 8 to 48 points), an opacity from 10 to 100, and a shadow under the letters for bright videos (#500).
 * `Tap brings the controls back` is new under `Automatic Clear display`. A tap on a video whose controls it hid shows them again instead of pausing the video, and they hide again after the delay, or after 3 seconds if the delay is shorter (#501).
 * `Burn-in guard dim level` sets how solid the buttons, caption and tabs stay while the burn-in guard has them dimmed, from 0 to 90. It used to be fixed at 25. At 0 they're gone until your next touch (#501).
+* `Hold speed bubble size` is new under `Slide to change the hold speed`. It draws the bubble from 50 to 150 percent of its usual size. Since 0.82.0 the bubble grows with your phone's font size, which made it big with large text on, so set it under 100 to bring it back down (#452).
 
 ### Bug Fixes
 

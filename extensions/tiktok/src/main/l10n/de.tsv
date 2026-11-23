@@ -1481,6 +1481,8 @@ One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It t
 Enter one speed from %1$s to %2$s	Gib eine Geschwindigkeit von %1$s bis %2$s ein
 Slide to change the hold speed	Haltegeschwindigkeit durch Wischen ändern
 Hold speed bubble style	Stil der Haltegeschwindigkeits-Blase
+Hold speed bubble size	Größe der Haltegeschwindigkeits-Blase
+How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.	Wie groß die Blase gezeichnet wird, von %1$d bis %2$d. 100 ist die normale Größe, die schon mit der Schriftgröße deines Handys wächst.
 Pill	Pille
 Circle	Kreis
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pille ist die breite Blase mit einer Punktreihe unter der Geschwindigkeit. Kreis ist eine kleine runde Skala mit einer Kerbe für jede Geschwindigkeit am Rand.

@@ -1925,6 +1925,8 @@ Sleep timer off,Đã tắt bộ hẹn giờ ngủ
 Slide across the tabs,Trượt qua các thẻ
 Slide to change the hold speed,Trượt để thay đổi tốc độ nhấn giữ
 Hold speed bubble style,Kiểu bong bóng tốc độ nhấn giữ
+Hold speed bubble size,Kích thước bong bóng tốc độ nhấn giữ
+"How big the bubble is drawn, from %1$d to %2$d. 100 is the normal size, which already grows with your phone's font size.","Độ lớn khi vẽ bong bóng, từ %1$d đến %2$d. 100 là kích thước bình thường, vốn đã to lên theo cỡ chữ của điện thoại bạn."
 Pill,Viên thuốc
 Circle,Hình tròn
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Viên thuốc là bong bóng rộng với một hàng chấm dưới tốc độ. Hình tròn là mặt số tròn nhỏ có một vạch cho mỗi tốc độ quanh viền.

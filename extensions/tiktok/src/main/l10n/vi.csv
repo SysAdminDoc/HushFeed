@@ -3015,3 +3015,6 @@ Show how long a LIVE has been on,Hiện LIVE đã phát được bao lâu
 LIVE for %1$s,Đã LIVE %1$s
 Show exact LIVE battle scores,Hiện điểm đấu LIVE chính xác
 "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.","Trong một trận đấu LIVE, TikTok giới hạn điểm số lớn mà người xem thấy, còn chủ phòng thấy con số đầy đủ. Tùy chọn này hiện điểm đầy đủ trên thanh trận đấu và trong cửa sổ đồng chủ phòng."
+Start LIVEs at,Bắt đầu LIVE ở chất lượng
+The quality you picked last,Chất lượng bạn chọn lần cuối
+"A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.","Phòng LIVE mở ở chất lượng này cho đến khi bạn chọn chất lượng khác, và lựa chọn đó áp dụng cho các phòng tiếp theo cho đến khi TikTok đóng. Phòng mà luồng phát không có chất lượng này sẽ mở theo lựa chọn của TikTok."

@@ -3179,3 +3179,6 @@ Adds a small line to LIVE rooms with how long the host has been live, counted fr
 LIVE for %1$s	LIVE müddəti %1$s
 Show exact LIVE battle scores	Dəqiq LIVE döyüş xallarını göstər
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	LIVE döyüşündə TikTok izləyicilərin gördüyü böyük xalları məhdudlaşdırır, aparıcı isə tam rəqəmi görür. Bu, döyüş panelində və birgə aparıcı pəncərələrində tam xalı göstərir.
+Start LIVEs at	LIVE-ları bu keyfiyyətdə başlat
+The quality you picked last	Son seçdiyiniz keyfiyyət
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	LIVE otağı siz başqa keyfiyyət seçənə qədər bu keyfiyyətdə açılır, həmin seçim isə TikTok bağlanana qədər növbəti otaqlara keçir. Yayımında bu keyfiyyət olmayan otaq TikTok-un seçimi ilə açılır.

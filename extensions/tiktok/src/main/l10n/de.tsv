@@ -3182,3 +3182,6 @@ Adds a small line to LIVE rooms with how long the host has been live, counted fr
 LIVE for %1$s	LIVE seit %1$s
 Show exact LIVE battle scores	Genaue LIVE-Battle-Punkte anzeigen
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	In einem LIVE-Battle deckelt TikTok große Punktzahlen für Zuschauer, während der Host die ganze Zahl sieht. Damit siehst du die ganze Punktzahl in der Battle-Leiste und in den Co-Host-Fenstern.
+Start LIVEs at	LIVEs starten mit
+The quality you picked last	Die zuletzt gewählte Qualität
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	Ein LIVE-Raum öffnet mit dieser Qualität, bis du eine andere wählst, und diese Wahl gilt dann für die nächsten Räume, bis TikTok geschlossen wird. Ein Raum, dessen Stream sie nicht hat, öffnet mit der Wahl von TikTok.

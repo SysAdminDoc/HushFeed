@@ -3182,3 +3182,6 @@ Adds a small line to LIVE rooms with how long the host has been live, counted fr
 LIVE for %1$s	LIVE มาแล้ว %1$s
 Show exact LIVE battle scores	แสดงคะแนนแบทเทิล LIVE ที่แน่นอน
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	ในแบทเทิล LIVE นั้น TikTok จำกัดคะแนนสูงที่ผู้ชมเห็น ขณะที่โฮสต์เห็นตัวเลขเต็ม การตั้งค่านี้จะแสดงคะแนนเต็มในแถบแบทเทิลและหน้าต่างโฮสต์ร่วม
+Start LIVEs at	เริ่ม LIVE ที่คุณภาพ
+The quality you picked last	คุณภาพที่คุณเลือกล่าสุด
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	ห้อง LIVE จะเปิดที่คุณภาพนี้จนกว่าคุณจะเลือกคุณภาพอื่น และตัวเลือกนั้นจะใช้กับห้องถัดไปจนกว่า TikTok จะปิด ห้องที่สตรีมไม่มีคุณภาพนี้จะเปิดตามที่ TikTok เลือก

@@ -11083,6 +11083,12 @@
     "row": "Offer LIVE quality in more rooms"
    },
    {
+    "key": "live_start_quality",
+    "default": "last",
+    "type": "string",
+    "row": "Start LIVEs at"
+   },
+   {
     "key": "offer_live_clear_screen",
     "default": false,
     "type": "bool",

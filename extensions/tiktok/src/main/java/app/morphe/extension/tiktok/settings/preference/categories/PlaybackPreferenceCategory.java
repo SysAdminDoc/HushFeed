@@ -156,6 +156,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "that quality again after a restart. A room whose stream doesn't have it "
                             + "opens at TikTok's choice.",
                     Settings.REMEMBER_LIVE_QUALITY));
+            addPreference(new ChoicePreference(context, "Start LIVEs at", Settings.LIVE_START_QUALITY,
+                    app.morphe.extension.tiktok.live.LiveControls.START_QUALITY_LABELS,
+                    app.morphe.extension.tiktok.live.LiveControls.START_QUALITY_VALUES)
+                    .withNote("A LIVE room opens at this quality until you pick another one, and that pick "
+                            + "carries to the next rooms until TikTok closes. A room whose stream doesn't have "
+                            + "it opens at TikTok's choice."));
             addPreference(new TogglePreference(context, "Offer Audio only in LIVE quality",
                     "Adds Audio only to a LIVE's Video quality list. The room plays its sound without "
                             + "the picture, which uses much less data, until you pick another quality or "

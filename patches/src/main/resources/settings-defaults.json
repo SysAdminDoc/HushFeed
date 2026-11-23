@@ -595,6 +595,7 @@
       "live_running_time",
       "offer_live_quality",
       "remember_live_quality",
+      "live_start_quality",
       "offer_live_clear_screen",
       "keep_live_clear_screen",
       "offer_live_full_screen",
@@ -3522,6 +3523,12 @@
       "key": "live_running_time",
       "type": "boolean",
       "default": false
+    },
+    "live_start_quality": {
+      "field": "LIVE_START_QUALITY",
+      "key": "live_start_quality",
+      "type": "string",
+      "default": "last"
     },
     "live_under_status_bar": {
       "field": "LIVE_UNDER_STATUS_BAR",

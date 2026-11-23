@@ -148,6 +148,7 @@ source,target
 A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.,A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.
 "A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden.","A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden."
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.,A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.
+"A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.","A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice."
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.,A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.
 "A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.","A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off."
 A Lab change is already running,A Lab change is already running
@@ -2337,6 +2338,7 @@ Split comment minimum width,Split comment minimum width
 Split the Activity page,Split the Activity page
 "Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.","Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them."
 Standard,Standard
+Start LIVEs at,Start LIVEs at
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
 Start recording,Start recording
@@ -2590,6 +2592,7 @@ The profile picture couldn't be saved. Try again.,The profile picture couldn't b
 "The proxy's address, like 192.168.1.20 or proxy.example.com.","The proxy's address, like 192.168.1.20 or proxy.example.com."
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.,The publication state of these older recording files is unknown. Export a copy or delete the retained files.
 The quality choice is still open,The quality choice is still open
+The quality you picked last,The quality you picked last
 The recording couldn't be saved. Try again.,The recording couldn't be saved. Try again.
 The recovery record is damaged. Export a copy of the recording files or delete them.,The recovery record is damaged. Export a copy of the recording files or delete them.
 The report couldn't be saved. Try again.,The report couldn't be saved. Try again.

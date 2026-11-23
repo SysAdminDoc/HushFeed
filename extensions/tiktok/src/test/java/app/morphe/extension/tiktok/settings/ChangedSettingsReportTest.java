@@ -138,7 +138,7 @@ public class ChangedSettingsReportTest {
                 "glass_corners", "glass_haptic_style", "glass_opacity", "hold_speed", "hold_speed_hud_style", "hushfeed_language",
                 "hold_speed_slide_axis",
                 "live_auto_tap_rate", "live_button_size", "live_card_background", "live_card_text", "live_min_max_followers",
-                "live_min_max_viewers", "live_record_quality", "live_record_source", "liked_grid_sort", "favorites_grid_sort", "collection_grid_sort", "long_press_action", "min_max_comments", "min_max_favourites",
+                "live_min_max_viewers", "live_record_quality", "live_record_source", "live_start_quality", "liked_grid_sort", "favorites_grid_sort", "collection_grid_sort", "long_press_action", "min_max_comments", "min_max_favourites",
                 "min_max_likes", "min_max_shares", "min_max_views", "network_proxy_type",
                 "playback_bitrate_limit", "playback_quality", "playback_quality_metered", "profile_grid_sort", "seekbar_time_placement", "settings_theme", "sound_grid_sort", "start_page",
                 "bottom_tab_icon_style", "store_identity_installer", "subtitle_language", "swipe_left_action", "swipe_levels_left", "swipe_levels_right",

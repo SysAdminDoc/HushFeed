@@ -15,6 +15,7 @@ Every Hushfeed release, newest first.
 * When the diagnostic report says the phone destroyed TikTok's main screen, it now says why it might have. Either Don't keep activities is on in Developer options, or it gives how full TikTok's memory was, since Android closes an app's screens in the background once three quarters of it is used (#419).
 * `Show how long a LIVE has been on`, with the other LIVE options in Playback, adds how long the host has been live to the small line in LIVE rooms, counted from when the room started and ticking every second. It sits under the room ID when that's on too. A room opened from the LIVE feed shows it once TikTok has that room's start time. It starts off (#494).
 * `Show exact LIVE battle scores` shows a battle's whole score where TikTok caps it for viewers at 1M+ (or at the server's own limit with a + after it) and only the host sees the number. It covers the battle bar, the co-host windows and the high score notice. The supporters list is a page TikTok's server draws, so it isn't covered. It starts off (#495).
+* `Start LIVEs at` is new under `Offer LIVE quality in more rooms`. Pick a quality there and every LIVE room opens at it until you pick another one in a room, and that pick then carries to the next rooms until TikTok closes. A room whose stream doesn't have the quality opens at TikTok's choice. It starts at `The quality you picked last`, which is how rooms opened before (#57).
 
 ### Build
 

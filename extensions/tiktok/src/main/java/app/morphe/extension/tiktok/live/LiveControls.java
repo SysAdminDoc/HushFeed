@@ -134,6 +134,25 @@ public final class LiveControls {
         return offerQualityEverywhere() && Settings.REMEMBER_LIVE_QUALITY.get();
     }
 
+    /**
+     * The settings row's choices for the quality LIVE rooms start at (#57). "last" keeps the
+     * last pick (the kept one after a restart, while Keep the LIVE quality is on), the way rooms
+     * started before the choice; the rest are TikTok's own quality keys.
+     */
+    public static final String[] START_QUALITY_LABELS = {
+            "The quality you picked last", "Original", "1080p", "720p", "540p", "360p"};
+    public static final String[] START_QUALITY_VALUES = {"last", "origin", "uhd", "hd", "sd", "ld"};
+
+    /** The start quality picked in settings, or null for the last pick. Off with Offer LIVE quality. */
+    static String startQuality() {
+        if (!offerQualityEverywhere()) return null;
+        String start = Settings.LIVE_START_QUALITY.get();
+        for (int i = 1; i < START_QUALITY_VALUES.length; i++) {
+            if (START_QUALITY_VALUES[i].equals(start)) return start;
+        }
+        return null;
+    }
+
     private static volatile boolean restoredLogged;
     private static volatile String lastQualityPick;
     /** The last pick this run made while Offer LIVE quality was on, from either picker, or null. */
@@ -163,7 +182,12 @@ public final class LiveControls {
         // this run carries instead, and TikTok's own is only the newer picker's.
         String runPick = pickThisRun;
         if (runPick != null && offerQualityEverywhere()) return runPick;
-        if (picked != null || !rememberQuality()) return picked;
+        if (picked != null) return picked;
+        // A start quality picked in settings comes ahead of the kept pick, and a pick in a room
+        // this run comes ahead of it (#57).
+        String start = startQuality();
+        if (start != null) return start;
+        if (!rememberQuality()) return null;
         String saved = Settings.REMEMBERED_LIVE_QUALITY.get();
         if (saved == null || saved.isEmpty()) return null;
         if (!restoredLogged) {

@@ -3450,3 +3450,6 @@ Adds a small line to LIVE rooms with how long the host has been live, counted fr
 LIVE for %1$s	مدة LIVE %1$s
 Show exact LIVE battle scores	إظهار نتائج معارك LIVE الدقيقة
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	في معركة LIVE، يقيّد TikTok النتائج الكبيرة التي يراها المشاهدون بينما يرى المضيف الرقم كاملًا. يعرض هذا النتيجة كاملة في شريط المعركة ونوافذ المضيفين المشاركين.
+Start LIVEs at	بدء LIVE بجودة
+The quality you picked last	الجودة التي اخترتها آخر مرة
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	تُفتح غرفة LIVE بهذه الجودة حتى تختار جودة أخرى، ثم ينتقل اختيارك إلى الغرف التالية حتى يُغلق TikTok. الغرفة التي لا يتوفر بثها بهذه الجودة تُفتح باختيار TikTok.

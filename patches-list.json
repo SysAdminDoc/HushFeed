@@ -7895,6 +7895,15 @@
           "values": null
         },
         {
+          "key": "live_start_quality",
+          "title": "Default: live start quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "last",
+          "values": null
+        },
+        {
           "key": "offer_live_clear_screen",
           "title": "Default: offer live clear screen",
           "description": null,

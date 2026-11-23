@@ -3380,3 +3380,6 @@ Adds a small line to LIVE rooms with how long the host has been live, counted fr
 LIVE for %1$s	В эфире %1$s
 Show exact LIVE battle scores	Показывать точные очки в битвах LIVE
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	В битве LIVE TikTok ограничивает большие очки, которые видят зрители, а ведущий видит полное число. Этот переключатель показывает полный счёт на полосе битвы и в окнах соведущих.
+Start LIVEs at	Начинать LIVE в качестве
+The quality you picked last	Последнее выбранное качество
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	Комната LIVE открывается в этом качестве, пока вы не выберете другое, и этот выбор переходит в следующие комнаты, пока TikTok не закроется. Комната, в трансляции которой его нет, открывается в качестве, выбранном TikTok.

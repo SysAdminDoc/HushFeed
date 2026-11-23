@@ -117,6 +117,27 @@ public class Aweme {
         throw new UnsupportedOperationException("Stub");
     }
 
+    /**
+     * A caption with line breaks, as a JSON array of its lines, or null. The comment list's
+     * caption row shows this, with {@link #getContentDescExtra()}, once it's expanded.
+     */
+    public String getContentDesc() {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    public void setContentDesc(String contentDesc) {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    /** The spans of {@link #getContentDesc()}, each a {@code TextExtraStruct} with its line. */
+    public List getContentDescExtra() {
+        throw new UnsupportedOperationException("Stub");
+    }
+
+    public void setContentDescExtra(List contentDescExtra) {
+        throw new UnsupportedOperationException("Stub");
+    }
+
     /** TikTok's own copy of the video model. */
     @Override
     public Aweme clone() {

@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.comment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -35,6 +36,8 @@ public class CaptionTranslationTest {
         final String id;
         String desc;
         List textExtra;
+        String contentDesc;
+        List contentDescExtra;
 
         Video(String id, String desc, List textExtra) {
             this.id = id;
@@ -47,7 +50,17 @@ public class CaptionTranslationTest {
         @Override public void setDesc(String desc) { this.desc = desc; }
         @Override public List getTextExtra() { return textExtra; }
         @Override public void setTextExtra(List textExtra) { this.textExtra = textExtra; }
-        @Override public Aweme clone() { return new Video(id, desc, textExtra); }
+        @Override public String getContentDesc() { return contentDesc; }
+        @Override public void setContentDesc(String contentDesc) { this.contentDesc = contentDesc; }
+        @Override public List getContentDescExtra() { return contentDescExtra; }
+        @Override public void setContentDescExtra(List contentDescExtra) { this.contentDescExtra = contentDescExtra; }
+
+        @Override public Aweme clone() {
+            Video copy = new Video(id, desc, textExtra);
+            copy.contentDesc = contentDesc;
+            copy.contentDescExtra = contentDescExtra;
+            return copy;
+        }
     }
 
     /** TikTok's translation state for one video, as the bridges would read it. */
@@ -120,6 +133,31 @@ public class CaptionTranslationTest {
         assertEquals("the same video", video.getAid(), row.getAid());
         assertEquals("and the video itself keeps its caption", "Hola #gatos", video.getDesc());
         assertEquals(Collections.singletonList("span over #gatos"), video.getTextExtra());
+    }
+
+    /**
+     * #488: a caption with line breaks also comes as its lines, which the row shows once "more"
+     * expands it. The copy leaves those out, so the expanded row stays in the translation.
+     */
+    @Test public void aCaptionWithLineBreaksExpandsIntoTheTranslationToo() {
+        Settings.CAPTION_OPENS_COMMENTS.save(true);
+        tiktok.translated = true;
+        tiktok.wrapper = rich("Hello\n#cats", Collections.singletonList("span over #cats"));
+        Video video = new Video("aCaptionWithLineBreaksExpandsIntoTheTranslationToo", "Hola\n#gatos",
+                new ArrayList<>(Collections.singletonList("span over #gatos")));
+        video.contentDesc = "[\"Hola\",\"#gatos\"]";
+        video.contentDescExtra = new ArrayList<>(Collections.singletonList("line 2 span over #gatos"));
+        Aweme row = (Aweme) CaptionTranslation.captionAweme(video);
+        assertEquals("Hello\n#cats", row.getDesc());
+        assertNull("the expanded row has no original lines to show", row.getContentDesc());
+        assertNull(row.getContentDescExtra());
+        assertEquals("the video itself keeps its lines", "[\"Hola\",\"#gatos\"]", video.getContentDesc());
+        assertEquals(Collections.singletonList("line 2 span over #gatos"), video.getContentDescExtra());
+
+        Settings.CAPTION_OPENS_COMMENTS.save(false);
+        Video untranslated = new Video("aCaptionWithLineBreaksKeepsItsLinesUntranslated", "Hola\n#gatos", new ArrayList<>());
+        untranslated.contentDesc = "[\"Hola\",\"#gatos\"]";
+        assertSame("a row that isn't translated keeps everything", untranslated, CaptionTranslation.captionAweme(untranslated));
     }
 
     private static TextExtraStruct tag(String id, String name) {

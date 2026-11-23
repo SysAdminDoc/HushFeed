@@ -105,6 +105,10 @@ public final class CaptionTranslation {
             Aweme copy = ((Aweme) aweme).clone();
             copy.setDesc(translation.text);
             copy.setTextExtra(new ArrayList<>(translation.spans));
+            // A caption with line breaks also comes as its lines, and the row shows those once
+            // it's expanded, so the copy drops them and expands into the translation instead.
+            copy.setContentDesc(null);
+            copy.setContentDescExtra(null);
             HookStatus.bound(CaptionComments.FAMILY, "caption row translated");
             return copy;
         } catch (RuntimeException | LinkageError failure) {

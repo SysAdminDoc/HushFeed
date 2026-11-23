@@ -79,3 +79,15 @@ internal object FeedPagerPageSelectedFingerprint : Fingerprint(
     parameters = listOf("I", "Z"),
     strings = listOf("VerticalViewPagercheckMultiInvokePageSelected>>>pos:"),
 )
+
+/**
+ * The feed panel acting on a single tap: TikTok's tap timer posts message 0 after the double-tap
+ * timeout and this pauses or plays the video (#501). Its own log line names it.
+ */
+internal object FeedTapMessageFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/panel/BaseListFragmentPanel;",
+    name = "handleMsg",
+    returnType = "V",
+    parameters = listOf("Landroid/os/Message;"),
+    strings = listOf("try resume play or try pause play for tap"),
+)

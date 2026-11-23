@@ -7,7 +7,9 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -321,25 +323,49 @@ public final class CaptionLine {
         }
     }
 
+    /** The shadow the line's own shadow switch draws: black at 70%, a little below the letters. */
+    static final int SHADOW_COLOR = 0xB3000000;
+    static final float SHADOW_RADIUS_DP = 3f;
+    static final float SHADOW_DY_DP = 1f;
+
     /**
      * Sized like the post time it carries, so it reads as TikTok's own small print, and white
-     * like the name above it rather than the post time's grey (#498).
+     * like the name above it rather than the post time's grey (#498). Its own size, opacity and
+     * shadow settings win over both (#500): a long exact date at the name's size crowds the
+     * caption, and a faint one disappears on a bright video.
      */
     private static void style(Line line, TextView source, TextView colorOf) {
-        if (line.getCurrentTextColor() != colorOf.getCurrentTextColor()) {
-            line.setTextColor(colorOf.getCurrentTextColor());
+        int opacity = Math.max(10, Math.min(100, Settings.COUNTRY_DATE_OPACITY.get()));
+        int base = colorOf.getCurrentTextColor();
+        int color = (Math.round(Color.alpha(base) * opacity / 100f) << 24) | (base & 0x00FFFFFF);
+        if (line.getCurrentTextColor() != color) {
+            line.setTextColor(color);
         }
-        if (source == null) return;
-        if (line.getTextSize() != source.getTextSize()) {
+        DisplayMetrics metrics = line.getResources().getDisplayMetrics();
+        int points = Settings.COUNTRY_DATE_TEXT_SIZE.get();
+        if (points > 0) {
+            int size = FeedTextSize.clampSize(points);
+            if (line.getTextSize() != TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, metrics)) {
+                line.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+            }
+        } else if (source != null && line.getTextSize() != source.getTextSize()) {
             line.setTextSize(TypedValue.COMPLEX_UNIT_PX, source.getTextSize());
         }
-        if (line.getTypeface() != source.getTypeface()) {
+        if (source != null && line.getTypeface() != source.getTypeface()) {
             line.setTypeface(source.getTypeface());
         }
-        if (line.getShadowRadius() != source.getShadowRadius() || line.getShadowDx() != source.getShadowDx()
-                || line.getShadowDy() != source.getShadowDy() || line.getShadowColor() != source.getShadowColor()) {
-            line.setShadowLayer(source.getShadowRadius(), source.getShadowDx(), source.getShadowDy(),
-                    source.getShadowColor());
+        if (Settings.COUNTRY_DATE_SHADOW.get()) {
+            shadow(line, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHADOW_RADIUS_DP, metrics), 0f,
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHADOW_DY_DP, metrics), SHADOW_COLOR);
+        } else if (source != null) {
+            shadow(line, source.getShadowRadius(), source.getShadowDx(), source.getShadowDy(), source.getShadowColor());
+        }
+    }
+
+    private static void shadow(TextView line, float radius, float dx, float dy, int color) {
+        if (line.getShadowRadius() != radius || line.getShadowDx() != dx
+                || line.getShadowDy() != dy || line.getShadowColor() != color) {
+            line.setShadowLayer(radius, dx, dy, color);
         }
     }
 

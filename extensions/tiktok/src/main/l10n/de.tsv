@@ -6,7 +6,6 @@ Burn-in guard	Einbrennschutz
 Couldn't add the caption. Saving without it.	Beschreibung fehlt. Video wird ohne gespeichert.
 Dim when idle	Bei Inaktivität abdunkeln
 Dim when idle and shift	Bei Inaktivität abdunkeln und verschieben
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Für OLED-Bildschirme. Nach 5 Sekunden ohne Berührung werden die Schaltflächen, die Beschreibung und die Tabs über dem Video auf ein Viertel abgedunkelt, und deine nächste Berührung holt sie zurück. Verschieben bewegt außerdem alles im Feed alle 2 Minuten um ein paar Pixel.
 Hashtags	Hashtags
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Durch den Import ist das Rückgängigmachen des früheren Löschens beendet. Du kannst den importierten Verlauf löschen.
 %1$d setting in that file can't be restored here and was skipped	%1$d Einstellung in der Datei kann hier nicht wiederhergestellt werden und wurde übersprungen
@@ -3190,3 +3189,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	Werbewörter
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Trenne Wörter oder Ausdrücke mit Kommas, etwa casino, promo code. Groß- und Kleinschreibung spielt keine Rolle, und "a" & "b" oder "a" !& "b" funktionieren wie bei Gesperrte Wörter in Beschreibungen.
 Skipped a promo line	Werbezeile übersprungen
+Country and date text size	Textgröße für Land und Datum
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	Nutze 0, um die Größe des Beitragsdatums zu übernehmen, oder %1$d bis %2$d. Ändert nur die Zeile unter der Beschreibung und behält die Schriftskalierung von Android bei.
+Post date's size	Größe des Beitragsdatums
+Country and date opacity	Deckkraft von Land und Datum
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	Wie deckend die Zeile unter der Beschreibung gezeichnet wird, von 10 bis 100. Weniger lässt mehr vom Video durchscheinen.
+Shadow under the country and date	Schatten unter Land und Datum
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	Zeichnet einen dunklen Schatten unter die Buchstaben der Zeile, damit sie auf hellen Videos lesbar bleibt.
+Tap brings the controls back	Tippen holt die Steuerung zurück
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	Ein Tippen zeigt die ausgeblendete Steuerung wieder an, statt das Video zu pausieren. Sie verschwindet nach der Verzögerung wieder, oder nach %1$d Sekunden, wenn die Verzögerung kürzer ist.
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Für OLED-Bildschirme. Nach 5 Sekunden ohne Berührung werden die Schaltflächen, die Beschreibung und die Tabs über dem Video auf die Stufe darunter abgedunkelt, und deine nächste Berührung holt sie zurück. Verschieben bewegt außerdem alles im Feed alle 2 Minuten um ein paar Pixel.
+Burn-in guard dim level	Abdunkelungsstufe des Einbrennschutzes
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Wie deckend Schaltflächen, Beschreibung und Tabs im abgedunkelten Zustand sind, von %1$d bis %2$d. Weniger dunkelt sie stärker ab.

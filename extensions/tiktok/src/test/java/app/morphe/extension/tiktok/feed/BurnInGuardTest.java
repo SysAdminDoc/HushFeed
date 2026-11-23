@@ -66,6 +66,7 @@ public class BurnInGuardTest {
         clear(false);
         Settings.CLEAR_DISPLAY.save(false);
         Settings.BURN_IN_GUARD.resetToDefault();
+        Settings.BURN_IN_GUARD_LEVEL.resetToDefault();
         Settings.FADE_CONTROLS_OPACITY.save(100);
         SettingsStatus.videoOverlaysEnabled = overlays;
         BurnInGuard.resetForTests();
@@ -148,6 +149,32 @@ public class BurnInGuardTest {
                     SystemClock.uptimeMillis() + BurnInGuard.IDLE_AFTER_MS, BurnInGuard.nextPassAtForTests());
             after(BurnInGuard.IDLE_AFTER_MS);
             assertEquals("5 s after the lift it dims", DIMMED, column.getAlpha(), 0.0001f);
+        }
+    }
+
+    /** #501: Burn-in guard dim level sets how solid the dimmed controls are, held to 0..90. */
+    @Test
+    public void theDimLevelSettingSetsHowFarTheControlsDim() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            Settings.BURN_IN_GUARD.save(BurnInGuard.DIM);
+            Settings.BURN_IN_GUARD_LEVEL.save(10);
+            VideoOverlayHider.applyTo(activity);
+            after(BurnInGuard.IDLE_AFTER_MS);
+            assertEquals("dimmed to the chosen 10%", 0.10f, column.getAlpha(), 0.0001f);
+
+            touch();
+            assertEquals("a touch brings them back", 1f, column.getAlpha(), 0f);
+            Settings.BURN_IN_GUARD_LEVEL.save(0);
+            after(BurnInGuard.IDLE_AFTER_MS);
+            // 0 takes the column away the way a fade of 0 does, so no invisible button takes a tap.
+            assertEquals("0 hides them until the next touch", View.GONE, column.getVisibility());
+
+            touch();
+            assertEquals("the touch brings them back", View.VISIBLE, column.getVisibility());
+            Settings.BURN_IN_GUARD_LEVEL.save(95);
+            after(BurnInGuard.IDLE_AFTER_MS);
+            assertEquals("held to 90", BurnInGuard.MAX_IDLE_LEVEL / 100f, column.getAlpha(), 0.0001f);
         }
     }
 

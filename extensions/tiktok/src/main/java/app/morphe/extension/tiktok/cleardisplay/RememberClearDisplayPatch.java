@@ -391,6 +391,15 @@ public final class RememberClearDisplayPatch {
             if (manuallyChanged && starting) setCarrying(false);
             return;
         }
+        armAutomaticClear(id, stillCurrent, event, awaitingNative ? 0 : automaticDelay());
+    }
+
+    private static long automaticDelay() {
+        return Math.max(0, Math.min(30000, Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get()));
+    }
+
+    /** The automatic clear of video {@code id}, {@code delay} from now unless something comes first. */
+    private static void armAutomaticClear(String id, Condition stillCurrent, ClearEvent event, long delay) {
         long attempt = generation;
         pending = () -> {
             if (attempt != generation) return;
@@ -411,9 +420,37 @@ public final class RememberClearDisplayPatch {
                 Logger.printDebug(() -> "Clear display: automatic clear skipped, the video or its window isn't current");
             }
         };
-        MAIN.postDelayed(pending, awaitingNative ? 0
-                : Math.max(0, Math.min(30000, Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get())));
+        MAIN.postDelayed(pending, delay);
     }
+
+    /** The least time controls a tap brought back stay up, whatever the delay (#501). */
+    public static final long TAP_SHOW_MS = 3000;
+
+    /**
+     * A single tap on a feed video, as TikTok's panel is about to pause or play it ({@code what}
+     * 0, BaseListFragmentPanel.handleMsg). With Tap brings the controls back on, a tap on a video
+     * whose controls the automatic clear hid brings them back instead of pausing it, and the
+     * automatic clear hides them again after its delay, or {@link #TAP_SHOW_MS} if that's longer
+     * (#501). True when the tap was taken, so TikTok leaves the video playing. A clear made by
+     * hand, or with Hushfeed paused, is left to TikTok's tap.
+     */
+    public static boolean onFeedTap(int what) {
+        if (what != 0 || !Settings.AUTOMATIC_CLEAR_DISPLAY.get() || !Settings.TAP_SHOWS_CLEARED_CONTROLS.get()
+                || Setting.isPaused() || !clearNow || !automaticHidden) return false;
+        String id = currentId;
+        Condition stillCurrent = activeCondition;
+        if (id == null || stillCurrent == null || !id.equals(activeId)) return false;
+        cancel();
+        emit(tapEvent, false);
+        applied = false;
+        setCarrying(false);
+        Logger.printDebug(() -> "Clear display: a tap brought the controls back");
+        armAutomaticClear(id, stillCurrent, tapEvent, Math.max(TAP_SHOW_MS, automaticDelay()));
+        return true;
+    }
+
+    /** Where a tap's change is posted; a test stands in its own. */
+    static ClearEvent tapEvent = RememberClearDisplayPatch::postClear;
 
     /**
      * The daily hold went up over a cleared screen. Its panel says messages, profiles and search
@@ -474,6 +511,7 @@ public final class RememberClearDisplayPatch {
         nativeCondition = null;
         progressQueued.set(false);
         readerPost = RememberClearDisplayPatch::postAsReader;
+        tapEvent = RememberClearDisplayPatch::postClear;
     }
 
     /** Whether the controls are hidden right now, automatically or by the user. */

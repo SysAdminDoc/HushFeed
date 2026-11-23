@@ -82,6 +82,61 @@ public class AutomaticClearDisplayTest {
         }
     }
 
+    /**
+     * #501: with Tap brings the controls back on, a tap on a video the automatic clear hid the
+     * controls of brings them back and keeps TikTok from pausing it, and they hide again after
+     * the delay or TAP_SHOW_MS, whichever is longer. Any other message, the switch off, or a
+     * clear made by hand leaves the tap to TikTok.
+     */
+    @Test public void aTapBringsTheAutomaticallyHiddenControlsBackForAWhile() {
+        Settings.TAP_SHOWS_CLEARED_CONTROLS.save(true);
+        try {
+            List<Boolean> events = new ArrayList<>();
+            List<Boolean> taps = new ArrayList<>();
+            RememberClearDisplayPatch.tapEvent = taps::add;
+            assertFalse("a tap before any clear was taken", RememberClearDisplayPatch.onFeedTap(0));
+
+            RememberClearDisplayPatch.firstFrame("tapped", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1000));
+            assertTrue("the fixture never cleared", RememberClearDisplayPatch.isClearDisplayNow());
+
+            assertFalse("another panel message was taken", RememberClearDisplayPatch.onFeedTap(1));
+            assertTrue("the tap was left to TikTok's pause", RememberClearDisplayPatch.onFeedTap(0));
+            assertEquals(List.of(false), taps);
+            assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+            assertFalse("a second tap on shown controls was taken", RememberClearDisplayPatch.onFeedTap(0));
+
+            // The delay is one second, so the controls stay for TAP_SHOW_MS.
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(
+                    Duration.ofMillis(RememberClearDisplayPatch.TAP_SHOW_MS - 100));
+            assertEquals("the controls hid again before TAP_SHOW_MS", List.of(false), taps);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200));
+            assertEquals(List.of(false, true), taps);
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+
+            // A longer delay wins over TAP_SHOW_MS.
+            Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(5000);
+            assertTrue(RememberClearDisplayPatch.onFeedTap(0));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(4900));
+            assertEquals(List.of(false, true, false), taps);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200));
+            assertEquals(List.of(false, true, false, true), taps);
+
+            Settings.TAP_SHOWS_CLEARED_CONTROLS.save(false);
+            assertFalse("the tap was taken with the switch off", RememberClearDisplayPatch.onFeedTap(0));
+            Settings.TAP_SHOWS_CLEARED_CONTROLS.save(true);
+
+            // TikTok's own change makes the state the reader's, so their tap pauses as before.
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 0));
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(true, 0));
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+            assertFalse("a tap on a clear made by hand was taken", RememberClearDisplayPatch.onFeedTap(0));
+            assertEquals(List.of(false, true, false, true), taps);
+        } finally {
+            Settings.TAP_SHOWS_CLEARED_CONTROLS.resetToDefault();
+        }
+    }
+
     /** The feed lock covers the feed like the hold does, and needs the tabs just as much. */
     @Test public void theFeedLockStopsClearDisplayFromClearingTheFeedItCovers() {
         SettingsStatus.blockAuthorEnabled = true;
@@ -1587,7 +1642,8 @@ public class AutomaticClearDisplayTest {
             int heading = titles.indexOf("Clear display");
             assertTrue(titles.toString(), heading >= 0);
             assertEquals(List.of("Clear display", "Automatic Clear display", "Clear display delay",
-                    "Hide the Clear display controls"), titles.subList(heading, heading + 4));
+                    "Tap brings the controls back", "Hide the Clear display controls"),
+                    titles.subList(heading, heading + 5));
             assertEquals(1, titles.stream().filter("Hide the Clear display controls"::equals).count());
 
             // The row belongs to the overlay patch, so a bundle without the automatic one still

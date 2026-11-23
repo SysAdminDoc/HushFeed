@@ -12,6 +12,9 @@ Every Hushfeed release, newest first.
 * `Show exact LIVE battle scores` shows a battle's whole score where TikTok caps it for viewers at 1M+ (or at the server's own limit with a + after it) and only the host sees the number. It covers the battle bar, the co-host windows and the high score notice. The supporters list is a page TikTok's server draws, so it isn't covered. It starts off (#495).
 * `Start LIVEs at` is new under `Offer LIVE quality in more rooms`. Pick a quality there and every LIVE room opens at it until you pick another one in a room, and that pick then carries to the next rooms until TikTok closes. A room whose stream doesn't have the quality opens at TikTok's choice. It starts at `The quality you picked last`, which is how rooms opened before (#57).
 * `Skip promo lines` is new under Feed filter, with its own `Promo words` list. When a line of a video's captions has one of your words, like casino or promo code, the video jumps past it and shows Undo, which goes back and lets that part play. It reads the video's own captions, so a video without any plays as usual. It's part of Subtitle tools and starts off (#493).
+* `Show the country and date under the caption` has three settings of its own under Feed screen now: a text size (0 keeps the post date's size, or pick 8 to 48 points), an opacity from 10 to 100, and a shadow under the letters for bright videos (#500).
+* `Tap brings the controls back` is new under `Automatic Clear display`. A tap on a video whose controls it hid shows them again instead of pausing the video, and they hide again after the delay, or after 3 seconds if the delay is shorter (#501).
+* `Burn-in guard dim level` sets how solid the buttons, caption and tabs stay while the burn-in guard has them dimmed, from 0 to 90. It used to be fixed at 25. At 0 they're gone until your next touch (#501).
 
 ### Bug Fixes
 

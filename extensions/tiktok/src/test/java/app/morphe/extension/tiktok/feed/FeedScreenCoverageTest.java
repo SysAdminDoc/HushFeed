@@ -202,6 +202,10 @@ public class FeedScreenCoverageTest {
         put("region_as_flag", YES, YES, NONE);
         // The same row's country and date, moved under the caption beside it (#410).
         put("country_date_under_caption", YES, YES, NONE);
+        // How that line looks, so it reaches where the line does (#500).
+        put("country_date_text_size", YES, YES, NONE);
+        put("country_date_opacity", YES, YES, NONE);
+        put("country_date_shadow", YES, YES, NONE);
         put("show_author_handle", YES, YES, NONE);
         put("show_engagement_rate", YES, YES, NONE);
         put("hide_feed_caption", YES, YES, NONE);
@@ -279,6 +283,9 @@ public class FeedScreenCoverageTest {
         // Clear display follows TikTok's own mode in either window (#84).
         put("automatic_clear_display", YES, YES, NONE);
         put("automatic_clear_display_delay", YES, YES, NONE);
+        // The tap comes through the list panel's message handler, which the opened post's panel
+        // inherits (#501).
+        put("tap_shows_cleared_controls", YES, YES, NONE);
         put("remember_clear_display_on_scroll", YES, YES, NONE);
         put("hide_clear_display_controls", YES, YES, NONE);
         put("keep_clear_display_seek_bar", YES, YES, NONE);
@@ -317,6 +324,7 @@ public class FeedScreenCoverageTest {
         put("status_bar_shade", YES, YES, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
         put("burn_in_guard", YES, YES, NONE);
+        put("burn_in_guard_level", YES, YES, NONE);
 
         // Gestures.
         put("swipe_levels", YES, YES, NONE);

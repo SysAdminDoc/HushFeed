@@ -10,6 +10,9 @@ import app.morphe.patcher.patch.mutableClassDefByOrNull
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsWithLabels
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -153,6 +156,9 @@ val rememberClearDisplayPatch = bytecodePatch(
             "invoke-static/range { p0 .. p0 }, $EXTENSION->onFirstFrame(Ljava/lang/Object;)V")
         PlayerProgressAidFingerprint.method.addInstruction(0,
             "invoke-static/range { p0 .. p1 }, $EXTENSION->onPlaybackProgress(Ljava/lang/Object;Ljava/lang/String;)V")
+        // #501: with Tap brings the controls back on, a tap on a video the automatic clear hid the
+        // controls of brings them back, and TikTok's pause for that tap is skipped.
+        FeedTapMessageFingerprint.method.hookFeedTap()
         // A new video picked as a swipe lets go: with Keep Clear display across videos off, a
         // clear by hand ends there instead of after that video has settled (#232).
         val pageSelected = if (packageMetadata.versionName in declaredVersions()) FeedPagerPageSelectedFingerprint.method
@@ -180,4 +186,19 @@ val rememberClearDisplayPatch = bytecodePatch(
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAutomaticClearDisplay()V")
     }
+}
+
+/**
+ * Asks the extension about the panel's message before TikTok reads it, and returns when the tap
+ * was taken. The message is read into v0, which the method's own first instruction writes too.
+ */
+internal fun MutableMethod.hookFeedTap() {
+    addInstructionsWithLabels(0, """
+        move-object/from16 v0, p1
+        iget v0, v0, Landroid/os/Message;->what:I
+        invoke-static { v0 }, $EXTENSION->onFeedTap(I)Z
+        move-result v0
+        if-eqz v0, :tiktok_tap
+        return-void
+    """, ExternalLabel("tiktok_tap", getInstruction(0)))
 }

@@ -6,7 +6,6 @@ Burn-in guard	حماية من الاحتراق
 Couldn't add the caption. Saving without it.	تعذرت إضافة الوصف. سيتم الحفظ بدونه.
 Dim when idle	تعتيم عند الخمول
 Dim when idle and shift	تعتيم عند الخمول والإزاحة
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	لشاشات OLED. بعد 5 ثوان بدون لمس، تخفت الأزرار والتسمية والتبويبات فوق الفيديو إلى الربع، وتعيدها لمستك التالية. كما تحرك الإزاحة كل شيء في الخلاصة بضعة بكسلات كل دقيقتين.
 Hashtags	علامات الهاشتاج
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	استيراد سجل جديد أنهى إمكانية التراجع عن المسح السابق. يمكنك مسح السجل المستورد.
 %1$d setting in that file can't be restored here and was skipped	%1$d إعداد في هذا الملف لا يمكن استعادته هنا وتم تخطيه
@@ -3458,3 +3457,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	كلمات الترويج
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	افصل الكلمات أو العبارات بفواصل، مثل casino, promo code. لا تهم الأحرف الكبيرة، و"a" & "b" أو "a" !& "b" تعمل كما تعمل في كلمات الوصف المحظورة.
 Skipped a promo line	تم تخطي سطر ترويجي
+Country and date text size	حجم نص البلد والتاريخ
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	استخدم 0 ليطابق حجم تاريخ المنشور، أو من %1$d إلى %2$d. يغيّر حجم السطر تحت الوصف فقط ويحافظ على تكبير الخط في Android.
+Post date's size	حجم تاريخ المنشور
+Country and date opacity	عتامة البلد والتاريخ
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	مدى وضوح السطر تحت الوصف، من 10 إلى 100. القيمة الأقل تُظهر المزيد من الفيديو خلفه.
+Shadow under the country and date	ظل تحت البلد والتاريخ
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	يرسم ظلا داكنا تحت حروف السطر ليبقى مقروءا على مقاطع الفيديو الساطعة.
+Tap brings the controls back	النقر يعيد عناصر التحكم
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	النقرة تُظهر عناصر التحكم المخفية مجددا بدلا من إيقاف الفيديو مؤقتا. تختفي مرة أخرى بعد التأخير، أو بعد %1$d ثوان إذا كان التأخير أقصر.
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	لشاشات OLED. بعد 5 ثوان بدون لمس، تخفت الأزرار والتسمية والتبويبات فوق الفيديو إلى المستوى أدناه، وتعيدها لمستك التالية. كما تحرك الإزاحة كل شيء في الخلاصة بضعة بكسلات كل دقيقتين.
+Burn-in guard dim level	مستوى تعتيم الحماية من الاحتراق
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	مدى وضوح الأزرار والتسمية والتبويبات أثناء التعتيم، من %1$d إلى %2$d. القيمة الأقل تعتّمها أكثر.

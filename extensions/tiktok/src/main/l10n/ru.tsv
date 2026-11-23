@@ -6,7 +6,6 @@ Burn-in guard	Защита от выгорания экрана
 Couldn't add the caption. Saving without it.	Описание не добавлено. Сохраняется без него.
 Dim when idle	Затемнять при бездействии
 Dim when idle and shift	Затемнять при бездействии и сдвигать
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Для OLED-экранов. Через 5 секунд без касаний кнопки, подпись и вкладки поверх видео затемняются до четверти, а следующее касание возвращает их. Сдвиг также смещает всё в ленте на несколько пикселей каждые 2 минуты.
 Hashtags	Хештеги
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	После импорта новой истории нельзя отменить предыдущую очистку. Вы можете очистить импортированную историю.
 %1$d setting in that file can't be restored here and was skipped	%1$d настройку из файла нельзя восстановить здесь, и она пропущена
@@ -3388,3 +3387,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	Рекламные слова
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Разделяйте слова или фразы запятыми, например casino, promo code. Регистр не важен, а "a" & "b" или "a" !& "b" работают так же, как в Заблокированные слова в подписях.
 Skipped a promo line	Рекламная строка пропущена
+Country and date text size	Размер текста страны и даты
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	Укажите 0, чтобы размер совпадал с датой публикации, или от %1$d до %2$d. Меняет только строку под описанием и сохраняет масштаб шрифта Android.
+Post date's size	Размер даты публикации
+Country and date opacity	Непрозрачность страны и даты
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	Насколько плотно рисуется строка под описанием, от 10 до 100. Меньшее значение пропускает больше видео.
+Shadow under the country and date	Тень под страной и датой
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	Рисует тёмную тень под буквами строки, чтобы её было видно на светлых видео.
+Tap brings the controls back	Касание возвращает кнопки
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	Касание снова показывает скрытые кнопки вместо паузы видео. Они снова скрываются после задержки или через %1$d сек., если задержка короче.
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Для OLED-экранов. Через 5 секунд без касаний кнопки, подпись и вкладки поверх видео затемняются до уровня ниже, а следующее касание возвращает их. Сдвиг также смещает всё в ленте на несколько пикселей каждые 2 минуты.
+Burn-in guard dim level	Уровень затемнения защиты от выгорания
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Насколько плотными остаются кнопки, подпись и вкладки при затемнении, от %1$d до %2$d. Меньшее значение затемняет сильнее.

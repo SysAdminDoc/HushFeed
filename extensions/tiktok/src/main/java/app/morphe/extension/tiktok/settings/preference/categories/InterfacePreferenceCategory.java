@@ -13,6 +13,7 @@ import java.util.List;
 
 import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.tiktok.captions.CaptionStyle;
+import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.feed.BurnInGuard;
 import app.morphe.extension.tiktok.feed.FeedTextSize;
 import app.morphe.extension.tiktok.feed.GridSort;
@@ -475,6 +476,26 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Moves the country and the post date off the creator's row onto a line of their own below the caption.",
                     Settings.COUNTRY_DATE_UNDER_CAPTION
             ));
+            NumberInputPreference countryDateSize = new NumberInputPreference(context, "Country and date text size",
+                    L10n.f(context, "Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.",
+                            FeedTextSize.MIN_TEXT_SIZE, FeedTextSize.MAX_TEXT_SIZE),
+                    Settings.COUNTRY_DATE_TEXT_SIZE, "%1$s point", "%1$s points") {
+                @Override protected int clamp(int value) { return FeedTextSize.clampSize(value); }
+            };
+            countryDateSize.zeroMeans("Post date's size");
+            addPreference(countryDateSize);
+            addPreference(new NumberInputPreference(
+                    context,
+                    "Country and date opacity",
+                    "How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.",
+                    Settings.COUNTRY_DATE_OPACITY, "%1$s%%"
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Shadow under the country and date",
+                    "Draws a dark shadow under the line's letters so it stays readable on bright videos.",
+                    Settings.COUNTRY_DATE_SHADOW
+            ));
             addPreference(new TogglePreference(
                     context,
                     "Show the handle instead of the name",
@@ -851,6 +872,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "%1$s millisecond", "%1$s milliseconds");
             delay.zeroMeans("No delay");
             addPreference(delay);
+            addPreference(new TogglePreference(context, "Tap brings the controls back",
+                    L10n.f(context, "A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.",
+                            (int) (RememberClearDisplayPatch.TAP_SHOW_MS / 1000)),
+                    Settings.TAP_SHOWS_CLEARED_CONTROLS));
         }
         // Beside the automatic switch rather than at the end of Around the video, where the #84
         // reporter couldn't find it. It belongs to the overlay patch, so it shows without the
@@ -1002,7 +1027,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new ChoicePreference(context, "Burn-in guard", Settings.BURN_IN_GUARD,
                     new String[]{"Off", "Dim when idle", "Dim when idle and shift"},
                     new String[]{BurnInGuard.OFF, BurnInGuard.DIM, BurnInGuard.DIM_AND_SHIFT})
-                    .withNote("For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."));
+                    .withNote("For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."));
+            addPreference(new NumberInputPreference(context, "Burn-in guard dim level",
+                    L10n.f(context, "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.",
+                            BurnInGuard.MIN_IDLE_LEVEL, BurnInGuard.MAX_IDLE_LEVEL),
+                    Settings.BURN_IN_GUARD_LEVEL, "%1$s%%"));
         }
     }
 

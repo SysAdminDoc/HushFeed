@@ -194,11 +194,41 @@ public class CaptionLineTest {
         AuthorRegion.restore();
         CaptionLine.setCaptionId(0);
         Settings.COUNTRY_DATE_UNDER_CAPTION.resetToDefault();
+        Settings.COUNTRY_DATE_TEXT_SIZE.resetToDefault();
+        Settings.COUNTRY_DATE_OPACITY.resetToDefault();
+        Settings.COUNTRY_DATE_SHADOW.resetToDefault();
         Settings.SHOW_AUTHOR_REGION.resetToDefault();
         Settings.REGION_AS_FLAG.resetToDefault();
         Settings.SHOW_AUTHOR_HANDLE.resetToDefault();
         SettingsStatus.authorRegionEnabled = regionPatched;
         Locale.setDefault(locale);
+    }
+
+    /** #500: the line's own size, opacity and shadow win over what it copies, and off puts that back. */
+    @Test
+    public void theLinesOwnSizeOpacityAndShadowWinOverWhatItCopies() {
+        Cell cell = new Cell(context, "jasonthegreat", true);
+        cell.postTime.setShadowLayer(1f, 0f, 0f, 0x22000000);
+        Settings.COUNTRY_DATE_TEXT_SIZE.save(11);
+        Settings.COUNTRY_DATE_OPACITY.save(85);
+        Settings.COUNTRY_DATE_SHADOW.save(true);
+
+        CaptionLine.show(cell.name, cell.root, "United States");
+        TextView line = cell.line();
+        float density = context.getResources().getDisplayMetrics().scaledDensity;
+        assertEquals("11 points, whatever the post time's size", 11 * density, line.getTextSize(), 0.01f);
+        assertEquals("the name's white at 85%", 0xD9FFFFFF, line.getCurrentTextColor());
+        assertEquals("a dark shadow at 70%", 0xB3000000, line.getShadowColor());
+        assertTrue("the shadow is the line's own", line.getShadowRadius() > 1f);
+
+        Settings.COUNTRY_DATE_TEXT_SIZE.save(0);
+        Settings.COUNTRY_DATE_OPACITY.save(100);
+        Settings.COUNTRY_DATE_SHADOW.save(false);
+        CaptionLine.show(cell.name, cell.root, "United States");
+        assertEquals("back to the post time's size", 13f, line.getTextSize(), 0f);
+        assertEquals(NAME_COLOR, line.getCurrentTextColor());
+        assertEquals("and the post time's shadow", 0x22000000, line.getShadowColor());
+        assertEquals(1f, line.getShadowRadius(), 0f);
     }
 
     @Test

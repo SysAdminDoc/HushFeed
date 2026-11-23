@@ -159,6 +159,9 @@ public class Settings extends BaseSettings {
     public static final IntegerSetting AUTOMATIC_CLEAR_DISPLAY_DELAY =
             new IntegerSetting("automatic_clear_display_delay", 1000, false,
                     Setting.parent(AUTOMATIC_CLEAR_DISPLAY)).withRange(0, 30000);
+    /** A tap on a video the automatic clear hid the controls of brings them back instead of pausing (#501). */
+    public static final BooleanSetting TAP_SHOWS_CLEARED_CONTROLS = new BooleanSetting("tap_shows_cleared_controls",
+            FALSE, false, Setting.parent(AUTOMATIC_CLEAR_DISPLAY));
     public static final StringSetting PLAYBACK_QUALITY = new StringSetting("playback_quality", "auto");
     public static final StringSetting PLAYBACK_QUALITY_METERED = new StringSetting("playback_quality_metered", "off");
     /** The heaviest video to play, in Mb/s, or "off" (#454). */
@@ -1441,6 +1444,8 @@ public class Settings extends BaseSettings {
      * couple of dp every two minutes. Over the feed and an opened video only.
      */
     public static final StringSetting BURN_IN_GUARD = new StringSetting("burn_in_guard", "off");
+    /** The level, in percent, Burn-in guard dims the controls to (#501). */
+    public static final IntegerSetting BURN_IN_GUARD_LEVEL = new IntegerSetting("burn_in_guard_level", 25).withRange(0, 90);
     public static final BooleanSetting HIDE_SHARE_GUIDE = new BooleanSetting("hide_share_guide", FALSE);
     public static final BooleanSetting HIDE_RAIL_FOLLOW = new BooleanSetting("hide_rail_follow", FALSE);
     public static final BooleanSetting HIDE_RAIL_LIKE = new BooleanSetting("hide_rail_like", FALSE);
@@ -1474,6 +1479,15 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting REGION_AS_FLAG = new BooleanSetting("region_as_flag", FALSE);
     /** The country and the post time on a line of their own under the caption, off the creator's row (#410). */
     public static final BooleanSetting COUNTRY_DATE_UNDER_CAPTION = new BooleanSetting("country_date_under_caption", FALSE);
+    /** That line's own text size in points; 0 keeps the size of the post time it carries (#500). */
+    public static final IntegerSetting COUNTRY_DATE_TEXT_SIZE = new IntegerSetting("country_date_text_size", 0,
+            Setting.parent(COUNTRY_DATE_UNDER_CAPTION)).withRange(0, 48);
+    /** How solid that line is drawn, as a percentage of the name's color (#500). */
+    public static final IntegerSetting COUNTRY_DATE_OPACITY = new IntegerSetting("country_date_opacity", 100,
+            Setting.parent(COUNTRY_DATE_UNDER_CAPTION)).withRange(10, 100);
+    /** A dark shadow under that line's letters, so it reads on a bright video (#500). */
+    public static final BooleanSetting COUNTRY_DATE_SHADOW = new BooleanSetting("country_date_shadow", FALSE,
+            Setting.parent(COUNTRY_DATE_UNDER_CAPTION));
     public static final BooleanSetting SHOW_AUTHOR_HANDLE = new BooleanSetting("show_author_handle", FALSE);
     public static final BooleanSetting SHOW_ENGAGEMENT_RATE = new BooleanSetting("show_engagement_rate", FALSE);
     public static final BooleanSetting BLOCK_AUTHOR_BUTTON =

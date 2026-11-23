@@ -6,7 +6,6 @@ Burn-in guard	Ekran yanmasından qoruma
 Couldn't add the caption. Saving without it.	Açıqlama əlavə olunmadı. Onsuz saxlanılır.
 Dim when idle	Toxunulmayanda solğunlaşdır
 Dim when idle and shift	Toxunulmayanda solğunlaşdır və sürüşdür
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	OLED ekranlar üçün. 5 saniyə toxunulmadıqda videonun üzərindəki düymələr, başlıq və tablar dörddə birə qədər solğunlaşır, növbəti toxunuşunuz onları geri qaytarır. Sürüşdürmə həmçinin lentdəki hər şeyi hər 2 dəqiqədən bir bir neçə piksel tərpədir.
 Hashtags	Heşteqlər
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Yeni tarixçənin idxalı əvvəlki təmizləməni geri qaytarmaq imkanını bitirdi. İdxal olunmuş tarixçəni təmizləyə bilərsiniz.
 %1$d setting in that file can't be restored here and was skipped	Bu fayldakı %1$d ayar burada bərpa edilə bilmir və ötürüldü
@@ -3187,3 +3186,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	Reklam sözləri
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Sözləri və ya ifadələri vergüllə ayırın, məsələn casino, promo code. Böyük hərflərin fərqi yoxdur, "a" & "b" və ya "a" !& "b" isə Bloklanmış başlıq sözlərindəki kimi işləyir.
 Skipped a promo line	Reklam sətri keçildi
+Country and date text size	Ölkə və tarix mətn ölçüsü
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	Paylaşım tarixinin ölçüsünə uyğunlaşdırmaq üçün 0, ya da %1$d ilə %2$d arası istifadə edin. Yalnız başlığın altındakı sətrin ölçüsünü dəyişir və Android-in şrift miqyasını saxlayır.
+Post date's size	Paylaşım tarixinin ölçüsü
+Country and date opacity	Ölkə və tarixin qeyri-şəffaflığı
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	Başlığın altındakı sətrin nə qədər tutqun çəkildiyi, 10-dan 100-ə qədər. Aşağı dəyər videonun daha çox görünməsinə imkan verir.
+Shadow under the country and date	Ölkə və tarixin altında kölgə
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	Sətrin hərflərinin altına tünd kölgə çəkir ki, parlaq videolarda oxunaqlı qalsın.
+Tap brings the controls back	Toxunuş idarəetmələri geri qaytarır
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	Toxunuş videonu dayandırmaq əvəzinə gizlədilmiş idarəetmələri yenidən göstərir. Onlar gecikmədən sonra, gecikmə daha qısadırsa %1$d saniyədən sonra yenidən gizlənir.
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	OLED ekranlar üçün. 5 saniyə toxunulmadıqda videonun üzərindəki düymələr, başlıq və tablar aşağıdakı səviyyəyə qədər solğunlaşır, növbəti toxunuşunuz onları geri qaytarır. Sürüşdürmə həmçinin lentdəki hər şeyi hər 2 dəqiqədən bir bir neçə piksel tərpədir.
+Burn-in guard dim level	Ekran yanmasından qoruma solğunluq səviyyəsi
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Solğunlaşmış zaman düymələrin, başlığın və tabların nə qədər tutqun olduğu, %1$d ilə %2$d arası. Aşağı dəyər onları daha çox solğunlaşdırır.

@@ -6,7 +6,6 @@ Burn-in guard	ป้องกันภาพหน้าจอเบิร์น
 Couldn't add the caption. Saving without it.	ไม่สามารถเพิ่มคำบรรยายได้ กำลังบันทึกโดยไม่มีคำบรรยาย
 Dim when idle	หรี่แสงเมื่อไม่ได้ใช้งาน
 Dim when idle and shift	หรี่แสงเมื่อไม่ได้ใช้งานและเลื่อนตำแหน่ง
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	สำหรับหน้าจอ OLED หลังจากไม่มีการสัมผัสเป็นเวลา 5 วินาที ปุ่ม คำบรรยาย และแท็บต่างๆ บนวิดีโอจะหรี่ลงเหลือหนึ่งในสี่ และการสัมผัสครั้งต่อไปจะทำให้กลับคืนมา การเลื่อนตำแหน่งยังจะขยับทุกอย่างบนฟีดไปสองสามพิกเซลทุกๆ 2 นาที
 Hashtags	แฮชแท็ก
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	การนำเข้าประวัติใหม่ทำให้การเลิกทำสำหรับการล้างก่อนหน้านี้สิ้นสุดลง คุณสามารถล้างประวัติที่นำเข้ามาได้
 %1$d setting in that file can't be restored here and was skipped	การตั้งค่า %1$d รายการในไฟล์นั้นไม่สามารถกู้คืนที่นี่ได้และถูกข้ามไป
@@ -3190,3 +3189,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	คำโปรโมต
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	คั่นคำหรือวลีด้วยเครื่องหมายจุลภาค เช่น casino, promo code ตัวพิมพ์ใหญ่ไม่มีผล และ "a" & "b" หรือ "a" !& "b" ใช้ได้เหมือนใน คำที่ถูกบล็อกในคำบรรยาย
 Skipped a promo line	ข้ามบรรทัดโปรโมตแล้ว
+Country and date text size	ขนาดข้อความประเทศและวันที่
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	ใช้ 0 เพื่อให้เท่ากับขนาดวันที่โพสต์ หรือ %1$d ถึง %2$d ปรับขนาดเฉพาะบรรทัดใต้คำบรรยาย และยังคงการปรับขนาดแบบอักษรของ Android
+Post date's size	ขนาดวันที่โพสต์
+Country and date opacity	ความทึบของประเทศและวันที่
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	ความทึบของบรรทัดใต้คำบรรยาย ตั้งแต่ 10 ถึง 100 ค่าต่ำจะมองเห็นวิดีโอผ่านได้มากขึ้น
+Shadow under the country and date	เงาใต้ประเทศและวันที่
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	วาดเงาสีเข้มใต้ตัวอักษรของบรรทัด เพื่อให้อ่านได้ชัดบนวิดีโอที่สว่าง
+Tap brings the controls back	แตะเพื่อแสดงตัวควบคุมอีกครั้ง
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	การแตะจะแสดงตัวควบคุมที่ซ่อนอยู่อีกครั้งแทนการหยุดวิดีโอชั่วคราว ตัวควบคุมจะซ่อนอีกครั้งหลังระยะเวลาหน่วง หรือหลัง %1$d วินาทีหากระยะเวลาหน่วงสั้นกว่า
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	สำหรับหน้าจอ OLED หลังจากไม่มีการสัมผัสเป็นเวลา 5 วินาที ปุ่ม คำบรรยาย และแท็บต่างๆ บนวิดีโอจะหรี่ลงตามระดับด้านล่าง และการสัมผัสครั้งต่อไปจะทำให้กลับคืนมา การเลื่อนตำแหน่งยังจะขยับทุกอย่างบนฟีดไปสองสามพิกเซลทุกๆ 2 นาที
+Burn-in guard dim level	ระดับการหรี่ของการป้องกันภาพหน้าจอเบิร์น
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	ความทึบของปุ่ม คำบรรยาย และแท็บขณะหรี่ ตั้งแต่ %1$d ถึง %2$d ค่าต่ำจะหรี่มากขึ้น

@@ -50,8 +50,16 @@ public final class BurnInGuard {
 
     /** How long the screen goes untouched before the controls dim. */
     static final long IDLE_AFTER_MS = 5_000L;
-    /** The opacity the controls dim to, as a percentage of what TikTok draws. */
+    /** The opacity the controls dim to by default, as a percentage of what TikTok draws. */
     static final int IDLE_LEVEL = 25;
+    /** The range Burn-in guard dim level takes (#501): 0 hides the controls, 90 barely dims them. */
+    public static final int MIN_IDLE_LEVEL = 0;
+    public static final int MAX_IDLE_LEVEL = 90;
+
+    /** The level the controls dim to, as Burn-in guard dim level sets it (#501). */
+    static int idleLevel() {
+        return Math.max(MIN_IDLE_LEVEL, Math.min(MAX_IDLE_LEVEL, Settings.BURN_IN_GUARD_LEVEL.get()));
+    }
     /** How long the content stays in one place. */
     static final long SHIFT_EVERY_MS = 120_000L;
     static final float STEP_DP = 2f;
@@ -114,19 +122,21 @@ public final class BurnInGuard {
             fingerDown = false;
         }
         guarding = on;
-        boolean canDim = on && chosen > IDLE_LEVEL;
+        int idle = idleLevel();
+        boolean canDim = on && chosen > idle;
         dimmed = canDim && !fingerDown && now - touchedAt >= IDLE_AFTER_MS;
         boolean shifting = on && DIM_AND_SHIFT.equals(mode);
         place(activity, shifting, now);
         // No dim is timed while a finger is down; its lift asks for the pass that times one.
         schedule(Math.min(canDim && !dimmed && !fingerDown ? touchedAt + IDLE_AFTER_MS : Long.MAX_VALUE,
                 shifting ? (now / SHIFT_EVERY_MS + 1) * SHIFT_EVERY_MS : Long.MAX_VALUE));
-        return dimmed ? IDLE_LEVEL : chosen;
+        return dimmed ? idle : chosen;
     }
 
     /** A level of its own under the dim: lowered to the idle level, never raised to it. */
     static int drawn(int chosen) {
-        return dimmed && chosen > IDLE_LEVEL ? IDLE_LEVEL : chosen;
+        int idle = idleLevel();
+        return dimmed && chosen > idle ? idle : chosen;
     }
 
     /** The place the content is in at {@code now}, in steps of {@link #STEP_DP}. */

@@ -6,7 +6,6 @@ Burn-in guard	Protección contra el quemado de pantalla
 Couldn't add the caption. Saving without it.	No se añadió la descripción. Se guarda sin ella.
 Dim when idle	Atenuar en reposo
 Dim when idle and shift	Atenuar en reposo y desplazar
-For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Para pantallas OLED. Tras 5 segundos sin tocar, los botones, la descripción y las pestañas sobre el vídeo se atenúan a una cuarta parte, y tu siguiente toque los devuelve. Desplazar también mueve todo el feed unos píxeles cada 2 minutos.
 Hashtags	Hashtags
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Importar un historial nuevo impide deshacer el borrado anterior. Puedes borrar el historial importado.
 %1$d setting in that file can't be restored here and was skipped	%1$d ajuste del archivo no se puede restaurar aquí y se omitió
@@ -3187,3 +3186,15 @@ Skips the part of a video where a caption line has a word from Promo words, like
 Promo words	Palabras promocionales
 Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Separa palabras o frases con comas, como casino, promo code. Las mayúsculas no importan, y "a" & "b" o "a" !& "b" funcionan igual que en Palabras bloqueadas en las descripciones.
 Skipped a promo line	Se saltó una línea promocional
+Country and date text size	Tamaño del texto del país y la fecha
+Use 0 to match the post date's size, or %1$d to %2$d. Sizes only the line under the caption and keeps Android's font scaling.	Usa 0 para igualar el tamaño de la fecha de publicación, o de %1$d a %2$d. Solo cambia la línea debajo de la descripción y respeta la escala de fuente de Android.
+Post date's size	Tamaño de la fecha de publicación
+Country and date opacity	Opacidad del país y la fecha
+How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.	Qué tan sólida se dibuja la línea debajo de la descripción, de 10 a 100. Un valor menor deja ver más el vídeo.
+Shadow under the country and date	Sombra bajo el país y la fecha
+Draws a dark shadow under the line's letters so it stays readable on bright videos.	Dibuja una sombra oscura bajo las letras de la línea para que se lea bien en vídeos claros.
+Tap brings the controls back	Tocar devuelve los controles
+A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.	Un toque vuelve a mostrar los controles ocultos en lugar de pausar el vídeo. Se ocultan de nuevo tras el retardo, o tras %1$d segundos si el retardo es menor.
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to the level below, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Para pantallas OLED. Tras 5 segundos sin tocar, los botones, la descripción y las pestañas sobre el vídeo se atenúan al nivel de abajo, y tu siguiente toque los devuelve. Desplazar también mueve todo el feed unos píxeles cada 2 minutos.
+Burn-in guard dim level	Nivel de atenuación de la protección contra el quemado
+How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.	Qué tan sólidos quedan los botones, la descripción y las pestañas al atenuarse, de %1$d a %2$d. Un valor menor los atenúa más.

@@ -16,6 +16,8 @@ Every Hushfeed release, newest first.
 * `Tap brings the controls back` is new under `Automatic Clear display`. A tap on a video whose controls it hid shows them again instead of pausing the video, and they hide again after the delay, or after 3 seconds if the delay is shorter (#501).
 * `Burn-in guard dim level` sets how solid the buttons, caption and tabs stay while the burn-in guard has them dimmed, from 0 to 90. It used to be fixed at 25. At 0 they're gone until your next touch (#501).
 * `Hold speed bubble size` is new under `Slide to change the hold speed`. It draws the bubble from 50 to 150 percent of its usual size. Since 0.82.0 the bubble grows with your phone's font size, which made it big with large text on, so set it under 100 to bring it back down (#452).
+* `Fade the controls out` is new under `Automatic Clear display`. The buttons, caption and tabs fade away over a quarter second before the clear instead of vanishing at once, and a touch during the fade brings them back. It starts off (#501).
+* `Date instead of age` is new next to the publish date options. Recent videos show the day they were posted, like 10-12 or Oct 12, where TikTok writes 2d ago, and today's and yesterday's videos get a date too. `Day before month` and `Write the month as a word` change it the same way. It starts off (#461).
 
 ### Bug Fixes
 

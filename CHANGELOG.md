@@ -17,6 +17,7 @@ Every Hushfeed release, newest first.
 * `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
 * New patch, `Fix notifications on OPPO, OnePlus and realme`. On those phones TikTok also signs up for OPPO's push service, and OPPO only delivers to TikTok as TikTok signed it, so notifications sent that way can't reach a patched TikTok. TikTok now uses Google's push service there, the way it does on a Samsung or a Pixel. Other phones don't change. It's in the default selection, with no switch (#496).
 * With `SIM spoof` on, pictures and thumbnails could stay grey unless a VPN was on. TikTok's network stack picked its image and API servers by the preset's country while the phone was on another country's network. The network stack now gets your real SIM's country and carrier, and the rest of TikTok still sees the preset (#415).
+* With `Keep captions available` on, a video whose caption tracks don't include the one in its original language now shows one of the others. TikTok used to say the video had no captions even though it carried some. The export's Captions line counts those videos as `tracks:unmatched` (#217).
 
 ### Build
 

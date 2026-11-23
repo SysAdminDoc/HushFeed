@@ -11,6 +11,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -136,10 +137,57 @@ internal fun MutableMethod.keepCaptionControls(patch: String) = guardAtEntry(
     """,
 )
 
+private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+internal const val CAPTION_ITEM = "Lcom/ss/android/ugc/aweme/feed/model/CaptionItemModel;"
+private const val CAPTION_MODEL = "Lcom/ss/android/ugc/aweme/feed/model/CaptionModel;"
+
+/**
+ * TikTok's lookup of a video's own caption track (#217), `X.07o6.LJIIIZ` on 47.9.3: static, takes
+ * the Aweme, and answers the captionList item whose languageId matches the CaptionModel's
+ * originalCaptionLanguage. The Captions panel, the player's caption layer and translation all ask
+ * it, and a null answer is what makes TikTok toast that the video has no captions.
+ */
+internal object OriginalCaptionTrackFingerprint : Fingerprint(
+    returnType = CAPTION_ITEM,
+    parameters = listOf(AWEME),
+    custom = { method, _ -> method.looksUpOriginalCaptionTrack() },
+)
+
+internal fun Method.looksUpOriginalCaptionTrack(): Boolean {
+    if (!AccessFlags.STATIC.isSet(accessFlags) || returnType != CAPTION_ITEM) return false
+    if (parameterTypes.map { it.toString() } != listOf(AWEME)) return false
+    val fields = implementation?.instructions?.mapNotNull { it.getReference<FieldReference>() } ?: return false
+    return fields.any { it.definingClass == CAPTION_MODEL && it.name == "originalCaptionLanguage" } &&
+        fields.any { it.definingClass == CAPTION_MODEL && it.name == "captionList" } &&
+        fields.any { it.definingClass == CAPTION_ITEM && it.name == "languageId" }
+}
+
+/**
+ * The extension answers first. A track it picks is returned as TikTok's own; null runs TikTok's
+ * lookup as it always did.
+ */
+internal fun MutableMethod.keepOriginalCaptionTrack(patch: String) {
+    requireLocals(patch, 1)
+    val aweme = implementation!!.registerCount - 1
+    addInstructionsWithLabels(
+        0,
+        """
+            invoke-static/range { v$aweme .. v$aweme }, $CAPTIONS_AVAILABLE->originalTrack(Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object v0
+            if-eqz v0, :morphe_stock_caption_track
+            check-cast v0, $CAPTION_ITEM
+            return-object v0
+            :morphe_stock_caption_track
+            nop
+        """,
+    )
+}
+
 /**
  * Keep captions available (#217). Both parts are needed: the row's placement alone draws nothing
  * where the caption controls are off, and the controls alone leave the Accessibility page without
- * its switch.
+ * its switch. The track lookup then lets a video whose tracks miss TikTok's language match show
+ * one of them.
  */
 internal fun hookCaptionsAvailable(patch: String) {
     val row = CaptionsRowFingerprint.method
@@ -147,9 +195,12 @@ internal fun hookCaptionsAvailable(patch: String) {
     val group = initializer.experimentGroupField()
         ?: throw PatchException("$patch: ${initializer.definingClass} doesn't store $CAPTION_CONTROLS_KEY.")
     val question = captionControlsQuestion(mutableClassDefBy(initializer.definingClass).methods, group)
-    // The guard's one check that can fail, made before anything changes.
+    val track = OriginalCaptionTrackFingerprint.method
+    // The guards' one check that can fail, made before anything changes.
     question.requireLocals(patch, 1)
+    track.requireLocals(patch, 1)
 
     row.placeCaptionsRow()
     question.keepCaptionControls(patch)
+    track.keepOriginalCaptionTrack(patch)
 }

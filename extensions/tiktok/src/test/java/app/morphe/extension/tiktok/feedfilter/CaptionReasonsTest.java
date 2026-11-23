@@ -26,14 +26,33 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
 public class CaptionReasonsTest {
-    /** TikTok's CaptionModel as 47.9.3 has it: the tracks and the reason an empty list is empty. */
+    /**
+     * TikTok's CaptionModel as 47.9.3 has it: the tracks, the original caption language and the
+     * reason an empty list is empty.
+     */
     public static final class Model {
         public final List<Object> captionList;
         public final Integer noOriginalCaptionReasonV2;
+        public final Language originalCaptionLanguage;
         Model(List<Object> captionList, Integer reason) {
+            this(captionList, reason, null);
+        }
+        Model(List<Object> captionList, Integer reason, Language original) {
             this.captionList = captionList;
             this.noOriginalCaptionReasonV2 = reason;
+            this.originalCaptionLanguage = original;
         }
+    }
+
+    /** CaptionLanguage and CaptionItemModel both carry the language id TikTok matches by. */
+    public static final class Language {
+        public final long languageId;
+        Language(long languageId) { this.languageId = languageId; }
+    }
+
+    public static final class Track {
+        public final long languageId;
+        Track(long languageId) { this.languageId = languageId; }
     }
 
     public static final class Video {
@@ -86,7 +105,10 @@ public class CaptionReasonsTest {
     }
 
     @Test public void eachVideoIsCountedOnceByWhatTikTokSent() {
-        Item tracked = new Item("tracked", new Model(List.of(new Object()), null));
+        Item tracked = new Item("tracked", new Model(List.of(new Track(7), new Track(12)), null, new Language(12)));
+        // Tracks, but none in the original language, which is the only one TikTok shows.
+        Item unmatched = new Item("unmatched", new Model(List.of(new Track(7)), null, new Language(12)));
+        Item noOriginal = new Item("noOriginal", new Model(List.of(new Track(7)), null));
         Item locked = new Item("locked", new Model(new ArrayList<>(), 2));
         Item locked2 = new Item("locked2", new Model(null, 2));
         Item quiet = new Item("quiet", new Model(new ArrayList<>(), 3));
@@ -94,12 +116,12 @@ public class CaptionReasonsTest {
         Item newer = new Item("newer", new Model(new ArrayList<>(), 9));
         Item bare = new Item("bare", null);
 
-        page(tracked, locked, locked2, quiet, unset, newer, bare);
+        page(tracked, unmatched, noOriginal, locked, locked2, quiet, unset, newer, bare);
         // TikTok reads a page again before it hands it over; the same videos count once.
-        page(tracked, locked, locked2, quiet, unset, newer, bare);
+        page(tracked, unmatched, noOriginal, locked, locked2, quiet, unset, newer, bare);
 
-        assertEquals("Captions: 1 lists, 7 items, 0 removed. Kinds: none:notAuthorized 2, "
-                + "noCaptionData 1, none:code9 1, none:speechUnrecognized 1, none:unset 1, tracks 1",
+        assertEquals("Captions: 1 lists, 9 items, 0 removed. Kinds: none:notAuthorized 2, "
+                + "tracks:unmatched 2, noCaptionData 1, none:code9 1, none:speechUnrecognized 1, none:unset 1, tracks 1",
                 captionsLine());
     }
 

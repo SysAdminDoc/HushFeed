@@ -7,6 +7,7 @@ package app.morphe.extension.tiktok.feedfilter;
 import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.captions.CaptionsAvailable;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ final class CaptionReasons {
     /** The export's line for the caption data the For You videos came with. */
     static final String SOURCE = "Captions";
     static final String TRACKS = "tracks";
+    static final String UNMATCHED = "tracks:unmatched";
     static final String NO_MODEL = "noCaptionData";
     private static final String FAMILY = "caption reasons";
     /** TikTok's NoCaptionReasonEnum, by value: NO_OP 0 through BEING_GENERATED 5. */
@@ -56,13 +58,19 @@ final class CaptionReasons {
         }
     }
 
-    /** "tracks", "none:" plus TikTok's reason for sending none, or "noCaptionData". */
+    /**
+     * "tracks", "tracks:unmatched" (tracks, but none in the original caption language, which
+     * TikTok alone shows), "none:" plus TikTok's reason for sending none, or "noCaptionData".
+     */
     static String kind(Aweme item) {
         Object video = Reflect.property(item, "getVideo", "video");
         Object model = Reflect.property(video, "getCaptionModel", "captionModel");
         if (model == null) return NO_MODEL;
         Object tracks = Reflect.readField(model, "captionList");
-        if (tracks instanceof List<?> && !((List<?>) tracks).isEmpty()) return TRACKS;
+        if (tracks instanceof List<?> && !((List<?>) tracks).isEmpty()) {
+            return CaptionsAvailable.hasOriginalTrack((List<?>) tracks, Reflect.readField(model, "originalCaptionLanguage"))
+                    ? TRACKS : UNMATCHED;
+        }
         return "none:" + reasonName(Reflect.readField(model, "noOriginalCaptionReasonV2"));
     }
 

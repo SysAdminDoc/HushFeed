@@ -46,11 +46,17 @@ public final class SuggestedAccountCells {
     private SuggestedAccountCells() {
     }
 
-    /** The profile page, the one place the cells sit in a panel of their own. */
+    /**
+     * The root a profile opened on its own page sits in. A profile TikTok builds inside the feed,
+     * the one a video's avatar or a swipe opens, has no such root.
+     */
     static final String PROFILE = "view_profile";
-    /** The "View all" end of the header above a profile's suggestions. */
+    /**
+     * The "View all" end of the header above a profile's suggestions. It comes from one layout,
+     * the profile's suggestion panel, so it marks that panel wherever the profile is hosted.
+     */
     static final String PANEL_HEADER = "user_card_horizontal_right_widget";
-    /** How far up from the list the profile page and the panel are looked for. */
+    /** How far up from the list the panel is looked for. */
     private static final int MAX_DEPTH = 16;
 
     /** A view's resource entry name. The tests name their views without resources. */
@@ -96,24 +102,25 @@ public final class SuggestedAccountCells {
 
     /**
      * The box a profile's suggestions sit in: the nearest view above the cell's list that holds
-     * the panel header, widened through the plain frames that hold only it. Null anywhere but a
-     * profile page, so the Inbox, the Friends tab and the feed are left to the cells.
+     * the panel header, widened through the plain frames that hold only it. Null for a list with
+     * no such header above it, so the Inbox and the Friends tab are left to the cells. The search
+     * used to need the {@link #PROFILE} root too, which a profile opened from the feed doesn't
+     * have, so a follow there still left the header over an empty box (#462).
      */
     static View profilePanel(View cell) {
         if (!(cell.getParent() instanceof ViewGroup)) return null;
         View at = (View) cell.getParent();
         View panel = null;
-        boolean onProfile = false;
         for (int depth = 0; depth < MAX_DEPTH && at.getParent() instanceof ViewGroup; depth++) {
             ViewGroup up = (ViewGroup) at.getParent();
-            if (PROFILE.equals(name(up))) {
-                onProfile = true;
+            if (PROFILE.equals(name(up))) break;
+            if (holds(up, PANEL_HEADER, 2)) {
+                panel = up;
                 break;
             }
-            if (panel == null && holds(up, PANEL_HEADER, 2)) panel = up;
             at = up;
         }
-        if (!onProfile || panel == null) return null;
+        if (panel == null) return null;
         while (panel.getParent() instanceof ViewGroup && ((ViewGroup) panel.getParent()).getChildCount() == 1
                 && !PROFILE.equals(name((View) panel.getParent()))) {
             panel = (View) panel.getParent();

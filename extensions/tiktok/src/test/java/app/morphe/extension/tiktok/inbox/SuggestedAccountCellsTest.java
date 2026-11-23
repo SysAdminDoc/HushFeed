@@ -48,7 +48,11 @@ public class SuggestedAccountCellsTest {
         SuggestedAccountCells.namesForTests = null;
     }
 
-    /** A profile page as 47.9.3 lays it out around the suggestions it opens after a follow. */
+    /**
+     * A profile page as 47.9.3 lays it out around the suggestions it opens after a follow. One
+     * opened on its own page sits in a view_profile root, and one opened from a video in the feed
+     * has none. Without the panel header it's any other list of the cells, like the Inbox's.
+     */
     private static final class Profile {
         final Map<View, String> names = new HashMap<>();
         final FrameLayout page;
@@ -57,9 +61,9 @@ public class SuggestedAccountCellsTest {
         final View list;
         final View card;
 
-        Profile(Activity activity, boolean onProfile) {
+        Profile(Activity activity, boolean ownPage, boolean panelHeader) {
             page = new FrameLayout(activity);
-            if (onProfile) names.put(page, "view_profile");
+            if (ownPage) names.put(page, "view_profile");
             LinearLayout header = new LinearLayout(activity);
             header.setOrientation(LinearLayout.VERTICAL);
             page.addView(header);
@@ -76,7 +80,7 @@ public class SuggestedAccountCellsTest {
             LinearLayout titleRow = new LinearLayout(activity);
             panel.addView(titleRow);
             View viewAll = new View(activity);
-            names.put(viewAll, "user_card_horizontal_right_widget");
+            if (panelHeader) names.put(viewAll, "user_card_horizontal_right_widget");
             titleRow.addView(viewAll);
             FrameLayout listFrame = new FrameLayout(activity);
             panel.addView(listFrame, new LinearLayout.LayoutParams(1080, 551));
@@ -103,7 +107,7 @@ public class SuggestedAccountCellsTest {
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
-            Profile profile = new Profile(activity, true);
+            Profile profile = new Profile(activity, true, true);
 
             Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
             SuggestedAccountCells.onBind(new Cell(profile.card));
@@ -129,7 +133,7 @@ public class SuggestedAccountCellsTest {
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
-            Profile profile = new Profile(activity, true);
+            Profile profile = new Profile(activity, true, true);
 
             Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
             Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);
@@ -143,12 +147,42 @@ public class SuggestedAccountCellsTest {
         }
     }
 
-    /** Away from a profile only the cells go: the lists there have no panel of their own. */
-    @Test public void aListThatIsNotOnAProfileKeepsItsBox() {
+    /**
+     * #462 again: a profile opened from a video in the feed has no view_profile root, so the
+     * panel was never found there. A follow still left the header over an empty box, and Keep
+     * suggestions on profiles couldn't bring the cards back either.
+     */
+    @Test public void aProfileOpenedFromTheFeedLosesItsPanelToo() {
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
-            Profile elsewhere = new Profile(activity, false);
+            Profile fromFeed = new Profile(activity, false, true);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(new Cell(fromFeed.card));
+            runPosted();
+
+            assertEquals(View.GONE, fromFeed.card.getVisibility());
+            assertEquals("the panel's box was left as a gap", View.GONE, fromFeed.outer.getVisibility());
+            assertEquals(0, fromFeed.outer.getLayoutParams().height);
+            assertEquals("the profile's buttons were touched", View.VISIBLE, fromFeed.buttons.getVisibility());
+
+            Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(new Cell(fromFeed.card));
+            runPosted();
+            assertEquals("a kept profile card stayed hidden", View.VISIBLE, fromFeed.card.getVisibility());
+            assertEquals(416, fromFeed.card.getLayoutParams().width);
+            assertEquals(View.VISIBLE, fromFeed.outer.getVisibility());
+            assertEquals(669, fromFeed.outer.getLayoutParams().height);
+        }
+    }
+
+    /** A list with no panel header above it, like the Inbox's, loses only its cells. */
+    @Test public void aListWithNoPanelHeaderKeepsItsBox() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Profile elsewhere = new Profile(activity, false, false);
 
             Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
             Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);

@@ -23,6 +23,7 @@ import app.morphe.util.cloneMutable
 import app.morphe.util.extendsClass
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -396,7 +397,8 @@ internal fun hookOwnedShareActions() {
     val rowBuilds = mutableListOf<Pair<Method, List<OwnedMenuRowBuild>>>()
     for (callerType in callers) {
         val classDef = classDefByOrNull(callerType) ?: continue
-        classDef.methods.forEach { method ->
+        // Read only, so a caller made mutable earlier doesn't keep a built copy of every body (#497).
+        classDef.methods.map(Method::readOnly).forEach { method ->
             method.ownedShareIconBind(action, isImageView)?.let { bind -> iconBinders += method to bind }
             method.ownedMenuRowBuilds(menuRow.model, textResource, action.interfaces)
                 .takeIf { it.isNotEmpty() }?.let { builds -> rowBuilds += method to builds }

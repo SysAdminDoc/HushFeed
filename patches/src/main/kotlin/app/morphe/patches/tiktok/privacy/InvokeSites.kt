@@ -11,6 +11,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.util.classesCallingMethods
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -67,7 +68,9 @@ internal fun invokeSitesOf(
     for (callerType in callers) {
         if (callerType.startsWith("Lapp/morphe/extension/")) continue
         val owner = classDefByOrNull(callerType) ?: continue
-        owner.methods.forEach { method ->
+        // Read only: a caller an earlier patch made mutable would otherwise have every one of its
+        // bodies built and kept to the end of the run, not just the ones with a site (#497).
+        owner.methods.map(Method::readOnly).forEach { method ->
             method.implementation?.instructions?.forEachIndexed { index, instruction ->
                 if (instruction.opcode !in opcodes) return@forEachIndexed
                 val reference = instruction.getReference<MethodReference>() ?: return@forEachIndexed

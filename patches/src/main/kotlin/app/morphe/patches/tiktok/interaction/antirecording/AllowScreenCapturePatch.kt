@@ -26,6 +26,7 @@ import app.morphe.util.classesCallingMethods
 import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -118,7 +119,8 @@ val allowScreenCapturePatch = bytecodePatch(
         for (callerType in callers) {
             if (callerType.startsWith("Lapp/morphe/extension/")) continue
             val owner = classDefByOrNull(callerType) ?: continue
-            owner.methods.forEach { method ->
+            // Read only, so a caller made mutable earlier doesn't keep a built copy of every body (#497).
+            owner.methods.map(Method::readOnly).forEach { method ->
                 val instructions = method.implementation?.instructions?.toList() ?: return@forEach
                 val targets by lazy { method.branchTargets() }
                 instructions.forEachIndexed { index, instruction ->

@@ -19,6 +19,7 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.argumentRegister
 import app.morphe.util.getFreeRegisterProvider
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
@@ -107,8 +108,10 @@ val copyCommentsWithoutUsernamePatch = bytecodePatch(
                     returnType = clipboardHelper.returnType,
                 ),
             ),
+            // Read only: the patcher hands this the mutable method of a class an earlier patch
+            // changed, and reading that builds a copy of its body kept to the end of the run (#497).
             custom = { method, _ ->
-                method.isCommentCopyBuilder(clipboardHelper)
+                method.readOnly().isCommentCopyBuilder(clipboardHelper)
             },
         )
 

@@ -12,6 +12,7 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -45,8 +46,10 @@ private val GATE_CALLER = listOf(
 private object LongPressQuickShareGateCallerFingerprint : Fingerprint(
     returnType = "Z",
     parameters = emptyList(),
+    // Read only: every Z() method of a class an earlier patch made mutable passes here, and a plain
+    // read keeps a built copy of each body to the end of the run (#497).
     custom = { method, _ ->
-        method.implementation?.instructions?.map { it.opcode } == GATE_CALLER
+        method.readOnly().implementation?.instructions?.map { it.opcode } == GATE_CALLER
     },
 )
 

@@ -9,6 +9,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -156,7 +157,9 @@ internal fun bottomBarHeightSites(
     val reads = mutableListOf<BarRead>()
     for (owner in callers(BAR_DIMENSION_READS.keys)) {
         if (owner.type.startsWith("Lapp/morphe/extension/")) continue
-        owner.methods.forEach { method ->
+        // Read only: these are every class that reads a dimension, and one an earlier patch made
+        // mutable would otherwise keep a built copy of every body to the end of the run (#497).
+        owner.methods.map(Method::readOnly).forEach { method ->
             val code = method.implementation?.instructions?.toList() ?: return@forEach
             val targets by lazy { method.branchTargets() }
             code.indices.forEach { index ->

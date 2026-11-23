@@ -17,6 +17,7 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -52,9 +53,10 @@ internal object RefreshRateWriteFingerprint : Fingerprint(
     // The filter repeats a reference the custom block requires, so the patcher reads only the
     // classes that make it (#54).
     filters = listOf(fieldAccess(definingClass = LAYOUT_PARAMS, name = "preferredRefreshRate", opcode = Opcode.IPUT)),
+    // Read only: a mutable class's method would otherwise keep a built copy of its body (#497).
     custom = { method, classDef ->
         !classDef.type.startsWith("Lapp/morphe/") &&
-            method.implementation?.instructions?.any(::writesRefreshRate) == true
+            method.readOnly().implementation?.instructions?.any(::writesRefreshRate) == true
     },
 )
 

@@ -24,6 +24,7 @@ import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.classesCallingMethods
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import app.morphe.util.readOnly
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -238,7 +239,8 @@ internal fun hookAmoledThemeSwitch(): AmoledThemeSwitchSites {
     val wrappers = classesCallingMethods(setOf(THEME_WRAPPER_INIT))
         .filterNot { it.startsWith("Lapp/morphe/extension/") }
         .mapNotNull { classDefByOrNull(it) }
-        .flatMap { owner -> owner.methods.flatMap { themeWrapperPairs(owner, it) } }
+        // Read only, so a caller made mutable earlier doesn't keep a built copy of every body (#497).
+        .flatMap { owner -> owner.methods.flatMap { themeWrapperPairs(owner, it.readOnly()) } }
     val dialogs = dialogSites()
     if (applyStyles.isEmpty() || dialogs.isEmpty()) {
         throw PatchException("AMOLED dark theme: TikTok's theme calls aren't where they were.")

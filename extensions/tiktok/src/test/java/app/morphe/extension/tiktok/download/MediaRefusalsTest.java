@@ -16,8 +16,11 @@ import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import java.io.File;
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -88,6 +91,45 @@ public class MediaRefusalsTest {
                 + "p16-sign-sg.tiktokcdn.com: 2 refused; link already expired 1, still in date 1, no expiry 0\n"
                 + "p16-sign-sg.tiktokcdn.com, HTTP 403: 2 times\n"));
         assertFalse(report, report.contains("SECRETSIG"));
+    }
+
+    @Test public void aRefusalOnTikToksOwnServerSaysWhetherItCarriedTheSignIn() throws Exception {
+        CookieHandler before = CookieHandler.getDefault();
+        try {
+            MediaTransport.Client network = MediaTransportFixtures.publicClient(
+                    url -> MediaTransportFixtures.response(url, 403, new byte[0]));
+            CookieHandler.setDefault(new CookieHandler() {
+                @Override public Map<String, List<String>> get(URI uri, Map<String, List<String>> headers) {
+                    return Map.of("Cookie", List.of("sessionid=SECRETSESSION"));
+                }
+
+                @Override public void put(URI uri, Map<String, List<String>> headers) { }
+            });
+            String story = "https://image-sg.tiktokv.com/obj/tos-alisg-i-0000/";
+            for (String photo : new String[]{story + "a.jpeg", story + "b.jpeg"}) {
+                try {
+                    RemoteMedia.fetch(List.of(photo), temporary.newFile(), RemoteMedia.Kind.IMAGE, network);
+                    fail("refused");
+                } catch (IOException expected) { }
+            }
+            CookieHandler.setDefault(null);
+            try {
+                RemoteMedia.fetch(List.of(story + "c.jpeg", EXPIRED), temporary.newFile(), RemoteMedia.Kind.IMAGE, network);
+                fail("refused");
+            } catch (IOException expected) { }
+
+            List<String> lines = MediaRefusals.sectionForTests().lines();
+            assertEquals(List.of(
+                    "Since the app started: 4 save addresses refused for good",
+                    "image-sg.tiktokv.com: 3 refused; link already expired 0, still in date 0, no expiry 3;"
+                            + " sent TikTok's sign-in 2",
+                    "image-sg.tiktokv.com, HTTP 403: 3 times",
+                    "p16-sign-sg.tiktokcdn.com: 1 refused; link already expired 1, still in date 0, no expiry 0",
+                    "p16-sign-sg.tiktokcdn.com, HTTP 403: 1 time"), lines);
+            for (String line : lines) assertFalse(line, line.contains("SECRETSESSION") || line.contains("sessionid"));
+        } finally {
+            CookieHandler.setDefault(before);
+        }
     }
 
     @Test public void aSaveThatLandsLeavesTheSectionOutOfTheReport() throws Exception {

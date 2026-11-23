@@ -55,6 +55,8 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
         long expired;
         long inDate;
         long undated;
+        /** Refusals that went out with TikTok's sign-in, counted on TikTok's own API hosts only. */
+        long signedIn;
         final Map<String, long[]> reasons = new LinkedHashMap<>();
     }
 
@@ -64,13 +66,26 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
     /** One mirror that failed for good: its link and what it failed with. Never throws. */
     static void record(String url, Throwable failure) {
         try {
-            count(host(url), reason(failure), expiry(url));
+            count(host(url), reason(failure), expiry(url), signedIn(url));
         } catch (Throwable ignored) {
             // A report one refusal short beats a save that stops on its bookkeeping.
         }
     }
 
-    private static void count(String host, String reason, Long expires) {
+    /**
+     * Whether a save to this link carries TikTok's sign-in, so a refusal from one of TikTok's own
+     * servers says if it was turned down with the sign-in or without one (#464). Only the yes or
+     * no goes in the report, never a cookie.
+     */
+    private static boolean signedIn(String url) {
+        try {
+            return url != null && MediaTransport.signIn(new java.net.URL(url.trim())) != null;
+        } catch (Exception unparsable) {
+            return false;
+        }
+    }
+
+    private static void count(String host, String reason, Long expires, boolean signedIn) {
         if (!installed) {
             installed = true;
             LogBufferManager.registerReportSection(INSTANCE);
@@ -90,6 +105,7 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
             if (expires == null) entry.undated++;
             else if (expires <= now) entry.expired++;
             else entry.inDate++;
+            if (signedIn) entry.signedIn++;
             long[] times = entry.reasons.get(reason);
             if (times == null) {
                 if (entry.reasons.size() >= REASON_LIMIT) reason = OTHER_REASONS;
@@ -166,7 +182,9 @@ final class MediaRefusals implements LogBufferManager.ServerNamingSection {
             for (Map.Entry<String, Host> entry : HOSTS.entrySet()) {
                 Host host = entry.getValue();
                 lines.add(entry.getKey() + ": " + host.refused + " refused; link already expired "
-                        + host.expired + ", still in date " + host.inDate + ", no expiry " + host.undated);
+                        + host.expired + ", still in date " + host.inDate + ", no expiry " + host.undated
+                        + (MediaTransport.signInHost(entry.getKey())
+                                ? "; sent TikTok's sign-in " + host.signedIn : ""));
                 for (Map.Entry<String, long[]> reason : host.reasons.entrySet()) {
                     long times = reason.getValue()[0];
                     lines.add(entry.getKey() + ", " + reason.getKey() + ": " + times

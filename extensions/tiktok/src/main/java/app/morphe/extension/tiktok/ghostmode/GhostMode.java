@@ -160,6 +160,16 @@ public final class GhostMode {
     }
 
     /**
+     * TikTok Lite's activity status report (#502) reads its status API object and sends nothing
+     * when there isn't one. Handed null while {@link #shouldBlockOnlineStatus()} holds the report
+     * back, and the object itself otherwise.
+     */
+    public static Object onlineStatusReporter(Object api) {
+        if (api == null) return null;
+        return shouldBlockOnlineStatus() ? null : api;
+    }
+
+    /**
      * A LIVE room enter, the request that puts you on the host's viewer list (#420). Held back
      * while Ghost mode and its Watch LIVEs unseen switch are on, unless the eye was tapped in
      * that room to let the host see you.

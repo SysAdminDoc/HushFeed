@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -46,6 +47,8 @@ public class GhostModeReportSwitchesTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     private boolean installed;
     private boolean telemetryInstalled;
+    private boolean liveViewsInstalled;
+    private boolean localLikesInstalled;
 
     /** Read once the rule has set a context: Settings can't load before there is one. */
     private static List<BooleanSetting> children() {
@@ -55,6 +58,8 @@ public class GhostModeReportSwitchesTest {
     @Before public void setUp() {
         installed = SettingsStatus.ghostModeEnabled;
         telemetryInstalled = SettingsStatus.disableTelemetryEnabled;
+        liveViewsInstalled = SettingsStatus.ghostModeLiveViewsEnabled;
+        localLikesInstalled = SettingsStatus.ghostModeLocalLikesEnabled;
         resetSwitches();
         HookStatus.clear();
     }
@@ -63,6 +68,8 @@ public class GhostModeReportSwitchesTest {
         PausedProcess.set(false);
         SettingsStatus.ghostModeEnabled = installed;
         SettingsStatus.disableTelemetryEnabled = telemetryInstalled;
+        SettingsStatus.ghostModeLiveViewsEnabled = liveViewsInstalled;
+        SettingsStatus.ghostModeLocalLikesEnabled = localLikesInstalled;
         resetSwitches();
         HookStatus.clear();
         Utils.setActivity(null);
@@ -165,6 +172,41 @@ public class GhostModeReportSwitchesTest {
             }
             assertTrue("Hide online status comes after the three",
                     page.findPreference(Settings.GHOST_HIDE_ONLINE_STATUS.key).getOrder() > previous);
+        }
+    }
+
+    /**
+     * TikTok Lite (#502) sends its activity status report on the API object its reporter reads,
+     * and sends nothing without one. The hook hands that object back only while the report goes.
+     */
+    @Test public void liteStatusApiIsHandedBackOnlyWhileTheReportGoes() {
+        Object api = new Object();
+        assertSame("Ghost mode off", api, GhostMode.onlineStatusReporter(api));
+        Settings.GHOST_MODE.save(true);
+        Settings.GHOST_HIDE_ONLINE_STATUS.save(true);
+        assertNull("held back", GhostMode.onlineStatusReporter(api));
+        Settings.GHOST_HIDE_ONLINE_STATUS.save(false);
+        assertSame("its own switch off", api, GhostMode.onlineStatusReporter(api));
+        assertNull("no API object stays none", GhostMode.onlineStatusReporter(null));
+    }
+
+    /** Lite's Ghost mode has no LIVE enters or likes to hold, so it offers neither row (#502). */
+    @Test public void theLiveAndLikesRowsShowOnlyWhereTheyAreHooked() {
+        SettingsStatus.ghostModeEnabled = true;
+        SettingsStatus.ghostModeLiveViewsEnabled = false;
+        SettingsStatus.ghostModeLocalLikesEnabled = false;
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            TikTokPreferenceFragment page = privacy(owner.get());
+            assertNotNull(page.findPreference(Settings.GHOST_HIDE_ONLINE_STATUS.key));
+            assertNull(page.findPreference(Settings.GHOST_HIDE_LIVE_VIEWS.key));
+            assertNull(page.findPreference(Settings.GHOST_LOCAL_LIKES.key));
+        }
+        SettingsStatus.ghostModeLiveViewsEnabled = true;
+        SettingsStatus.ghostModeLocalLikesEnabled = true;
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            TikTokPreferenceFragment page = privacy(owner.get());
+            assertNotNull(page.findPreference(Settings.GHOST_HIDE_LIVE_VIEWS.key));
+            assertNotNull(page.findPreference(Settings.GHOST_LOCAL_LIKES.key));
         }
     }
 

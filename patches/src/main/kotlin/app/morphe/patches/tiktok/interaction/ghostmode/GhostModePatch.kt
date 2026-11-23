@@ -10,6 +10,7 @@ package app.morphe.patches.tiktok.interaction.ghostmode
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
@@ -20,6 +21,7 @@ import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
 import app.morphe.patches.tiktok.interaction.live.LivePlayFragmentResumeFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -482,9 +484,14 @@ val ghostModePatch = bytecodePatch(
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
+        if (isTikTokLite(packageMetadata.packageName)) {
+            ghostModeOnLite()
+            return@execute
+        }
+
         // Worked out before the first write, so a build that moved TikTok's network lancet
         // fails Ghost mode by name with nothing written.
         val lancets = classDefByOrNull(CALL_SERVER_INTERCEPTOR)?.methods
@@ -522,6 +529,14 @@ val ghostModePatch = bytecodePatch(
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, $GHOST_MODE_EXTENSION->installed()V",
+        )
+        // TikTok Lite has neither, so their rows are offered only where they're hooked.
+        SettingsStatusLoadFingerprint.method.addInstructions(
+            0,
+            """
+                invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableGhostModeLiveViews()V
+                invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableGhostModeLocalLikes()V
+            """,
         )
 
         listOf(

@@ -138,22 +138,27 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                             + "last status can linger.",
                     Settings.GHOST_HIDE_ONLINE_STATUS
             ));
-            addPreference(new TogglePreference(
-                    context,
-                    "Watch LIVEs unseen",
-                    "You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let "
-                            + "that host see you. Needs Ghost mode on.",
-                    Settings.GHOST_HIDE_LIVE_VIEWS
-            ));
-            addPreference(new TogglePreference(
-                    context,
-                    "Keep likes on this phone",
-                    "A like you give a video stays on this phone. The heart turns red, but TikTok "
-                            + "isn't told, so the creator never sees it and it isn't on your "
-                            + "profile. Needs Ghost mode on.",
-                    Settings.GHOST_LOCAL_LIKES
-            ));
-            addPreference(new LocalLikesPreference(context));
+            // TikTok Lite's Ghost mode has neither of these two (#502).
+            if (SettingsStatus.ghostModeLiveViewsEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Watch LIVEs unseen",
+                        "You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let "
+                                + "that host see you. Needs Ghost mode on.",
+                        Settings.GHOST_HIDE_LIVE_VIEWS
+                ));
+            }
+            if (SettingsStatus.ghostModeLocalLikesEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Keep likes on this phone",
+                        "A like you give a video stays on this phone. The heart turns red, but TikTok "
+                                + "isn't told, so the creator never sees it and it isn't on your "
+                                + "profile. Needs Ghost mode on.",
+                        Settings.GHOST_LOCAL_LIKES
+                ));
+                addPreference(new LocalLikesPreference(context));
+            }
             HookStatusPreference diagnostics = new HookStatusPreference(context);
             diagnostics.setKey("action_ghost_mode_diagnostics");
             diagnostics.setTitle(L10n.t(context, "Ghost mode diagnostics"));

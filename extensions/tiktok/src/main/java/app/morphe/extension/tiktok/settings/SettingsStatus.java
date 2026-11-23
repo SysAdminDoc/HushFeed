@@ -700,6 +700,20 @@ public class SettingsStatus {
         ghostModeEnabled = true;
     }
 
+    /** Ghost mode held LIVE room enters (#420). TikTok Lite has no LIVE room to hold them in. */
+    public static boolean ghostModeLiveViewsEnabled = false;
+
+    public static void enableGhostModeLiveViews() {
+        ghostModeLiveViewsEnabled = true;
+    }
+
+    /** Ghost mode answers likes on the phone. TikTok Lite has no network lancet to answer them in. */
+    public static boolean ghostModeLocalLikesEnabled = false;
+
+    public static void enableGhostModeLocalLikes() {
+        ghostModeLocalLikesEnabled = true;
+    }
+
     public static void enableDisableTelemetry() {
         disableTelemetryEnabled = true;
     }

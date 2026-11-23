@@ -246,6 +246,16 @@ public class SettingsStatus {
         feedFilterEnabled = true;
     }
 
+    /**
+     * Feed filter hooked what TikTok draws around a video: the search strip, the playlist bar
+     * and the event badge. TikTok Lite's Feed filter (#48) only filters the feed's items.
+     */
+    public static boolean feedFilterViewsEnabled = false;
+
+    public static void enableFeedFilterViews() {
+        feedFilterViewsEnabled = true;
+    }
+
     public static void enableLiveFeedFilter() {
         liveFeedFilterEnabled = true;
     }

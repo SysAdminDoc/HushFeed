@@ -706,24 +706,27 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         // They were the tail of the Feed filter page under "Feed elements", a page about
         // which videos arrive.
         if (SettingsStatus.feedFilterEnabled) {
-            addPreference(new TogglePreference(
-                    context,
-                    "Hide the search bar below videos",
-                    "Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.",
-                    Settings.HIDE_BOTTOM_SEARCH_BAR
-            ));
-            addPreference(new TogglePreference(
-                    context,
-                    "Hide the playlist bar",
-                    "Hide the playlist bar along the bottom of videos that belong to a series.",
-                    Settings.HIDE_PLAYLIST_BAR
-            ));
-            addPreference(new TogglePreference(
-                    context,
-                    "Hide the event badge",
-                    "Hide the floating promotional badge over the feed.",
-                    Settings.HIDE_EVENT_BADGE
-            ));
+            // TikTok Lite's Feed filter (#48) filters items only, so these three do nothing there.
+            if (SettingsStatus.feedFilterViewsEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the search bar below videos",
+                        "Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.",
+                        Settings.HIDE_BOTTOM_SEARCH_BAR
+                ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the playlist bar",
+                        "Hide the playlist bar along the bottom of videos that belong to a series.",
+                        Settings.HIDE_PLAYLIST_BAR
+                ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the event badge",
+                        "Hide the floating promotional badge over the feed.",
+                        Settings.HIDE_EVENT_BADGE
+                ));
+            }
             addPreference(new TogglePreference(
                     context,
                     "Hide inserted cards",

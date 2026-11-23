@@ -21,6 +21,7 @@ Every Hushfeed release, newest first.
 * `Fade the controls out` is new under `Automatic Clear display`. The buttons, caption and tabs fade away over a quarter second before the clear instead of vanishing at once, and a touch during the fade brings them back. It starts off (#501).
 * `Date instead of age` is new next to the publish date options. Recent videos show the day they were posted, like 10-12 or Oct 12, where TikTok writes 2d ago, and today's and yesterday's videos get a date too. `Day before month` and `Write the month as a word` change it the same way. It starts off (#461).
 * `SIM spoof`, `Ghost mode`, `Always show publish date` and `Show author region` work on TikTok Lite now. SIM spoof uses the same Region settings as in TikTok. Lite's Ghost mode has `Hide story views`, `Hide profile visits`, `Hide typing` and `Hide online status`. The publish date shows next to the creator's name on every Lite video, For You included, and the date options change it there too. With `Show where a video was posted` on, the country comes after the date, or stands alone where Lite leaves the date off. Lite's video data does carry it, but Lite throws it away while it reads the feed, so Hushfeed picks it up there (#502).
+* TikTok Lite's Feed screen page no longer lists `Hide the search bar below videos`, `Hide the playlist bar` and `Hide the event badge`. Lite's feed filter works on the videos in the feed, not on what's drawn around them, so those three switches did nothing there. `Hide inserted cards` stays (#48).
 
 ### Bug Fixes
 

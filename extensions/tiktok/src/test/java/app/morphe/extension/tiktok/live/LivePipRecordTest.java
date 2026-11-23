@@ -26,6 +26,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.lang.ref.WeakReference;
@@ -174,6 +175,14 @@ public class LivePipRecordTest {
         LivePipRecord.update(room);
         assertNotNull(room.last);
         assertTrue(actionsOf(room.last).isEmpty());
+    }
+
+    /** The window's Record, pressed after the room page it was for is gone, says so (#413). */
+    @Test public void recordWithTheRoomPageGoneSaysToReopenTheLive() {
+        ShadowToast.reset();
+        LiveRecordChip.onPipButton();
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertEquals("No stream found to record. Reopen the LIVE.", ShadowToast.getTextOfLatestToast());
     }
 
     private static Intent sentBy(PendingIntent pending) {

@@ -675,6 +675,14 @@ public final class LiveRecordChip {
     private static void onChipTap() {
         try {
             if (saving || stopRecording()) return;
+            if (enabled() && (host.get() == null || page.get() == null)) {
+                // The small window's Record can outlast the room page it was for (#413).
+                boolean noActivity = host.get() == null;
+                Logger.printInfo(() -> "LIVE record: the button found no LIVE room "
+                        + (noActivity ? "activity" : "page") + " to record");
+                Utils.showToastShort(L10n.t("No stream found to record. Reopen the LIVE."));
+                return;
+            }
             start();
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not use the LIVE record button", failure);

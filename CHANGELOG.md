@@ -31,6 +31,7 @@ Every Hushfeed release, newest first.
 * A translated caption at the top of the comments showed TikTok's raw tags around its hashtags and mentions, like `<h id="288">#flowers</h>`. It shows the plain text now, with the hashtags and mentions where TikTok draws them (#488).
 * With the floating bottom bar, the top of the pill stuck up over the last row of Home's Community grid. On a page that ends at the bar, like that grid or the other tabs, the strip above the bar now matches the bottom area, so the pill sits inside it. Over videos it still stands a little above the bar (#436).
 * A speed locked on one video and carried to the next ones by `Remember the last speed` now counts as locked there too, so pulling down on those videos lets the lock go. TikTok took them for 1x videos, so the pull just locked the same speed again and the bubble's padlock showed open (#485).
+* Patching takes a lot less memory with most patches selected. All of them together now fit in a 1 GB patcher heap, where they used to run out at 1.5 GB. Several patches only look through TikTok's code, but every look made the patcher keep an editable copy of the method until the end (#497, #460, #310).
 
 ### Build
 

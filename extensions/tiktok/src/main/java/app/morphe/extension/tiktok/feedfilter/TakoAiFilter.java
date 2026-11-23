@@ -399,6 +399,19 @@ public final class TakoAiFilter {
             "com.ss.android.ugc.aweme.search.pages.result.bot.component.SearchTakoCardProtocol"
     );
 
+    /**
+     * The brand block a search can open with (#484): an "Ad" banner for a brand, a row of its
+     * videos and its official account with a Follow button. It's a native search card with a
+     * protocol of its own, outside the result list Remove feed ads filters ("wildwood" on the S22,
+     * 47.9.3, gave five plain videos there), so its row goes to no height with that switch on.
+     * The hybrid protocol draws the same block from a web page.
+     */
+    static final Set<String> SEARCH_BRAND_ZONE_PROTOCOLS = Set.of(
+            "com.ss.android.ugc.aweme.search.pages.result.topsearch.commerce.searchbrand.SearchAdBrandZoneProtocol",
+            "com.ss.android.ugc.aweme.search.pages.result.topsearch.commerce.hybrid.SearchAdBrandZoneHybridProtocol"
+    );
+    private static final String SEARCH_BRAND_ZONE = "search brand zone";
+
     // ConcurrentHashMap.newKeySet() is API 24, and this class loads on API 23 phones too.
     private static final Set<String> seenSearchCardProtocols =
             Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
@@ -425,9 +438,17 @@ public final class TakoAiFilter {
             if (BaseSettings.DEBUG.get() && seenSearchCardProtocols.add(name)) {
                 Logger.printInfo(() -> "[Morphe TikTok TakoAI] Search card protocol: " + name);
             }
-            if (!SEARCH_ANSWER_PROTOCOLS.contains(name)) return;
-            boolean enabled = Settings.HIDE_TAKO_AI.get();
-            HookStatus.bound(HOOK_FAMILY, SEARCH_ANSWER_CARD + (enabled ? " hidden" : " left"));
+            boolean brandZone = SEARCH_BRAND_ZONE_PROTOCOLS.contains(name);
+            if (!brandZone && !SEARCH_ANSWER_PROTOCOLS.contains(name)) return;
+            boolean enabled;
+            if (brandZone) {
+                enabled = Settings.REMOVE_ADS.get();
+                HookStatus.bound(SEARCH_BRAND_ZONE, enabled ? "card collapsed" : "card left");
+                if (enabled) FeedFilterCounters.removedItems("SearchBrandZone", 1, "brandZone");
+            } else {
+                enabled = Settings.HIDE_TAKO_AI.get();
+                HookStatus.bound(HOOK_FAMILY, SEARCH_ANSWER_CARD + (enabled ? " hidden" : " left"));
+            }
             if (!enabled) return;
             collapseRow(view);
             view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {

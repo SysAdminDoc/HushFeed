@@ -13,13 +13,21 @@ import java.io.File
  */
 class SearchAnswerProtocolsTest {
     @Test
-    fun `every declared build names each AI answer protocol the extension hides`() {
+    fun `every declared build names each AI answer protocol the extension hides`() =
+        assertNamedOnEveryBuild("SEARCH_ANSWER_PROTOCOLS")
+
+    /** The search brand block (#484) is found the same way, by its protocols' class names. */
+    @Test
+    fun `every declared build names each brand block protocol the extension hides`() =
+        assertNamedOnEveryBuild("SEARCH_BRAND_ZONE_PROTOCOLS")
+
+    private fun assertNamedOnEveryBuild(setName: String) {
         val repo = if (File("src/main/kotlin").isDirectory) File("..") else File(".")
         val source = File(repo, "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/TakoAiFilter.java").readText()
-        val set = Regex("""SEARCH_ANSWER_PROTOCOLS = Set\.of\(([^)]*)\)""").find(source)?.groupValues?.get(1)
-            ?: error("TakoAiFilter no longer keeps SEARCH_ANSWER_PROTOCOLS")
+        val set = Regex("""$setName = Set\.of\(([^)]*)\)""").find(source)?.groupValues?.get(1)
+            ?: error("TakoAiFilter no longer keeps $setName")
         val names = Regex("\"([^\"]+)\"").findAll(set).map { it.groupValues[1] }.toList()
-        assertTrue("no protocol names in SEARCH_ANSWER_PROTOCOLS", names.isNotEmpty())
+        assertTrue("no protocol names in $setName", names.isNotEmpty())
         Fixtures.forEachDeclared { apk ->
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val strings = container.dexEntryNames.flatMapTo(HashSet()) { container.getEntry(it)!!.dexFile.stringSection }

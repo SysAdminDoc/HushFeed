@@ -30,6 +30,7 @@ Every Hushfeed release, newest first.
 * Record in a LIVE's small window used to do nothing when the room it belonged to had gone away in the meantime. Now it says "No stream found to record. Reopen the LIVE." and writes which part was missing to the log (#413).
 * A translated caption at the top of the comments showed TikTok's raw tags around its hashtags and mentions, like `<h id="288">#flowers</h>`. It shows the plain text now, with the hashtags and mentions where TikTok draws them (#488).
 * With the floating bottom bar, the top of the pill stuck up over the last row of Home's Community grid. On a page that ends at the bar, like that grid or the other tabs, the strip above the bar now matches the bottom area, so the pill sits inside it. Over videos it still stands a little above the bar (#436).
+* A speed locked on one video and carried to the next ones by `Remember the last speed` now counts as locked there too, so pulling down on those videos lets the lock go. TikTok took them for 1x videos, so the pull just locked the same speed again and the bubble's padlock showed open (#485).
 
 ### Build
 

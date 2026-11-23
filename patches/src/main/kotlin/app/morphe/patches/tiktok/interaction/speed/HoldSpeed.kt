@@ -106,6 +106,22 @@ internal fun MutableMethod.routeThroughHoldSpeed(literals: List<Pair<Int, Int>>)
 internal fun MutableMethod.routeThroughUnlockSpeed(literal: Pair<Int, Int>) =
     routeThrough(listOf(literal), "holdUnlockSpeed")
 
+/**
+ * The speed the press keeps from before the hold, handed to the extension right before the press
+ * writes it, so the field and every later read of it hold the speed the video plays at (#485).
+ * TikTok's per-video lookup answers 1x on a video this patch carried a speed to.
+ */
+internal fun MutableMethod.routeKeptSpeedThroughPlayingSpeed() {
+    val kept = holdSpeedKept()
+    addInstructions(
+        kept.index,
+        """
+            invoke-static/range {v${kept.register} .. v${kept.register}}, $EXTENSION->holdKeptSpeed(F)F
+            move-result v${kept.register}
+        """,
+    )
+}
+
 private fun MutableMethod.routeThrough(literals: List<Pair<Int, Int>>, helper: String) {
     literals.asReversed().forEach { (index, register) ->
         addInstructions(

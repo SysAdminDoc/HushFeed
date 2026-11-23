@@ -601,6 +601,27 @@ public final class PlaybackSpeedPatch {
         }
     }
 
+    /**
+     * The speed the hold gesture keeps as the one the video played at before it (#485). Its
+     * release goes back to it after a plain hold, and compares it with the hold speed to tell a
+     * locked video, where a pull lets go of the lock. TikTok reads it from its own speed state,
+     * which answers 1x for any video but the one it names, and the first frame of a preloaded
+     * neighbour moves that name on. So on a video this patch carried a speed to (a remembered
+     * lock, the default speed, a drag) TikTok said 1x, and a pull on a carried lock locked it
+     * again instead of letting go. Where TikTok says 1x and the video on screen plays at another
+     * speed, that speed stands; any other answer is TikTok's own for this video.
+     */
+    public static float holdKeptSpeed(float nativeSpeed) {
+        if (Float.compare(nativeSpeed, 1.0f) != 0 || Setting.isPaused()) return nativeSpeed;
+        try {
+            float playing = liveStartSpeed();
+            return isValidSpeed(playing) ? playing : nativeSpeed;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not read the speed of the video on screen for the hold", ex);
+            return nativeSpeed;
+        }
+    }
+
     public static float preserveTransitionSpeed(float requestedSpeed) {
         synchronized (PlaybackSpeedPatch.class) {
             // The live bridge brought TikTok's own speed state to a dragged speed, and TikTok carries

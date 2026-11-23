@@ -1,12 +1,15 @@
 package app.morphe.patches.tiktok.interaction.speed
 
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import app.morphe.util.literalReads
 import app.morphe.util.readsAfter
 import app.morphe.util.readsRegisterAsFloat
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.builder.BuilderInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -251,6 +254,38 @@ class HoldSpeedAnchorsTest {
                     },
                 )
             }
+        }
+    }
+
+    @Test
+    fun `each declared build's press keeps the speed the extension says the video plays at (#485)`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val (press, _) = gestureMethods(app, apk)
+            val stock = press.holdSpeedKept()
+            val patched = MutableMethod(press)
+            patched.routeKeptSpeedThroughPlayingSpeed()
+
+            val code = patched.implementation!!.instructions.toList()
+            val kept = patched.holdSpeedKept()
+            assertEquals("${apk.name}: the same field is kept", stock.field.toString(), kept.field.toString())
+            val call = code[kept.index - 2]
+            val move = code[kept.index - 1]
+            assertEquals("${apk.name}: ${call.opcode} before the kept write", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+            assertEquals(
+                "Lapp/morphe/extension/tiktok/speed/PlaybackSpeedPatch;->holdKeptSpeed(F)F",
+                (call as ReferenceInstruction).reference.toString(),
+            )
+            assertEquals("${apk.name}: the call reads the kept register", kept.register, (call as RegisterRangeInstruction).startRegister)
+            assertEquals(1, call.registerCount)
+            assertEquals("${apk.name}: ${move.opcode} into the kept register", Opcode.MOVE_RESULT, move.opcode)
+            assertEquals(kept.register, (move as OneRegisterInstruction).registerA)
+            // Nothing branches onto the write past the call, so every way into it keeps the answer.
+            assertTrue(
+                "${apk.name}: a label sits on the kept write",
+                (code[kept.index] as BuilderInstruction).location.labels.isEmpty(),
+            )
+            assertEquals("${apk.name}: only the call and its result went in", press.implementation!!.instructions.count() + 2, code.size)
         }
     }
 

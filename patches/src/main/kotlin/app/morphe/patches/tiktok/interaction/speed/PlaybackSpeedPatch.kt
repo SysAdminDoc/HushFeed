@@ -514,6 +514,17 @@ val playbackSpeedPatch = bytecodePatch(
         rewordHoldSpeedToasts(release)
         val lockShow = rewordHoldSpeedBanners(HoldBannerReceiverFingerprint.method)
 
+        // The press keeps the video's speed from TikTok's own lookup, which says 1x on a video this
+        // patch carried a speed to, so a pull on a carried lock locked it again instead of letting
+        // go (#485). The extension hands it the speed the video plays at. Before the hold HUD's
+        // hook below, which reads the same register right after the write.
+        try {
+            press.routeKeptSpeedThroughPlayingSpeed()
+        } catch (problem: PatchException) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out the playing speed for the hold on ${packageMetadata.versionName}: ${problem.message}")
+        }
+
         // Undoing the lock plays a literal 1x, "Back to normal speed"; with a default speed on,
         // normal is the default (#248). An add-on like the live change, so only a declared build
         // has to have it.

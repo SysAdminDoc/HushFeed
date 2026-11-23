@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -262,5 +263,77 @@ public class LiveSpeedTest {
 
         assertEquals(1.5f, PlaybackSpeedPatch.liveStartSpeed(), 0f);
         assertEquals(1.5f, PlaybackSpeedPatch.getPlaybackSpeedForVideo(video("a")), 0f);
+    }
+
+    /**
+     * #485: a lock at 0.8x carried to the next video by Remember the last speed. TikTok's hold reads
+     * that video's speed from its own state, which names another video there, so it answers 1x and
+     * the lock didn't count: a pull locked again instead of letting go. The hold keeps the speed
+     * the video plays at.
+     */
+    @Test
+    public void theHoldKeepsTheCarriedLockWhereTikTokAnswersOneX() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        Settings.REMEMBERED_SPEED.save(0.8f);
+        playing("b");
+
+        assertEquals(0.8f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+    }
+
+    @Test
+    public void theHoldKeepsTheDefaultSpeedTheVideoStartedAt() {
+        playing("a");
+
+        assertEquals("Use a default playback speed gave it 1.5x", 1.5f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+    }
+
+    @Test
+    public void theHoldKeepsASpeedDraggedInForThisVideo() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        playing("a");
+        assertTrue(PlaybackSpeedPatch.setLiveSpeed(2.5f));
+
+        assertEquals(2.5f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+    }
+
+    @Test
+    public void aSpeedTikTokKeptForThisVideoStands() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        Settings.REMEMBERED_SPEED.save(0.8f);
+        playing("b");
+
+        assertEquals("TikTok's own speed for the video it named", 1.5f, PlaybackSpeedPatch.holdKeptSpeed(1.5f), 0f);
+    }
+
+    @Test
+    public void aLockLetGoOfKeepsOneX() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        Settings.REMEMBERED_SPEED.save(0.8f);
+        playing("b");
+        // TikTok's "Back to normal speed" goes through the selection boundary like the lock did.
+        PlaybackSpeedPatch.onSelection(1f, video("b"), "homepage_hot", "swipe_up_lock_persist");
+
+        assertEquals(1f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+    }
+
+    @Test
+    public void withNoPlayerKnownTikToksAnswerStands() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        Settings.REMEMBERED_SPEED.save(0.8f);
+
+        assertEquals(1f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+    }
+
+    @Test
+    public void pausedLeavesTikToksAnswer() {
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        Settings.REMEMBERED_SPEED.save(0.8f);
+        playing("b");
+        ReflectionHelpers.setStaticField(Setting.class, "pausedForProcess", true);
+        try {
+            assertEquals(1f, PlaybackSpeedPatch.holdKeptSpeed(1f), 0f);
+        } finally {
+            ReflectionHelpers.setStaticField(Setting.class, "pausedForProcess", false);
+        }
     }
 }

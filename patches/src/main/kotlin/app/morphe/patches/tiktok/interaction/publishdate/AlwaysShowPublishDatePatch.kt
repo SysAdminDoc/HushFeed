@@ -19,6 +19,7 @@ import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFin
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.ControlFlow
 import app.morphe.util.getReference
@@ -56,13 +57,23 @@ val alwaysShowPublishDatePatch = bytecodePatch(
     // The grid cell's count comes with the grid patch, which Show engagement rate shares.
     dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
+        if (isTikTokLite(packageMetadata.packageName)) {
+            showPublishDateOnLite()
+            return@execute
+        }
+
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAlwaysShowPublishDate()V",
+        )
+        // TikTok Lite has none of the grid hooks below, so the grid rows are offered only here.
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePublishDateGrids()V",
         )
 
         VideoAuthorInfoStateFingerprint.method.apply {

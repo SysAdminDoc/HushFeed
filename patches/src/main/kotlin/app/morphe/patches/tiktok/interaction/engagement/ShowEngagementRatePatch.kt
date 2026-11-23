@@ -9,6 +9,8 @@ import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.packageMetadata
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.authorregion.authorRowPatch
@@ -325,6 +327,9 @@ internal val profileGridCountPatch = bytecodePatch {
     dependsOn(sharedExtensionPatch)
 
     execute {
+        // TikTok Lite's profile grids are its own (#502). Always show publish date runs there
+        // without them, so this does nothing on Lite.
+        if (isTikTokLite(packageMetadata.packageName)) return@execute
         ProfileGridBindFingerprint.method.apply {
             if (AccessFlags.STATIC.isSet(accessFlags)) {
                 throw PatchException("$WHAT: the profile grid bind is static.")

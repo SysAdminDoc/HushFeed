@@ -554,6 +554,13 @@ public class SettingsStatus {
         alwaysShowPublishDateEnabled = true;
     }
 
+    /** Always show publish date hooked TikTok's profile grids. TikTok Lite's are its own (#502). */
+    public static boolean publishDateGridsEnabled = false;
+
+    public static void enablePublishDateGrids() {
+        publishDateGridsEnabled = true;
+    }
+
     public static void enableDiagnostics() {
         diagnosticsEnabled = true;
     }

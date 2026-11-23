@@ -153,6 +153,7 @@ public class GridSortTest {
         SettingsStatus.soundGridSortEnabled = soundGridSortEnabled;
         SettingsStatus.collectionGridSortEnabled = collectionGridSortEnabled;
         SettingsStatus.alwaysShowPublishDateEnabled = false;
+        SettingsStatus.publishDateGridsEnabled = false;
         HookStatus.clear();
         GridSort.resetForTests();
     }
@@ -2499,6 +2500,7 @@ public class GridSortTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
 
             SettingsStatus.gridSortEnabled = false;
             assertEquals(null, build(activity).findPreference(Settings.PROFILE_GRID_SORT.key));
@@ -2528,6 +2530,7 @@ public class GridSortTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.likedGridSortEnabled = false;
@@ -2553,6 +2556,7 @@ public class GridSortTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.likedGridSortEnabled = false;
@@ -2578,6 +2582,7 @@ public class GridSortTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.collectionGridSortEnabled = false;
@@ -2603,6 +2608,7 @@ public class GridSortTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.soundGridSortEnabled = false;

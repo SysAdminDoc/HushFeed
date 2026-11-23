@@ -90,6 +90,7 @@ public class GridSearchTest {
         SettingsStatus.gridSortEnabled = gridSortEnabled;
         SettingsStatus.likedGridSortEnabled = likedGridSortEnabled;
         SettingsStatus.alwaysShowPublishDateEnabled = false;
+        SettingsStatus.publishDateGridsEnabled = false;
         HookStatus.clear();
         GridSearch.resetForTests();
         GridSort.resetForTests();
@@ -1027,6 +1028,7 @@ public class GridSearchTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.likedGridSortEnabled = false;

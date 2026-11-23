@@ -363,6 +363,9 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.",
                     Settings.PUBLISH_DATE_INSTEAD_OF_AGE
             ));
+        }
+        // TikTok Lite's Always show publish date has no profile grid hooks (#502).
+        if (SettingsStatus.alwaysShowPublishDateEnabled && SettingsStatus.publishDateGridsEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Show dates on profile grids",

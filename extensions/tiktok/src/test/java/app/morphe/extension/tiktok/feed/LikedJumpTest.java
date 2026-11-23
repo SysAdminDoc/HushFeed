@@ -87,6 +87,7 @@ public class LikedJumpTest {
         SettingsStatus.gridSortEnabled = gridSortEnabled;
         SettingsStatus.likedJumpEnabled = likedJumpEnabled;
         SettingsStatus.alwaysShowPublishDateEnabled = false;
+        SettingsStatus.publishDateGridsEnabled = false;
         HookStatus.clear();
         LikedJump.resetForTests();
         GridSort.resetForTests();
@@ -340,6 +341,7 @@ public class LikedJumpTest {
             var activity = controller.get();
             Utils.setContext(activity);
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             SettingsStatus.gridSortEnabled = true;
 
             SettingsStatus.likedJumpEnabled = false;

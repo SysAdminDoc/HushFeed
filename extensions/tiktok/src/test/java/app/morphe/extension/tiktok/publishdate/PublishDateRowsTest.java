@@ -40,6 +40,47 @@ public class PublishDateRowsTest {
 
     @After public void tearDown() {
         SettingsStatus.alwaysShowPublishDateEnabled = false;
+        SettingsStatus.publishDateGridsEnabled = false;
+        Settings.ALWAYS_SHOW_PUBLISH_DATE.resetToDefault();
+    }
+
+    /**
+     * TikTok Lite (#502) patches only the date by the creator's name. Its grid rows would change
+     * nothing there, so they're offered only where the grids were hooked.
+     */
+    @Test public void theGridRowsShowOnlyWhereTheGridsWereHooked() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.alwaysShowPublishDateEnabled = true;
+
+            SettingsStatus.publishDateGridsEnabled = false;
+            PreferenceScreen lite = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, lite);
+            assertNotNull(lite.findPreference(Settings.ALWAYS_SHOW_PUBLISH_DATE.key));
+            assertNotNull(lite.findPreference(Settings.PUBLISH_DATE_EXACT_TIME.key));
+            assertNotNull(lite.findPreference(Settings.PUBLISH_DATE_INSTEAD_OF_AGE.key));
+            assertNull(lite.findPreference(Settings.PUBLISH_DATE_ON_GRID.key));
+            assertNull(lite.findPreference(Settings.VIDEO_LENGTH_ON_GRID.key));
+            assertNull(lite.findPreference(Settings.HIDE_GRID_VIEW_COUNT.key));
+            assertNull(lite.findPreference(Settings.ROUNDED_GRID_CORNERS.key));
+
+            SettingsStatus.publishDateGridsEnabled = true;
+            PreferenceScreen tiktok = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, tiktok);
+            assertNotNull(tiktok.findPreference(Settings.PUBLISH_DATE_ON_GRID.key));
+            assertNotNull(tiktok.findPreference(Settings.ROUNDED_GRID_CORNERS.key));
+        }
+    }
+
+    /** Lite's row date shows wherever Lite's own checks would hide it, while the switch is on (#502). */
+    @Test public void liteShowsTheRowDateWhileTheSwitchIsOn() {
+        Settings.ALWAYS_SHOW_PUBLISH_DATE.save(true);
+        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(0));
+        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(1));
+        Settings.ALWAYS_SHOW_PUBLISH_DATE.save(false);
+        assertFalse("Lite's own answer stands", AlwaysShowPublishDatePatch.showLitePostTime(0));
+        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(1));
     }
 
     @Test public void theOptionsAreOnTheFeedScreenPageOnlyWhenPatched() {
@@ -60,6 +101,7 @@ public class PublishDateRowsTest {
             assertNull(without.findPreference(Settings.VIDEO_LENGTH_ON_GRID.key));
 
             SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.publishDateGridsEnabled = true;
             PreferenceScreen with = activity.getPreferenceManager().createPreferenceScreen(activity);
             new InterfacePreferenceCategory(activity, with);
             assertNotNull(with.findPreference(Settings.ALWAYS_SHOW_PUBLISH_DATE.key));

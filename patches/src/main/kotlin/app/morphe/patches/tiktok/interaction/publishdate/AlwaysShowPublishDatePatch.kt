@@ -54,8 +54,9 @@ val alwaysShowPublishDatePatch = bytecodePatch(
     default = true,
 ) {
     category("Feed")
-    // The grid cell's count comes with the grid patch, which Show engagement rate shares.
-    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch)
+    // The grid cell's count comes with the grid patch, which Show engagement rate shares. Lite's
+    // author row is hooked once for this and Show author region.
+    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch, liteAuthorRowPatch)
 
     compatibleWith(*AppCompatibilities.tiktokAndLite())
 

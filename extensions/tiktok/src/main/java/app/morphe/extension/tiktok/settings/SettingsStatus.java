@@ -582,6 +582,16 @@ public class SettingsStatus {
         authorRegionEnabled = true;
     }
 
+    /**
+     * Show author region decorates TikTok's own row and caption. TikTok Lite (#502) only adds the
+     * country after the date, so the caption line and handle options stay off its page.
+     */
+    public static boolean authorRegionFullRowEnabled = false;
+
+    public static void enableAuthorRegionFullRow() {
+        authorRegionFullRowEnabled = true;
+    }
+
     public static void enableBlockAuthor() {
         blockAuthorEnabled = true;
     }

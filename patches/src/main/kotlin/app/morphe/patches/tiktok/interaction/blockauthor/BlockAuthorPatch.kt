@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.interaction.blockauthor
 
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -47,6 +49,9 @@ internal val sessionPlaybackBridgePatch = bytecodePatch {
     dependsOn(sharedExtensionPatch)
 
     execute {
+        // Show author region reaches this through Block author on TikTok Lite (#502), which has
+        // none of TikTok's player.
+        if (isTikTokLite(packageMetadata.packageName)) return@execute
         // A bind is not "this video is on screen": the feed binds the items either side of
         // the current one before the user reaches them, so a bind tracker would arm the next
         // creator. The player names the video that is actually playing, which is what selects
@@ -98,6 +103,9 @@ val blockAuthorPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
+        // Only Show author region brings this along on TikTok Lite (#502), for TikTok's row,
+        // which Lite doesn't have.
+        if (isTikTokLite(packageMetadata.packageName)) return@execute
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +

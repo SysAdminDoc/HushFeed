@@ -68,7 +68,8 @@ public class LaunchCrashCleanupTest {
         assertEquals(Arrays.asList("morphe_prefs", "morphe_feature_gate_lab",
                         "hushfeed_release_notes", "hushfeed_device_identity", "hushfeed_group_chats",
                         "hushfeed_sticker_recents", "hushfeed_new_dots", "hushfeed_story_reads",
-                        "hushfeed_picture_in_picture", "hushfeed_local_likes", "hushfeed_profile_changes"),
+                        "hushfeed_picture_in_picture", "hushfeed_local_likes", "hushfeed_profile_changes",
+                        "hushfeed_lite_regions"),
                 Arrays.asList(kept).subList(TIKTOK_KEEPS.length, kept.length));
         assertArrayEquals(LaunchCrashCleanup.HUSHFEED_FILES, LaunchCrashCleanup.keepHushfeedFiles(null));
     }
@@ -80,6 +81,7 @@ public class LaunchCrashCleanupTest {
         expected.put("comment/StickerRecents.java", Arrays.asList("PREFS_NAME"));
         expected.put("diagnostics/JavaCrashCapture.java", Arrays.asList("PREFS_NAME"));
         expected.put("featuregatelab/FeatureGateLabStore.java", Arrays.asList("PREFS_NAME"));
+        expected.put("feed/LiteVideoRegion.java", Arrays.asList("PREFS_NAME"));
         expected.put("ghostmode/LocalLikes.java", Arrays.asList("PREFS_NAME"));
         expected.put("ghostmode/StoryReads.java", Arrays.asList("PREFS_NAME"));
         expected.put("settings/L10n.java", Arrays.asList("Setting.PREFERENCES_NAME"));
@@ -116,6 +118,7 @@ public class LaunchCrashCleanupTest {
         assertTrue(kept.contains(app.morphe.extension.tiktok.playback.PictureInPicture.STATE));
         assertTrue(kept.contains(app.morphe.extension.tiktok.ghostmode.LocalLikes.PREFS_NAME));
         assertTrue(kept.contains(app.morphe.extension.tiktok.profile.ProfileChanges.PREFS_NAME));
+        assertTrue(kept.contains(app.morphe.extension.tiktok.feed.LiteVideoRegion.PREFS_NAME));
         assertFalse("TikTok's store-region file stays off Hushfeed's list",
                 kept.contains(constant(app.morphe.extension.tiktok.spoof.sim.ImageLoads.class, "STORE_PREFS")));
     }

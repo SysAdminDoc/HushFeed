@@ -479,6 +479,9 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.",
                     Settings.REGION_AS_FLAG
             ));
+        }
+        // TikTok Lite (#502) only adds the country after the date by the creator's name.
+        if (SettingsStatus.authorRegionEnabled && SettingsStatus.authorRegionFullRowEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Show the country and date under the caption",

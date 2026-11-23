@@ -24,10 +24,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * #502: Always show publish date in TikTok Lite 47.8.2. Lite's feed author row is found once,
- * both of its checks that leave the date out (For You, and one of Lite's own) go through the
- * extension, and the date text goes through the same extension call TikTok's row uses, with the
- * row's own Aweme and nothing else moved.
+ * #502: TikTok Lite 47.8.2's author row, which Always show publish date and Show author region
+ * share. The row is found once, both of its checks that leave the date out (For You, and one of
+ * Lite's own) go through the extension with the row's video, and the text goes through it too,
+ * with the row's own Aweme and nothing else moved.
  */
 class LitePublishDateTest {
     private val classes: Map<String, ClassDef> by lazy {
@@ -55,6 +55,10 @@ class LitePublishDateTest {
         listOf(it.registerC, it.registerD, it.registerE, it.registerF, it.registerG).take(it.registerCount)
     }
 
+    private fun extension(instruction: Instruction, name: String) = called(instruction)?.let {
+        it.definingClass == "Lapp/morphe/extension/tiktok/feed/LiteAuthorRow;" && it.name == name
+    } == true
+
     @Test
     fun `Lite's author row shows its date wherever the switch says and through the extension`() {
         val method = row()
@@ -67,16 +71,17 @@ class LitePublishDateTest {
         method.hookLitePostTime(site)
 
         val code = code(method)
-        val asks = code.indices.filter { called(code[it])?.name == "showLitePostTime" }
+        val asks = code.indices.filter { extension(code[it], "show") }
         assertEquals("one answer per check", 2, asks.size)
         for (ask in asks) {
-            val register = registers(code[ask]).single()
+            val (register, video) = registers(code[ask])
+            assertEquals("with the row's video", aweme, video)
             assertEquals(Opcode.MOVE_RESULT, code[ask + 1].opcode)
             assertEquals(register, (code[ask + 1] as OneRegisterInstruction).registerA)
             assertEquals("right before the check it answers", Opcode.IF_EQZ, code[ask + 2].opcode)
             assertEquals(register, (code[ask + 2] as OneRegisterInstruction).registerA)
         }
-        val posts = code.indices.filter { called(code[it])?.name == "postTime" }
+        val posts = code.indices.filter { extension(code[it], "text") }
         assertEquals(1, posts.size)
         val post = posts.single()
         assertEquals("with the date and the row's Aweme", listOf(site.textRegister, aweme), registers(code[post]))
@@ -97,7 +102,7 @@ class LitePublishDateTest {
         val method = row()
         val constructor = MutableClass(classes.getValue(method.definingClass)).methods.first { it.name == "<init>" }
         val thrown = assertThrows(PatchException::class.java) { planLitePostTime(constructor) }
-        assertTrue(thrown.message, thrown.message!!.startsWith("Always show publish date: "))
+        assertTrue(thrown.message, thrown.message!!.startsWith("TikTok Lite's author row: "))
     }
 
     /** What the rest of Always show publish date hooks on TikTok, none of which Lite has. */

@@ -8,12 +8,15 @@ package app.morphe.patches.tiktok.interaction.authorregion
 
 import app.morphe.util.addInstruction
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.blockauthor.blockAuthorPatch
+import app.morphe.patches.tiktok.interaction.publishdate.liteAuthorRowPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 
 private const val EXTENSION_CLASS_DESCRIPTOR =
@@ -41,6 +44,9 @@ internal val authorRowPatch = bytecodePatch {
     dependsOn(sharedExtensionPatch, blockAuthorPatch)
 
     execute {
+        // TikTok Lite has neither activity's row. Show author region writes the country into
+        // Lite's own author row there (#502).
+        if (isTikTokLite(packageMetadata.packageName)) return@execute
         // p0 is the activity. /range because a parameter register is usually above v15.
         listOf(MainActivityOnCreateFingerprint, DetailActivityOnCreateFingerprint).forEach {
             it.method.addInstruction(
@@ -59,15 +65,26 @@ val showAuthorRegionPatch = bytecodePatch(
         "Starts off. Turn it on in Hushfeed settings > Feed screen.",
 ) {
     category("Feed")
-    dependsOn(settingsPatch, sharedExtensionPatch, authorRowPatch)
+    // Lite's author row is hooked once for this and Always show publish date.
+    dependsOn(settingsPatch, sharedExtensionPatch, authorRowPatch, liteAuthorRowPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndLite())
 
     execute {
+        val lite = if (isTikTokLite(packageMetadata.packageName)) planLiteRegions() else null
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAuthorRegion()V",
+        )
+        if (lite != null) {
+            lite.write()
+            return@execute
+        }
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, " +
+                "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAuthorRegionFullRow()V",
         )
     }
 }

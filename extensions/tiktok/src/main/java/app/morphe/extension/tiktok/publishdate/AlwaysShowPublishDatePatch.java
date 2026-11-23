@@ -58,15 +58,6 @@ public final class AlwaysShowPublishDatePatch {
     }
 
     /**
-     * TikTok Lite's author row (#502) leaves its date out on For You and wherever one of its own
-     * checks says no. Each check's answer (non-zero shows the date) comes through here, and the
-     * date shows whenever the switch is on.
-     */
-    public static boolean showLitePostTime(int original) {
-        return Settings.ALWAYS_SHOW_PUBLISH_DATE.get() || original != 0;
-    }
-
-    /**
      * Called where the creator's row has its post time text ready ("2d ago", "10-7"). Returns
      * that text, or the full date and time to the second with the time zone while the switch is on
      * (a story's header gets {@link #storyTime}), with Mark saved videos' check before it for a

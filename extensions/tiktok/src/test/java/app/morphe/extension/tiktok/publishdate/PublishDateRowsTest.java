@@ -73,16 +73,6 @@ public class PublishDateRowsTest {
         }
     }
 
-    /** Lite's row date shows wherever Lite's own checks would hide it, while the switch is on (#502). */
-    @Test public void liteShowsTheRowDateWhileTheSwitchIsOn() {
-        Settings.ALWAYS_SHOW_PUBLISH_DATE.save(true);
-        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(0));
-        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(1));
-        Settings.ALWAYS_SHOW_PUBLISH_DATE.save(false);
-        assertFalse("Lite's own answer stands", AlwaysShowPublishDatePatch.showLitePostTime(0));
-        assertTrue(AlwaysShowPublishDatePatch.showLitePostTime(1));
-    }
-
     @Test public void theOptionsAreOnTheFeedScreenPageOnlyWhenPatched() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

@@ -8,8 +8,12 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.isTikTokLite
 import app.morphe.util.ControlFlow
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -21,9 +25,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
-private const val LITE_PUBLISH_DATE_EXTENSION = "Lapp/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch;"
+private const val LITE_ROW_EXTENSION = "Lapp/morphe/extension/tiktok/feed/LiteAuthorRow;"
 private const val LITE_ROW_AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-private const val LITE_ROW_WHAT = "Always show publish date"
+private const val LITE_ROW_WHAT = "TikTok Lite's author row"
 private val LITE_DATE_FORMATTER = listOf("J", "Landroid/content/Context;")
 
 /**
@@ -134,15 +138,16 @@ internal fun planLitePostTime(method: MutableMethod): LitePostTimeSite {
 }
 
 /**
- * The date text first, so the gates' indices before it still hold: it goes through the same
- * extension call TikTok's row uses, for the exact time, the date options and the saved mark.
- * Then each gate's answer, so the date shows while the switch is on.
+ * The row's text first, so the gates' indices before it still hold: the date through the same
+ * call TikTok's row uses (the exact time, the date options and the saved mark), then the country.
+ * Then each gate's answer, with the row's video, so the row goes on to its text whenever the
+ * date or the country is wanted.
  */
 internal fun MutableMethod.hookLitePostTime(site: LitePostTimeSite) {
     addInstructions(
         site.textAt,
         """
-            invoke-static { v${site.textRegister}, v${site.awemeRegister} }, $LITE_PUBLISH_DATE_EXTENSION->postTime(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
+            invoke-static { v${site.textRegister}, v${site.awemeRegister} }, $LITE_ROW_EXTENSION->text(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
             move-result-object v${site.textRegister}
         """,
     )
@@ -150,7 +155,7 @@ internal fun MutableMethod.hookLitePostTime(site: LitePostTimeSite) {
         addInstructions(
             index,
             """
-                invoke-static { v$register }, $LITE_PUBLISH_DATE_EXTENSION->showLitePostTime(I)Z
+                invoke-static { v$register, v${site.awemeRegister} }, $LITE_ROW_EXTENSION->show(ILjava/lang/Object;)Z
                 move-result v$register
             """,
         )
@@ -158,17 +163,30 @@ internal fun MutableMethod.hookLitePostTime(site: LitePostTimeSite) {
 }
 
 /**
+ * Hooks TikTok Lite's author row once for every switch that adds to it (#502): Always show
+ * publish date's date and Show author region's country. Does nothing on TikTok, whose row each
+ * of them decorates its own way.
+ */
+internal val liteAuthorRowPatch = bytecodePatch {
+    dependsOn(sharedExtensionPatch)
+
+    execute {
+        if (!isTikTokLite(packageMetadata.packageName)) return@execute
+        val rows = LiteAuthorRowBindFingerprint.matchAllOrNull().orEmpty().map { it.method }
+        val row = rows.singleOrNull()
+            ?: throw PatchException("$LITE_ROW_WHAT: expected one in TikTok Lite, found ${rows.size}.")
+        row.hookLitePostTime(planLitePostTime(row))
+    }
+}
+
+/**
  * Always show publish date in TikTok Lite (#502): the date by the creator's name, on For You too,
- * with the date options. Lite's profile grids are its own, so their rows stay TikTok's.
+ * with the date options, through [liteAuthorRowPatch]. Lite's profile grids are its own, so their
+ * rows stay TikTok's.
  */
 internal fun showPublishDateOnLite() {
-    val rows = LiteAuthorRowBindFingerprint.matchAllOrNull().orEmpty().map { it.method }
-    val row = rows.singleOrNull()
-        ?: throw PatchException("$LITE_ROW_WHAT: expected one author row in TikTok Lite, found ${rows.size}.")
-    val site = planLitePostTime(row)
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
         "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAlwaysShowPublishDate()V",
     )
-    row.hookLitePostTime(site)
 }

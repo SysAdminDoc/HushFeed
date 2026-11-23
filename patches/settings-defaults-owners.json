@@ -443,7 +443,8 @@
       "HIDE_INBOX_CUSTOM_TITLES",
       "SHOW_INBOX_FILTERS",
       "PIN_MORE_CHATS",
-      "SHOW_MESSAGE_TIMES"
+      "SHOW_MESSAGE_TIMES",
+      "KEEP_CHAT_PLACE"
     ],
     "Hide inbox stories": [
       "HIDE_INBOX_STORIES"

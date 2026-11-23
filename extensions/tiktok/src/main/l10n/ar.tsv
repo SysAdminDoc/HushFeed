@@ -3477,3 +3477,6 @@ The buttons, caption and tabs fade away instead of vanishing at once, and a touc
 # context: #461 Date instead of age, a switch under Write the month as a word
 Date instead of age	التاريخ بدل العمر
 Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.	تعرض الفيديوهات الحديثة تاريخ نشرها بجانب اسم صانع المحتوى، مثل 10-12، بدلًا من عمر مثل منذ يومين. يغيّر «اليوم قبل الشهر» و«اكتب الشهر بالاسم» شكله بالطريقة نفسها.
+# context: #503 Keep your place in chats, an Inbox switch under Show message times; the down arrow is the button that jumps a chat to its newest message
+Keep your place in chats	الحفاظ على موضعك في الدردشات
+A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.	تبقى الدردشة التي مررت فيها للأعلى حيث كنت عند عودتك من فيديو أو عند إرسال رد. إرسال رسالة عادية أو النقر على سهم الأسفل لا يزال ينقلك إلى الأحدث.

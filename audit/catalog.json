@@ -8068,6 +8068,12 @@
     "default": false,
     "type": "bool",
     "row": "Show message times"
+   },
+   {
+    "key": "keep_chat_place",
+    "default": false,
+    "type": "bool",
+    "row": "Keep your place in chats"
    }
   ],
   "surface": "inbox",

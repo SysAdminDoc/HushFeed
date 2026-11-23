@@ -1591,6 +1591,13 @@ public class Settings extends BaseSettings {
     /** The time under each message in a chat, read at each row bind. See MessageTimes. */
     public static final BooleanSetting SHOW_MESSAGE_TIMES =
             new BooleanSetting("show_message_times", FALSE);
+    /**
+     * Keeps a chat you scrolled up in where it is when TikTok would move it to the newest message
+     * on its own, like coming back from a video or sending a reply. Read on each change to the
+     * chat's list. See KeepChatPlace.
+     */
+    public static final BooleanSetting KEEP_CHAT_PLACE =
+            new BooleanSetting("keep_chat_place", FALSE);
     public static final StringSetting HIDE_INBOX_CUSTOM_TITLES =
             new StringSetting("hide_inbox_custom_titles", "");
     // Feed filter additions. The list based ones are read live, so a sound blocked from

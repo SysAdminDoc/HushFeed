@@ -446,7 +446,8 @@
       "hide_inbox_custom_titles",
       "show_inbox_filters",
       "pin_more_chats",
-      "show_message_times"
+      "show_message_times",
+      "keep_chat_place"
     ],
     "Hide inbox stories": [
       "hide_inbox_stories"
@@ -3311,6 +3312,12 @@
     "keep_captions_clear_display": {
       "field": "KEEP_CAPTIONS_CLEAR_DISPLAY",
       "key": "keep_captions_clear_display",
+      "type": "boolean",
+      "default": false
+    },
+    "keep_chat_place": {
+      "field": "KEEP_CHAT_PLACE",
+      "key": "keep_chat_place",
       "type": "boolean",
       "default": false
     },

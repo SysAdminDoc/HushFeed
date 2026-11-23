@@ -281,6 +281,16 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                         Settings.SHOW_MESSAGE_TIMES
                 ));
             }
+            if (SettingsStatus.keepChatPlaceEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Keep your place in chats",
+                        "A chat you've scrolled up in stays where you were when you come back "
+                                + "from a video or send a reply. Sending a regular message or "
+                                + "tapping the down arrow still takes you to the newest.",
+                        Settings.KEEP_CHAT_PLACE
+                ));
+            }
         }
         if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.bundleActivityLikesEnabled

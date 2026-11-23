@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
@@ -68,7 +69,8 @@ val inboxFilterPatch = bytecodePatch(
         "the stories row and the On this day memory in it, plus call buttons and suggested replies in chats. Each has its own " +
         "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
         "Unread and Starred tabs on any account, a way to rebuild message search, room to pin " +
-        "more than 5 chats and the time under each chat message. Starts off. " +
+        "more than 5 chats, the time under each chat message and a way to keep your place in a " +
+        "chat you scrolled up in. Starts off. " +
         "Turn it on in Hushfeed settings > Inbox.",
 ) {
     category("Inbox")
@@ -154,6 +156,18 @@ val inboxFilterPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Show message times on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // Keep your place in chats, held the same way by KeepChatPlaceAnchorsTest.
+        val chatPlace = try {
+            chatScrollHook(
+                PATCH_NAME,
+                ChatScrollDecisionFingerprint.method,
+                ChatScrollDecisionFingerprint.classDef,
+            ) { classDefByOrNull(it) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep your place in chats on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         val binding = InboxRowBindingFingerprint.method
@@ -272,6 +286,15 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMessageTimes()V",
+            )
+        }
+
+        // TikTok's move to the newest message, which a chat scrolled up in can keep from (#503).
+        if (chatPlace != null) {
+            ChatScrollDecisionFingerprint.method.keepChatPlace(chatPlace)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableKeepChatPlace()V",
             )
         }
     }

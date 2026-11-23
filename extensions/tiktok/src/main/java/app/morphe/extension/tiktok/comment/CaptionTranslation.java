@@ -4,8 +4,14 @@
  */
 package app.morphe.extension.tiktok.comment;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -13,6 +19,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.editpost.ClientText;
 import com.ss.android.ugc.aweme.editpost.ClientTextWrapper;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
+import com.ss.android.ugc.aweme.model.TextExtraStruct;
 
 /**
  * The caption row at the top of a video's comments, in the language the feed shows it in (#488).
@@ -126,7 +133,7 @@ public final class CaptionTranslation {
             if (rich.translationProtocol == CLIENT_TEXT) {
                 ClientText text = rich.clientText;
                 if (text != null && notEmpty(text.markupText)) {
-                    return new Translation(text.markupText, text.textExtra == null ? new ArrayList<>() : text.textExtra);
+                    return fromMarkup(text.markupText, text.textExtra == null ? new ArrayList<>() : text.textExtra);
                 }
             } else if (rich.translationProtocol == PLAIN_TEXT) {
                 String text = source.richText(aweme, language);
@@ -139,6 +146,86 @@ public final class CaptionTranslation {
 
     private static boolean notEmpty(String text) {
         return text != null && !text.trim().isEmpty();
+    }
+
+    /** A markup tag: {@code <h id="288">}, {@code </h>} or {@code <br/>}. */
+    private static final Pattern TAG = Pattern.compile(
+            "<(/?)([a-zA-Z][a-zA-Z0-9]*)((?:\\s+[a-zA-Z_][\\w-]*\\s*=\\s*\"[^\"]*\")*)\\s*(/?)>");
+    private static final Pattern ID = Pattern.compile("\\bid\\s*=\\s*\"([^\"]*)\"");
+    private static final Pattern ENTITY = Pattern.compile("&(lt|gt|amp|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);");
+
+    /**
+     * A rich translation as TikTok's feed draws it (#488). Its markup tags each words of the text
+     * ({@code <h id="288">#xh</h>} for a hashtag, {@code m} for a mention, {@code br} for a line
+     * break), and each span's {@code tagId} names the tag it sits on. The text keeps the tagged
+     * words without their tags, and every span with a tag in it gets a copy placed on that tag's
+     * words; TikTok's cached spans are never changed. Text with no tags at all is kept as it came.
+     */
+    static Translation fromMarkup(String markup, List<?> spans) {
+        Matcher tag = TAG.matcher(markup);
+        if (!tag.find()) return new Translation(markup, spans);
+        tag.reset();
+        StringBuilder text = new StringBuilder(markup.length());
+        Map<String, int[]> ranges = new HashMap<>();
+        Deque<String[]> open = new ArrayDeque<>();
+        int from = 0;
+        while (tag.find()) {
+            text.append(unescape(markup.substring(from, tag.start())));
+            from = tag.end();
+            String name = tag.group(2);
+            if ("br".equalsIgnoreCase(name)) {
+                text.append('\n');
+            } else if (tag.group(1).isEmpty()) {
+                if (!tag.group(4).isEmpty()) continue;
+                Matcher id = ID.matcher(tag.group(3));
+                open.push(new String[]{name, id.find() ? id.group(1) : null, String.valueOf(text.length())});
+            } else {
+                while (!open.isEmpty()) {
+                    String[] started = open.pop();
+                    if (!started[0].equals(name)) continue;
+                    if (started[1] != null) {
+                        ranges.put(started[1], new int[]{Integer.parseInt(started[2]), text.length()});
+                    }
+                    break;
+                }
+            }
+        }
+        text.append(unescape(markup.substring(from)));
+        List<Object> placed = new ArrayList<>();
+        for (Object span : spans) {
+            if (!(span instanceof TextExtraStruct)) continue;
+            TextExtraStruct own = (TextExtraStruct) span;
+            int[] range = own.tagId == null ? null : ranges.get(own.tagId);
+            if (range == null) continue;
+            TextExtraStruct copy = own.clone();
+            copy.start = range[0];
+            copy.end = range[1];
+            placed.add(copy);
+        }
+        return new Translation(text.toString(), placed);
+    }
+
+    private static String unescape(String text) {
+        if (text.indexOf('&') < 0) return text;
+        Matcher entity = ENTITY.matcher(text);
+        StringBuilder out = new StringBuilder(text.length());
+        int from = 0;
+        while (entity.find()) {
+            out.append(text, from, entity.start());
+            String name = entity.group(1);
+            switch (name) {
+                case "lt": out.append('<'); break;
+                case "gt": out.append('>'); break;
+                case "amp": out.append('&'); break;
+                case "quot": out.append('"'); break;
+                case "apos": out.append('\''); break;
+                default:
+                    int code = name.startsWith("#x") ? Integer.parseInt(name.substring(2), 16) : Integer.parseInt(name.substring(1));
+                    if (Character.isValidCodePoint(code)) out.appendCodePoint(code); else out.append(entity.group());
+            }
+            from = entity.end();
+        }
+        return out.append(text, from, text.length()).toString();
     }
 
     // The patch rewrites each bridge to read TikTok's own state. Their bodies here answer as if

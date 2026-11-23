@@ -22,6 +22,7 @@ Every Hushfeed release, newest first.
 * `Show the country and date under the caption` no longer sits on the progress bar on videos without a search line under the caption. The line now goes right under the caption and keeps the gap TikTok leaves above the bar. It's white like the name and caption too, not the post time's grey (#498).
 * `Hold TikTok's save button to download` works wherever you press on the save button. TikTok gives some accounts a check that only starts the long press when the press lands right on the icon or its count, and a hold beside them did nothing at all (#499).
 * Record in a LIVE's small window used to do nothing when the room it belonged to had gone away in the meantime. Now it says "No stream found to record. Reopen the LIVE." and writes which part was missing to the log (#413).
+* A translated caption at the top of the comments showed TikTok's raw tags around its hashtags and mentions, like `<h id="288">#flowers</h>`. It shows the plain text now, with the hashtags and mentions where TikTok draws them (#488).
 
 ### Build
 

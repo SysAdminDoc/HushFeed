@@ -12,6 +12,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.editpost.ClientText;
 import com.ss.android.ugc.aweme.editpost.ClientTextWrapper;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
+import com.ss.android.ugc.aweme.model.TextExtraStruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -119,6 +120,51 @@ public class CaptionTranslationTest {
         assertEquals("the same video", video.getAid(), row.getAid());
         assertEquals("and the video itself keeps its caption", "Hola #gatos", video.getDesc());
         assertEquals(Collections.singletonList("span over #gatos"), video.getTextExtra());
+    }
+
+    private static TextExtraStruct tag(String id, String name) {
+        TextExtraStruct span = new TextExtraStruct();
+        span.tagId = id;
+        span.hashTagName = name;
+        span.start = -1;
+        span.end = -1;
+        return span;
+    }
+
+    /** #488: TikTok's markup translation draws as text, with each span on its own tag's words. */
+    @Test public void aMarkupTranslationShowsItsTextWithTheSpansOnTheirTags() {
+        Settings.CAPTION_OPENS_COMMENTS.save(true);
+        tiktok.translated = true;
+        TextExtraStruct xh = tag("288", "xh");
+        TextExtraStruct flowers = tag("295", "flowers");
+        TextExtraStruct unused = tag("999", "nowhere");
+        tiktok.wrapper = rich("Better &amp; brighter.<h id=\"288\">#xh</h> <h id=\"295\">#flowers</h><br/><m id=\"7\">@ana</m>",
+                Arrays.asList(xh, flowers, unused, tag("7", null)));
+        Aweme row = (Aweme) CaptionTranslation.captionAweme(posted("aMarkupTranslationShowsItsTextWithTheSpansOnTheirTags"));
+
+        String text = row.getDesc();
+        assertEquals("Better & brighter.#xh #flowers\n@ana", text);
+        List<?> spans = row.getTextExtra();
+        assertEquals("only spans with a tag in the text", 3, spans.size());
+        TextExtraStruct first = (TextExtraStruct) spans.get(0);
+        assertEquals("#xh", text.substring(first.start, first.end));
+        assertEquals("xh", first.hashTagName);
+        TextExtraStruct second = (TextExtraStruct) spans.get(1);
+        assertEquals("#flowers", text.substring(second.start, second.end));
+        TextExtraStruct mention = (TextExtraStruct) spans.get(2);
+        assertEquals("@ana", text.substring(mention.start, mention.end));
+        assertEquals("TikTok's cached spans are left as they were", -1, xh.start);
+        assertNotSame(xh, first);
+    }
+
+    @Test public void aStrayAngleBracketInAMarkupTranslationStaysText() {
+        Settings.CAPTION_OPENS_COMMENTS.save(true);
+        tiktok.translated = true;
+        tiktok.wrapper = rich("3 < 5 and <h id=\"1\">#math</h> <3", Collections.singletonList(tag("1", "math")));
+        Aweme row = (Aweme) CaptionTranslation.captionAweme(posted("aStrayAngleBracketInAMarkupTranslationStaysText"));
+        assertEquals("3 < 5 and #math <3", row.getDesc());
+        TextExtraStruct span = (TextExtraStruct) row.getTextExtra().get(0);
+        assertEquals("#math", row.getDesc().substring(span.start, span.end));
     }
 
     @Test public void aPlainTranslationDropsSpansThatPointIntoTheOriginal() {

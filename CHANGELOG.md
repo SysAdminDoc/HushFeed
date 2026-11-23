@@ -18,6 +18,7 @@ Every Hushfeed release, newest first.
 * `Hold speed bubble size` is new under `Slide to change the hold speed`. It draws the bubble from 50 to 150 percent of its usual size. Since 0.82.0 the bubble grows with your phone's font size, which made it big with large text on, so set it under 100 to bring it back down (#452).
 * `Fade the controls out` is new under `Automatic Clear display`. The buttons, caption and tabs fade away over a quarter second before the clear instead of vanishing at once, and a touch during the fade brings them back. It starts off (#501).
 * `Date instead of age` is new next to the publish date options. Recent videos show the day they were posted, like 10-12 or Oct 12, where TikTok writes 2d ago, and today's and yesterday's videos get a date too. `Day before month` and `Write the month as a word` change it the same way. It starts off (#461).
+* `SIM spoof`, `Ghost mode` and `Always show publish date` work on TikTok Lite now. SIM spoof uses the same Region settings as in TikTok. Lite's Ghost mode has `Hide story views`, `Hide profile visits`, `Hide typing` and `Hide online status`. The publish date shows next to the creator's name on every Lite video, For You included, and the date options change it there too (#502).
 
 ### Bug Fixes
 

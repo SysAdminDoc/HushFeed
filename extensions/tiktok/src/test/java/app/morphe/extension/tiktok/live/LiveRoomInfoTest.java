@@ -75,6 +75,7 @@ public class LiveRoomInfoTest {
     @After public void tearDown() {
         LiveRoomInfo.resetForTests();
         Settings.LIVE_ROOM_INFO.resetToDefault();
+        Settings.LIVE_RUNNING_TIME.resetToDefault();
         SettingsStatus.liveControlsEnabled = liveControls;
         Locale.setDefault(locale);
         room.close();
@@ -92,14 +93,106 @@ public class LiveRoomInfoTest {
     }
 
     private TextView line() {
+        return lineStarting("Room ID ");
+    }
+
+    private TextView lineStarting(String start) {
         ViewGroup content = room.get().findViewById(android.R.id.content);
         for (int i = 0; i < content.getChildCount(); i++) {
             View child = content.getChildAt(i);
-            if (child instanceof TextView && ((TextView) child).getText().toString().startsWith("Room ID ")) {
+            if (child instanceof TextView && ((TextView) child).getText().toString().startsWith(start)) {
                 return (TextView) child;
             }
         }
         return null;
+    }
+
+    // ---------------------------------------------------------------- how long the room has run (#494)
+
+    @Test public void theRunningTimeCountsFromTheRoomsStart() {
+        Settings.LIVE_ROOM_INFO.save(false);
+        Settings.LIVE_RUNNING_TIME.save(true);
+        front.room.createTime = System.currentTimeMillis() / 1000 - (3600 + 2 * 60 + 3);
+        openRoom();
+        TextView line = lineStarting("LIVE for ");
+        assertNotNull("no running time", line);
+        String text = line.getText().toString();
+        assertTrue(text, text.equals("LIVE for 1:02:03") || text.equals("LIVE for 1:02:04"));
+        assertEquals(View.VISIBLE, line.getVisibility());
+        // The room ID stays off with its own switch off.
+        assertFalse(text, text.contains("Room ID"));
+    }
+
+    @Test public void theRunningTimeGoesUnderTheRoomIdWithBothSwitchesOn() {
+        Settings.LIVE_RUNNING_TIME.save(true);
+        front.room.createTime = System.currentTimeMillis() / 1000 - 125;
+        openRoom();
+        String text = line().getText().toString();
+        assertTrue(text, text.startsWith("Room ID 7301234567890123456\nLIVE for 2:0"));
+    }
+
+    @Test public void theRunningTimeTicksWithTheLine() {
+        Settings.LIVE_ROOM_INFO.save(false);
+        Settings.LIVE_RUNNING_TIME.save(true);
+        front.room.createTime = System.currentTimeMillis() / 1000 - 10;
+        openRoom();
+        String before = lineStarting("LIVE for ").getText().toString();
+        front.room.createTime -= 60;
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        String after = lineStarting("LIVE for ").getText().toString();
+        assertTrue(before + " then " + after, after.startsWith("LIVE for 1:1"));
+    }
+
+    @Test public void aRoomWithNoStartTimeYetShowsNoRunningTime() {
+        // A room from the LIVE feed has no start time until TikTok's enter answer fills it in.
+        Settings.LIVE_ROOM_INFO.save(false);
+        Settings.LIVE_RUNNING_TIME.save(true);
+        openRoom();
+        assertNull(lineStarting("LIVE for "));
+        assertNull(line());
+        front.room.startTime = System.currentTimeMillis() / 1000 - 30;
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNotNull("the start time came in and no line followed", lineStarting("LIVE for 0:3"));
+    }
+
+    @Test public void theRunningTimeHasNoLineWithItsSwitchOff() {
+        Settings.LIVE_ROOM_INFO.save(false);
+        front.room.createTime = System.currentTimeMillis() / 1000 - 125;
+        openRoom();
+        assertNull(lineStarting("LIVE for "));
+        Settings.LIVE_ROOM_INFO.save(true);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertEquals("Room ID 7301234567890123456", line().getText().toString());
+    }
+
+    @Test public void theRunningTimeReadsHoursMinutesAndSeconds() {
+        assertEquals("0:00", LiveRoomInfo.runningTime(0));
+        assertEquals("0:00", LiveRoomInfo.runningTime(-5_000));
+        assertEquals("0:59", LiveRoomInfo.runningTime(59_999));
+        assertEquals("12:05", LiveRoomInfo.runningTime((12 * 60 + 5) * 1000L));
+        assertEquals("1:00:00", LiveRoomInfo.runningTime(3_600_000L));
+        assertEquals("27:03:09", LiveRoomInfo.runningTime(((27 * 60 + 3) * 60 + 9) * 1000L));
+    }
+
+    @Test public void theStartIsReadInSecondsOrMilliseconds() {
+        Room seconds = new Room();
+        seconds.createTime = 1_763_800_000L;
+        assertEquals(1_763_800_000_000L, LiveRoomInfo.startedAtMs(seconds));
+        Room millis = new Room();
+        millis.startTime = 1_763_800_000_123L;
+        assertEquals(1_763_800_000_123L, LiveRoomInfo.startedAtMs(millis));
+        assertEquals(0L, LiveRoomInfo.startedAtMs(new Room()));
+        assertEquals(0L, LiveRoomInfo.startedAtMs(null));
+        assertEquals(0L, LiveRoomInfo.startedAtMs(new Object()));
+    }
+
+    @Test public void theRunningTimeLineNeedsLiveControlsAndNoPause() {
+        Settings.LIVE_ROOM_INFO.save(false);
+        Settings.LIVE_RUNNING_TIME.save(true);
+        SettingsStatus.liveControlsEnabled = false;
+        front.room.createTime = System.currentTimeMillis() / 1000 - 125;
+        openRoom();
+        assertNull(lineStarting("LIVE for "));
     }
 
     @Test public void theLineShowsTheRoomInFrontWhileTheSwitchIsOn() {

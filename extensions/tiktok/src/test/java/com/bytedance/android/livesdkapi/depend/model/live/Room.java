@@ -4,4 +4,7 @@ package com.bytedance.android.livesdkapi.depend.model.live;
 public class Room {
     public Object owner;
     public String idStr;
+    /** Seconds since the epoch, as TikTok's own room keeps them. */
+    public long createTime;
+    public long startTime;
 }

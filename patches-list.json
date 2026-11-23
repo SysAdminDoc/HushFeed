@@ -7859,6 +7859,15 @@
           "values": null
         },
         {
+          "key": "live_running_time",
+          "title": "Default: live running time",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "offer_live_quality",
           "title": "Default: offer live quality",
           "description": null,

@@ -11065,6 +11065,12 @@
     "row": "Show the room ID and your connection"
    },
    {
+    "key": "live_running_time",
+    "default": false,
+    "type": "bool",
+    "row": "Show how long a LIVE has been on"
+   },
+   {
     "key": "offer_live_quality",
     "default": false,
     "type": "bool",

@@ -24,6 +24,7 @@ import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -45,6 +46,10 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * the round trip to the stream's server, how far behind live the picture is and how fast it
  * downloads. The same JSON also carries the host's phone model and system; none of that is read.
  * A tap copies the room ID.
+ *
+ * <p>The same line can say how long the LIVE has been running (#494), from the room's own start
+ * time, the one TikTok's LIVE code counts a room's duration from. Each switch shows its own part,
+ * and the line shows while either has something to say.
  */
 @SuppressWarnings("unused")
 public final class LiveRoomInfo {
@@ -76,8 +81,15 @@ public final class LiveRoomInfo {
     private static boolean statsFailed;
 
     static boolean enabled() {
-        return SettingsStatus.liveControlsEnabled && Settings.LIVE_ROOM_INFO.get() && !Setting.isPaused();
+        return SettingsStatus.liveControlsEnabled && !Setting.isPaused()
+                && (Settings.LIVE_ROOM_INFO.get() || Settings.LIVE_RUNNING_TIME.get());
     }
+
+    /**
+     * Below this a start time is in seconds, as the room keeps it; at or above, it's already in
+     * milliseconds. A second count only reaches it in the year 5138.
+     */
+    private static final long MILLIS_FROM = 100_000_000_000L;
 
     /** Called as a LIVE room's page begins to resume, with that page. */
     public static void noteRoomFragment(Object fragment) {
@@ -160,8 +172,14 @@ public final class LiveRoomInfo {
         if (activity == null) return;
         boolean wanted = enabled() && !activity.isFinishing() && !activity.isDestroyed()
                 && !FeedVisibility.isFeedWindow(activity) && !inPictureInPicture(activity);
-        String room = wanted ? roomInFront(activity) : null;
-        if (room == null) {
+        Object roomObject = wanted ? LiveRecordChip.roomOf(pageInFront(activity)) : null;
+        String room = LiveRecordChip.roomKey(roomObject);
+        boolean showRoom = room != null && Settings.LIVE_ROOM_INFO.get();
+        String running = room != null && Settings.LIVE_RUNNING_TIME.get()
+                ? runningLine(roomObject, System.currentTimeMillis()) : null;
+        String text = showRoom ? text(room, stats()) : "";
+        if (running != null) text = text.isEmpty() ? running : text + "\n" + running;
+        if (text.isEmpty()) {
             removeLabel();
             return;
         }
@@ -171,12 +189,12 @@ public final class LiveRoomInfo {
             label = showLabel(activity);
             if (label == null) return;
         }
-        String text = text(room, stats());
         if (!text.contentEquals(label.getText())) {
             label.setText(text);
             label.setContentDescription(text);
         }
-        shownRoom = room;
+        // Only the room ID is copied, so with its switch off a tap does nothing.
+        shownRoom = showRoom ? room : null;
         // Clear screen hides the room's controls, and a screen recording hides Hushfeed's own
         // buttons so they aren't filmed (#265); the line goes with them.
         boolean hidden = LiveRecordChip.clearScreenOn() || LiveRecordChip.filmingScreen();
@@ -195,7 +213,7 @@ public final class LiveRoomInfo {
         label.setTextColor(SettingsUi.OVERLAY_TEXT);
         label.setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SP);
         label.setGravity(Gravity.END);
-        label.setMaxLines(2);
+        label.setMaxLines(3);
         int padding = SettingsUi.dp(activity, 6);
         label.setPadding(padding + padding / 2, padding / 2, padding + padding / 2, padding / 2);
         label.setBackground(SettingsUi.overlayControl(activity, SettingsUi.RADIUS_OVERLAY));
@@ -257,6 +275,41 @@ public final class LiveRoomInfo {
         return line.toString();
     }
 
+    /** "LIVE for 1:02:03", or null while the room has no start time yet. Real-named fields on 47.9.3. */
+    static String runningLine(Object room, long nowMs) {
+        long started = startedAtMs(room);
+        if (started <= 0) return null;
+        return L10n.f("LIVE for %1$s", runningTime(nowMs - started));
+    }
+
+    /**
+     * When the room started, in milliseconds, or 0 when it doesn't say. TikTok's own duration
+     * counts from the room's create time, in seconds; its start time is the fallback. A room
+     * from the LIVE feed has neither until TikTok's enter answer fills the page's room in.
+     */
+    static long startedAtMs(Object room) {
+        if (room == null) return 0;
+        long started = seconds(Reflect.readField(room, "createTime"));
+        if (started <= 0) started = seconds(Reflect.readField(room, "startTime"));
+        if (started <= 0) return 0;
+        return started >= MILLIS_FROM ? started : started * 1000;
+    }
+
+    private static long seconds(Object value) {
+        return value instanceof Number ? ((Number) value).longValue() : 0;
+    }
+
+    /** "12:05" under an hour, "1:02:03" from one, hours counting on past a day. */
+    static String runningTime(long elapsedMs) {
+        long total = Math.max(0, elapsedMs) / 1000;
+        long hours = total / 3600;
+        long minutes = total / 60 % 60;
+        long seconds = total % 60;
+        return hours > 0
+                ? String.format(Locale.US, "%d:%02d:%02d", hours, minutes, seconds)
+                : String.format(Locale.US, "%d:%02d", minutes, seconds);
+    }
+
     private static String tenths(double value) {
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMinimumFractionDigits(1);
@@ -284,8 +337,8 @@ public final class LiveRoomInfo {
         return null;
     }
 
-    /** The room of the page with the most of itself on screen, or the only page known. */
-    static String roomInFront(Activity activity) {
+    /** The page with the most of itself on screen, or the only page known, or null. */
+    private static Object pageInFront(Activity activity) {
         Object best = null;
         Object only = null;
         int pages = 0;
@@ -301,7 +354,7 @@ public final class LiveRoomInfo {
             }
         }
         if (best == null && pages == 1 && !Boolean.FALSE.equals(Reflect.invoke(only, "isResumed"))) best = only;
-        return best == null ? null : LiveRecordChip.roomKey(LiveRecordChip.roomOf(best));
+        return best;
     }
 
     static void resetForTests() {

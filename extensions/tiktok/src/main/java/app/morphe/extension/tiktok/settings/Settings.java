@@ -833,6 +833,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting LIVE_ROOM_INFO = new BooleanSetting("live_room_info", FALSE);
     /**
+     * How long the LIVE has been running, on the same line (#494), counted from the room's own
+     * start time; the LIVE controls patch. Read every second, so no restart.
+     */
+    public static final BooleanSetting LIVE_RUNNING_TIME = new BooleanSetting("live_running_time", FALSE);
+    /**
      * Offers TikTok's quality picker in more LIVE rooms and carries the last pick to the next
      * room; the LIVE controls patch. Read when a room builds its menu and picks its starting
      * quality, so the next room follows a change.

@@ -13,6 +13,7 @@ Every Hushfeed release, newest first.
 
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
 * When the diagnostic report says the phone destroyed TikTok's main screen, it now says why it might have. Either Don't keep activities is on in Developer options, or it gives how full TikTok's memory was, since Android closes an app's screens in the background once three quarters of it is used (#419).
+* `Show how long a LIVE has been on`, with the other LIVE options in Playback, adds how long the host has been live to the small line in LIVE rooms, counted from when the room started and ticking every second. It sits under the room ID when that's on too. A room opened from the LIVE feed shows it once TikTok has that room's start time. It starts off (#494).
 
 ### Build
 

@@ -247,6 +247,7 @@ Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving t
 "Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.","Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it."
 "Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.","Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back."
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
+"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that."
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID."
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts."
@@ -1267,6 +1268,7 @@ LIVE ended or dropped. Recording saved to %1$s,LIVE ended or dropped. Recording 
 LIVE feed,LIVE feed
 LIVE feed countries,LIVE feed countries
 LIVE followers range,LIVE followers range
+LIVE for %1$s,LIVE for %1$s
 LIVE name alerts,LIVE name alerts
 LIVE profile card background,LIVE profile card background
 LIVE profile card text,LIVE profile card text
@@ -2194,6 +2196,7 @@ Show exact counts,Show exact counts
 Show failures on screen,Show failures on screen
 Show follow status,Show follow status
 Show gates,Show gates
+Show how long a LIVE has been on,Show how long a LIVE has been on
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.
 Show how many were filtered,Show how many were filtered
 Show inbox filters,Show inbox filters

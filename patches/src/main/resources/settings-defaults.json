@@ -591,6 +591,7 @@
       "hide_live_ai_summary",
       "show_exact_live_viewers",
       "live_room_info",
+      "live_running_time",
       "offer_live_quality",
       "remember_live_quality",
       "offer_live_clear_screen",
@@ -3512,6 +3513,12 @@
     "live_room_info": {
       "field": "LIVE_ROOM_INFO",
       "key": "live_room_info",
+      "type": "boolean",
+      "default": false
+    },
+    "live_running_time": {
+      "field": "LIVE_RUNNING_TIME",
+      "key": "live_running_time",
       "type": "boolean",
       "default": false
     },

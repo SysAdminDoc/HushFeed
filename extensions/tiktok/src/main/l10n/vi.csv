@@ -3038,3 +3038,5 @@ Burn-in guard dim level,Mức làm mờ của chống lưu ảnh
 "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.","Mức đậm của nút, chú thích và thẻ khi bị làm mờ, từ %1$d đến %2$d. Giá trị thấp hơn làm mờ nhiều hơn."
 Fade the controls out,Làm mờ dần điều khiển
 "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.","Các nút, chú thích và thẻ mờ dần thay vì biến mất ngay, và một lần chạm trong lúc mờ dần sẽ hiển thị lại chúng. Khi tắt hiệu ứng động của Android, chúng vẫn biến mất ngay."
+Date instead of age,Ngày thay cho thời gian
+"Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.","Video mới hiện ngày đăng cạnh tên nhà sáng tạo, như 10-12, thay cho thời gian như 2 ngày trước. Ngày trước tháng và Viết tháng bằng chữ cũng đổi nó theo cùng cách."

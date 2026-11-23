@@ -359,6 +359,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Date instead of age",
+                    "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.",
+                    Settings.PUBLISH_DATE_INSTEAD_OF_AGE
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show dates on profile grids",
                     "Show the day each video was posted under its view count on profile grids.",
                     Settings.PUBLISH_DATE_ON_GRID

@@ -3474,3 +3474,6 @@ How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Low
 # context: #501 Fade the controls out, a switch under Automatic Clear display
 Fade the controls out	إخفاء عناصر التحكم بالتلاشي
 The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.	تتلاشى الأزرار والتسمية والتبويبات تدريجيًا بدلًا من أن تختفي فجأة، ولمسة أثناء التلاشي تعيدها. عند إيقاف الرسوم المتحركة في Android تختفي فجأة كما كانت.
+# context: #461 Date instead of age, a switch under Write the month as a word
+Date instead of age	التاريخ بدل العمر
+Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.	تعرض الفيديوهات الحديثة تاريخ نشرها بجانب اسم صانع المحتوى، مثل 10-12، بدلًا من عمر مثل منذ يومين. يغيّر «اليوم قبل الشهر» و«اكتب الشهر بالاسم» شكله بالطريقة نفسها.

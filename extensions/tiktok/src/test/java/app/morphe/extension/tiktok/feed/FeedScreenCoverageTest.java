@@ -177,6 +177,8 @@ public class FeedScreenCoverageTest {
         // Day first rewrites TikTok's own date by the creator's name, so it reaches where that row does (#438).
         put("publish_date_day_first", YES, YES, NONE);
         put("publish_date_month_name", YES, YES, NONE);
+        // The same row's age written as a date, so it reaches where that row does (#461).
+        put("publish_date_instead_of_age", YES, YES, NONE);
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("video_length_on_grid", NONE, NONE, NONE);

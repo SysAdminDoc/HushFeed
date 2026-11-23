@@ -3203,3 +3203,6 @@ How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Low
 # context: #501 Fade the controls out, a switch under Automatic Clear display
 Fade the controls out	Esmaecer os controles
 The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.	Os botões, a legenda e as abas esmaecem em vez de sumir de uma vez, e um toque durante o esmaecimento os traz de volta. Com as animações do Android desligadas, eles ainda somem de uma vez.
+# context: #461 Date instead of age, a switch under Write the month as a word
+Date instead of age	Data em vez de idade
+Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.	Vídeos recentes mostram a data em que foram postados ao lado do nome do criador, como 10-12, em vez de uma idade como há 2 d. Dia antes do mês e Escrever o mês por extenso mudam a data do mesmo jeito.

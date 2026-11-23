@@ -3038,3 +3038,5 @@ Burn-in guard dim level,老化防护变暗程度
 "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.",变暗时按钮、标题和选项卡的不透明程度，从 %1$d 到 %2$d。数值越低越暗.
 Fade the controls out,淡出控件
 "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.",按钮、标题和选项卡会逐渐淡出，而不是一下子消失，淡出时触摸屏幕会让它们恢复。关闭 Android 动画时，它们仍会立即消失.
+Date instead of age,显示日期而非时长
+"Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.",新视频在创作者名字旁显示发布日期，如 10-12，而不是像 2天前 这样的时长。日在月前 和 用文字写月份 也会以同样方式改变它.

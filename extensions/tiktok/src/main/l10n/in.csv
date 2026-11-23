@@ -3040,3 +3040,5 @@ Burn-in guard dim level,Tingkat redup pelindung burn-in
 "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.","Seberapa pekat tombol, keterangan, dan tab saat meredup, dari %1$d sampai %2$d. Nilai lebih rendah membuatnya lebih redup."
 Fade the controls out,Pudarkan kontrol
 "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.","Tombol, keterangan, dan tab memudar alih-alih hilang seketika, dan sentuhan saat memudar memunculkannya lagi. Jika animasi Android dimatikan, semuanya tetap hilang seketika."
+Date instead of age,Tanggal alih-alih usia
+"Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.","Video baru menampilkan tanggal diunggah di samping nama kreator, seperti 10-12, alih-alih usia seperti 2 hr lalu. Hari sebelum bulan dan Tulis bulan sebagai kata mengubahnya dengan cara yang sama."

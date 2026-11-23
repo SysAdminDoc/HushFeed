@@ -12,6 +12,7 @@ import android.text.format.DateUtils;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,6 +70,10 @@ public final class AlwaysShowPublishDatePatch {
     private static String exactOrOriginal(String original, Object item) {
         if (!Settings.PUBLISH_DATE_EXACT_TIME.get()) {
             boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
+            if (Settings.PUBLISH_DATE_INSTEAD_OF_AGE.get()) {
+                String date = insteadOfAge(original, item, Settings.PUBLISH_DATE_MONTH_NAME.get(), dayFirst);
+                if (date != null) return date;
+            }
             if (Settings.PUBLISH_DATE_MONTH_NAME.get()) return monthName(original, item, dayFirst);
             return dayFirst ? dayFirst(original, item) : original;
         }
@@ -135,6 +140,98 @@ public final class AlwaysShowPublishDatePatch {
             Logger.printException(() -> "Could not write the month as a word", ex);
             return original;
         }
+    }
+
+    /**
+     * Date instead of age (#461): TikTok writes a recent video's time as an age ("2d ago", "1w
+     * ago", "Yesterday") before this hook sees it, so the two date options had nothing to rewrite
+     * there. With the switch on, that age becomes the day the video was posted, in the shape the
+     * options pick ({@link #fixedDate}). A date TikTok already wrote goes on to the options as
+     * before, and a story keeps its hours: its header is about the time of day.
+     */
+    private static String insteadOfAge(String original, Object item, boolean monthName, boolean dayFirst) {
+        if (original == null || original.trim().isEmpty()) return null;
+        try {
+            long now = System.currentTimeMillis();
+            long seconds = postedAt(item, now);
+            if (seconds <= 0 || StoryShareSave.isStory(item)) return null;
+            Locale locale = Locale.getDefault();
+            TimeZone zone = TimeZone.getDefault();
+            if (writesADate(original, seconds, locale, zone)) return null;
+            String date = fixedDate(seconds, now, monthName, dayFirst, locale, zone);
+            Logger.printDebug(() -> "Publish date: " + date + " in place of TikTok's " + original);
+            return date;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write the date in place of the age", ex);
+            return null;
+        }
+    }
+
+    /**
+     * The day a video posted at {@code seconds} was posted, in {@code zone}: "10-12" the way
+     * TikTok writes an older date, "12.10" day first, "Oct 12" or "12 Oct" with the month as a
+     * word. A date from another year than {@code nowMillis}'s carries it: "2025-10-12",
+     * "12.10.25", "Oct 12, 2025", "12 Oct 2025", the shapes the options give TikTok's own dates.
+     */
+    static String fixedDate(long seconds, long nowMillis, boolean monthName, boolean dayFirst, Locale locale,
+            TimeZone zone) {
+        long millis = seconds * 1000L;
+        Calendar calendar = Calendar.getInstance(zone);
+        calendar.setTimeInMillis(millis);
+        int year = calendar.get(Calendar.YEAR);
+        calendar.setTimeInMillis(nowMillis);
+        boolean sameYear = year == calendar.get(Calendar.YEAR);
+        SimpleDateFormat format;
+        if (monthName) {
+            String pattern = sameYear ? (dayFirst ? "d MMM" : "MMM d") : (dayFirst ? "d MMM y" : "MMM d, y");
+            format = new SimpleDateFormat(pattern, locale);
+        } else {
+            String pattern = sameYear ? (dayFirst ? "dd.MM" : "MM-dd") : (dayFirst ? "dd.MM.yy" : "yyyy-MM-dd");
+            format = new SimpleDateFormat(pattern, Locale.ROOT);
+        }
+        format.setTimeZone(zone);
+        return format.format(new Date(millis));
+    }
+
+    /**
+     * Whether TikTok's text is already a date rather than an age: all numbers ("10-12",
+     * "2025-10-12"), or the posted day's number with its month's name ("Oct 12", "12 oct.",
+     * "10月12日") in the phone's language.
+     */
+    private static boolean writesADate(String text, long seconds, Locale locale, TimeZone zone) {
+        int groups = numberGroups(text);
+        if (groups >= 2 && groups <= 3) return true;
+        Calendar posted = Calendar.getInstance(zone);
+        posted.setTimeInMillis(seconds * 1000L);
+        if (!hasNumber(text, posted.get(Calendar.DAY_OF_MONTH))) return false;
+        int month = posted.get(Calendar.MONTH);
+        DateFormatSymbols symbols = DateFormatSymbols.getInstance(locale);
+        String lower = text.toLowerCase(locale);
+        for (String[] names : new String[][]{symbols.getShortMonths(), symbols.getMonths()}) {
+            if (month >= names.length || names[month] == null) continue;
+            String name = names[month].toLowerCase(locale);
+            while (name.endsWith(".")) name = name.substring(0, name.length() - 1);
+            if (!name.isEmpty() && lower.contains(name)) return true;
+        }
+        return false;
+    }
+
+    /** Whether {@code text} holds {@code number} as a run of digits of its own. */
+    private static boolean hasNumber(String text, int number) {
+        int i = 0;
+        while (i < text.length()) {
+            if (!Character.isDigit(text.charAt(i))) {
+                i++;
+                continue;
+            }
+            int value = 0;
+            while (i < text.length() && Character.isDigit(text.charAt(i))) {
+                value = Math.min(value * 10 + Character.digit(text.charAt(i), 10), 1_000_000);
+                i++;
+            }
+            if (value == number) return true;
+        }
+        return false;
     }
 
     /** How many runs of digits a date like "09-29" holds, or 0 when anything but digits and - . / is in it. */

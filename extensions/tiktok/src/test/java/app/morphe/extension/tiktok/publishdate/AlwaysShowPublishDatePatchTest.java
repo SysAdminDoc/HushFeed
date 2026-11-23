@@ -154,6 +154,7 @@ public class AlwaysShowPublishDatePatchTest {
         Settings.PUBLISH_DATE_SHORT_DATE.resetToDefault();
         Settings.PUBLISH_DATE_DAY_FIRST.resetToDefault();
         Settings.PUBLISH_DATE_MONTH_NAME.resetToDefault();
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
     }
@@ -253,6 +254,120 @@ public class AlwaysShowPublishDatePatchTest {
         Settings.PUBLISH_DATE_DAY_FIRST.save(true);
         assertEquals("29 Sep", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
         assertEquals("7 Mar 2024", AlwaysShowPublishDatePatch.postTime("2024-03-07", older));
+    }
+
+    /**
+     * Issue #461: TikTok writes a recent video's time as an age ("2d ago", "1w ago") before the
+     * hook sees it, and the date options only rewrote all-number dates, so recent videos kept the
+     * age. Date instead of age writes the day it was posted, in the shape the two options pick:
+     * TikTok's own 10-12, day first 12.10, the month as a word Oct 12, or both 12 Oct, with the
+     * year only for a post from another year.
+     */
+    @Test
+    public void aRecentPostsAgeBecomesAFixedDateInEveryShape() {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        long now = utcSeconds(2026, 10, 14, 12, 0) * 1000L;
+        long twoDays = utcSeconds(2026, 10, 12, 9, 30);
+        long oneWeek = utcSeconds(2026, 10, 7, 20, 15);
+        assertEquals("10-12", AlwaysShowPublishDatePatch.fixedDate(twoDays, now, false, false, Locale.US, utc));
+        assertEquals("12.10", AlwaysShowPublishDatePatch.fixedDate(twoDays, now, false, true, Locale.US, utc));
+        assertEquals("Oct 12", AlwaysShowPublishDatePatch.fixedDate(twoDays, now, true, false, Locale.US, utc));
+        assertEquals("12 Oct", AlwaysShowPublishDatePatch.fixedDate(twoDays, now, true, true, Locale.US, utc));
+        assertEquals("10-07", AlwaysShowPublishDatePatch.fixedDate(oneWeek, now, false, false, Locale.US, utc));
+        assertEquals("07.10", AlwaysShowPublishDatePatch.fixedDate(oneWeek, now, false, true, Locale.US, utc));
+        assertEquals("Oct 7", AlwaysShowPublishDatePatch.fixedDate(oneWeek, now, true, false, Locale.US, utc));
+        assertEquals("7 Oct", AlwaysShowPublishDatePatch.fixedDate(oneWeek, now, true, true, Locale.US, utc));
+
+        // A week ago across New Year is last year's date, so it carries the year as an older one does.
+        long january = utcSeconds(2027, 1, 3, 12, 0) * 1000L;
+        long december = utcSeconds(2026, 12, 27, 18, 0);
+        assertEquals("2026-12-27", AlwaysShowPublishDatePatch.fixedDate(december, january, false, false, Locale.US, utc));
+        assertEquals("27.12.26", AlwaysShowPublishDatePatch.fixedDate(december, january, false, true, Locale.US, utc));
+        assertEquals("Dec 27, 2026", AlwaysShowPublishDatePatch.fixedDate(december, january, true, false, Locale.US, utc));
+        assertEquals("27 Dec 2026", AlwaysShowPublishDatePatch.fixedDate(december, january, true, true, Locale.US, utc));
+
+        // The day is the phone's: 23:30 UTC on the 12th is already the 13th in Tokyo.
+        long late = utcSeconds(2026, 10, 12, 23, 30);
+        assertEquals("10-13", AlwaysShowPublishDatePatch.fixedDate(late, now, false, false, Locale.US,
+                TimeZone.getTimeZone("Asia/Tokyo")));
+    }
+
+    /**
+     * The same through the creator's row with today's clock: a post 2 days and one a week old
+     * read as their date with the switch on, in all four shapes, and keep TikTok's age with it
+     * off. Today, yesterday and a few minutes ago go the same way. A date TikTok already wrote
+     * (in numbers or with the month's name), a story's time, and a video with no time are left as
+     * they were.
+     */
+    @Test
+    public void dateInsteadOfAgeRewritesTheRowOnlyWithTheSwitchOn() {
+        assertEquals(Boolean.FALSE, Settings.PUBLISH_DATE_INSTEAD_OF_AGE.defaultValue);
+        long nowSeconds = System.currentTimeMillis() / 1000L;
+        Post twoDays = new Post(nowSeconds - 2 * 86_400L, POSTED_ID);
+        Post oneWeek = new Post(nowSeconds - 7 * 86_400L, POSTED_ID);
+        Post minutes = new Post(nowSeconds - 300L, POSTED_ID);
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", twoDays));
+        assertEquals("1w ago", AlwaysShowPublishDatePatch.postTime("1w ago", oneWeek));
+        Settings.PUBLISH_DATE_MONTH_NAME.save(true);
+        Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+        assertEquals("the options alone keep the age", "2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", twoDays));
+        Settings.PUBLISH_DATE_MONTH_NAME.save(false);
+        Settings.PUBLISH_DATE_DAY_FIRST.save(false);
+
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.save(true);
+        for (boolean monthName : new boolean[]{false, true}) {
+            for (boolean dayFirst : new boolean[]{false, true}) {
+                Settings.PUBLISH_DATE_MONTH_NAME.save(monthName);
+                Settings.PUBLISH_DATE_DAY_FIRST.save(dayFirst);
+                String shape = (monthName ? "word" : "number") + (dayFirst ? ", day first" : ", month first");
+                assertEquals(shape, written(twoDays.createTime, monthName, dayFirst),
+                        AlwaysShowPublishDatePatch.postTime("2d ago", twoDays));
+                assertEquals(shape, written(oneWeek.createTime, monthName, dayFirst),
+                        AlwaysShowPublishDatePatch.postTime("1w ago", oneWeek));
+            }
+        }
+        Settings.PUBLISH_DATE_MONTH_NAME.save(false);
+        Settings.PUBLISH_DATE_DAY_FIRST.save(false);
+        String today = written(minutes.createTime, false, false);
+        assertEquals(today, AlwaysShowPublishDatePatch.postTime("5m ago", minutes));
+        assertEquals(today, AlwaysShowPublishDatePatch.postTime("Today", minutes));
+        assertEquals(today, AlwaysShowPublishDatePatch.postTime("Just now", minutes));
+        assertEquals(written(twoDays.createTime, false, false),
+                AlwaysShowPublishDatePatch.postTime("Yesterday", twoDays));
+
+        Post thisYear = new Post(utcSeconds(2026, 9, 29, 14, 5), POSTED_ID);
+        assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
+        assertEquals("Sep 29", AlwaysShowPublishDatePatch.postTime("Sep 29", thisYear));
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", new Post(0L, null)));
+        assertEquals("", AlwaysShowPublishDatePatch.postTime("", twoDays));
+        assertEquals("a story keeps its hours", "5h ago",
+                AlwaysShowPublishDatePatch.postTime("5h ago", new Story(nowSeconds - 5 * 3600L)));
+
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.save(false);
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", twoDays));
+    }
+
+    /** What the row should read for a post at {@code seconds}, worked out from the calendar in UTC. */
+    private static String written(long seconds, boolean monthName, boolean dayFirst) {
+        java.util.Calendar posted = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.US);
+        posted.setTimeInMillis(seconds * 1000L);
+        java.util.Calendar today = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.US);
+        boolean sameYear = posted.get(java.util.Calendar.YEAR) == today.get(java.util.Calendar.YEAR);
+        int day = posted.get(java.util.Calendar.DAY_OF_MONTH);
+        int month = posted.get(java.util.Calendar.MONTH) + 1;
+        int year = posted.get(java.util.Calendar.YEAR);
+        String name = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
+                "Nov", "Dec"}[month - 1];
+        if (monthName) {
+            if (dayFirst) return day + " " + name + (sameYear ? "" : " " + year);
+            return name + " " + day + (sameYear ? "" : ", " + year);
+        }
+        if (dayFirst) {
+            return String.format(Locale.ROOT, "%02d.%02d", day, month)
+                    + (sameYear ? "" : String.format(Locale.ROOT, ".%02d", year % 100));
+        }
+        return sameYear ? String.format(Locale.ROOT, "%02d-%02d", month, day)
+                : String.format(Locale.ROOT, "%d-%02d-%02d", year, month, day);
     }
 
     @Test

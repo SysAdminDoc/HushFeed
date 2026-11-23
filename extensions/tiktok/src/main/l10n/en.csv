@@ -649,6 +649,7 @@ Dark Favorites popup,Dark Favorites popup
 Dark LIVE panels in dark mode,Dark LIVE panels in dark mode
 Dark gray,Dark gray
 Data Saver,Data Saver
+Date instead of age,Date instead of age
 Day before month,Day before month
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
@@ -1860,6 +1861,7 @@ Rebuild message search,Rebuild message search
 Rebuilding message search,Rebuilding message search
 Received message translation,Received message translation
 Recent searches,Recent searches
+"Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.","Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way."
 Recently used,Recently used
 Record,Record
 Record LIVEs you watch,Record LIVEs you watch

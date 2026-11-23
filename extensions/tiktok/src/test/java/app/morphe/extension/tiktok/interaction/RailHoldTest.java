@@ -235,6 +235,27 @@ public class RailHoldTest {
         }
     }
 
+    /**
+     * #499: some accounts only get Favorites' long press for a press on the icon or its count.
+     * With the save-on-hold switch on, a press anywhere on the button counts.
+     */
+    @Test public void aHoldBesideTheFavoritesIconCountsOnlyForTheSave() {
+        boolean wasEnabled = SettingsStatus.advancedDownloadsEnabled;
+        try {
+            SettingsStatus.advancedDownloadsEnabled = true;
+            assertTrue("a press on the icon always counts", RailHold.favoritesPressCounts(1));
+            assertFalse("switched off, TikTok's check stands", RailHold.favoritesPressCounts(0));
+
+            Settings.HOLD_SAVE_TO_DOWNLOAD.save(true);
+            assertTrue("switched on, a press beside the icon counts", RailHold.favoritesPressCounts(0));
+
+            SettingsStatus.advancedDownloadsEnabled = false;
+            assertFalse("nor without the download patch", RailHold.favoritesPressCounts(0));
+        } finally {
+            SettingsStatus.advancedDownloadsEnabled = wasEnabled;
+        }
+    }
+
     @Test public void noListenerStaysNoListener() {
         View share = button();
         RailHold.setShareLongClick(share, null);

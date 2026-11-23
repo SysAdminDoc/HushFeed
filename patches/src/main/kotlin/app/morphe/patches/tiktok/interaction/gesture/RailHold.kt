@@ -5,6 +5,8 @@
 package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
+import app.morphe.patcher.string
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -17,12 +19,14 @@ import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 internal const val RAIL_HOLD_EXTENSION = "Lapp/morphe/extension/tiktok/interaction/RailHold;"
 internal const val VIDEO_COMMENT_ASSEM = "Lcom/ss/android/ugc/aweme/feed/assem/videocomment/VideoCommentAssem;"
@@ -34,10 +38,14 @@ internal const val COMMENT_MENU_KEY = "video_comment_button_long_click"
 internal const val FAVORITES_MENU_KEY = "video_favorite_button_long_click"
 internal const val FAVORITES_MENU_EVENT = "long_press_favorite"
 internal const val EDGE_SPEEDUP_ABILITY = "Lcom/ss/android/ugc/aweme/feed/longvideo/edgespeedup/EdgeSpeedupAbility;"
+internal const val FAVORITES_TOUCH_LABEL = "getQuickFavoriteOnTouchDelegate"
 private const val VIEW = "Landroid/view/View;"
 private const val ON_LONG_CLICK = "Landroid/view/View\$OnLongClickListener;"
+private const val ON_TOUCH = "Landroid/view/View\$OnTouchListener;"
 private const val HANDLER = "Landroid/os/Handler;"
 private const val RUNNABLE = "Ljava/lang/Runnable;"
+private const val FUNCTION2 = "Lkotlin/jvm/functions/Function2;"
+private const val BOOLEAN = "Ljava/lang/Boolean;"
 
 /** Whether the instruction is TikTok's own View.setOnLongClickListener call. */
 internal fun Instruction.setsLongClick(): Boolean =
@@ -73,6 +81,82 @@ internal object FavoritesMenuFingerprint : Fingerprint(
     parameters = listOf(),
     strings = listOf(FAVORITES_MENU_KEY, FAVORITES_MENU_EVENT),
 )
+
+/**
+ * The timer TikTok's touch listener on Favorites posts as a press lands, which marks the press as
+ * a long one and runs the collection offer. It names itself in a trace label
+ * ("QuickFavoriteManager@2914.getQuickFavoriteOnTouchDelegate$1$action$1" on 47.9.3, the number
+ * changing between builds), and its constructor takes the listener it belongs to.
+ */
+internal object FavoritesTouchTimerFingerprint : Fingerprint(
+    name = "run",
+    returnType = "V",
+    parameters = listOf(),
+    filters = listOf(string(FAVORITES_TOUCH_LABEL, StringComparisonType.CONTAINS)),
+    custom = { _, classDef -> RUNNABLE in classDef.interfaces },
+)
+
+/**
+ * The touch listener a Favorites [timer] belongs to: of the types its constructor takes, the one
+ * [lookup] finds is a View.OnTouchListener.
+ */
+internal fun favoritesTouchListenerType(timer: ClassDef, lookup: (String) -> ClassDef?): String {
+    val listeners = timer.methods.filter { it.name == "<init>" }
+        .flatMap { it.parameterTypes.map(CharSequence::toString) }
+        .distinct()
+        .filter { type -> lookup(type)?.interfaces?.contains(ON_TOUCH) == true }
+    if (listeners.size != 1) {
+        throw PatchException("Long-press controls: the Favorites timer ${timer.type} belongs to ${listeners.size} touch listeners, not one.")
+    }
+    return listeners.single()
+}
+
+/**
+ * The indexes in the Favorites listener's onTouch where the answer of TikTok's icon check is
+ * unboxed into a register: a Function2 call, its Boolean taken out with booleanValue and moved.
+ * The index is the move's.
+ */
+internal fun Method.favoritesPressChecks(): List<Int> {
+    val instructions = implementation?.instructions?.toList() ?: return emptyList()
+    return instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.INVOKE_INTERFACE &&
+            instructions[index].getReference<MethodReference>()?.let {
+                it.definingClass == FUNCTION2 && it.name == "invoke"
+            } == true &&
+            instructions.getOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT &&
+            instructions.getOrNull(index + 2)?.let {
+                it.opcode == Opcode.CHECK_CAST && it.getReference<TypeReference>()?.type == BOOLEAN
+            } == true &&
+            instructions.getOrNull(index + 3)?.let {
+                it.opcode == Opcode.INVOKE_VIRTUAL && it.getReference<MethodReference>()?.let { call ->
+                    call.definingClass == BOOLEAN && call.name == "booleanValue"
+                } == true
+            } == true &&
+            instructions.getOrNull(index + 4)?.opcode == Opcode.MOVE_RESULT
+    }.map { it + 4 }
+}
+
+/**
+ * Hands the answer of TikTok's icon check on Favorites to the extension (#499). Accounts in
+ * TikTok's tt_interaction_area_ux_opt test at 3 or more only start the long press when a press
+ * lands on the icon or its count, so a hold beside them did nothing at all. The extension answers
+ * yes for any press on the button while Hold TikTok's save button to download is on.
+ */
+internal fun MutableMethod.letFavoritesPressAnywhere() {
+    val checks = favoritesPressChecks()
+    if (checks.size != 1) {
+        throw PatchException("Long-press controls: $definingClass->$name asks ${checks.size} press checks, not one.")
+    }
+    val moveAt = checks.single()
+    val register = (implementation!!.instructions[moveAt] as OneRegisterInstruction).registerA
+    addInstructions(
+        moveAt + 1,
+        """
+            invoke-static/range {v$register .. v$register}, $RAIL_HOLD_EXTENSION->favoritesPressCounts(I)Z
+            move-result v$register
+        """,
+    )
+}
 
 /** Whether the instruction is a Handler.removeCallbacks(Runnable) call. */
 internal fun Instruction.dropsCallbacks(): Boolean =

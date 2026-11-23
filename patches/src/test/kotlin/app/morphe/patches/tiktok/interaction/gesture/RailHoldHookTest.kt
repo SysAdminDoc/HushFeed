@@ -12,6 +12,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
@@ -291,5 +292,80 @@ class RailHoldHookTest {
     fun `a view setup with no long press is refused`() {
         val method = method(VIDEO_SHARE_ASSEM, "onViewCreated", listOf(view), "V", 2, "return-void")
         assertThrows(PatchException::class.java) { method.routeLongClicks("setShareLongClick") }
+    }
+
+    private val function2 = "Lkotlin/jvm/functions/Function2;"
+
+    /**
+     * 47.9.3's Favorites listener as a press lands, cut down: the icon check unboxed into v5, so a
+     * register slip shows, then the long press's post.
+     */
+    private fun favoritesTouch(checks: Int = 1) = method("LX/0BQF;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 13, """
+        const/4 v8, 0x0
+        invoke-virtual {p2}, Landroid/view/MotionEvent;->getAction()I
+        move-result v1
+        if-nez v1, :done
+        iget-object v0, p0, LX/0BQF;->check:$function2
+        if-eqz v0, :post
+        ${"""
+        invoke-interface {v0, p1, p2}, $function2->invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        move-result-object v6
+        check-cast v6, Ljava/lang/Boolean;
+        invoke-virtual {v6}, Ljava/lang/Boolean;->booleanValue()Z
+        move-result v5
+        if-nez v5, :post
+        """.repeat(checks)}
+        goto :done
+        :post
+        iget-object v2, p0, LX/0BQF;->timer:Ljava/lang/Runnable;
+        :done
+        return v8
+    """)
+
+    @Test
+    fun `Favorites' icon check goes through the extension in its own register`() {
+        val method = favoritesTouch()
+        val before = method.implementation!!.instructions.toList()
+        val kept = branches(before)
+        val moveAt = before.indexOfFirst { it.opcode == Opcode.MOVE_RESULT && (it as OneRegisterInstruction).registerA == 5 }
+
+        method.letFavoritesPressAnywhere()
+
+        val after = method.implementation!!.instructions.toList()
+        assertEquals(before.size + 2, after.size)
+        val call = after[moveAt + 1]
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
+        assertExtensionCall(call, "favoritesPressCounts", listOf("I"), "Z")
+        assertEquals(5, (call as RegisterRangeInstruction).startRegister)
+        assertEquals(1, call.registerCount)
+        assertEquals(Opcode.MOVE_RESULT, after[moveAt + 2].opcode)
+        assertEquals(5, (after[moveAt + 2] as OneRegisterInstruction).registerA)
+        assertSame("TikTok's branch on the answer comes next", before[moveAt + 1], after[moveAt + 3])
+        (0..moveAt).forEach { assertSame(before[it], after[it]) }
+        assertBranchesKept(kept, after)
+    }
+
+    @Test
+    fun `a Favorites listener with no icon check, or two, is refused`() {
+        assertThrows(PatchException::class.java) { favoritesTouch(checks = 0).letFavoritesPressAnywhere() }
+        assertThrows(PatchException::class.java) { favoritesTouch(checks = 2).letFavoritesPressAnywhere() }
+    }
+
+    private fun classDef(type: String, interfaces: List<String>, methods: List<ImmutableMethod> = emptyList()) =
+        ImmutableClassDef(type, AccessFlags.PUBLIC.value, "Ljava/lang/Object;", interfaces, null, null, null, methods)
+
+    @Test
+    fun `the Favorites timer leads to the one touch listener it was built for`() {
+        val listener = classDef("LX/0BQF;", listOf("Landroid/view/View\$OnTouchListener;"))
+        val menu = classDef("LX/0BQD;", listOf("Lkotlin/jvm/functions/Function0;"))
+        val constructor = ImmutableMethod(
+            "LX/0BQG;", "<init>", listOf(listener.type, menu.type).map { ImmutableMethodParameter(it, null, null) }, "V",
+            AccessFlags.PUBLIC.value or AccessFlags.CONSTRUCTOR.value, null, null, null,
+        )
+        val timer = classDef("LX/0BQG;", listOf("Ljava/lang/Runnable;"), listOf(constructor))
+        val types = listOf(listener, menu).associateBy { it.type }
+
+        assertEquals("LX/0BQF;", favoritesTouchListenerType(timer) { types[it] })
+        assertThrows(PatchException::class.java) { favoritesTouchListenerType(timer) { null } }
     }
 }

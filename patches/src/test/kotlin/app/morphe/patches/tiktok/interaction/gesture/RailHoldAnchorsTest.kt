@@ -99,6 +99,28 @@ class RailHoldAnchorsTest {
     }
 
     @Test
+    fun `Favorites' touch listener asks one icon check before its long press, on every fixture`() {
+        for (apk in Fixtures.apks()) {
+            val build = Build(apk)
+            val timers = build.methods.filter { (classDef, method) -> FavoritesTouchTimerFingerprint.takes(method, classDef) }.toList()
+            assertEquals("${apk.name}: ${timers.map { "${it.first.type}->${it.second.name}" }}", 1, timers.size)
+            val listener = build.byType.getValue(favoritesTouchListenerType(timers.single().first) { build.byType[it] })
+            val onTouch = listener.methods.single { it.name == "onTouch" }
+            // The check gates the post that starts the long press, so its answer is branched on
+            // and nothing else reads it (#499).
+            assertEquals("${apk.name}: ${listener.type} asks the icon check", 1, onTouch.favoritesPressChecks().size)
+            // The same listener runs the collection offer, through the timer.
+            val menu = build.methods.filter { (classDef, method) -> FavoritesMenuFingerprint.takes(method, classDef) }.single().first.type
+            val timerTakes = timers.single().first.methods.single { it.name == "<init>" }.parameterTypes.map(CharSequence::toString)
+            assertTrue("${apk.name}: the timer runs $timerTakes, not the offer $menu", menu in timerTakes)
+            val instructions = onTouch.implementation!!.instructions.toList()
+            val answer = onTouch.favoritesPressChecks().single()
+            assertTrue("${apk.name}: the check's answer isn't branched on next",
+                instructions[answer + 1].opcode in listOf(Opcode.IF_EQZ, Opcode.IF_NEZ))
+        }
+    }
+
+    @Test
     fun `the hold's touch listener is one method on every fixture, dropping its post in each way a press ends`() {
         for (apk in Fixtures.apks()) {
             val build = Build(apk)
@@ -136,6 +158,7 @@ class RailHoldAnchorsTest {
         assertTrue("the hold check's asks are not answered", source.contains("EdgeSpeedupEligibilityFingerprint.method.answerRailHitTests()"))
         assertTrue("Comment's emoji row is not skipped", source.contains("CommentMenuFingerprint.method.skipCommentMenuWhenHeld()"))
         assertTrue("Favorites' offer is not skipped", source.contains("FavoritesMenuFingerprint.method.skipFavoritesMenuWhenHeld()"))
+        assertTrue("Favorites' icon check is not answered", source.contains(".letFavoritesPressAnywhere()"))
         assertTrue("a dropped hold doesn't forget its passes", source.contains("HoldTouchFingerprint.method.routeHoldDrops()"))
         assertTrue("Share's long presses are not wrapped", source.contains("ShareViewCreatedFingerprint.method.routeLongClicks(\"setShareLongClick\")"))
     }

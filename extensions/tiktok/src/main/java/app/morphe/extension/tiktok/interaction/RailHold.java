@@ -131,6 +131,23 @@ public final class RailHold {
     }
 
     /**
+     * TikTok's touch listener on Favorites, as a press lands, asking whether it landed on the icon
+     * or its count; only then does the long press start. Accounts in TikTok's
+     * tt_interaction_area_ux_opt test at 3 or more get this check and the rest don't, so a hold
+     * beside the icon did nothing at all for some people (#499). With Hold TikTok's save button
+     * to download on, a press anywhere on the button counts. Taps are never asked.
+     *
+     * @param onIcon TikTok's answer, non-zero for yes
+     */
+    public static boolean favoritesPressCounts(int onIcon) {
+        HookStatus.bound(FAMILY, "favorites press check");
+        if (onIcon != 0) return true;
+        if (!holdDownloads()) return false;
+        HookStatus.bound(FAMILY, "favorites press widened");
+        return true;
+    }
+
+    /**
      * Whether a long press on Favorites downloads the video (#433). It takes Favorites from the
      * hold speed too, so one press never both speeds the video up and saves it.
      */

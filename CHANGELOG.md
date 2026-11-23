@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 * With `SIM spoof` on, pictures and thumbnails could stay grey unless a VPN was on. TikTok's network stack picked its image and API servers by the preset's country while the phone was on another country's network. The network stack now gets your real SIM's country and carrier, and the rest of TikTok still sees the preset (#415).
 * With `Keep captions available` on, a video whose caption tracks don't include the one in its original language now shows one of the others. TikTok used to say the video had no captions even though it carried some. The export's Captions line counts those videos as `tracks:unmatched` (#217).
 * `Show the country and date under the caption` no longer sits on the progress bar on videos without a search line under the caption. The line now goes right under the caption and keeps the gap TikTok leaves above the bar. It's white like the name and caption too, not the post time's grey (#498).
+* `Hold TikTok's save button to download` works wherever you press on the save button. TikTok gives some accounts a check that only starts the long press when the press lands right on the icon or its count, and a hold beside them did nothing at all (#499).
 * Record in a LIVE's small window used to do nothing when the room it belonged to had gone away in the meantime. Now it says "No stream found to record. Reopen the LIVE." and writes which part was missing to the log (#413).
 
 ### Build

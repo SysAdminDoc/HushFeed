@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
@@ -232,6 +233,13 @@ val longPressPatch = bytecodePatch(
         HoldTouchFingerprint.method.routeHoldDrops()
         CommentMenuFingerprint.method.skipCommentMenuWhenHeld()
         FavoritesMenuFingerprint.method.skipFavoritesMenuWhenHeld()
+        // Hold TikTok's save button to download counts a hold anywhere on the button, past
+        // TikTok's icon check some accounts get (#499).
+        val favoritesTouch = favoritesTouchListenerType(FavoritesTouchTimerFingerprint.classDef) { classDefByOrNull(it) }
+        mutableClassDefBy(favoritesTouch).methods.single { method ->
+            method.name == "onTouch" && method.returnType == "Z" &&
+                method.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;", "Landroid/view/MotionEvent;")
+        }.letFavoritesPressAnywhere()
         ShareViewCreatedFingerprint.method.routeLongClicks("setShareLongClick")
         // A creator's videos can get For You's full long-press menu instead of the small sheet (#120).
         LongPressSceneFingerprint.method.aliasProfileLongPressScene()

@@ -3182,3 +3182,8 @@ In a LIVE battle, TikTok caps the big scores viewers see while the host sees the
 Start LIVEs at	Avvia le LIVE in
 The quality you picked last	L'ultima qualità che hai scelto
 A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	Una stanza LIVE si apre in questa qualità finché non ne scegli un'altra, e quella scelta passa alle stanze successive finché TikTok non si chiude. Una stanza il cui stream non la offre si apre con la scelta di TikTok.
+Skip promo lines	Salta le righe promozionali
+Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.	Salta la parte di un video in cui una riga dei sottotitoli contiene una parola di Parole promozionali, come la pubblicità di un casinò o un codice promozionale, e mostra Annulla. Legge i sottotitoli del video stesso, quindi un video senza sottotitoli viene riprodotto come sempre.
+Promo words	Parole promozionali
+Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Separa parole o frasi con virgole, come casino, promo code. Le maiuscole non contano, e "a" & "b" o "a" !& "b" funzionano come in Parole bloccate nelle descrizioni.
+Skipped a promo line	Riga promozionale saltata

@@ -44,9 +44,10 @@ private object ClearTransitionFingerprint : Fingerprint(
 val subtitleToolsPatch = bytecodePatch(
     name = "Subtitle tools",
     description = "Lets you make captions bigger, change their background and keep them in " +
-        "clear display, bring back TikTok's captions switch where it's missing, and save subtitle " +
-        "files with downloaded videos. Starts off. Turn it on in " +
-        "Hushfeed settings > Feed screen, and Downloads for subtitle files.",
+        "clear display, bring back TikTok's captions switch where it's missing, skip the part of " +
+        "a video whose caption has a promo word you list, and save subtitle files with downloaded " +
+        "videos. Starts off. Turn it on in Hushfeed settings > Feed screen, Feed filter for promo " +
+        "words, and Downloads for subtitle files.",
 ) {
     category("Playback")
     compatibleWith(*AppCompatibilities.tiktok())
@@ -135,6 +136,11 @@ val subtitleToolsPatch = bytecodePatch(
         }
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableSubtitleTools()V")
+
+        // Skip promo lines (#493), held to each declared build by PromoSkipAnchorsTest.
+        PromoProgressFingerprint.method.hookPromoSkip()
+        SettingsStatusLoadFingerprint.method.addInstruction(0,
+            "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePromoSkip()V")
 
         // Keep captions available (#217), held to each declared build by CaptionsAvailableAnchorsTest.
         val captionsAvailable = try {

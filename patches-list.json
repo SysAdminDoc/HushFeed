@@ -12101,7 +12101,7 @@
     },
     {
       "name": "Subtitle tools",
-      "description": "Lets you make captions bigger, change their background and keep them in clear display, bring back TikTok's captions switch where it's missing, and save subtitle files with downloaded videos. Starts off. Turn it on in Hushfeed settings > Feed screen, and Downloads for subtitle files.",
+      "description": "Lets you make captions bigger, change their background and keep them in clear display, bring back TikTok's captions switch where it's missing, skip the part of a video whose caption has a promo word you list, and save subtitle files with downloaded videos. Starts off. Turn it on in Hushfeed settings > Feed screen, Feed filter for promo words, and Downloads for subtitle files.",
       "category": "Playback",
       "use": true,
       "dependencies": [
@@ -12236,6 +12236,24 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "skip_promo_lines",
+          "title": "Default: skip promo lines",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "skip_promo_words",
+          "title": "Default: skip promo words",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
           "values": null
         }
       ]

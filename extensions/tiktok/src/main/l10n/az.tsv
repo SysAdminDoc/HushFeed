@@ -3182,3 +3182,8 @@ In a LIVE battle, TikTok caps the big scores viewers see while the host sees the
 Start LIVEs at	LIVE-ları bu keyfiyyətdə başlat
 The quality you picked last	Son seçdiyiniz keyfiyyət
 A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	LIVE otağı siz başqa keyfiyyət seçənə qədər bu keyfiyyətdə açılır, həmin seçim isə TikTok bağlanana qədər növbəti otaqlara keçir. Yayımında bu keyfiyyət olmayan otaq TikTok-un seçimi ilə açılır.
+Skip promo lines	Reklam sətirlərini keç
+Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.	Videonun başlıq sətrində Reklam sözlərindən biri olan hissəsini, məsələn kazino və ya promo kod reklamını keçir və Geri qaytarın göstərir. Videonun öz başlıqlarını oxuyur, ona görə başlığı olmayan video həmişəki kimi oynayır.
+Promo words	Reklam sözləri
+Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Sözləri və ya ifadələri vergüllə ayırın, məsələn casino, promo code. Böyük hərflərin fərqi yoxdur, "a" & "b" və ya "a" !& "b" isə Bloklanmış başlıq sözlərindəki kimi işləyir.
+Skipped a promo line	Reklam sətri keçildi

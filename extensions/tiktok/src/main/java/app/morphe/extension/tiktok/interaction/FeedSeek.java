@@ -80,7 +80,7 @@ public final class FeedSeek {
         if (target >= durationMs) target = durationMs - 1;
 
         Object manager = Reflect.invoke(controller, "getPlayerManager");
-        if (manager == null || !seek(manager, target)) return false;
+        if (manager == null || !seek(manager, target, durationMs)) return false;
 
         // A second press counts from where the first one landed. The progress tick that would
         // say so has not arrived yet.
@@ -88,12 +88,24 @@ public final class FeedSeek {
         return true;
     }
 
-    private static boolean seek(Object manager, long targetMs) {
+    /**
+     * Moves the video behind {@code controller} to {@code targetMs} of {@code lengthMs}, kept
+     * inside its length, for a caller holding its own progress tick (Skip promo lines, #493).
+     * Main thread only, like the gesture.
+     */
+    public static boolean seekTo(Object controller, long targetMs, long lengthMs) {
+        if (controller == null || lengthMs <= 0) return false;
+        long target = Math.max(0, Math.min(targetMs, lengthMs - 1));
+        Object manager = Reflect.invoke(controller, "getPlayerManager");
+        return manager != null && seek(manager, target, lengthMs);
+    }
+
+    private static boolean seek(Object manager, long targetMs, long lengthMs) {
         try {
             Method method = seekMethod(manager.getClass());
             if (method == null) return false;
             // Native 0MhE's seekbar uses target / duration * 100 before 0MI0.seek(F).
-            method.invoke(manager, (float) targetMs / durationMs * 100f);
+            method.invoke(manager, (float) targetMs / lengthMs * 100f);
             return true;
         } catch (Exception exception) {
             Logger.printException(() -> "Could not seek the playing video", exception);

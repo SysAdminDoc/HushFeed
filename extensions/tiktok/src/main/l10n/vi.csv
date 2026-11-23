@@ -3018,3 +3018,8 @@ Show exact LIVE battle scores,Hiện điểm đấu LIVE chính xác
 Start LIVEs at,Bắt đầu LIVE ở chất lượng
 The quality you picked last,Chất lượng bạn chọn lần cuối
 "A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.","Phòng LIVE mở ở chất lượng này cho đến khi bạn chọn chất lượng khác, và lựa chọn đó áp dụng cho các phòng tiếp theo cho đến khi TikTok đóng. Phòng mà luồng phát không có chất lượng này sẽ mở theo lựa chọn của TikTok."
+Skip promo lines,Bỏ qua dòng quảng cáo
+"Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.","Bỏ qua đoạn video có dòng phụ đề chứa một từ trong Từ quảng cáo, như quảng cáo sòng bạc hay mã khuyến mãi, và hiện Hoàn tác. Tính năng này đọc phụ đề của chính video, nên video không có phụ đề vẫn phát như bình thường."
+Promo words,Từ quảng cáo
+"Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words.","Phân tách các từ hoặc cụm từ bằng dấu phẩy, như casino, promo code. Chữ hoa không quan trọng, và ""a"" & ""b"" hoặc ""a"" !& ""b"" hoạt động như trong Từ khóa tiêu đề bị chặn."
+Skipped a promo line,Đã bỏ qua dòng quảng cáo

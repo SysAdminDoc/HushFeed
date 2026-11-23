@@ -3020,3 +3020,8 @@ Show exact LIVE battle scores,Tampilkan skor pertarungan LIVE yang tepat
 Start LIVEs at,Mulai LIVE dengan kualitas
 The quality you picked last,Kualitas yang terakhir kamu pilih
 "A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.","Ruang LIVE dibuka dengan kualitas ini sampai kamu memilih yang lain, lalu pilihan itu berlaku untuk ruang berikutnya sampai TikTok ditutup. Ruang yang siarannya tidak punya kualitas ini dibuka dengan pilihan TikTok."
+Skip promo lines,Lewati baris promosi
+"Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.","Melewati bagian video yang baris teksnya berisi kata dari Kata promosi, seperti iklan kasino atau kode promo, lalu menampilkan Urungkan. Fitur ini membaca teks video itu sendiri, jadi video tanpa teks diputar seperti biasa."
+Promo words,Kata promosi
+"Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words.","Pisahkan kata atau frasa dengan koma, seperti casino, promo code. Huruf besar tidak berpengaruh, dan ""a"" & ""b"" atau ""a"" !& ""b"" berfungsi sama seperti di Kata yang diblokir di keterangan."
+Skipped a promo line,Baris promosi dilewati

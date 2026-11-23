@@ -3018,3 +3018,8 @@ Show exact LIVE battle scores,显示准确的 LIVE PK 分数
 Start LIVEs at,LIVE 起始画质
 The quality you picked last,你上次选的画质
 "A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.",直播间会以这个画质打开，直到你选别的画质，之后这个选择会沿用到后面的直播间，直到 TikTok 关闭。直播流没有这个画质的直播间会以 TikTok 的选择打开.
+Skip promo lines,跳过推广字幕行
+"Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.",某行字幕含有“推广词”里的词时（例如赌场或优惠码广告），跳过视频的这一段，并显示撤消。它读取视频自带的字幕，所以没有字幕的视频照常播放.
+Promo words,推广词
+"Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words.","用逗号分隔词语或短语，例如 casino, promo code。不区分大小写，""a"" & ""b"" 或 ""a"" !& ""b"" 的用法与“屏蔽的标题文字”相同."
+Skipped a promo line,已跳过一行推广内容

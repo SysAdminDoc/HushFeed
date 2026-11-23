@@ -545,6 +545,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting BLOCKED_CAPTION_WORDS =
             new FeedRuleStringSetting("blocked_caption_words", false);
     public static final BooleanSetting BLOCKED_WORDS_IN_STICKERS = new BooleanSetting("blocked_words_in_stickers", FALSE);
+    /** Skip promo lines (#493): seek past caption lines holding a word from the list below. */
+    public static final BooleanSetting SKIP_PROMO_LINES = new BooleanSetting("skip_promo_lines", FALSE);
+    public static final StringSetting SKIP_PROMO_WORDS =
+            new FeedRuleStringSetting("skip_promo_words", false);
     public static final StringSetting BLOCKED_CREATORS =
             new FeedRuleStringSetting("blocked_creators", true);
     public static final StringSetting LOCAL_HIDDEN_CREATORS =

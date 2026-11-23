@@ -1802,6 +1802,7 @@ Profile picture,Profile picture
 Profile picture saved to %1$s,Profile picture saved to %1$s
 Profile share actions,Profile share actions
 Profile tab name,Profile tab name
+Promo words,Promo words
 Promotional music,Promotional music
 Proof,Proof
 Protect external pages in TikTok's browser,Protect external pages in TikTok's browser
@@ -2134,6 +2135,7 @@ Sent to %1$d/%2$d chats. They won't get another message today.,Sent to %1$d/%2$d
 "Separate names with commas, exactly as the share sheet shows them. These can be friends in the Send to row, apps such as Facebook, or actions such as Create group or Repost. The words copy, save and dislike also work before the sheet has opened.","Separate names with commas, exactly as the share sheet shows them. These can be friends in the Send to row, apps such as Facebook, or actions such as Create group or Repost. The words copy, save and dislike also work before the sheet has opened."
 "Separate the titles of any other Inbox rows you want to hide with commas, spelled exactly. Use this for anything not listed above.","Separate the titles of any other Inbox rows you want to hide with commas, spelled exactly. Use this for anything not listed above."
 Separate usernames or display names with commas. Their comments are hidden.,Separate usernames or display names with commas. Their comments are hidden.
+"Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words.","Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words."
 "Separate words or phrases with commas. Videos whose caption matches are hidden. Capital letters don't matter. Write ""a"" & ""b"" to need both phrases, or ""a"" !& ""b"" to need the first without the second.","Separate words or phrases with commas. Videos whose caption matches are hidden. Capital letters don't matter. Write ""a"" & ""b"" to need both phrases, or ""a"" !& ""b"" to need the first without the second."
 "Separate words with commas, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Capital letters don't matter.","Separate words with commas, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Capital letters don't matter."
 "Separate words with commas, like saxophone, to match against sound names. Capital letters don't matter.","Separate words with commas, like saxophone, to match against sound names. Capital letters don't matter."
@@ -2284,16 +2286,19 @@ Size of the LIVE buttons,Size of the LIVE buttons
 Size of the buttons on videos,Size of the buttons on videos
 Skip TikTok's setup screens,Skip TikTok's setup screens
 Skip content warnings,Skip content warnings
+Skip promo lines,Skip promo lines
 Skip the Share to sheet after a save,Skip the Share to sheet after a save
 "Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.","Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off."
 Skip the splash ad,Skip the splash ad
 Skip update checks,Skip update checks
 Skipped a creator pattern that could stall: %1$s,Skipped a creator pattern that could stall: %1$s
 Skipped a creator pattern that's too long: %1$s,Skipped a creator pattern that's too long: %1$s
+Skipped a promo line,Skipped a promo line
 "Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos.","Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos."
 Skipping videos from %1$s,Skipping videos from %1$s
 Skipping videos tagged %1$s,Skipping videos tagged %1$s
 Skipping videos with %1$s,Skipping videos with %1$s
+"Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.","Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual."
 Sleep timer off,Sleep timer off
 Slide across the tabs,Slide across the tabs
 Slide to change the hold speed,Slide to change the hold speed

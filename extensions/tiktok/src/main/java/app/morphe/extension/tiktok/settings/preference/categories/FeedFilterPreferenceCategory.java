@@ -287,6 +287,23 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
         addPreference(new TogglePreference(context, "Match text stickers too",
                 "Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.",
                 Settings.BLOCKED_WORDS_IN_STICKERS));
+        if (SettingsStatus.promoSkipEnabled) {
+            // Skip promo lines (#493): the same list editor, matched against each caption line.
+            addPreference(new TogglePreference(context, "Skip promo lines",
+                    "Skips the part of a video where a caption line has a word from Promo words, "
+                            + "like a casino or promo code plug, and shows Undo. It reads the "
+                            + "video's own captions, so a video without any plays as usual.",
+                    Settings.SKIP_PROMO_LINES));
+            addPreference(new InputTextPreference(context, "Promo words",
+                    "Separate words or phrases with commas, like casino, promo code. Capital "
+                            + "letters don't matter, and \"a\" & \"b\" or \"a\" !& \"b\" work as "
+                            + "they do for Blocked caption words.",
+                    Settings.SKIP_PROMO_WORDS)
+                    .withCheck(app.morphe.extension.tiktok.feedfilter.KeywordRules::problem)
+                    .withSamplePreview(app.morphe.extension.tiktok.settings.L10n.t("Sample caption to test"),
+                            app.morphe.extension.tiktok.feedfilter.KeywordRulePreview.MAX_SAMPLE_CHARS,
+                            app.morphe.extension.tiktok.feedfilter.KeywordRulePreview::result));
+        }
         addPreference(new InputTextPreference(context, "Only from these countries",
                 "Separate country codes with commas, like GB, IE. Videos posted from anywhere "
                         + "else are hidden. Leave empty for all countries.",

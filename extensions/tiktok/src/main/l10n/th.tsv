@@ -3185,3 +3185,8 @@ In a LIVE battle, TikTok caps the big scores viewers see while the host sees the
 Start LIVEs at	เริ่ม LIVE ที่คุณภาพ
 The quality you picked last	คุณภาพที่คุณเลือกล่าสุด
 A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	ห้อง LIVE จะเปิดที่คุณภาพนี้จนกว่าคุณจะเลือกคุณภาพอื่น และตัวเลือกนั้นจะใช้กับห้องถัดไปจนกว่า TikTok จะปิด ห้องที่สตรีมไม่มีคุณภาพนี้จะเปิดตามที่ TikTok เลือก
+Skip promo lines	ข้ามบรรทัดโปรโมต
+Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.	ข้ามช่วงของวิดีโอที่บรรทัดคำบรรยายมีคำจากคำโปรโมต เช่น โฆษณาคาสิโนหรือโค้ดโปรโมชัน และแสดงเลิกทำ โดยอ่านคำบรรยายของวิดีโอเอง วิดีโอที่ไม่มีคำบรรยายจึงเล่นตามปกติ
+Promo words	คำโปรโมต
+Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	คั่นคำหรือวลีด้วยเครื่องหมายจุลภาค เช่น casino, promo code ตัวพิมพ์ใหญ่ไม่มีผล และ "a" & "b" หรือ "a" !& "b" ใช้ได้เหมือนใน คำที่ถูกบล็อกในคำบรรยาย
+Skipped a promo line	ข้ามบรรทัดโปรโมตแล้ว

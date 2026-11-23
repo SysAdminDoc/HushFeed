@@ -3383,3 +3383,8 @@ In a LIVE battle, TikTok caps the big scores viewers see while the host sees the
 Start LIVEs at	Начинать LIVE в качестве
 The quality you picked last	Последнее выбранное качество
 A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	Комната LIVE открывается в этом качестве, пока вы не выберете другое, и этот выбор переходит в следующие комнаты, пока TikTok не закроется. Комната, в трансляции которой его нет, открывается в качестве, выбранном TikTok.
+Skip promo lines	Пропускать рекламные строки
+Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.	Пропускает часть видео, где строка субтитров содержит слово из списка Рекламные слова, например рекламу казино или промокода, и показывает Отменить. Читает собственные субтитры видео, поэтому видео без них воспроизводится как обычно.
+Promo words	Рекламные слова
+Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Разделяйте слова или фразы запятыми, например casino, promo code. Регистр не важен, а "a" & "b" или "a" !& "b" работают так же, как в Заблокированные слова в подписях.
+Skipped a promo line	Рекламная строка пропущена

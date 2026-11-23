@@ -17224,7 +17224,10 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/CaptionsAvailable.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionTools.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionsAvailable.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionsAvailable.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/PromoSkip.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/PromoSkip.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/CaptionCues.java"
   ],
   "settings": [
    {
@@ -17275,6 +17278,18 @@
     "type": "bool",
     "row": "Keep captions available",
     "restart": true
+   },
+   {
+    "key": "skip_promo_lines",
+    "default": false,
+    "type": "bool",
+    "row": "Skip promo lines"
+   },
+   {
+    "key": "skip_promo_words",
+    "default": "",
+    "type": "string",
+    "row": "Promo words"
    },
    {
     "key": "download_subtitles",

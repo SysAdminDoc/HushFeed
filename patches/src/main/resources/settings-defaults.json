@@ -895,7 +895,9 @@
       "keep_captions_clear_display",
       "caption_clear_display_offset",
       "caption_clear_display_spot",
-      "keep_captions_available"
+      "keep_captions_available",
+      "skip_promo_lines",
+      "skip_promo_words"
     ],
     "Swipe-left controls": [
       "swipe_left_action"
@@ -4645,6 +4647,18 @@
       "key": "skip_post_download_share_sheet",
       "type": "boolean",
       "default": false
+    },
+    "skip_promo_lines": {
+      "field": "SKIP_PROMO_LINES",
+      "key": "skip_promo_lines",
+      "type": "boolean",
+      "default": false
+    },
+    "skip_promo_words": {
+      "field": "SKIP_PROMO_WORDS",
+      "key": "skip_promo_words",
+      "type": "string",
+      "default": ""
     },
     "skip_splash_ad": {
       "field": "SKIP_SPLASH_AD",

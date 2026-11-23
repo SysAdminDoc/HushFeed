@@ -22,7 +22,7 @@ final class SubtitleFormat {
      */
     private static final SettingsJson.Limits CAPTION_LIMITS =
             new SettingsJson.Limits(16, 400_000, 100_000, 20_000, 2 * 1024 * 1024);
-    private static final Pattern TIMELINE = Pattern.compile("^((?:\\d{1,3}:)?\\d{2}:\\d{2}[.,]\\d{3})\\s+-->\\s+((?:\\d{1,3}:)?\\d{2}:\\d{2}[.,]\\d{3})(?:\\s+.*)?$");
+    static final Pattern TIMELINE = Pattern.compile("^((?:\\d{1,3}:)?\\d{2}:\\d{2}[.,]\\d{3})\\s+-->\\s+((?:\\d{1,3}:)?\\d{2}:\\d{2}[.,]\\d{3})(?:\\s+.*)?$");
     private SubtitleFormat() { }
 
     static String toSrt(String source, String format) throws IOException {
@@ -64,7 +64,7 @@ final class SubtitleFormat {
         return output.toString();
     }
 
-    private static long millis(String value) throws IOException {
+    static long millis(String value) throws IOException {
         String[] parts = value.replace(',', '.').split(":");
         try {
             long hours = parts.length == 3 ? Long.parseLong(parts[0]) : 0;

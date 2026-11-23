@@ -14233,7 +14233,9 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/spoof/sim/SpoofSimPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SpoofSimPatch.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SimPresets.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SimPresets.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/spoof/sim/NetworkStackSim.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/NetworkStackSim.java"
   ],
   "settings": [
    {

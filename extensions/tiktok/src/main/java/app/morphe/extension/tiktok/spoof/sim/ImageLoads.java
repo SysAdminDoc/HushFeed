@@ -234,8 +234,12 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
      */
     static List<String> placement(Context context) {
         List<String> lines = new ArrayList<>();
+        // How many of TikTok's network stack answers went back to the real SIM (#415).
+        long swapped = NetworkStackSim.swapped();
         lines.add("SIM spoof: " + (Settings.SIM_SPOOF.get()
-                ? "on, " + code(Settings.SIM_SPOOF_ISO.get()) : "off"));
+                ? "on, " + code(Settings.SIM_SPOOF_ISO.get()) : "off")
+                + (swapped > 0 ? ", network stack kept on the real SIM ("
+                        + swapped + plural(swapped, " answer)", " answers)") : ""));
         if (context == null) return lines;
         try {
             SharedPreferences prefs = context.getSharedPreferences(STORE_PREFS, Context.MODE_PRIVATE);
@@ -326,5 +330,6 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
         }
         URI_METHODS.clear();
         installed = false;
+        NetworkStackSim.resetForTests();
     }
 }

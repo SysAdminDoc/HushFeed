@@ -5,6 +5,8 @@
 
 package app.morphe.patches.tiktok.misc.spoof.sim
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.anyInstruction
@@ -26,6 +28,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -152,6 +155,11 @@ val simSpoofPatch = bytecodePatch(
         // written. They sit here because grey covers with a spoofed SIM are what they're for.
         val produceResults = NetworkFetchProducerFingerprint.method
         val imageLoads = planImageLoadHooks(produceResults, mutableClassDefBy(produceResults.definingClass))
+        // TTNet routes by the SIM it's told about, so it keeps the real one (#415). Found before
+        // the first write too, and before the extension's own classes could be counted.
+        val allClasses = mutableListOf<ClassDef>()
+        classDefForEach { allClasses += it }
+        val networkStack = planNetworkStackHooks(allClasses.asSequence()) { classDefByOrNull(it) }
 
         val replacements = mapOf(
             "getSimCountryIso" to "getCountryIso",
@@ -237,5 +245,9 @@ val simSpoofPatch = bytecodePatch(
         )
 
         writeImageLoadHooks(produceResults, imageLoads)
+        networkStack.forEach { hook ->
+            mutableClassDefBy(hook.method.definingClass).findMutableMethodOf(hook.method)
+                .writeNetworkStackHook(hook.bridge)
+        }
     }
 }

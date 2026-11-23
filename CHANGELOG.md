@@ -4,11 +4,6 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-### Bug Fixes
-
-* `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
-* New patch, `Fix notifications on OPPO, OnePlus and realme`. On those phones TikTok also signs up for OPPO's push service, and OPPO only delivers to TikTok as TikTok signed it, so notifications sent that way can't reach a patched TikTok. TikTok now uses Google's push service there, the way it does on a Samsung or a Pixel. Other phones don't change. It's in the default selection, with no switch (#496).
-
 ### Features
 
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
@@ -16,6 +11,12 @@ Every Hushfeed release, newest first.
 * `Show how long a LIVE has been on`, with the other LIVE options in Playback, adds how long the host has been live to the small line in LIVE rooms, counted from when the room started and ticking every second. It sits under the room ID when that's on too. A room opened from the LIVE feed shows it once TikTok has that room's start time. It starts off (#494).
 * `Show exact LIVE battle scores` shows a battle's whole score where TikTok caps it for viewers at 1M+ (or at the server's own limit with a + after it) and only the host sees the number. It covers the battle bar, the co-host windows and the high score notice. The supporters list is a page TikTok's server draws, so it isn't covered. It starts off (#495).
 * `Start LIVEs at` is new under `Offer LIVE quality in more rooms`. Pick a quality there and every LIVE room opens at it until you pick another one in a room, and that pick then carries to the next rooms until TikTok closes. A room whose stream doesn't have the quality opens at TikTok's choice. It starts at `The quality you picked last`, which is how rooms opened before (#57).
+
+### Bug Fixes
+
+* `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
+* New patch, `Fix notifications on OPPO, OnePlus and realme`. On those phones TikTok also signs up for OPPO's push service, and OPPO only delivers to TikTok as TikTok signed it, so notifications sent that way can't reach a patched TikTok. TikTok now uses Google's push service there, the way it does on a Samsung or a Pixel. Other phones don't change. It's in the default selection, with no switch (#496).
+* With `SIM spoof` on, pictures and thumbnails could stay grey unless a VPN was on. TikTok's network stack picked its image and API servers by the preset's country while the phone was on another country's network. The network stack now gets your real SIM's country and carrier, and the rest of TikTok still sees the preset (#415).
 
 ### Build
 

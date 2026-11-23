@@ -4785,6 +4785,15 @@
           "values": null
         },
         {
+          "key": "fill_wide_videos",
+          "title": "Default: fill wide videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "stretch_video_to_screen",
           "title": "Default: stretch video to screen",
           "description": null,

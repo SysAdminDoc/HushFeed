@@ -3480,3 +3480,6 @@ Recent videos show the date they were posted by the creator's name, like 10-12, 
 # context: #503 Keep your place in chats, an Inbox switch under Show message times; the down arrow is the button that jumps a chat to its newest message
 Keep your place in chats	الحفاظ على موضعك في الدردشات
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.	تبقى الدردشة التي مررت فيها للأعلى حيث كنت عند عودتك من فيديو أو عند إرسال رد. إرسال رسالة عادية أو النقر على سهم الأسفل لا يزال ينقلك إلى الأحدث.
+# context: #505 Fill wide videos too, a Playback switch right under Fill the screen with the video; it crops landscape and square videos to cover a phone held upright, which Fill alone leaves whole
+Fill wide videos too	املأ الشاشة بالفيديوهات العريضة أيضًا
+With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.	عند تشغيل المفتاح أعلاه، تُقص الفيديوهات الأفقية والمربعة أيضًا لتغطي الشاشة، فيظهر وسطها فقط. عند إيقافه تبقى كاملة.

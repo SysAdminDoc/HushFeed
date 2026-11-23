@@ -637,12 +637,13 @@ public final class VideoFit {
      * Whether the video at this size needs changing: it overflows for fit, or leaves a gap for
      * fill. Fill only takes a video standing the same way as the window. A wide video on a tall
      * window covered it by losing three quarters of its width (#394), and a square one more than
-     * half; the switch is for the strip under a tall video, and the rest stay whole.
+     * half; the switch is for the strip under a tall video, and the rest stay whole unless Fill
+     * wide videos too asks for them as well (#505).
      */
     static boolean wants(Mode mode, int width, int height, int containerWidth, int containerHeight) {
         if (mode == Mode.FIT) return width > containerWidth || height > containerHeight;
         if (mode == Mode.FILL) {
-            return sameWay(width, height, containerWidth, containerHeight)
+            return (sameWay(width, height, containerWidth, containerHeight) || fillsWideVideos())
                     && (width < containerWidth || height < containerHeight);
         }
         if (mode == Mode.STRETCH) {
@@ -680,6 +681,15 @@ public final class VideoFit {
         double space = containerWidth / (double) containerHeight;
         double apart = video > space ? video / space : space / video;
         return apart <= limit + 1e-9;
+    }
+
+    /**
+     * Whether Fill also takes a video standing the other way from the window, a landscape or
+     * square one on a phone held upright (#505). Fill's own: Fit's Fill a tall screen instead,
+     * which also fills, keeps them whole.
+     */
+    static boolean fillsWideVideos() {
+        return Settings.FILL_VIDEO_TO_SCREEN.get() && Settings.FILL_WIDE_VIDEOS.get();
     }
 
     /** Both taller than wide, or both wider than tall. A square either way stands neither. */
@@ -941,6 +951,7 @@ public final class VideoFit {
                 lines.add("Fill a tall screen instead: on"
                         + (tallWindow() ? ", this window is tall" : ", this window is squarish"));
             }
+            if (Settings.FILL_WIDE_VIDEOS.savedValue()) lines.add("Fill wide videos too: on");
             if ((fit || fill || stretch || blend || middle) && mode() == Mode.LEAVE_ALONE) {
                 lines.add("Hushfeed is paused, so videos keep TikTok's size");
             } else if (middle && mode() == Mode.BLEND && !blend) {

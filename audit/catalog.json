@@ -6215,6 +6215,12 @@
     "row": "Fill the screen with the video"
    },
    {
+    "key": "fill_wide_videos",
+    "default": false,
+    "type": "bool",
+    "row": "Fill wide videos too"
+   },
+   {
     "key": "stretch_video_to_screen",
     "default": false,
     "type": "bool",

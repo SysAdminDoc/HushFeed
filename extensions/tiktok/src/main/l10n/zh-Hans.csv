@@ -3042,3 +3042,5 @@ Date instead of age,显示日期而非时长
 "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.",新视频在创作者名字旁显示发布日期，如 10-12，而不是像 2天前 这样的时长。日在月前 和 用文字写月份 也会以同样方式改变它.
 Keep your place in chats,保持聊天中的位置
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,在聊天中向上滚动后，从视频返回或发送回复时会停留在原处。发送普通消息或点按向下箭头仍会跳到最新消息.
+Fill wide videos too,宽视频也铺满
+"With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.",开启上面的开关后，横向和方形视频也会被裁剪以铺满屏幕，只显示中间部分。关闭时，它们保持完整.

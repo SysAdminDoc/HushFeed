@@ -427,6 +427,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "opened up, still shows the whole video.",
                     Settings.FIT_FILLS_TALL_SCREEN));
             addPreference(fill);
+            // #505: Fill leaves wide and square videos whole (#394); this crops them too.
+            addPreference(new TogglePreference(context, "Fill wide videos too",
+                    "With the switch above on, landscape and square videos are cropped to cover "
+                            + "the screen too, so only their middle shows. Off, they stay whole.",
+                    Settings.FILL_WIDE_VIDEOS));
             addPreference(stretch);
             addPreference(blend);
             if (middle != null) addPreference(middle);

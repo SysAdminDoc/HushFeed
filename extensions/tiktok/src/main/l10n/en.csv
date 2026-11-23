@@ -796,6 +796,7 @@ Field edits weren't saved,Field edits weren't saved
 Files,Files
 Fill a tall screen instead,Fill a tall screen instead
 Fill the screen with the video,Fill the screen with the video
+Fill wide videos too,Fill wide videos too
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change."
 Filter TikTok's offline videos,Filter TikTok's offline videos
 Filter bottom tabs,Filter bottom tabs
@@ -2974,6 +2975,7 @@ Window width needed to enable the layout. Restart TikTok to apply this.,Window w
 "With the SIM changed, TikTok can keep showing videos you've already watched. Turn this on to stop that. Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","With the SIM changed, TikTok can keep showing videos you've already watched. Turn this on to stop that. Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count."
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.","With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100."
 "With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.","With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it."
+"With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.","With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole."
 "With the switch above on, the video is cropped to fill a tall screen like a folding phone's front screen. A squarer one, like the big screen opened up, still shows the whole video.","With the switch above on, the video is cropped to fill a tall screen like a folding phone's front screen. A squarer one, like the big screen opened up, still shows the whole video."
 "Word rules only, not every feed filter:","Word rules only, not every feed filter:"
 "Words, countries and languages","Words, countries and languages"

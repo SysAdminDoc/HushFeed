@@ -365,6 +365,9 @@ public class Settings extends BaseSettings {
     /** The opposite: crop the video until it covers the window (issue #29). Fit wins when both are on. */
     public static final BooleanSetting FILL_VIDEO_TO_SCREEN =
             new BooleanSetting("fill_video_to_screen", FALSE);
+    /** With Fill on, wide and square videos are cropped to cover the window too (#505, after #394). */
+    public static final BooleanSetting FILL_WIDE_VIDEOS =
+            new BooleanSetting("fill_wide_videos", FALSE, false, Setting.parent(FILL_VIDEO_TO_SCREEN));
     /** Cover the window with the whole video by stretching it instead of cropping (#406). */
     public static final BooleanSetting STRETCH_VIDEO_TO_SCREEN =
             new BooleanSetting("stretch_video_to_screen", FALSE);

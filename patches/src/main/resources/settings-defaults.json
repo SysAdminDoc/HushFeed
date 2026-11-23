@@ -360,6 +360,7 @@
       "fit_video_to_screen",
       "fit_fills_tall_screen",
       "fill_video_to_screen",
+      "fill_wide_videos",
       "stretch_video_to_screen",
       "blend_video_to_screen",
       "keep_middle_video_to_screen"
@@ -2068,6 +2069,12 @@
     "fill_video_to_screen": {
       "field": "FILL_VIDEO_TO_SCREEN",
       "key": "fill_video_to_screen",
+      "type": "boolean",
+      "default": false
+    },
+    "fill_wide_videos": {
+      "field": "FILL_WIDE_VIDEOS",
+      "key": "fill_wide_videos",
       "type": "boolean",
       "default": false
     },

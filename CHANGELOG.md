@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Fill wide videos too`, right under `Fill the screen with the video`, crops landscape and square videos to cover the screen as well. Fill on its own still leaves those whole, so you see all of a landscape video with bars above and below it. Turn this on and every video fills the screen, showing the middle of a wide one (#505).
 * `Keep your place in chats` stops a chat you've scrolled up in from jumping to the bottom on its own. Coming back from a video you opened in the chat leaves you where you were, and so does sending a reply to an older message. A plain message you send and the down arrow still take you to the newest. It starts off and sits under `Show message times` in Hushfeed settings > Inbox (#503).
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
 * When the diagnostic report says the phone destroyed TikTok's main screen, it now says why it might have. Either Don't keep activities is on in Developer options, or it gives how full TikTok's memory was, since Android closes an app's screens in the background once three quarters of it is used (#419).

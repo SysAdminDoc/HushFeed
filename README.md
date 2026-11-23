@@ -32,7 +32,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 
 Hushfeed v0.84.0 contains 155 patches for TikTok 47.9.3. New in this one: TikTok moves to 47.9.3. You can unfollow the accounts that don't follow you back, name a video's song with Shazam, shrink TikTok's whole interface and keep your likes on your phone. TikTok Lite 47.8.2 gets its first 11 patches. It needs Morphe Manager 2.7.0 or newer.
 
-The main branch contains 155 patches, the same set as v0.84.0.
+The main branch contains 156 patches, v0.84.0's set plus `Fix notifications on OPPO, OnePlus and realme`.
 
 ## What it changes
 
@@ -185,6 +185,7 @@ Simple mode in Morphe Manager selects 137 of these patches. Each row says what t
 | `Feed text sizes` | Lets you make video descriptions, creator names and post dates bigger or smaller, or give them a color and a backdrop, so they're easier to read. Starts off. Pick them in Hushfeed settings > Feed screen. |
 | `Fit the video to the screen` | Shows the whole video instead of cutting off its sides on folding phones, squarer screens and split screen, and fits photo slideshows whole on squarer screens. Four more switches cover the whole screen instead. One crops the video, one stretches it, one does a little of each and one keeps the middle at its own shape and stretches only the top and bottom. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Fix Google login` | Makes Sign in with Google work in the patched app, where it would otherwise fail. Works as soon as you patch it in, with no switch. |
+| `Fix notifications on OPPO, OnePlus and realme` | On OPPO, OnePlus and realme phones TikTok can send its notifications through OPPO's push service, which only delivers to TikTok as TikTok signed it, not to a patched copy. This has TikTok use Google's push service on those phones, like it does on other phones. Other phones don't change. Works as soon as you patch it in, with no switch. |
 | `Fix Spotify login` | Makes Add to Spotify work in the patched app. The Spotify app turns down a patched TikTok, so you sign in on Spotify's own page instead. Works as soon as you patch it in, with no switch. |
 | `Foldable split comment view` | On a folding phone or tablet, shows comments beside the video instead of over it when the screen is wide enough. Starts off. Turn it on in Hushfeed settings > App. |
 | `Follow diagnostics` | Tells you when TikTok quietly turned down a follow, and why, since the app shows it as if it worked. With diagnostic logging on, the details go in the report too. Works as soon as you patch it in, with no switch. |

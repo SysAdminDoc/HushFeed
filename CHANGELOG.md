@@ -7,6 +7,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
+* New patch, `Fix notifications on OPPO, OnePlus and realme`. On those phones TikTok also signs up for OPPO's push service, and OPPO only delivers to TikTok as TikTok signed it, so notifications sent that way can't reach a patched TikTok. TikTok now uses Google's push service there, the way it does on a Samsung or a Pixel. Other phones don't change. It's in the default selection, with no switch (#496).
 
 ### Features
 

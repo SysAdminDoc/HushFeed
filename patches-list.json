@@ -4857,6 +4857,45 @@
       "options": []
     },
     {
+      "name": "Fix notifications on OPPO, OnePlus and realme",
+      "description": "On OPPO, OnePlus and realme phones TikTok can send its notifications through OPPO's push service, which only delivers to TikTok as TikTok signed it, not to a patched copy. This has TikTok use Google's push service on those phones, like it does on other phones. Other phones don't change. Works as soon as you patch it in, with no switch.",
+      "category": "Inbox",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709030,
+                "ARMEABI_V7A": 2024709030,
+                "X86": 2024709030,
+                "X86_64": 2024709030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Foldable split comment view",
       "description": "On a folding phone or tablet, shows comments beside the video instead of over it when the screen is wide enough. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Comments",

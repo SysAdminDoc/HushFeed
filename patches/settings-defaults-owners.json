@@ -515,6 +515,7 @@
       "SEE_THROUGH_STATUS_BAR",
       "STATUS_BAR_SHADE",
       "BURN_IN_GUARD",
+      "BURN_IN_GUARD_LEVEL",
       "HIDE_SHARE_GUIDE",
       "HIDE_RAIL_FOLLOW",
       "HIDE_RAIL_LIKE",
@@ -704,6 +705,7 @@
       "HOLD_SPEED_SLIDE",
       "HOLD_SPEED_HUD_STYLE",
       "HOLD_SPEED_SLIDE_AXIS",
+      "HOLD_SPEED_HUD_SIZE",
       "HIDE_SPEED_TOASTS",
       "REMEMBERED_SPEED"
     ],
@@ -728,6 +730,7 @@
     "Remember clear display": [
       "AUTOMATIC_CLEAR_DISPLAY",
       "AUTOMATIC_CLEAR_DISPLAY_DELAY",
+      "TAP_SHOWS_CLEARED_CONTROLS",
       "CLEAR_DISPLAY_FADE_OUT",
       "REMEMBER_CLEAR_DISPLAY_ON_SCROLL",
       "CLEAR_DISPLAY"
@@ -789,6 +792,9 @@
       "SHOW_AUTHOR_REGION",
       "REGION_AS_FLAG",
       "COUNTRY_DATE_UNDER_CAPTION",
+      "COUNTRY_DATE_TEXT_SIZE",
+      "COUNTRY_DATE_OPACITY",
+      "COUNTRY_DATE_SHADOW",
       "SHOW_AUTHOR_HANDLE"
     ],
     "Show commenter handle and region": [

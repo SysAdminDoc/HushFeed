@@ -64,6 +64,7 @@
       "publish_date_short_date",
       "publish_date_day_first",
       "publish_date_month_name",
+      "publish_date_instead_of_age",
       "publish_date_on_grid",
       "video_length_on_grid",
       "hide_grid_view_count",
@@ -520,6 +521,7 @@
       "see_through_status_bar",
       "status_bar_shade",
       "burn_in_guard",
+      "burn_in_guard_level",
       "hide_share_guide",
       "hide_rail_follow",
       "hide_rail_like",
@@ -709,6 +711,7 @@
       "hold_speed_slide",
       "hold_speed_hud_style",
       "hold_speed_slide_axis",
+      "hold_speed_hud_size",
       "hide_speed_toasts",
       "remembered_speed_v2"
     ],
@@ -733,6 +736,8 @@
     "Remember clear display": [
       "automatic_clear_display",
       "automatic_clear_display_delay",
+      "tap_shows_cleared_controls",
+      "clear_display_fade_out",
       "remember_clear_display_on_scroll",
       "clear_display"
     ],
@@ -803,6 +808,9 @@
       "show_author_region",
       "region_as_flag",
       "country_date_under_caption",
+      "country_date_text_size",
+      "country_date_opacity",
+      "country_date_shadow",
       "show_author_handle"
     ],
     "Show commenter handle and region": [
@@ -1274,6 +1282,14 @@
       "type": "string",
       "default": "off"
     },
+    "burn_in_guard_level": {
+      "field": "BURN_IN_GUARD_LEVEL",
+      "key": "burn_in_guard_level",
+      "type": "integer",
+      "default": 25,
+      "minimum": 0,
+      "maximum": 90
+    },
     "camera_mic_indicator": {
       "field": "CAMERA_MIC_INDICATOR",
       "key": "camera_mic_indicator",
@@ -1363,6 +1379,12 @@
     "clear_display": {
       "field": "CLEAR_DISPLAY",
       "key": "clear_display",
+      "type": "boolean",
+      "default": false
+    },
+    "clear_display_fade_out": {
+      "field": "CLEAR_DISPLAY_FADE_OUT",
+      "key": "clear_display_fade_out",
       "type": "boolean",
       "default": false
     },
@@ -1491,6 +1513,28 @@
       "key": "copy_ids",
       "type": "boolean",
       "default": true
+    },
+    "country_date_opacity": {
+      "field": "COUNTRY_DATE_OPACITY",
+      "key": "country_date_opacity",
+      "type": "integer",
+      "default": 100,
+      "minimum": 10,
+      "maximum": 100
+    },
+    "country_date_shadow": {
+      "field": "COUNTRY_DATE_SHADOW",
+      "key": "country_date_shadow",
+      "type": "boolean",
+      "default": false
+    },
+    "country_date_text_size": {
+      "field": "COUNTRY_DATE_TEXT_SIZE",
+      "key": "country_date_text_size",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 48
     },
     "country_date_under_caption": {
       "field": "COUNTRY_DATE_UNDER_CAPTION",
@@ -3158,6 +3202,14 @@
       "type": "string",
       "default": ""
     },
+    "hold_speed_hud_size": {
+      "field": "HOLD_SPEED_HUD_SIZE",
+      "key": "hold_speed_hud_size",
+      "type": "integer",
+      "default": 100,
+      "minimum": 50,
+      "maximum": 150
+    },
     "hold_speed_hud_style": {
       "field": "HOLD_SPEED_HUD_STYLE",
       "key": "hold_speed_hud_style",
@@ -4074,6 +4126,12 @@
       "type": "boolean",
       "default": false
     },
+    "publish_date_instead_of_age": {
+      "field": "PUBLISH_DATE_INSTEAD_OF_AGE",
+      "key": "publish_date_instead_of_age",
+      "type": "boolean",
+      "default": false
+    },
     "publish_date_month_name": {
       "field": "PUBLISH_DATE_MONTH_NAME",
       "key": "publish_date_month_name",
@@ -4883,6 +4941,12 @@
     "system_font": {
       "field": "SYSTEM_FONT",
       "key": "system_font",
+      "type": "boolean",
+      "default": false
+    },
+    "tap_shows_cleared_controls": {
+      "field": "TAP_SHOWS_CLEARED_CONTROLS",
+      "key": "tap_shows_cleared_controls",
       "type": "boolean",
       "default": false
     },

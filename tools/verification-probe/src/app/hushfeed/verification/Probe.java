@@ -3394,7 +3394,9 @@ public final class Probe extends Instrumentation {
                         Object fileName = importedFont.getMethod("name", Context.class).invoke(null, app);
                         Field knownField = importedFont.getDeclaredField("known");
                         knownField.setAccessible(true);
-                        boolean knownBefore = knownField.getBoolean(null);
+                        // known is each font's own field since the emoji font got its own
+                        // ImportedFont; the text one is the font this action reports.
+                        boolean knownBefore = knownField.getBoolean(importedFont.getField("TEXT").get(null));
                         android.graphics.Typeface face = (android.graphics.Typeface)
                                 importedFont.getMethod("typeface").invoke(null);
                         Method decide = loader.loadClass("app.morphe.extension.tiktok.font.SystemFont")

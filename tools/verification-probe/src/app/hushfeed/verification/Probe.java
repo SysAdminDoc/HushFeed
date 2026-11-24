@@ -1201,6 +1201,64 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok collect sent aid=" + aid + " on=" + on + " via " + call.getName());
                         break;
                     }
+                    case "favgrid": {
+                        // Every list the grid hook last handed a grid (#516): per video its id,
+                        // what its status marks (deleted, private, in review), and which details
+                        // it still carries as counts and yes or no, never the text. Says whether a
+                        // saved video that's gone still comes with a cover, a creator or a caption.
+                        Class<?> sort = loader.loadClass("app.morphe.extension.tiktok.feed.GridSort");
+                        Field handedField = sort.getDeclaredField("HANDED");
+                        handedField.setAccessible(true);
+                        Field tabsField = sort.getDeclaredField("TABS");
+                        tabsField.setAccessible(true);
+                        // Copies, read on the main thread the hook writes them on.
+                        java.util.Map<?, ?> handed =
+                                new java.util.IdentityHashMap<>((java.util.Map<?, ?>) handedField.get(null));
+                        java.util.Map<?, ?> tabs =
+                                new java.util.IdentityHashMap<>((java.util.Map<?, ?>) tabsField.get(null));
+                        int most = 60;
+                        String only = intent.getStringExtra("tab");
+                        for (java.util.Map.Entry<?, ?> entry : handed.entrySet()) {
+                            Object tab = tabs.get(entry.getKey());
+                            if (only != null && !only.equals(String.valueOf(tab))) continue;
+                            List<?> list = entry.getValue() instanceof List ? (List<?>) entry.getValue() : null;
+                            Log.i(TAG, "favgrid list tab=" + tab + " adapter=" + entry.getKey().getClass().getName()
+                                    + " size=" + (list == null ? -1 : list.size()));
+                            if (list == null) continue;
+                            for (Object aweme : list) {
+                                if (most-- <= 0) break;
+                                Object status = optional(aweme, "getStatus");
+                                StringBuilder marks = new StringBuilder();
+                                if (status != null) {
+                                    for (Field field : status.getClass().getDeclaredFields()) {
+                                        if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+                                        field.setAccessible(true);
+                                        Object value = field.get(status);
+                                        if (Boolean.TRUE.equals(value)
+                                                || value instanceof Integer && (Integer) value != 0) {
+                                            marks.append(' ').append(field.getName()).append('=').append(value);
+                                        }
+                                    }
+                                }
+                                Object author = optional(aweme, "getAuthor");
+                                Object video = optional(aweme, "getVideo");
+                                Object cover = optional(video, "getCover");
+                                Object urls = optional(cover, "getUrlList");
+                                Object desc = optional(aweme, "getDesc");
+                                Log.i(TAG, "favgrid aid=" + optional(aweme, "getAid")
+                                        + " type=" + optional(aweme, "getAwemeType")
+                                        + " status=" + (status == null ? "null" : "[" + marks.toString().trim() + "]")
+                                        + " canPlay=" + optional(aweme, "isCanPlay")
+                                        + " author=" + (author == null ? "null" : blank(optional(author, "getUniqueId")) ? "nohandle" : "handle")
+                                        + " desc=" + (desc == null ? "null" : String.valueOf(desc).length())
+                                        + " created=" + optional(aweme, "getCreateTime")
+                                        + " video=" + (video == null ? "null" : "yes")
+                                        + " cover=" + (urls instanceof List ? ((List<?>) urls).size() + "urls" : String.valueOf(cover == null ? "null" : "nourls")));
+                            }
+                        }
+                        Log.i(TAG, "ok favgrid lists=" + handed.size());
+                        break;
+                    }
                     case "msgtap": {
                         // Every LIVE message TikTok's message channels parse, counted by its method
                         // name (#513). Every channel passes each message to the message service's

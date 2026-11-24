@@ -100,15 +100,16 @@ val feedFilterPatch = bytecodePatch(
             return@execute
         }
 
-        // Enables the feed filter extension after settings were loaded, and the rows for what's
-        // drawn around a video, which TikTok Lite's branch above never hooks (#48).
+        // Enables the feed filter extension after settings were loaded, and the rows for what only
+        // this branch hooks: search, Friends, Following, offline videos, the count and the views
+        // around a video. TikTok Lite's branch above filters the feed's items only (#48).
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeedFilter()V",
         )
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
-            "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeedFilterViews()V",
+            "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFullFeedFilter()V",
         )
 
         // Show how many were filtered: the label follows the main activity from its creation and

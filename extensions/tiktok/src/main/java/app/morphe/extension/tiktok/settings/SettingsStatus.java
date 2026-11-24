@@ -247,13 +247,15 @@ public class SettingsStatus {
     }
 
     /**
-     * Feed filter hooked what TikTok draws around a video: the search strip, the playlist bar
-     * and the event badge. TikTok Lite's Feed filter (#48) only filters the feed's items.
+     * Feed filter hooked TikTok past the feed's items: search results and tabs, the Friends and
+     * Following feeds, the offline videos list, the filtered count, and what's drawn around a
+     * video (the search strip, the playlist bar, the event badge). TikTok Lite's Feed filter
+     * (#48) only filters the feed's items, so its pages leave those rows out.
      */
-    public static boolean feedFilterViewsEnabled = false;
+    public static boolean fullFeedFilterEnabled = false;
 
-    public static void enableFeedFilterViews() {
-        feedFilterViewsEnabled = true;
+    public static void enableFullFeedFilter() {
+        fullFeedFilterEnabled = true;
     }
 
     public static void enableLiveFeedFilter() {

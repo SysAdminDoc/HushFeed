@@ -66,7 +66,8 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
         if (SettingsStatus.feedFilterEnabled) addWordsAndCountries(context);
         if (SettingsStatus.feedFilterEnabled && SettingsStatus.liveFeedFilterEnabled) addLiveFeed(context);
         if (SettingsStatus.seenVideoFilterEnabled) addSeenVideoRules(context);
-        if (SettingsStatus.feedFilterEnabled) addAdvanced(context);
+        // Offline videos and the count are hooked only by TikTok's own Feed filter (#48).
+        if (SettingsStatus.feedFilterEnabled && SettingsStatus.fullFeedFilterEnabled) addAdvanced(context);
     }
 
 
@@ -77,12 +78,16 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 "Hide TikTok Shop", "Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
                 Settings.HIDE_SHOP
         ));
-        addPreference(new TogglePreference(
-                context,
-                "Hide TikTok Shop in search", "Hide the Products block and product cards in search results.",
-                Settings.HIDE_SEARCH_SHOP
-        ));
-        addPreference(new SearchTabChecklistPreference(context));
+        // TikTok Lite's Feed filter (#48) never sees search, the Friends tab or Following's order.
+        boolean full = SettingsStatus.fullFeedFilterEnabled;
+        if (full) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide TikTok Shop in search", "Hide the Products block and product cards in search results.",
+                    Settings.HIDE_SEARCH_SHOP
+            ));
+            addPreference(new SearchTabChecklistPreference(context));
+        }
         addPreference(new TogglePreference(
                 context,
                 "Hide LIVE videos", "Hide LIVE videos from the feed.",
@@ -102,18 +107,20 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 "Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.",
                 Settings.HIDE_UNPERSONALIZED_FOR_YOU
         ));
-        addPreference(new TogglePreference(
-                context,
-                "Show only mutual friends on the Friends tab",
-                "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.",
-                Settings.FRIENDS_MUTUALS_ONLY
-        ));
-        addPreference(new TogglePreference(
-                context,
-                "Latest first on Following",
-                "Play the Following feed newest post first. A newer post that loads later moves up to right after the video you're watching, and nothing you've already scrolled past moves. Ads and LIVEs keep their place.",
-                Settings.FOLLOWING_LATEST_FIRST
-        ));
+        if (full) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Show only mutual friends on the Friends tab",
+                    "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.",
+                    Settings.FRIENDS_MUTUALS_ONLY
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Latest first on Following",
+                    "Play the Following feed newest post first. A newer post that loads later moves up to right after the video you're watching, and nothing you've already scrolled past moves. Ads and LIVEs keep their place.",
+                    Settings.FOLLOWING_LATEST_FIRST
+            ));
+        }
         addPreference(new TogglePreference(
                 context,
                 "Hide stories", "Hide stories from the feed.",

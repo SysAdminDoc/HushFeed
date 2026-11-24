@@ -707,7 +707,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         // which videos arrive.
         if (SettingsStatus.feedFilterEnabled) {
             // TikTok Lite's Feed filter (#48) filters items only, so these three do nothing there.
-            if (SettingsStatus.feedFilterViewsEnabled) {
+            if (SettingsStatus.fullFeedFilterEnabled) {
                 addPreference(new TogglePreference(
                         context,
                         "Hide the search bar below videos",

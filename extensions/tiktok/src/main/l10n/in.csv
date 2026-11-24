@@ -3050,3 +3050,6 @@ Random time each day,Waktu acak setiap hari
 "Sends at a different time each day, somewhere between When to send and Latest time.","Mengirim pada waktu berbeda setiap hari, di antara Kapan dikirim dan Waktu paling lambat."
 Latest time,Waktu paling lambat
 "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","Akhir rentang acak, pada hari yang sama dengan Kapan dikirim. Jika tidak lebih lambat, pesan dikirim pada waktu Kapan dikirim."
+Jump to a date on Favorites grids,Lompat ke tanggal di kisi Favorit
+"Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Menambahkan tombol di sudut atas kisi Favorit yang memulai video tersimpan Anda dari tahun atau bulan yang Anda pilih, sehingga yang lebih lama dimuat tanpa harus menggulir melewati yang lebih baru. Pilih Favorit terbaru di sana untuk kembali."
+Newest saves,Favorit terbaru

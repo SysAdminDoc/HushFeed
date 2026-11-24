@@ -404,6 +404,7 @@ public final class GridSort {
                 afterTikTok(adapter, 0, size, fresh);
             });
             if (isLiked(adapter)) LikedJump.listIn(adapter, true);
+            else if (tabOf(adapter) == TAB_FAVORITES) FavoritesJump.listIn(adapter, true);
         }
         return out;
     }
@@ -430,6 +431,7 @@ public final class GridSort {
                 afterTikTok(adapter, before, size, false);
             });
             if (isLiked(adapter)) LikedJump.listIn(adapter, false);
+            else if (tabOf(adapter) == TAB_FAVORITES) FavoritesJump.listIn(adapter, false);
         }
         return out;
     }

@@ -362,6 +362,50 @@ internal fun hookLikedJump(versionName: String): Boolean {
     return true
 }
 
+private const val FAVORITES_JUMP = "Lapp/morphe/extension/tiktok/feed/FavoritesJump;"
+
+/**
+ * The address of a profile tab's list request (#508), the static method that answers a String
+ * and starts `(userId, secUserId, type, minCursor, cursor, ...)`. It turns on `locate_new_style`
+ * and puts the cursor on as `cursor` for the Favorites tab (type 4, the listcollection address)
+ * and as `max_cursor` for the others.
+ */
+internal object FavoritesListUrlFingerprint : Fingerprint(
+    returnType = "Ljava/lang/String;",
+    strings = listOf("locate_new_style", "min_cursor", "max_cursor"),
+    custom = { method, _ ->
+        AccessFlags.STATIC.isSet(method.accessFlags) &&
+            method.parameterTypes.size > 5 &&
+            method.parameterTypes.take(5).map { it.toString() } ==
+            listOf("Ljava/lang/String;", "Ljava/lang/String;", "I", "J", "J")
+    },
+)
+
+/**
+ * Jump to a date on Favorites grids (#508): the profile list address hands its ids, type and
+ * cursors to the extension at its first instruction and takes the cursor back, which the
+ * extension changes only for a fresh Favorites list. The grid refreshes through the Liked jump's
+ * `refreshGrid`, so this goes in only after that one did. Says whether it went in.
+ */
+internal fun hookFavoritesJump(versionName: String): Boolean {
+    val declared = versionName in declaredVersions()
+    val url = if (declared) FavoritesListUrlFingerprint.method else FavoritesListUrlFingerprint.methodOrNull
+    if (url == null) {
+        println("[$PATCH] Left out jumping to a date on Favorites grids on $versionName: no profile list address found.")
+        return false
+    }
+    // p0 .. p6: userId, secUserId, type, the wide minCursor and the wide cursor, which comes back
+    // into p5. The range form reaches them from any register count.
+    url.addInstructions(
+        0,
+        """
+            invoke-static/range { p0 .. p6 }, $FAVORITES_JUMP->cursor(Ljava/lang/String;Ljava/lang/String;IJJ)J
+            move-result-wide p5
+        """,
+    )
+    return true
+}
+
 /**
  * Sorts the grid's loaded videos while its switch is on (#180), and says whether the hooks went
  * in. Required on a declared build, where the anchors test holds it, and left out with a note on
@@ -386,6 +430,13 @@ internal fun hookGridSortOn(versionName: String): Boolean {
             "invoke-static {}, " +
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableLikedJump()V",
         )
+        if (hookFavoritesJump(versionName)) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, " +
+                    "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFavoritesJump()V",
+            )
+        }
     }
     if (hookSoundGridSort(versionName)) {
         SettingsStatusLoadFingerprint.method.addInstruction(

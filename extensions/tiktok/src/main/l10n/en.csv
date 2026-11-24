@@ -248,6 +248,7 @@ Adds Save episodes when you share an episode of a mini drama. It lists the drama
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
 Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.
 "Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.","Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it."
+"Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back."
 "Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.","Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back."
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
 "Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that."
@@ -1226,6 +1227,7 @@ Join Amplify,Join Amplify
 Joined,Joined
 Joined %s,Joined %s
 Jump to a date,Jump to a date
+Jump to a date on Favorites grids,Jump to a date on Favorites grids
 Jump to a date on Liked grids,Jump to a date on Liked grids
 Keep Clear display across videos,Keep Clear display across videos
 Keep For You on a Home tap,Keep For You on a Home tap
@@ -1498,6 +1500,7 @@ New style 2,New style 2
 New value,New value
 Newest first,Newest first
 Newest likes,Newest likes
+Newest saves,Newest saves
 Next LIVE,Next LIVE
 Next lock starts %1$s,Next lock starts %1$s
 Next message: today at %1$s.,Next message: today at %1$s.

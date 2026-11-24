@@ -972,6 +972,15 @@
           "values": null
         },
         {
+          "key": "favorites_jump_to_date",
+          "title": "Default: favorites jump to date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "grid_search",
           "title": "Default: grid search",
           "description": null,

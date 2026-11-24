@@ -830,6 +830,13 @@ public class SettingsStatus {
         likedJumpEnabled = true;
     }
 
+    /** The Favorites list request and the grid fragment's refresh were found, so a Favorites grid can jump to a date (#508). */
+    public static boolean favoritesJumpEnabled = false;
+
+    public static void enableFavoritesJump() {
+        favoritesJumpEnabled = true;
+    }
+
     /** The detail page grid adapter hands over its label, so a sound's page can be sorted (#180). */
     public static boolean soundGridSortEnabled = false;
 

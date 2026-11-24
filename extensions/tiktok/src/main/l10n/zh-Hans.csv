@@ -3048,3 +3048,6 @@ Random time each day,每天随机时间
 "Sends at a different time each day, somewhere between When to send and Latest time.",每天在不同时间发送，介于何时发送和最晚时间之间.
 Latest time,最晚时间
 "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",随机时间段的结束时间，与何时发送在同一天。如果不晚于它，消息会在何时发送的时间发出.
+Jump to a date on Favorites grids,在“收藏”网格中跳到某个日期
+"Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.",在“收藏”网格的顶角添加一个按钮，让你收藏的视频从你选择的年份或月份开始，这样无需滑过较新的收藏就能加载较早的收藏。在那里选择“最新的收藏”即可返回.
+Newest saves,最新的收藏

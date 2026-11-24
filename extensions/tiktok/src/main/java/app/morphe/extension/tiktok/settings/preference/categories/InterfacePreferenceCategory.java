@@ -439,6 +439,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             Settings.LIKED_JUMP_TO_DATE
                     ));
                 }
+                if (SettingsStatus.favoritesJumpEnabled) {
+                    addPreference(new TogglePreference(
+                            context,
+                            "Jump to a date on Favorites grids",
+                            "Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.",
+                            Settings.FAVORITES_JUMP_TO_DATE
+                    ));
+                }
                 if (SettingsStatus.likedGridSortEnabled) {
                     addPreference(new TogglePreference(
                             context,

@@ -3048,3 +3048,6 @@ Random time each day,Thời điểm ngẫu nhiên mỗi ngày
 "Sends at a different time each day, somewhere between When to send and Latest time.","Gửi vào một thời điểm khác nhau mỗi ngày, trong khoảng giữa Thời điểm gửi và Thời điểm muộn nhất."
 Latest time,Thời điểm muộn nhất
 "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","Điểm cuối của khoảng ngẫu nhiên, cùng ngày với Thời điểm gửi. Nếu không muộn hơn, tin nhắn sẽ gửi vào Thời điểm gửi."
+Jump to a date on Favorites grids,Chuyển đến ngày trên lưới Yêu thích
+"Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Thêm một nút ở góc trên của lưới Yêu thích để bắt đầu danh sách video đã lưu từ năm hoặc tháng bạn chọn, nhờ đó video cũ hơn được tải mà không phải cuộn qua video mới hơn. Chọn Yêu thích mới nhất ở đó để quay lại."
+Newest saves,Yêu thích mới nhất

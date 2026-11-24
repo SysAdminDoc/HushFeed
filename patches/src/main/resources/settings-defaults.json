@@ -76,6 +76,7 @@
       "collection_grid_sort",
       "sound_grid_sort",
       "liked_jump_to_date",
+      "favorites_jump_to_date",
       "grid_search",
       "grid_position_controls"
     ],
@@ -1999,6 +2000,12 @@
       "key": "favorites_grid_sort",
       "type": "string",
       "default": "profile"
+    },
+    "favorites_jump_to_date": {
+      "field": "FAVORITES_JUMP_TO_DATE",
+      "key": "favorites_jump_to_date",
+      "type": "boolean",
+      "default": false
     },
     "feed_author_text_size": {
       "field": "FEED_AUTHOR_TEXT_SIZE",

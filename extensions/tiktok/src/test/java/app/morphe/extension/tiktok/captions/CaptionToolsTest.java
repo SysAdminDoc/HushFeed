@@ -955,6 +955,44 @@ public class CaptionToolsTest {
     }
 
     /**
+     * #456 again on 0.84.0: TikTok's caption renderer holds the frame it draws into and isn't that
+     * frame, so the early line, stored by frame, was looked up by renderer, found nothing, and the
+     * kept line still waited for the second caption. On the S22 TikTok's own strip showed 0.85 s
+     * into a video and the kept caption's cue 3.2 s in.
+     */
+    @Test public void theFirstCaptionIsKeptWhenTheRendererHoldsItsFrame() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            FrameLayout content = new FrameLayout(activity);
+            FrameLayout first = new FrameLayout(activity);
+            FrameLayout second = new FrameLayout(activity);
+            content.addView(first);
+            content.addView(second);
+            activity.setContentView(content);
+            owner.windowFocusChanged(true);
+            CaptionTools.RendererForTests firstRenderer = () -> first;
+            CaptionTools.RendererForTests secondRenderer = () -> second;
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            CaptionTools.onVideoChanged("first");
+            CaptionTools.onCaption(firstRenderer, "first", "EXPANDED", "First video");
+            CaptionTools.onClear(new Video("first"), true);
+            TextView caption = find(activity.getWindow().getDecorView(), "First video");
+            assertNotNull(caption);
+
+            CaptionTools.onCaption(secondRenderer, "second", "EXPANDED", "Opening line");
+            CaptionTools.onClear(new Video("first"), false);
+            CaptionTools.onClear(new Video("second"), true);
+            CaptionTools.onVideoChanged("second");
+            assertEquals("the line drawn during the swipe was lost", "Opening line", caption.getText().toString());
+            assertEquals(View.VISIBLE, caption.getVisibility());
+
+            CaptionTools.onCaption(secondRenderer, null, "EXPANDED", "Second line");
+            assertEquals("a later line on the same renderer didn't follow", "Second line", caption.getText().toString());
+        }
+    }
+
+    /**
      * #456: the kept line covered the progress bar. Whatever spot it was given, it stays above a
      * bar that's showing, and goes back to that spot when the bar is hidden.
      */

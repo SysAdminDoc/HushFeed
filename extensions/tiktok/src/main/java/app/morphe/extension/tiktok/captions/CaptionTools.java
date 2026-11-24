@@ -32,11 +32,33 @@ import java.util.WeakHashMap;
 public final class CaptionTools {
     private static final Map<Object, String> OWNERS = new WeakHashMap<>();
     /**
-     * The last line each caption view got while its video wasn't the current one. TikTok draws a
-     * video's first caption during the swipe and doesn't send it again, so dropping it left the
-     * kept line empty until the second caption, seconds in (#456).
+     * The last line each caption view got while its video wasn't the current one, with that
+     * video's id. TikTok draws a video's first caption during the swipe and doesn't send it again,
+     * so dropping it left the kept line empty until the second caption, seconds in (#456). The id
+     * is kept with the line: {@link #OWNERS} is keyed by TikTok's renderer, which on the phone is
+     * a different object from the frame it draws into, so looking the frame up there found
+     * nothing and every early line was lost.
      */
-    private static final Map<FrameLayout, String> EARLY_LINES = new WeakHashMap<>();
+    private static final Map<FrameLayout, EarlyLine> EARLY_LINES = new WeakHashMap<>();
+
+    /** A line drawn for a video before it was current, and that video's id. */
+    private static final class EarlyLine {
+        final String owner;
+        final String line;
+
+        EarlyLine(String owner, String line) {
+            this.owner = owner;
+            this.line = line;
+        }
+    }
+
+    /**
+     * What a test hands {@link #onCaption} in place of TikTok's renderer, which holds the frame it
+     * draws into rather than being it.
+     */
+    interface RendererForTests {
+        FrameLayout root();
+    }
     /** With no strip seen, the kept line sits this fraction of the window up, near TikTok's own spot. */
     private static final int NO_STRIP_DIVISOR = 5;
     private static WeakReference<TextView> overlay = new WeakReference<>(null);
@@ -117,13 +139,13 @@ public final class CaptionTools {
         if (id == null) return;
         FrameLayout root = null;
         String line = "";
-        for (Iterator<Map.Entry<FrameLayout, String>> early = EARLY_LINES.entrySet().iterator(); early.hasNext();) {
-            Map.Entry<FrameLayout, String> entry = early.next();
+        for (Iterator<Map.Entry<FrameLayout, EarlyLine>> early = EARLY_LINES.entrySet().iterator(); early.hasNext();) {
+            Map.Entry<FrameLayout, EarlyLine> entry = early.next();
             FrameLayout candidate = entry.getKey();
-            if (candidate == null || !id.equals(OWNERS.get(candidate))) continue;
+            if (candidate == null || !id.equals(entry.getValue().owner)) continue;
             if (root == null || candidate.isAttachedToWindow()) {
                 root = candidate;
-                line = entry.getValue();
+                line = entry.getValue().line;
             }
             early.remove();
         }
@@ -165,7 +187,7 @@ public final class CaptionTools {
             // TikTok sends HIDDEN for captions it keeps off this video, text and all.
             String line = "EXPANDED".equals(String.valueOf(state)) && text != null ? text : "";
             if (!owner.equals(currentId)) {
-                EARLY_LINES.put(root, line);
+                EARLY_LINES.put(root, new EarlyLine(owner, line));
                 return;
             }
             EARLY_LINES.remove(root);
@@ -400,5 +422,8 @@ public final class CaptionTools {
     }
 
     // Replaced with the verified native renderer's FrameLayout field.
-    private static FrameLayout rootOf(Object renderer) { return renderer instanceof FrameLayout ? (FrameLayout) renderer : null; }
+    private static FrameLayout rootOf(Object renderer) {
+        if (renderer instanceof RendererForTests) return ((RendererForTests) renderer).root();
+        return renderer instanceof FrameLayout ? (FrameLayout) renderer : null;
+    }
 }

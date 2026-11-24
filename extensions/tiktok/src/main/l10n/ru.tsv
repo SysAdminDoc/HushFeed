@@ -3192,7 +3192,9 @@ Find and reopen the videos you liked only on this phone	Находите и сн
 Videos you like on this phone show up here	Здесь появятся видео, которые вы лайкнули на этом телефоне
 Likes cleared	Лайки очищены
 Export followers and following	Экспорт подписчиков и подписок
-Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Сохраняет аккаунты, которые на вас подписаны, или те, на которые подписаны вы, в CSV-файл в папке Download/Hushfeed. Они читаются примерно с той скоростью, с какой листают список, до %1$s за раз.
+Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Сохраняет аккаунты, которые на вас подписаны, или те, на которые подписаны вы, в файл CSV, JSON или обычный текстовый файл в папке Download/Hushfeed. Они читаются примерно с той скоростью, с какой листают список, до %1$s за раз.
+# context: a file type on the Export followers and following list, as in "Followers (Plain text)"
+Plain text	Обычный текст
 A list is already being read	Список уже читается
 Reading your followers (%1$s)	Читаем ваших подписчиков (%1$s)
 Reading who you follow (%1$s)	Читаем ваши подписки (%1$s)

@@ -3003,7 +3003,9 @@ Find and reopen the videos you liked only on this phone	Trova e riapri i video a
 Videos you like on this phone show up here	I video a cui metti Mi piace su questo telefono compaiono qui
 Likes cleared	Mi piace cancellati
 Export followers and following	Esporta follower e seguiti
-Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Salva gli account che ti seguono, o quelli che segui, come file CSV in Download/Hushfeed. Vengono letti più o meno alla velocità con cui si scorre l'elenco, fino a %1$s alla volta.
+Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Salva gli account che ti seguono, o quelli che segui, come file CSV, JSON o di testo semplice in Download/Hushfeed. Vengono letti più o meno alla velocità con cui si scorre l'elenco, fino a %1$s alla volta.
+# context: a file type on the Export followers and following list, as in "Followers (Plain text)"
+Plain text	Testo semplice
 A list is already being read	Si sta già leggendo un elenco
 Reading your followers (%1$s)	Lettura dei tuoi follower (%1$s)
 Reading who you follow (%1$s)	Lettura degli account che segui (%1$s)

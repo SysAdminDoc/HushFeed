@@ -2850,7 +2850,8 @@ Find and reopen the videos you liked only on this phone,Tìm và mở lại các
 Videos you like on this phone show up here,Các video bạn thích trên điện thoại này sẽ hiện ở đây
 Likes cleared,Đã xóa lượt thích
 Export followers and following,Xuất danh sách người theo dõi và đang theo dõi
-"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Lưu các tài khoản theo dõi bạn, hoặc các tài khoản bạn theo dõi, thành tệp CSV trong Download/Hushfeed. Chúng được đọc với tốc độ gần bằng tốc độ cuộn danh sách, tối đa %1$s tài khoản mỗi lần."
+"Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Lưu các tài khoản theo dõi bạn, hoặc các tài khoản bạn theo dõi, thành tệp CSV, JSON hoặc văn bản thuần trong Download/Hushfeed. Chúng được đọc với tốc độ gần bằng tốc độ cuộn danh sách, tối đa %1$s tài khoản mỗi lần."
+Plain text,Văn bản thuần
 A list is already being read,Đang đọc một danh sách rồi
 Reading your followers (%1$s),Đang đọc người theo dõi bạn (%1$s)
 Reading who you follow (%1$s),Đang đọc những người bạn theo dõi (%1$s)

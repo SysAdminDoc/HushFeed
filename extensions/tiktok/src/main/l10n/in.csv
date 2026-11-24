@@ -2852,7 +2852,8 @@ Find and reopen the videos you liked only on this phone,Cari dan buka lagi video
 Videos you like on this phone show up here,Video yang kamu sukai di ponsel ini muncul di sini
 Likes cleared,Suka dihapus
 Export followers and following,Ekspor pengikut dan yang diikuti
-"Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Menyimpan akun yang mengikuti kamu, atau yang kamu ikuti, sebagai file CSV di Download/Hushfeed. Akun dibaca kira-kira secepat menggulir daftarnya, hingga %1$s sekaligus."
+"Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.","Menyimpan akun yang mengikuti kamu, atau yang kamu ikuti, sebagai file CSV, JSON, atau teks biasa di Download/Hushfeed. Akun dibaca kira-kira secepat menggulir daftarnya, hingga %1$s sekaligus."
+Plain text,Teks biasa
 A list is already being read,Sebuah daftar sedang dibaca
 Reading your followers (%1$s),Membaca pengikut kamu (%1$s)
 Reading who you follow (%1$s),Membaca akun yang kamu ikuti (%1$s)

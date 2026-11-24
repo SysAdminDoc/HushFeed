@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,7 +30,7 @@ import app.morphe.extension.tiktok.comment.CommentExport;
 /**
  * Your followers, or the accounts you follow, read page by page through TikTok's own client (so
  * every request is signed the way the app's follower and following lists sign theirs) and
- * written out as a CSV file.
+ * written out as a CSV, JSON or plain text file.
  *
  * <p>The pages are asked for one after another with a pause between them, about as fast as a
  * person scrolls the list, and the run stops at {@link #MAX_ROWS}. Each page says whether there
@@ -51,6 +52,36 @@ public final class FollowLists {
     };
 
     public enum Kind { FOLLOWERS, FOLLOWING }
+
+    /** The kind of file a list is saved as. */
+    public enum Format {
+        CSV("csv", "text/csv"),
+        JSON("json", "application/json"),
+        TEXT("txt", "text/plain");
+
+        public final String extension;
+        public final String mimeType;
+
+        Format(String extension, String mimeType) {
+            this.extension = extension;
+            this.mimeType = mimeType;
+        }
+
+        /**
+         * The file's text. Only the CSV opens with a byte order mark: Excel needs it to read the
+         * names as UTF-8, and a JSON reader refuses a file that starts with one.
+         */
+        public String file(List<Account> accounts) {
+            switch (this) {
+                case JSON:
+                    return toJson(accounts);
+                case TEXT:
+                    return toText(accounts);
+                default:
+                    return (char) 0xFEFF + toCsv(accounts);
+            }
+        }
+    }
 
     /** How a read ended. */
     public enum End {
@@ -338,7 +369,7 @@ public final class FollowLists {
         for (Account account : accounts) {
             CommentExport.appendField(out, account.handle).append(',');
             CommentExport.appendField(out, account.nickname).append(',');
-            CommentExport.appendField(out, account.handle.isEmpty() ? "" : "https://www.tiktok.com/@" + account.handle).append(',');
+            CommentExport.appendField(out, profileUrl(account)).append(',');
             CommentExport.appendField(out, account.uid).append(',');
             CommentExport.appendField(out, account.secUid).append(',');
             CommentExport.appendField(out, Boolean.toString(account.youFollow())).append(',');
@@ -346,5 +377,72 @@ public final class FollowLists {
             out.append("\r\n");
         }
         return out.toString();
+    }
+
+    /** A JSON array with one object an account, under the CSV's column names and in its order. */
+    public static String toJson(List<Account> accounts) {
+        StringBuilder out = new StringBuilder("[");
+        boolean first = true;
+        for (Account account : accounts) {
+            out.append(first ? "\n  {" : ",\n  {");
+            first = false;
+            String[] text = {account.handle, account.nickname, profileUrl(account), account.uid, account.secUid};
+            for (int column = 0; column < text.length; column++) {
+                appendJsonString(out, COLUMNS[column]).append(": ");
+                appendJsonString(out, text[column]).append(", ");
+            }
+            appendJsonString(out, COLUMNS[5]).append(": ").append(account.youFollow()).append(", ");
+            appendJsonString(out, COLUMNS[6]).append(": ").append(account.followsYou()).append('}');
+        }
+        return out.append(first ? "]\n" : "\n]\n").toString();
+    }
+
+    /** One line an account: its @username, or its user id when TikTok sent no username. */
+    public static String toText(List<Account> accounts) {
+        StringBuilder out = new StringBuilder();
+        for (Account account : accounts) {
+            out.append(account.handle.isEmpty() ? account.uid : "@" + account.handle).append('\n');
+        }
+        return out.toString();
+    }
+
+    private static String profileUrl(Account account) {
+        return account.handle.isEmpty() ? "" : "https://www.tiktok.com/@" + account.handle;
+    }
+
+    /**
+     * Written by hand so the keys keep their order and a profile link keeps its plain slashes,
+     * which Android's own JSON writer escapes.
+     */
+    private static StringBuilder appendJsonString(StringBuilder out, String value) {
+        out.append('"');
+        for (int index = 0; index < value.length(); index++) {
+            char c = value.charAt(index);
+            switch (c) {
+                case '"':
+                    out.append("\\\"");
+                    break;
+                case '\\':
+                    out.append("\\\\");
+                    break;
+                case '\n':
+                    out.append("\\n");
+                    break;
+                case '\r':
+                    out.append("\\r");
+                    break;
+                case '\t':
+                    out.append("\\t");
+                    break;
+                default:
+                    // Control characters, and the two line separators some JSON readers stop on.
+                    if (c < 0x20 || c == 0x2028 || c == 0x2029) {
+                        out.append('\\').append('u').append(String.format(Locale.ROOT, "%04x", (int) c));
+                    } else {
+                        out.append(c);
+                    }
+            }
+        }
+        return out.append('"');
     }
 }

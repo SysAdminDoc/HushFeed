@@ -3258,7 +3258,9 @@ Find and reopen the videos you liked only on this phone	اعثر على الفي
 Videos you like on this phone show up here	الفيديوهات التي تعجبك على هذا الهاتف تظهر هنا
 Likes cleared	تم مسح الإعجابات
 Export followers and following	تصدير المتابِعين والمتابَعين
-Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	يحفظ الحسابات التي تتابعك، أو التي تتابعها، كملف CSV في Download/Hushfeed. تُقرأ بسرعة تقارب سرعة تمرير القائمة، حتى %1$s في المرة الواحدة.
+Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	يحفظ الحسابات التي تتابعك، أو التي تتابعها، كملف CSV أو JSON أو نص عادي في Download/Hushfeed. تُقرأ بسرعة تقارب سرعة تمرير القائمة، حتى %1$s في المرة الواحدة.
+# context: a file type on the Export followers and following list, as in "Followers (Plain text)"
+Plain text	نص عادي
 A list is already being read	تجري قراءة قائمة بالفعل
 Reading your followers (%1$s)	جارٍ قراءة متابِعيك (%1$s)
 Reading who you follow (%1$s)	جارٍ قراءة من تتابعهم (%1$s)

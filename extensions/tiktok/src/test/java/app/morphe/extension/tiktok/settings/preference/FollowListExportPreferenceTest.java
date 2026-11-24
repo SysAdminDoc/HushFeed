@@ -24,6 +24,7 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.profile.FollowLists;
 import app.morphe.extension.tiktok.profile.FollowListsAccess;
+import app.morphe.extension.tiktok.profile.FollowLists.Format;
 import app.morphe.extension.tiktok.profile.FollowLists.Kind;
 
 /** What Export followers and following says at the end of a read, and what it names the file. */
@@ -71,24 +72,31 @@ public class FollowListExportPreferenceTest {
 
     @Test public void aReadThatSavedNobodySaysWhy() {
         Context context = context();
-        assertEquals("Sign in to TikTok first", FollowListExportPreference.finish(context, Kind.FOLLOWERS, "me",
+        assertEquals("Sign in to TikTok first", FollowListExportPreference.finish(context, Kind.FOLLOWERS, Format.CSV, "me",
                 FollowListsAccess.ended(FollowLists.End.SIGNED_OUT)));
         assertEquals("Couldn't read the list. Try again in a moment.", FollowListExportPreference.finish(context,
-                Kind.FOLLOWERS, "me", FollowListsAccess.ended(FollowLists.End.FAILED)));
+                Kind.FOLLOWERS, Format.CSV, "me", FollowListsAccess.ended(FollowLists.End.FAILED)));
         assertEquals("Stopped before anyone was read", FollowListExportPreference.finish(context,
-                Kind.FOLLOWING, "me", FollowListsAccess.ended(FollowLists.End.STOPPED)));
+                Kind.FOLLOWING, Format.JSON, "me", FollowListsAccess.ended(FollowLists.End.STOPPED)));
         assertEquals("Nobody follows this account yet", FollowListExportPreference.finish(context,
-                Kind.FOLLOWERS, "me", FollowListsAccess.ended(FollowLists.End.DONE)));
+                Kind.FOLLOWERS, Format.CSV, "me", FollowListsAccess.ended(FollowLists.End.DONE)));
         assertEquals("This account doesn't follow anyone yet", FollowListExportPreference.finish(context,
-                Kind.FOLLOWING, "me", FollowListsAccess.ended(FollowLists.End.DONE)));
+                Kind.FOLLOWING, Format.JSON, "me", FollowListsAccess.ended(FollowLists.End.DONE)));
     }
 
-    @Test public void theFileNamesTheListAndTheAccount() {
-        String followers = FollowListExportPreference.fileName(Kind.FOLLOWERS, "Some.User_1");
+    @Test public void theFileNamesTheListTheAccountAndItsType() {
+        String followers = FollowListExportPreference.fileName(Kind.FOLLOWERS, Format.CSV, "Some.User_1");
         assertTrue(followers, followers.matches("tiktok-followers-some\\.user_1-[0-9_-]+\\.csv"));
-        String following = FollowListExportPreference.fileName(Kind.FOLLOWING, "../evil/");
-        assertTrue(following, following.matches("tiktok-following-\\.\\.evil-[0-9_-]+\\.csv"));
-        String nobody = FollowListExportPreference.fileName(Kind.FOLLOWING, null);
-        assertTrue(nobody, nobody.matches("tiktok-following-[0-9_-]+\\.csv"));
+        String following = FollowListExportPreference.fileName(Kind.FOLLOWING, Format.JSON, "../evil/");
+        assertTrue(following, following.matches("tiktok-following-\\.\\.evil-[0-9_-]+\\.json"));
+        String nobody = FollowListExportPreference.fileName(Kind.FOLLOWING, Format.TEXT, null);
+        assertTrue(nobody, nobody.matches("tiktok-following-[0-9_-]+\\.txt"));
+    }
+
+    @Test public void theChooserOffersEachListInEachFileTypeFollowersFirst() {
+        List<String> rows = new ArrayList<>();
+        for (CharSequence row : FollowListExportPreference.rows(context())) rows.add(row.toString());
+        assertEquals(List.of("Followers (CSV)", "Followers (JSON)", "Followers (Plain text)",
+                "Following (CSV)", "Following (JSON)", "Following (Plain text)"), rows);
     }
 }

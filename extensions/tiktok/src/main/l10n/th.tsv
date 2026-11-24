@@ -3006,7 +3006,9 @@ Find and reopen the videos you liked only on this phone	ค้นหาและ
 Videos you like on this phone show up here	วิดีโอที่คุณถูกใจบนโทรศัพท์เครื่องนี้จะแสดงที่นี่
 Likes cleared	ล้างการถูกใจแล้ว
 Export followers and following	ส่งออกผู้ติดตามและที่กำลังติดตาม
-Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	บันทึกบัญชีที่ติดตามคุณ หรือบัญชีที่คุณติดตาม เป็นไฟล์ CSV ใน Download/Hushfeed โดยอ่านด้วยความเร็วประมาณการเลื่อนดูรายการ ครั้งละไม่เกิน %1$s บัญชี
+Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	บันทึกบัญชีที่ติดตามคุณ หรือบัญชีที่คุณติดตาม เป็นไฟล์ CSV, JSON หรือข้อความธรรมดา ใน Download/Hushfeed โดยอ่านด้วยความเร็วประมาณการเลื่อนดูรายการ ครั้งละไม่เกิน %1$s บัญชี
+# context: a file type on the Export followers and following list, as in "Followers (Plain text)"
+Plain text	ข้อความธรรมดา
 A list is already being read	กำลังอ่านรายการอยู่แล้ว
 Reading your followers (%1$s)	กำลังอ่านผู้ติดตามของคุณ (%1$s)
 Reading who you follow (%1$s)	กำลังอ่านบัญชีที่คุณติดตาม (%1$s)

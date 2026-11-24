@@ -345,4 +345,49 @@ public class FollowListsTest {
                         + "carol,Carol,https://www.tiktok.com/@carol,3,MS4w3,false,true\r\n",
                 FollowLists.toCsv(Arrays.asList(plain, tricky, fan)));
     }
+
+    @Test public void theJsonFileHasOneObjectAnAccountUnderTheCsvsColumnNames() throws JSONException {
+        String separator = String.valueOf((char) 0x2028);
+        String name = "Bob \"B\" \\ line\nbreak" + separator + "\t" + (char) 1;
+        Account plain = new Account("1", "alice", "Alice", "MS4w1", FollowStatus.MUTUAL, 0);
+        Account tricky = new Account("2", "", name, "", FollowStatus.FOLLOWING, 0);
+        String json = FollowLists.toJson(Arrays.asList(plain, tricky));
+        // The first account as it's written: the CSV's columns in the CSV's order, slashes left alone.
+        assertTrue(json, json.startsWith("[\n  {\"username\": \"alice\", \"nickname\": \"Alice\", "
+                + "\"profile_url\": \"https://www.tiktok.com/@alice\", \"user_id\": \"1\", \"sec_uid\": \"MS4w1\", "
+                + "\"you_follow\": true, \"follows_you\": true},\n  {"));
+        assertTrue(json, json.endsWith("}\n]\n"));
+        // An account a line: nothing in a name can break the line or the string it sits in.
+        assertEquals(json, 4, json.split("\n", -1).length - 1);
+        assertFalse(json, json.contains(separator) || json.contains("\t") || json.contains("\r"));
+        JSONObject second = new JSONArray(json).getJSONObject(1);
+        assertEquals(name, second.getString("nickname"));
+        assertEquals("", second.getString("username"));
+        assertEquals("", second.getString("profile_url"));
+        assertEquals("2", second.getString("user_id"));
+        assertTrue(second.getBoolean("you_follow"));
+        assertFalse(second.getBoolean("follows_you"));
+        assertEquals(FollowLists.COLUMNS.length, second.length());
+        assertEquals("[]\n", FollowLists.toJson(new ArrayList<>()));
+    }
+
+    @Test public void theTextFileHasOneUsernameALineOrTheIdWhenThereIsNoUsername() {
+        Account plain = new Account("1", "alice", "Alice", "MS4w1", FollowStatus.MUTUAL, 0);
+        Account nameless = new Account("2", "", "Bob", "", FollowStatus.FOLLOWING, 0);
+        Account fan = new Account("3", "carol", "Carol", "MS4w3", 0, FollowStatus.FOLLOWING);
+        assertEquals("@alice\n2\n@carol\n", FollowLists.toText(Arrays.asList(plain, nameless, fan)));
+        assertEquals("", FollowLists.toText(new ArrayList<>()));
+    }
+
+    @Test public void onlyTheCsvFileOpensWithAByteOrderMark() throws JSONException {
+        List<Account> one = Arrays.asList(new Account("1", "alice", "Alice", "MS4w1", FollowStatus.MUTUAL, 0));
+        char mark = (char) 0xFEFF;
+        assertEquals(mark + FollowLists.toCsv(one), FollowLists.Format.CSV.file(one));
+        assertEquals(FollowLists.toJson(one), FollowLists.Format.JSON.file(one));
+        assertEquals(1, new JSONArray(FollowLists.Format.JSON.file(one)).length());
+        assertEquals("@alice\n", FollowLists.Format.TEXT.file(one));
+        assertEquals("csv text/csv", FollowLists.Format.CSV.extension + " " + FollowLists.Format.CSV.mimeType);
+        assertEquals("json application/json", FollowLists.Format.JSON.extension + " " + FollowLists.Format.JSON.mimeType);
+        assertEquals("txt text/plain", FollowLists.Format.TEXT.extension + " " + FollowLists.Format.TEXT.mimeType);
+    }
 }

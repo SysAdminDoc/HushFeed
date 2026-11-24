@@ -3003,7 +3003,9 @@ Find and reopen the videos you liked only on this phone	Yalnız bu telefonda bə
 Videos you like on this phone show up here	Bu telefonda bəyəndiyiniz videolar burada görünür
 Likes cleared	Bəyənmələr təmizləndi
 Export followers and following	İzləyiciləri və izlədiklərinizi ixrac edin
-Saves the accounts that follow you, or the ones you follow, as a CSV file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Sizi izləyən və ya sizin izlədiyiniz hesabları Download/Hushfeed qovluğunda CSV faylı kimi saxlayır. Onlar siyahını sürüşdürmə sürətinə yaxın sürətlə, bir dəfəyə %1$s ədədə qədər oxunur.
+Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.	Sizi izləyən və ya sizin izlədiyiniz hesabları Download/Hushfeed qovluğunda CSV, JSON və ya sadə mətn faylı kimi saxlayır. Onlar siyahını sürüşdürmə sürətinə yaxın sürətlə, bir dəfəyə %1$s ədədə qədər oxunur.
+# context: a file type on the Export followers and following list, as in "Followers (Plain text)"
+Plain text	Sadə mətn
 A list is already being read	Artıq bir siyahı oxunur
 Reading your followers (%1$s)	İzləyiciləriniz oxunur (%1$s)
 Reading who you follow (%1$s)	İzlədikləriniz oxunur (%1$s)

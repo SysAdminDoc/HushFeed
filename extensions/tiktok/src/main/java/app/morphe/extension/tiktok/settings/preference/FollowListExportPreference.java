@@ -21,19 +21,22 @@ import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.profile.FollowLists;
 import app.morphe.extension.tiktok.profile.FollowLists.End;
+import app.morphe.extension.tiktok.profile.FollowLists.Format;
 import app.morphe.extension.tiktok.profile.FollowLists.Kind;
 import app.morphe.extension.tiktok.settings.L10n;
 
 /**
  * Export followers and following: reads the signed-in account's followers, or the accounts it
- * follows, with a running count and Stop, and saves them as a CSV file in Download/Hushfeed.
- * Stopping keeps what was read so far, and the notice says the file is partial.
+ * follows, with a running count and Stop, and saves them as a CSV, JSON or plain text file in
+ * Download/Hushfeed. The list and the file type are one tap, a row for each pair. Stopping keeps
+ * what was read so far, and the notice says the file is partial.
  */
 @SuppressWarnings("deprecation")
 public final class FollowListExportPreference extends Preference {
     static final String KEY = "action_export_follow_lists";
-    static final String SUMMARY = "Saves the accounts that follow you, or the ones you follow, as a CSV file "
-            + "in Download/Hushfeed. They're read at about the pace of scrolling the list, up to %1$s at a time.";
+    static final String SUMMARY = "Saves the accounts that follow you, or the ones you follow, as a CSV, JSON or "
+            + "plain text file in Download/Hushfeed. They're read at about the pace of scrolling the list, up to "
+            + "%1$s at a time.";
 
     private static final AtomicBoolean RUNNING = new AtomicBoolean();
     /** The run on screen now: Stop sets it. */
@@ -60,16 +63,41 @@ public final class FollowListExportPreference extends Preference {
             SettingsActionBanner.showNotice(window, L10n.t(window, "A list is already being read"));
             return;
         }
-        CharSequence[] lists = {L10n.t(window, "Followers"), L10n.t(window, "Following")};
+        Kind[] kinds = Kind.values();
+        Format[] formats = Format.values();
         AlertDialog dialog = new AlertDialog.Builder(window)
                 .setTitle(L10n.t(window, "Export followers and following"))
-                .setItems(lists, (ignored, which) -> start(window, which == 0 ? Kind.FOLLOWERS : Kind.FOLLOWING))
+                .setItems(rows(window), (ignored, which) ->
+                        start(window, kinds[which / formats.length], formats[which % formats.length]))
                 .setNegativeButton(L10n.t(window, "Cancel"), null)
                 .show();
         SettingsUi.styleStandardAlertDialog(dialog);
     }
 
-    static void start(Context window, Kind kind) {
+    /** The chooser's rows: each list with each file type, followers first, as in "Followers (CSV)". */
+    static CharSequence[] rows(Context context) {
+        Kind[] kinds = Kind.values();
+        Format[] formats = Format.values();
+        CharSequence[] rows = new CharSequence[kinds.length * formats.length];
+        for (int row = 0; row < rows.length; row++) {
+            String list = L10n.t(context, kinds[row / formats.length] == Kind.FOLLOWERS ? "Followers" : "Following");
+            rows[row] = L10n.f(context, "%1$s (%2$s)", list, typeName(context, formats[row % formats.length]));
+        }
+        return rows;
+    }
+
+    private static String typeName(Context context, Format format) {
+        switch (format) {
+            case JSON:
+                return "JSON";
+            case TEXT:
+                return L10n.t(context, "Plain text");
+            default:
+                return "CSV";
+        }
+    }
+
+    static void start(Context window, Kind kind, Format format) {
         if (SignedInUser.id() == null) {
             SettingsActionBanner.showNotice(window, L10n.t(window, "Sign in to TikTok first"));
             return;
@@ -94,7 +122,7 @@ public final class FollowListExportPreference extends Preference {
                                 L10n.t(where, "Stop"), STOP, false);
                     }
                 }));
-                notice = finish(app, kind, handle, result);
+                notice = finish(app, kind, format, handle, result);
             } catch (Throwable unexpected) {
                 Logger.printException(() -> "Follow list export stopped on an error", unexpected);
                 notice = L10n.t(app, "Couldn't read the list. Try again in a moment.");
@@ -128,7 +156,7 @@ public final class FollowListExportPreference extends Preference {
     }
 
     /** Saves what was read, on the run's thread, and says how it went. */
-    static String finish(Context context, Kind kind, String handle, FollowLists.Result result) {
+    static String finish(Context context, Kind kind, Format format, String handle, FollowLists.Result result) {
         if (result.end == End.SIGNED_OUT) return L10n.t(context, "Sign in to TikTok first");
         if (result.accounts.isEmpty()) {
             if (result.end == End.FAILED) return L10n.t(context, "Couldn't read the list. Try again in a moment.");
@@ -139,8 +167,8 @@ public final class FollowListExportPreference extends Preference {
         }
         String where;
         try {
-            where = GateReportExport.write(context, (char) 0xFEFF + FollowLists.toCsv(result.accounts),
-                    fileName(kind, handle), "text/csv");
+            where = GateReportExport.write(context, format.file(result.accounts),
+                    fileName(kind, format, handle), format.mimeType);
         } catch (IOException | RuntimeException failure) {
             Logger.printException(() -> "Could not save the follow list", failure);
             return L10n.t(context, "The file couldn't be saved. Try again.");
@@ -165,12 +193,12 @@ public final class FollowListExportPreference extends Preference {
         }
     }
 
-    /** tiktok-followers-<handle>-<time>.csv, so two accounts' lists can't be mixed up. */
-    static String fileName(Kind kind, String handle) {
+    /** tiktok-followers-<handle>-<time>.csv (or .json, .txt), so two accounts' lists can't be mixed up. */
+    static String fileName(Kind kind, Format format, String handle) {
         String who = handle == null ? "" : handle.replaceAll("[^A-Za-z0-9._-]", "");
         return "tiktok-" + (kind == Kind.FOLLOWERS ? "followers" : "following")
                 + (who.isEmpty() ? "" : "-" + who.toLowerCase(Locale.ROOT))
-                + "-" + LogBufferManager.fileTimestamp() + ".csv";
+                + "-" + LogBufferManager.fileTimestamp() + "." + format.extension;
     }
 
     @Override

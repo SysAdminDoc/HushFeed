@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,19 +45,23 @@ public final class LiveRowOrder {
      */
     static final long CLAIM_MS = 60_000L;
 
-    /** The request types of the pager a LIVE from the row opens in start with this. */
-    static final String ROW_PAGER = "homepage_follow";
-
     private static final AtomicInteger FAILURES = new AtomicInteger();
     private static final AtomicInteger PAGE_FAILURES = new AtomicInteger();
 
-    /** The rooms the last tap lined up, the tapped one included, and the pager that shows them. */
+    /**
+     * The rooms the last tap lined up, the tapped one included, and the pager that shows them.
+     * That pager keeps the id of the room it opened on in a long field of its own (LLLIZZ on
+     * 47.9.3, the room its "Remove duplicate room" check compares with), which is how it's told
+     * apart: its request type is the pager's own and says nothing about the row.
+     */
     static final class Lineup {
+        final long tapped;
         final Set<Long> rooms;
         final long at;
         @Nullable volatile WeakReference<Object> pager;
 
-        Lineup(Set<Long> rooms, long at) {
+        Lineup(long tapped, Set<Long> rooms, long at) {
+            this.tapped = tapped;
             this.rooms = rooms;
             this.at = at;
         }
@@ -123,10 +128,12 @@ public final class LiveRowOrder {
                 more.add(entryConfig);
             }
             set(logData, "moreConfig", more);
-            Set<Long> rooms = new HashSet<>();
-            if (first != null) rooms.add(first.roomId);
-            for (RowLive live : next) rooms.add(live.roomId);
-            lineup = new Lineup(rooms, SystemClock.elapsedRealtime());
+            if (first != null) {
+                Set<Long> rooms = new HashSet<>();
+                rooms.add(first.roomId);
+                for (RowLive live : next) rooms.add(live.roomId);
+                lineup = new Lineup(first.roomId, rooms, SystemClock.elapsedRealtime());
+            }
             Logger.printDebug(() -> "LIVE row order: " + more.size() + " rooms after " + (first == null ? "?" : first.roomId));
         } catch (Throwable failure) {
             if (FAILURES.getAndIncrement() < 3) {
@@ -137,9 +144,9 @@ public final class LiveRowOrder {
 
     /**
      * Called by the patch at the top of TikTok's LIVE page handler with the pager, the page it
-     * loaded and the pager's request type. The pager the last row tap opened, the first one with
-     * the row's request type to load a page after it, gets the page back without the rooms that
-     * tap lined up. Every other pager, and every page on any failure, gets the page as it came.
+     * loaded and the pager's request type. The pager the last row tap opened, found by the room
+     * it opened on within a minute of the tap, gets the page back without the rooms that tap
+     * lined up. Every other pager, and every page on any failure, gets the page as it came.
      */
     public static List<?> page(Object pager, List<?> items, @Nullable String requestType) {
         Lineup current = lineup;
@@ -147,8 +154,9 @@ public final class LiveRowOrder {
         try {
             WeakReference<Object> claim = current.pager;
             if (claim == null) {
-                if (requestType == null || !requestType.startsWith(ROW_PAGER)
-                        || SystemClock.elapsedRealtime() - current.at > CLAIM_MS) return items;
+                if (SystemClock.elapsedRealtime() - current.at > CLAIM_MS || !opensOn(pager, current.tapped)) {
+                    return items;
+                }
                 current.pager = new WeakReference<>(pager);
             } else if (claim.get() != pager) {
                 return items;
@@ -160,17 +168,28 @@ public final class LiveRowOrder {
                 if (repeat && kept == null) kept = new ArrayList<>(items.subList(0, index));
                 else if (!repeat && kept != null) kept.add(item);
             }
-            if (kept == null) return items;
-            int dropped = items.size() - kept.size();
-            Logger.printDebug(() -> "LIVE row order: " + dropped + " of " + items.size()
-                    + " rooms on a " + requestType + " page were already lined up");
-            return kept;
+            int dropped = kept == null ? 0 : items.size() - kept.size();
+            Logger.printDebug(() -> "LIVE row order: a " + requestType + " page of " + items.size()
+                    + " rooms for the row's pager, " + dropped + " already lined up");
+            return kept == null ? items : kept;
         } catch (Throwable failure) {
             if (PAGE_FAILURES.getAndIncrement() < 3) {
                 Logger.printException(() -> "Could not check a LIVE page for the row's rooms; it was left as it came", failure);
             }
             return items;
         }
+    }
+
+    /** Whether {@code pager} has a long field of its own class chain holding {@code roomId}. */
+    static boolean opensOn(Object pager, long roomId) throws IllegalAccessException {
+        for (Class<?> type = pager.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (field.getType() != long.class || Modifier.isStatic(field.getModifiers())) continue;
+                field.setAccessible(true);
+                if (field.getLong(pager) == roomId) return true;
+            }
+        }
+        return false;
     }
 
     /** The id of the room a page item carries, or 0 for an item without one. */

@@ -105,30 +105,31 @@ public class LiveRowOrderTest {
     @Test public void thePagerTheTapOpenedLosesTheLinedUpRoomsFromItsPages() {
         List<Entry> row = Arrays.asList(entry(11, "a"), entry(12, "b"), entry(13, "c"));
         LiveRowOrder.seed(tapped(row.get(1)), row.get(1), row);
-        Object pager = new Object();
+        Pager pager = new Pager(12);
 
+        // TikTok's own load-more name for this pager says nothing about the row.
         List<Item> page = Arrays.asList(item(13), item(40), item(11), item(12), item(41));
-        assertEquals(Arrays.asList(40L, 41L), ids(LiveRowOrder.page(pager, page, "homepage_follow_live_cover_loadmore")));
-        // Later pages of the same pager too, whatever their type.
-        assertEquals(Arrays.asList(42L), ids(LiveRowOrder.page(pager, Arrays.asList(item(11), item(42)), "other")));
+        assertEquals(Arrays.asList(40L, 41L), ids(LiveRowOrder.page(pager, page, "_loadmore")));
+        // Later pages of the same pager too.
+        assertEquals(Arrays.asList(42L), ids(LiveRowOrder.page(pager, Arrays.asList(item(11), item(42)), "_loadmore")));
         // A page with nothing lined up comes back as it was.
         List<Item> clean = Arrays.asList(item(43), item(44));
-        assertSame(clean, LiveRowOrder.page(pager, clean, "homepage_follow_live_cover_loadmore"));
+        assertSame(clean, LiveRowOrder.page(pager, clean, "_loadmore"));
     }
 
     @Test public void otherPagersKeepTheirPages() {
         List<Entry> row = Arrays.asList(entry(11, "a"), entry(12, "b"));
         LiveRowOrder.seed(tapped(row.get(0)), row.get(0), row);
-        Object feed = new Object();
-        Object opened = new Object();
+        Pager feed = new Pager(99);
+        Pager opened = new Pager(11);
         List<Item> page = Arrays.asList(item(11), item(12), item(40));
 
-        // A pager of another kind loading first doesn't take the lineup.
-        assertSame(page, LiveRowOrder.page(feed, page, "toplive_draw_loadmore"));
-        assertEquals(Arrays.asList(40L), ids(LiveRowOrder.page(opened, page, "homepage_follow_live_cover_refresh")));
-        // Once claimed, no other pager loses anything, row-typed or not.
-        assertSame(page, LiveRowOrder.page(new Object(), page, "homepage_follow_live_cover_refresh"));
-        assertSame(page, LiveRowOrder.page(feed, page, "toplive_draw_loadmore"));
+        // A pager on another room loading first doesn't take the lineup.
+        assertSame(page, LiveRowOrder.page(feed, page, "toplive_user_host_room_loadmore"));
+        assertEquals(Arrays.asList(40L), ids(LiveRowOrder.page(opened, page, "_loadmore")));
+        // Once it's taken, no other pager loses anything, even one on the same room.
+        assertSame(page, LiveRowOrder.page(new Pager(11), page, "_loadmore"));
+        assertSame(page, LiveRowOrder.page(feed, page, "toplive_user_host_room_loadmore"));
     }
 
     @Test public void aTapWithTheSwitchOffOrAStaleTapLeavesPagesAlone() {
@@ -137,13 +138,28 @@ public class LiveRowOrderTest {
         LiveRowOrder.seed(tapped(row.get(0)), row.get(0), row);
         Settings.LIVE_FOLLOWING_ROW_ORDER.save(false);
         LiveRowOrder.seed(tapped(row.get(1)), row.get(1), row);
-        assertSame(page, LiveRowOrder.page(new Object(), page, "homepage_follow_live_cover_loadmore"));
+        assertSame(page, LiveRowOrder.page(new Pager(12), page, "_loadmore"));
 
         Settings.LIVE_FOLLOWING_ROW_ORDER.save(true);
         LiveRowOrder.seed(tapped(row.get(0)), row.get(0), row);
         LiveRowOrder.Lineup fresh = LiveRowOrder.lineup;
-        LiveRowOrder.lineup = new LiveRowOrder.Lineup(fresh.rooms, fresh.at - LiveRowOrder.CLAIM_MS - 1);
-        assertSame(page, LiveRowOrder.page(new Object(), page, "homepage_follow_live_cover_loadmore"));
+        LiveRowOrder.lineup = new LiveRowOrder.Lineup(fresh.tapped, fresh.rooms, fresh.at - LiveRowOrder.CLAIM_MS - 1);
+        assertSame(page, LiveRowOrder.page(new Pager(11), page, "_loadmore"));
+    }
+
+    /** TikTok's draw pager: the room it opened on in a long field, among others of its own. */
+    static class PagerBase {
+        long requestStart = 5;
+    }
+
+    static final class Pager extends PagerBase {
+        static long shared = 11;
+        int position = 11;
+        final long enteredRoom;
+
+        Pager(long enteredRoom) {
+            this.enteredRoom = enteredRoom;
+        }
     }
 
     private static List<Long> ids(List<?> page) {

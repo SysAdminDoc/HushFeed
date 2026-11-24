@@ -18,9 +18,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -35,20 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * down on the phone, as a failed connection, before anything is sent. The stream itself comes
  * from the room TikTok already loaded with the feed.
  *
- * <p>While hidden, the room still shows its chat, host bar and close button (#513). Once its page
- * kept the room open, the page's own startInteraction builds them ({@link #showRoom}), and the
- * room's messages come over TikTok's LIVE preview channel, the one the feed's LIVE previews read
- * without entering a room ({@link #messageMode}, {@link #reuseFor}). The room's own channel never
- * enters a hidden room ({@link #imEnter}), and what a viewer sends from it (likes, comments,
- * gifts, shares, votes, the room channel's fetch) fails on the phone in the same hook as the
- * enter. The eye in the room ({@code LiveUnseenButton}) lets the room you're in see you: the room
- * page enters again through TikTok's own enter, and the room's later enters and requests go out
- * as usual for the rest of that visit. Leaving the room, or tapping the eye again, hides you from
- * it again (#491).
+ * <p>While hidden, the room shows the video and the eye, and nothing a successful enter builds
+ * (the chat, the host bar, the close button). The eye in the room ({@code LiveUnseenButton})
+ * lets the room you're in see you: the room page enters again through TikTok's own enter, which
+ * builds the rest of the room, and the room's later enters go out as usual for the rest of that
+ * visit. Leaving the room, or tapping the eye again, hides you from it again (#491).
  *
- * <p>The hooks fail open. With a switch off, Hushfeed paused, the settings not loaded yet, or
- * the request unreadable, the request goes out as it always does, and a room whose page can't
- * start shows just the video and the eye.
+ * <p>The hook fails open. With a switch off, Hushfeed paused, the settings not loaded yet, or
+ * the request unreadable, the request goes out as it always does.
  */
 public final class LiveUnseen {
     static final String HOOK_FAMILY = "ghost mode";
@@ -68,24 +60,6 @@ public final class LiveUnseen {
     /** How long after an enter held with no readable room a failed enter is still taken as ours. */
     static final long UNKNOWN_ROOM_WINDOW_MS = 15_000;
     private static final long NEVER = -1;
-    /** The names TikTok's message channel kinds keep: a room's own channel and the LIVE preview's. */
-    static final String CHANNEL_ROOM = "LIVE_ROOM";
-    static final String CHANNEL_PREVIEW = "PREVIEW";
-    /** The hidden room's chat read over the preview channel, by its name in the diagnostics. */
-    static final String CHAT_PREVIEW = "live chat over the preview channel";
-    /** The room channel's websocket enter held for a hidden room, by its name in the diagnostics. */
-    static final String IM_ENTER_HELD = "live chat enter held";
-    /** The bridge into the room page's startInteraction, by its name in the diagnostics. */
-    static final String ROOM_SHOWN = "live room shown";
-    /**
-     * What a room sends that shows its host you're there, by path: the room channel's own fetch
-     * (the preview channel's isn't one), a like, a comment, the quick comment bar's report, an
-     * emote, a share, a gift, a poll vote and a room event report.
-     */
-    static final Set<String> ROOM_REQUESTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "/webcast/im/fetch/", "/webcast/room/like/", "/webcast/room/chat/",
-            "/webcast/room/chat/event/", "/webcast/room/emote_chat/", "/webcast/room/share/",
-            "/webcast/gift/send/", "/webcast/room/poll/vote/", "/webcast/room/event_report/")));
 
     /**
      * Rooms the eye was tapped in, whose enters go out: until the eye is tapped again, or until
@@ -98,17 +72,11 @@ public final class LiveUnseen {
             Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     /** The latest enter held for each room, guarded by itself. */
     private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
-    /** Hidden rooms whose page started its chat and host bar, until the eye or a leave. */
-    private static final Set<String> SHOWN =
-            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     /** When an enter was last held, and when one was last held without a readable room. */
     private static volatile long heldAt = NEVER;
     private static volatile long unknownHeldAt = NEVER;
     private static volatile boolean loggedHold;
     private static volatile boolean loggedKept;
-    private static volatile boolean loggedRequest;
-    private static volatile boolean loggedChat;
-    private static volatile boolean loggedShown;
 
     /** TikTok's network interceptor and chain for one enter it was about to send. */
     static final class HeldEnter {
@@ -127,13 +95,6 @@ public final class LiveUnseen {
     }
 
     static volatile Reentry reentry = LiveUnseen::enterAgain;
-
-    /** The room page starting its chat and host bar; the patch's bridge, swapped out in tests. */
-    interface Interaction {
-        boolean start(Object page, Object room);
-    }
-
-    static volatile Interaction interaction = LiveUnseen::startInteraction;
 
     /** What happened to a room when the eye was tapped. */
     public enum Reveal {
@@ -160,36 +121,17 @@ public final class LiveUnseen {
 
     /**
      * Called by TikTok's network interceptor right before it sends a request, with itself and its
-     * chain. Throws for a LIVE room enter while it's held, and for what a hidden room sends that
-     * shows its host you're there (#513), which TikTok handles as a connection that failed, and
-     * returns for everything else.
+     * chain. Throws for a LIVE room enter while it's held, which TikTok handles as a connection
+     * that failed, and returns for everything else.
      */
     public static void holdEnter(Object interceptor, Object chain) throws IOException {
         if (!enabled()) return;
         String room;
-        boolean roomRequest;
         try {
             Object request = Reflect.requiredField(interceptor, "mOriginalRequest", HOOK_FAMILY);
             Object path = Reflect.required(request, "getPath", HOOK_FAMILY);
-            String text = path instanceof String ? (String) path : null;
-            roomRequest = isRoomRequest(text);
-            if (!roomRequest && !isEnter(text)) return;
+            if (!isEnter(path instanceof String ? (String) path : null)) return;
             room = FollowDiagnostics.liveRoomIdOf(request);
-            if (roomRequest && !holdsRoomRequest(room)) return;
-        } catch (Throwable unreadable) {
-            HookStatus.threw(HOOK_FAMILY, GhostMode.LIVE_ENTER, unreadable);
-            return;
-        }
-        if (roomRequest) {
-            // Failed, never kept: TikTok's own retry or the viewer's next tap sends it again.
-            if (!loggedRequest) {
-                loggedRequest = true;
-                Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
-                        () -> "Ghost mode held back a request from a LIVE watched unseen");
-            }
-            throw new IOException(HELD_MESSAGE);
-        }
-        try {
             boolean revealed = room != null && REVEALED.contains(room);
             if (!GhostMode.holdLiveEnter(revealed)) {
                 if (revealed) ENTERED.add(room);
@@ -215,129 +157,13 @@ public final class LiveUnseen {
      * Called by TikTok's LIVE room page at the start of its leave, with itself and the reason.
      * TikTok takes the enter Ghost mode held back as a failed one and leaves the room for the
      * next LIVE with an "Unstable connection" toast. Returns true to stay in the room when the
-     * reason is a failed enter that Ghost mode held for this room, and the page then starts the
-     * room's chat and host bar once its leave is over ({@link #showRoom}); any other leave goes
-     * ahead and ends the visit ({@link #endVisit}).
+     * reason is a failed enter that Ghost mode held for this room; any other leave goes ahead
+     * and ends the visit ({@link #endVisit}).
      */
     public static boolean keepRoom(Object page, Object reason) {
         boolean stays = stays(page, reason);
-        if (stays) Utils.runOnMainThread(() -> showRoom(page));
-        else if (reason instanceof Enum) endVisit(page);
+        if (!stays && reason instanceof Enum) endVisit(page);
         return stays;
-    }
-
-    /**
-     * A hidden room kept open by its page: the page's own startInteraction builds the chat, the
-     * host bar and the close button, through the bridge the patch fills (#513). The room's
-     * messages come over TikTok's preview channel ({@link #messageMode}). A room revealed in the
-     * meantime is left to its own enter, and a page that can't start keeps the room as it was.
-     */
-    static void showRoom(Object page) {
-        String room = null;
-        try {
-            Object shown = LiveRecordChip.roomOf(page);
-            String key = LiveRecordChip.roomKey(shown);
-            if (shown == null || !hiding(key)) return;
-            // Counted from before the start, since the room's widgets send as they're built.
-            room = key;
-            SHOWN.add(room);
-            if (!interaction.start(page, shown)) {
-                SHOWN.remove(room);
-                return;
-            }
-        } catch (Throwable failure) {
-            if (room != null) SHOWN.remove(room);
-            HookStatus.threw(HOOK_FAMILY, ROOM_SHOWN, failure);
-            return;
-        }
-        HookStatus.bound(HOOK_FAMILY, ROOM_SHOWN);
-        if (!loggedShown) {
-            loggedShown = true;
-            Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
-                    () -> "Ghost mode showed the chat of a LIVE watched unseen");
-        }
-    }
-
-    /**
-     * Filled in by the patch with the room page's own start: a page still PREPARING, where a held
-     * enter leaves it, moves on to PREPARED, as a successful enter moves it, and its
-     * startInteraction builds the chat, host bar and close button. Returns true once it ran, false
-     * for a page in any other state. As written here it does nothing.
-     */
-    static boolean startInteraction(Object page, Object room) {
-        return false;
-    }
-
-    /**
-     * Called by TikTok's LIVE message channel builder with the room id, whether you host the room
-     * (non-zero) and the kind of channel asked for. A hidden room's own channel comes back as the
-     * LIVE preview kind, which reads the room's chat without entering it, as the feed's LIVE
-     * previews do. Anything else, or a kind with no preview, comes back as asked.
-     */
-    public static Object messageMode(long room, int host, Object mode) {
-        try {
-            if (host != 0 || room <= 0 || !(mode instanceof Enum)) return mode;
-            Enum<?> kind = (Enum<?>) mode;
-            if (!CHANNEL_ROOM.equals(kind.name()) || !hiding(String.valueOf(room))) return mode;
-            Object preview = previewOf(kind);
-            if (preview == null) return mode;
-            HookStatus.bound(HOOK_FAMILY, CHAT_PREVIEW);
-            if (!loggedChat) {
-                loggedChat = true;
-                Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
-                        () -> "Ghost mode reads a LIVE watched unseen over the preview channel");
-            }
-            return preview;
-        } catch (Throwable unreadable) {
-            HookStatus.threw(HOOK_FAMILY, CHAT_PREVIEW, unreadable);
-            return mode;
-        }
-    }
-
-    /** The PREVIEW constant of a channel kind's enum, or null when it has none. */
-    private static Object previewOf(Enum<?> kind) {
-        for (Object constant : kind.getDeclaringClass().getEnumConstants()) {
-            if (CHANNEL_PREVIEW.equals(((Enum<?>) constant).name())) return constant;
-        }
-        return null;
-    }
-
-    /**
-     * Called by the LIVE room page's start with the channel TikTok kept from the last room and
-     * the page. A hidden room gets null, so it makes its own channel ({@link #messageMode}), and
-     * the last room's channel isn't moved into it. Anything unreadable keeps the channel; the
-     * enter frame and request holds still stand in front of it.
-     */
-    public static Object reuseFor(Object channel, Object page) {
-        if (channel == null) return null;
-        try {
-            if (!hiding(LiveRecordChip.roomKey(LiveRecordChip.roomOf(page)))) return channel;
-        } catch (Throwable unreadable) {
-            HookStatus.threw(HOOK_FAMILY, CHAT_PREVIEW, unreadable);
-            return channel;
-        }
-        HookStatus.bound(HOOK_FAMILY, CHAT_PREVIEW);
-        return null;
-    }
-
-    /**
-     * Called by the room channel's websocket enter with its ImEnterRoom frame and the frame's
-     * bytes, right before it sends them. Returns null, which TikTok takes as nothing to send, for
-     * a hidden room. A frame with no readable room is held while no room is revealed.
-     */
-    public static byte[] imEnter(Object frame, byte[] bytes) {
-        if (bytes == null || !enabled()) return bytes;
-        try {
-            Object id = Reflect.readField(frame, "roomId");
-            boolean hold = id instanceof Number
-                    ? !revealed(String.valueOf(((Number) id).longValue()))
-                    : REVEALED.isEmpty();
-            if (!hold) return bytes;
-            HookStatus.bound(HOOK_FAMILY, IM_ENTER_HELD);
-        } catch (Throwable unreadable) {
-            HookStatus.threw(HOOK_FAMILY, IM_ENTER_HELD, unreadable);
-        }
-        return null;
     }
 
     private static boolean stays(Object page, Object reason) {
@@ -372,9 +198,7 @@ public final class LiveUnseen {
         } catch (Throwable unreadable) {
             return;
         }
-        if (room == null) return;
-        SHOWN.remove(room);
-        if (ENTERED.remove(room)) REVEALED.remove(room);
+        if (room != null && ENTERED.remove(room)) REVEALED.remove(room);
     }
 
     /**
@@ -397,21 +221,6 @@ public final class LiveUnseen {
     /** A room enter or its newer and prefetch forms, by the request's path. */
     static boolean isEnter(String path) {
         return path != null && path.toLowerCase(Locale.ROOT).contains(ENTER_PATH);
-    }
-
-    /** One of {@link #ROOM_REQUESTS}, by the request's whole path, with or without its last slash. */
-    static boolean isRoomRequest(String path) {
-        if (path == null) return false;
-        String normalized = path.toLowerCase(Locale.ROOT);
-        return ROOM_REQUESTS.contains(normalized.endsWith("/") ? normalized : normalized + "/");
-    }
-
-    /**
-     * Whether a room request for {@code room} is held: the room is hidden. One with no readable
-     * room is held while a hidden room shows its chat, since it may well come from that room.
-     */
-    static boolean holdsRoomRequest(String room) {
-        return room != null ? !revealed(room) : !SHOWN.isEmpty();
     }
 
     private static void keep(String room, HeldEnter held) {
@@ -457,7 +266,6 @@ public final class LiveUnseen {
             return;
         }
         REVEALED.add(room);
-        SHOWN.remove(room);
         HeldEnter held;
         synchronized (HELD) {
             held = HELD.remove(room);
@@ -561,10 +369,8 @@ public final class LiveUnseen {
 
     static void resetForTests() {
         reentry = LiveUnseen::enterAgain;
-        interaction = LiveUnseen::startInteraction;
         REVEALED.clear();
         ENTERED.clear();
-        SHOWN.clear();
         synchronized (HELD) {
             HELD.clear();
         }
@@ -572,8 +378,5 @@ public final class LiveUnseen {
         unknownHeldAt = NEVER;
         loggedHold = false;
         loggedKept = false;
-        loggedRequest = false;
-        loggedChat = false;
-        loggedShown = false;
     }
 }

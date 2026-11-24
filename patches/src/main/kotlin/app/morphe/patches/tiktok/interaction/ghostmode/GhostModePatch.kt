@@ -516,22 +516,6 @@ val ghostModePatch = bytecodePatch(
         val unseen = mutableClassDefBy(LIVE_UNSEEN_EXTENSION)
         val reEnterStub = unseen.methods.filter { it.name == "enterAgain" }
             .singleOrPatchException("Ghost mode: extension bridge enterAgain")
-        // The hidden room's chat (#513), each piece read off its method before anything is written.
-        fun Fingerprint.one(what: String): MutableMethod {
-            val found = matchAllOrNull().orEmpty().map { it.method }
-            return found.singleOrNull() ?: throw PatchException("Ghost mode: expected one $what, found ${found.size}.")
-        }
-        val channelBuilder = LiveMessageChannelFingerprint.one("LIVE message channel builder")
-        val channelKind = planMessageChannel(channelBuilder) { classDefByOrNull(it) }
-        val imEnterSender = LiveImEnterRoomFingerprint.one("LIVE websocket enter")
-        val imEnterHold = planImEnterHold(imEnterSender)
-        val roomStart = LiveRoomStartFingerprint.one("LIVE room start")
-        val reuseCheck = planReuseCheck(roomStart)
-        val liveStart = planLiveStart(LiveStartInteractionFingerprint.one("LIVE room startInteraction")) {
-            classDefByOrNull(it)
-        }
-        val startStub = unseen.methods.filter { it.name == "startInteraction" }
-            .singleOrPatchException("Ghost mode: extension bridge startInteraction")
 
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
@@ -630,16 +614,6 @@ val ghostModePatch = bytecodePatch(
         unseen.methods.remove(reEnterStub)
         unseen.methods.add(reEnterBridge)
         reEnterBridge.enterLiveRoomAgain(reEnter)
-        // A kept room starts its own chat, host bar and close button (#513), reading the room's
-        // messages over TikTok's LIVE preview channel, which doesn't enter the room. The room's
-        // own channel is never carried into a hidden room and its websocket enter is held.
-        channelBuilder.readHiddenRoomsAsPreview(channelKind)
-        roomStart.keepHiddenRoomsOffReusedChannels(reuseCheck)
-        imEnterSender.holdImEnters(imEnterHold)
-        val startBridge = startStub.cloneMutable(additionalRegisters = 2)
-        unseen.methods.remove(startStub)
-        unseen.methods.add(startBridge)
-        startBridge.startLiveInteraction(liveStart)
         // The room's eye button, which lets the host of the room you're in see you.
         roomResume.addInstruction(
             0,

@@ -54,6 +54,7 @@ Every Hushfeed release, newest first.
 ### Build
 
 * The release tools name only global TikTok's version in the README, the Manager text and the update steps. With TikTok Lite declared too, v0.84.0 went out saying "TikTok 47.8.2 and 47.9.3", and the README still pointed at 47.8.3.
+* Three of the patch tree's own checks pass on main again. The SIM spoof's network stack file has its source notice, TikTok Lite's region patch fills its reader stubs from a list the bridge check can read, and the check for made-up TikTok names no longer counts the month pattern `Jump to a date on Favorites grids` formats with.
 
 ## 0.84.0 (2026-11-22)
 

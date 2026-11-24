@@ -201,11 +201,12 @@ internal fun LiteRegionPlan.write() {
     val reader = reader
     val type = reader.type
     val extension = mutableClassDefBy(LITE_REGION)
-    listOf(
+    val stubs = mapOf(
         "readerPath" to reader.path,
         "readerPeek" to reader.peek,
         "readerNextString" to reader.nextString,
-    ).forEach { (name, call) ->
+    )
+    stubs.forEach { (name, call) ->
         val stub = extension.methods.singleOrNull {
             it.name == name && it.parameterTypes.map(CharSequence::toString) == listOf(OBJECT)
         } ?: throw PatchException("$WHAT: the extension has no $name to fill in.")

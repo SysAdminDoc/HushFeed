@@ -1225,6 +1225,11 @@ public final class SettingsUi {
      * ripple vanish on them in the light theme. The tone is the text colour the host paints
      * there, which is by definition visible against its background.
      */
+    /** The settings page's trash icon at 24 dp in {@code color}, for a delete button that shows no text. */
+    public static Drawable deleteIcon(Context context, @ColorInt int color) {
+        return SettingsIcons.icon(context, SettingsIcons.DELETE, color);
+    }
+
     public static Drawable overlayAction(Context context, int radiusDp, @ColorInt int tone) {
         return overlayControl(context, radiusDp, null, new ColorDrawable(Color.TRANSPARENT),
                 tone, (tone & 0x00ffffff) | 0x40000000);

@@ -3225,3 +3225,8 @@ Newest saves	En yeni favoriler
 Pick a built-in font	Yerleşik bir yazı tipi seç
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Hushfeed ile gelen %1$s yazı tipinden birini seçin. Her biri kendi stilinde gösterilir.
 Built-in fonts	Yerleşik yazı tipleri
+Delete	Sil
+Delete your picked posts	Seçtiğin gönderilerini sil
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Seçilen tüm gönderiler senin olduğunda seçim çubuğuna bir çöp kutusu düğmesi ekler. Durdurabilmen için 5'ten geri sayar, sonra onları hesabından tek tek siler. Silinen bir gönderi geri getirilemez.
+Posts to delete: %1$d. Starting in %2$d	Silinecek gönderiler: %1$d. Başlamasına %2$d
+Posts deleted: %1$d of %2$d	Silinen gönderiler: %1$d / %2$d

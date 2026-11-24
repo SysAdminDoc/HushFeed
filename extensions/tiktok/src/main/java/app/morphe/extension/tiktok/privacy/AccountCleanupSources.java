@@ -57,9 +57,13 @@ public final class AccountCleanupSources {
     static final int COMMENT_PAGE = 15;
     /** What a profile's Follow and Unfollow send. */
     static final String FOLLOW = "/aweme/v1/commit/follow/user/";
+    /** What a post's own Delete sends, for a post of yours (#487). */
+    static final String POST_DELETE = "/aweme/v1/aweme/delete/";
 
     static final String UPVOTE_API = "com.ss.android.ugc.aweme.upvote.api.UpvoteApi";
     static final String STORY_API = "com.ss.android.ugc.aweme.story.api.StoryApi";
+    /** Keeps the service a post's Delete goes out through, in a static field. */
+    static final String FEED_ACTION_API = "com.ss.android.ugc.aweme.feed.api.FeedActionApi";
 
     /** What a run empties. NOT_FOLLOWING_BACK unfollows the accounts a check found first. */
     public enum Kind { REPOSTS, LIKES, FAVORITES, COMMENTS, NOT_FOLLOWING_BACK }
@@ -78,6 +82,11 @@ public final class AccountCleanupSources {
 
         /** TikTok's general request service, for requests no service of the app declares. */
         Object network() throws Failure;
+
+        /** The service that deletes a post of yours. */
+        default Object posts() throws Failure {
+            throw new Failure(End.UNSUPPORTED, "no post service");
+        }
     }
 
     /** One of your comments as the comment history lists it. */
@@ -169,6 +178,11 @@ public final class AccountCleanupSources {
         public Object network() throws Failure {
             return built(networkService(), "general request");
         }
+
+        @Override
+        public Object posts() throws Failure {
+            return TikTokCalls.serviceIn(FEED_ACTION_API, POST_DELETE);
+        }
     };
 
     private static Object built(Object service, String what) throws Failure {
@@ -211,6 +225,32 @@ public final class AccountCleanupSources {
         String uid = SignedInUser.id();
         if (uid == null) throw new Failure(End.STOPPED, "signed out");
         return sameAccount(uid, pickedComments(services, cids));
+    }
+
+    /** Posts of yours picked on a grid, for the account signed in now. */
+    static Source pickedPostsFor(Collection<String> ids, Services services) throws Failure {
+        String uid = SignedInUser.id();
+        if (uid == null) throw new Failure(End.STOPPED, "signed out");
+        List<String> picked = Collections.unmodifiableList(new ArrayList<>(ids));
+        return sameAccount(uid, new Source() {
+            @Override
+            public Page fetch(long cursor) {
+                return new Page(picked, cursor, false);
+            }
+
+            @Override
+            public void remove(String id) throws Failure {
+                deletePost(services, id);
+            }
+        });
+    }
+
+    /** Deletes a post of yours with the request its own Delete sends. */
+    static void deletePost(Services services, String id) throws Failure {
+        Map<String, Object> query = new HashMap<>();
+        query.put("aweme_id", id);
+        Object body = TikTokCalls.await(TikTokCalls.call(services.posts(), POST_DELETE, "deleteItem", query));
+        TikTokCalls.checkStatus(body);
     }
 
     /** The accounts a check found not following back (id to secure id), for the account signed in now. */

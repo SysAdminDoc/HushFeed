@@ -3225,3 +3225,8 @@ Newest saves	Preferiti più recenti
 Pick a built-in font	Scegli un carattere incluso
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Scegli uno dei %1$s caratteri inclusi in Hushfeed. Ognuno è mostrato nel suo stile.
 Built-in fonts	Caratteri inclusi
+Delete	Elimina
+Delete your picked posts	Elimina i tuoi post scelti
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Aggiunge un pulsante cestino alla barra di selezione quando tutti i post scelti sono tuoi. Fa un conto alla rovescia da 5 per permetterti di fermarlo, poi li elimina dal tuo account uno alla volta. Un post eliminato non si può recuperare.
+Posts to delete: %1$d. Starting in %2$d	Post da eliminare: %1$d. Inizio tra %2$d
+Posts deleted: %1$d of %2$d	Post eliminati: %1$d di %2$d

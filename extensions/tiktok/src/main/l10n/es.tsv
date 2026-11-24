@@ -3225,3 +3225,8 @@ Newest saves	Favoritos más recientes
 Pick a built-in font	Elegir una fuente incluida
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Elige una de las %1$s fuentes que vienen con Hushfeed. Cada una se muestra con su propio estilo.
 Built-in fonts	Fuentes incluidas
+Delete	Eliminar
+Delete your picked posts	Eliminar tus publicaciones elegidas
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Añade un botón de papelera a la barra de selección cuando todas las publicaciones elegidas son tuyas. Cuenta atrás desde 5 para que puedas detenerlo y luego las elimina de tu cuenta una por una. Una publicación eliminada no se puede recuperar.
+Posts to delete: %1$d. Starting in %2$d	Publicaciones por eliminar: %1$d. Empieza en %2$d
+Posts deleted: %1$d of %2$d	Publicaciones eliminadas: %1$d de %2$d

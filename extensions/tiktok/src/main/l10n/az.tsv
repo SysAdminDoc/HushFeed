@@ -3225,3 +3225,8 @@ Newest saves	Ən yeni yadda saxlananlar
 Pick a built-in font	Daxili şrift seçin
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Hushfeed ilə gələn %1$s şriftdən birini seçin. Hər biri öz üslubunda göstərilir.
 Built-in fonts	Daxili şriftlər
+Delete	Sil
+Delete your picked posts	Seçdiyiniz paylaşımlarınızı silin
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Seçilən bütün paylaşımlar sizin olduqda seçim panelinə zibil qutusu düyməsi əlavə edir. Dayandıra bilməniz üçün 5-dən geri sayır, sonra onları hesabınızdan bir-bir silir. Silinmiş paylaşım geri qaytarıla bilməz.
+Posts to delete: %1$d. Starting in %2$d	Silinəcək paylaşımlar: %1$d. Başlanğıc: %2$d
+Posts deleted: %1$d of %2$d	Silinən paylaşımlar: %1$d / %2$d

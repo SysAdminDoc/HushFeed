@@ -89,6 +89,25 @@ final class FakeTikTok {
         Object removeInvalid(@Field("cursor") long cursor);
     }
 
+    /**
+     * The service a post's own Delete goes through, answering with a future as TikTok's
+     * ListenableFuture does. The longer variant beside it is the one Explore sends.
+     */
+    public interface FeedActionApi {
+        @Get("/aweme/v1/aweme/delete/")
+        Object deleteItem(@Query("aweme_id") String awemeId);
+
+        @Get("/aweme/v1/aweme/delete/")
+        Object deleteItemOfType(@Query("aweme_id") String awemeId, @Query("delete_type") int type);
+    }
+
+    /** A future that already holds {@code value}, the way an answered request's does. */
+    static java.util.concurrent.Future<Object> future(Object value) {
+        java.util.concurrent.FutureTask<Object> task = new java.util.concurrent.FutureTask<>(() -> value);
+        task.run();
+        return task;
+    }
+
     /** What a fake service answers a request with, by method name and named arguments. */
     interface Answer {
         Object answer(String method, Map<String, Object> arguments) throws Throwable;
@@ -309,6 +328,8 @@ final class FakeTikTok {
         final List<String> likes = new ArrayList<>();
         final List<String> favorites = new ArrayList<>();
         final List<String> unavailable = new ArrayList<>();
+        /** Your own posts, which a post's Delete takes off the account. */
+        final List<String> posts = new ArrayList<>();
         /** Your comments, newest first, as the comment history lists them. */
         final List<String> comments = new ArrayList<>();
         /** The accounts you follow, by the id an unfollow names them with. */
@@ -348,6 +369,11 @@ final class FakeTikTok {
 
         Account withComments(int count) {
             for (int index = 0; index < count; index++) comments.add("c" + index);
+            return this;
+        }
+
+        Account withPosts(int count) {
+            for (int index = 0; index < count; index++) posts.add("p" + index);
             return this;
         }
 
@@ -448,6 +474,22 @@ final class FakeTikTok {
                     unavailable.clear();
                 }
                 return single(new Status(0));
+            });
+        }
+
+        /** What a post's Delete fails with instead of answering, as a failed future does. */
+        volatile Exception postFailure;
+
+        @Override
+        public Object posts() {
+            return service(FeedActionApi.class, requests, (method, arguments) -> {
+                Exception failure = postFailure;
+                if (failure == null) return future(remove(posts, (String) arguments.get("aweme_id")));
+                java.util.concurrent.FutureTask<Object> failed = new java.util.concurrent.FutureTask<>(() -> {
+                    throw failure;
+                });
+                failed.run();
+                return failed;
             });
         }
 

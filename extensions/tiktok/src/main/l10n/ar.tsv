@@ -3496,3 +3496,8 @@ Newest saves	أحدث المحفوظات
 Pick a built-in font	اختر خطًا مدمجًا
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	اختر واحدًا من %1$s خطًا مضمّنة مع Hushfeed. يظهر كل خط بأسلوبه الخاص.
 Built-in fonts	الخطوط المدمجة
+Delete	حذف
+Delete your picked posts	حذف منشوراتك المختارة
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	يضيف زر سلة المهملات إلى شريط الاختيار عندما تكون كل المنشورات المختارة منشوراتك. يعدّ تنازليًا من 5 لتتمكن من إيقافه، ثم يحذفها من حسابك واحدًا تلو الآخر. لا يمكن استعادة المنشور المحذوف.
+Posts to delete: %1$d. Starting in %2$d	منشورات للحذف: %1$d. البدء خلال %2$d
+Posts deleted: %1$d of %2$d	المنشورات المحذوفة: %1$d من %2$d

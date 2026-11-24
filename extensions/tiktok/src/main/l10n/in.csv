@@ -3056,3 +3056,8 @@ Newest saves,Favorit terbaru
 Pick a built-in font,Pilih font bawaan
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,Pilih salah satu dari %1$s font bawaan Hushfeed. Setiap font ditampilkan dengan gayanya sendiri.
 Built-in fonts,Font bawaan
+Delete,Hapus
+Delete your picked posts,Hapus postingan pilihanmu
+"Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Menambahkan tombol tempat sampah ke bilah pilihan selama semua postingan yang dipilih adalah milikmu. Menghitung mundur dari 5 agar kamu bisa menghentikannya, lalu menghapusnya dari akunmu satu per satu. Postingan yang dihapus tidak bisa dikembalikan."
+Posts to delete: %1$d. Starting in %2$d,Postingan yang akan dihapus: %1$d. Mulai dalam %2$d
+Posts deleted: %1$d of %2$d,Postingan dihapus: %1$d dari %2$d

@@ -3054,3 +3054,8 @@ Newest saves,Yêu thích mới nhất
 Pick a built-in font,Chọn phông chữ có sẵn
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,Chọn một trong %1$s phông chữ đi kèm Hushfeed. Mỗi phông được hiển thị theo kiểu riêng của nó.
 Built-in fonts,Phông chữ có sẵn
+Delete,Xóa
+Delete your picked posts,Xóa bài đăng đã chọn của bạn
+"Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Thêm nút thùng rác vào thanh chọn khi mọi bài đăng đã chọn đều là của bạn. Đếm ngược từ 5 để bạn có thể dừng, sau đó xóa từng bài khỏi tài khoản của bạn. Bài đăng đã xóa không thể khôi phục."
+Posts to delete: %1$d. Starting in %2$d,Bài đăng sẽ xóa: %1$d. Bắt đầu sau %2$d
+Posts deleted: %1$d of %2$d,Đã xóa bài đăng: %1$d trên %2$d

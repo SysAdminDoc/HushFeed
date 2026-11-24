@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -24,6 +25,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.privacy.PostDelete;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -56,7 +58,9 @@ import java.util.WeakHashMap;
  * with Pick all, Save and Cancel. Save hands the picked posts to {@link BatchSave} as one run,
  * with the running count and Cancel of {@link SaveProgress}. Pick all takes every post the list
  * has loaded (see {@link #pickAll}), so a whole Liked, Favorites or Reposts list saves in runs of
- * {@link #MAX_PICKED}, each one picking up where the last stopped. TikTok's own tap and long press on a cell are
+ * {@link #MAX_PICKED}, each one picking up where the last stopped. With Delete your picked posts
+ * on, the bar also offers Delete while every picked post is your own ({@link PostDelete}).
+ * TikTok's own tap and long press on a cell are
  * never replaced: the circle and the cover are views of ours laid over the cell, and they go
  * (GONE, then removed on the next bind) when the switch is off or Hushfeed is paused.
  *
@@ -82,6 +86,7 @@ public final class GridPicker {
     private static WeakReference<View> bar = new WeakReference<>(null);
     private static WeakReference<TextView> barLabel = new WeakReference<>(null);
     private static WeakReference<View> barPickAll = new WeakReference<>(null);
+    private static WeakReference<View> barDelete = new WeakReference<>(null);
     /** The cell picked from last, whose list Pick all reads. */
     private static WeakReference<View> lastCell = new WeakReference<>(null);
     /** For the tests: what was handed to a save run. Null starts a real one. */
@@ -476,6 +481,21 @@ public final class GridPicker {
         View pickAll = barPickAll.get();
         // Only offered where the list can be read, so the button never does nothing.
         if (pickAll != null) pickAll.setVisibility(listOf(cell) != null ? View.VISIBLE : View.GONE);
+        View delete = barDelete.get();
+        if (delete != null) delete.setVisibility(PostDelete.offered(PICKED.values()) ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Delete on the bar, shown while every picked post is yours (#487): the picks are cleared at
+     * once and {@link PostDelete} counts down to deleting them, on the grid they were picked on.
+     */
+    static void deleteAll(Activity activity) {
+        List<Object> posts = new ArrayList<>(PICKED.values());
+        if (!PostDelete.offered(posts)) return;
+        List<String> ids = new ArrayList<>(PICKED.keySet());
+        View cell = lastCell.get();
+        clear();
+        PostDelete.start(activity, cell, ids);
     }
 
     private static View newBar(Activity activity, ViewGroup content) {
@@ -505,6 +525,19 @@ public final class GridPicker {
         TextView save = button(activity, L10n.t(activity, "Save"));
         save.setOnClickListener(view -> saveAll(activity));
         row.addView(save, new LinearLayout.LayoutParams(-2, -2));
+        // A trash icon rather than a word: with four buttons a word leaves the count no room, and
+        // longer languages would push Cancel off the bar. The word is what a screen reader says
+        // and what a long press shows.
+        TextView delete = button(activity, "");
+        String deleteText = L10n.t(activity, "Delete");
+        delete.setContentDescription(deleteText);
+        if (Build.VERSION.SDK_INT >= 26) delete.setTooltipText(deleteText);
+        delete.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                SettingsUi.deleteIcon(activity, SettingsUi.OVERLAY_ACCENT), null, null, null);
+        delete.setOnClickListener(view -> deleteAll(activity));
+        delete.setVisibility(View.GONE);
+        row.addView(delete, new LinearLayout.LayoutParams(-2, -2));
+        barDelete = new WeakReference<>(delete);
         TextView cancel = button(activity, L10n.t(activity, "Cancel"));
         cancel.setOnClickListener(view -> clear());
         row.addView(cancel, new LinearLayout.LayoutParams(-2, -2));
@@ -526,7 +559,8 @@ public final class GridPicker {
         return row;
     }
 
-    private static TextView button(Activity activity, String text) {
+    /** A button styled for the picking bar, also used by the bar {@link PostDelete} shows. */
+    public static TextView button(Activity activity, String text) {
         TextView button = new TextView(activity);
         button.setText(text);
         button.setContentDescription(text);
@@ -548,6 +582,7 @@ public final class GridPicker {
         bar = new WeakReference<>(null);
         barLabel = new WeakReference<>(null);
         barPickAll = new WeakReference<>(null);
+        barDelete = new WeakReference<>(null);
         if (shown != null && shown.getParent() instanceof ViewGroup) ((ViewGroup) shown.getParent()).removeView(shown);
     }
 

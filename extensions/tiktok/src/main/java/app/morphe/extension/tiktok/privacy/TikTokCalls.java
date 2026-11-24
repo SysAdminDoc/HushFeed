@@ -17,8 +17,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import app.morphe.extension.tiktok.blockauthor.Reflect;
@@ -32,8 +36,8 @@ import app.morphe.extension.tiktok.privacy.CleanupRunner.Failure;
  * <p>A TikTok service is an interface whose methods carry the request path in an annotation's
  * {@code value()} and each parameter's name the same way. The annotation classes are renamed in
  * every build, but what they hold isn't, so a method is found by its path and its arguments are
- * put in by name. The answer is either a call with {@code execute()} or an Rx source, which is
- * subscribed with an observer of its own interface and waited on.</p>
+ * put in by name. The answer is a call with {@code execute()}, a future, or an Rx source, which
+ * is subscribed with an observer of its own interface and waited on.</p>
  */
 final class TikTokCalls {
     /** How long one request may take before the run gives up on it. */
@@ -162,18 +166,44 @@ final class TikTokCalls {
     }
 
     /**
-     * Waits for what a service method answered: runs a call, or subscribes to an Rx source and
-     * takes its first value. Answers the response body.
+     * Waits for what a service method answered: runs a call, waits on a future, or subscribes to
+     * an Rx source and takes its first value. Answers the response body.
      */
     static Object await(Object answer) throws Failure {
         if (answer == null) throw new Failure(End.UNSUPPORTED, "the service answered nothing");
         Method execute = Reflect.method(answer.getClass(), "execute");
         if (execute != null) return bodyOf(run(execute, answer));
+        if (answer instanceof Future) return waitFor((Future<?>) answer, ANSWER_MS);
         Method subscribe = subscribeMethod(answer.getClass());
         if (subscribe == null) {
             throw new Failure(End.UNSUPPORTED, "can't wait on " + answer.getClass().getName());
         }
         return first(subscribe, answer, ANSWER_MS);
+    }
+
+    /**
+     * The value of a future, as a service that answers with Guava's ListenableFuture hands it
+     * over: the body itself, or a response holding it.
+     */
+    private static Object waitFor(Future<?> future, long timeoutMs) throws Failure {
+        Object value;
+        try {
+            value = future.get(timeoutMs, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException thrown) {
+            throw failureOf(thrown.getCause() != null ? thrown.getCause() : thrown);
+        } catch (TimeoutException late) {
+            future.cancel(true);
+            throw new Failure(End.NETWORK, "no answer in " + timeoutMs + " ms");
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+            future.cancel(true);
+            throw new Failure(End.STOPPED, "interrupted");
+        } catch (CancellationException cancelled) {
+            throw new Failure(End.STOPPED, "cancelled");
+        }
+        if (value == null) throw new Failure(End.NETWORK, "an empty answer");
+        Object body = Reflect.invoke(value, "body");
+        return body != null ? body : value;
     }
 
     private static Object run(Method execute, Object call) throws Failure {
@@ -410,5 +440,30 @@ final class TikTokCalls {
             }
         }
         throw new Failure(End.UNSUPPORTED, "no instance of " + className);
+    }
+
+    /**
+     * The request service a named API class keeps in a static field, found by a path it declares,
+     * since the field and the service interface are both renamed between builds. Loading the
+     * class makes the service the way TikTok's own callers get it.
+     */
+    static Object serviceIn(String className, String path) throws Failure {
+        Class<?> type;
+        try {
+            type = Class.forName(className);
+        } catch (Throwable missing) {
+            throw new Failure(End.UNSUPPORTED, "no " + className);
+        }
+        for (Field field : type.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || !field.getType().isInterface()) continue;
+            try {
+                field.setAccessible(true);
+                Object service = field.get(null);
+                if (service != null && endpoint(service, path, null) != null) return service;
+            } catch (Throwable unreadable) {
+                // Try the next one.
+            }
+        }
+        throw new Failure(End.UNSUPPORTED, "no service for " + path + " in " + className);
     }
 }

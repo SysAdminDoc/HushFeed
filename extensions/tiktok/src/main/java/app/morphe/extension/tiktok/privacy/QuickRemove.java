@@ -166,7 +166,11 @@ public final class QuickRemove {
 
     /** Takes the video off the grid the cell sits in, and off the lists kept to sort that grid. */
     static void dropFromGrid(View cell, String id) throws ReflectiveOperationException {
-        Object adapter = GridPicker.adapterOf(cell);
+        dropFromAdapter(GridPicker.adapterOf(cell), id);
+    }
+
+    /** Takes the video off a grid's adapter, and off the lists kept to sort that grid. */
+    static void dropFromAdapter(Object adapter, String id) throws ReflectiveOperationException {
         if (adapter == null) return;
         GridSort.forget(adapter, id);
         Object data = Reflect.invoke(adapter, "getData");

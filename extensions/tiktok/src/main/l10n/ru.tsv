@@ -3426,3 +3426,8 @@ Newest saves	Последние в избранном
 Pick a built-in font	Выбрать встроенный шрифт
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Выберите один из %1$s шрифтов, которые входят в Hushfeed. Каждый показан в своём стиле.
 Built-in fonts	Встроенные шрифты
+Delete	Удалить
+Delete your picked posts	Удалять выбранные свои публикации
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Добавляет кнопку корзины на панель выбора, когда все выбранные публикации ваши. Отсчитывает от 5, чтобы вы могли остановить, затем удаляет их из аккаунта по одной. Удалённую публикацию нельзя вернуть.
+Posts to delete: %1$d. Starting in %2$d	Публикаций для удаления: %1$d. Начало через %2$d
+Posts deleted: %1$d of %2$d	Удалено публикаций: %1$d из %2$d

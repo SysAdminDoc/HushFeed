@@ -3054,3 +3054,8 @@ Newest saves,最新的收藏
 Pick a built-in font,选择内置字体
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,从 Hushfeed 自带的 %1$s 种字体中选择一种。每种字体都以其自身样式显示.
 Built-in fonts,内置字体
+Delete,删除
+Delete your picked posts,删除你选中的帖子
+"Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.",当选中的帖子全都是你自己的时，在选择栏中添加垃圾桶按钮。它会从 5 开始倒计时，让你可以停止，然后从你的账号中逐个删除。删除的帖子无法恢复.
+Posts to delete: %1$d. Starting in %2$d,要删除的帖子：%1$d。%2$d 秒后开始
+Posts deleted: %1$d of %2$d,已删除帖子：%1$d / %2$d

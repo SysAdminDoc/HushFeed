@@ -3228,3 +3228,8 @@ Newest saves	Neueste Favoriten
 Pick a built-in font	Mitgelieferte Schrift wählen
 Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Wähle eine von %1$s Schriften, die bei Hushfeed dabei sind. Jede wird in ihrem eigenen Stil gezeigt.
 Built-in fonts	Mitgelieferte Schriften
+Delete	Löschen
+Delete your picked posts	Deine ausgewählten Beiträge löschen
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Fügt der Auswahlleiste einen Papierkorb-Knopf hinzu, solange jeder ausgewählte Beitrag dein eigener ist. Es zählt von 5 herunter, damit du es stoppen kannst, und löscht sie dann einen nach dem anderen aus deinem Konto. Ein gelöschter Beitrag lässt sich nicht wiederherstellen.
+Posts to delete: %1$d. Starting in %2$d	Zu löschende Beiträge: %1$d. Start in %2$d
+Posts deleted: %1$d of %2$d	Gelöschte Beiträge: %1$d von %2$d

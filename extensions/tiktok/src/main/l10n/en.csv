@@ -253,6 +253,7 @@ Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving t
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
 "Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that."
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID."
+"Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back."
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts."
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok."
@@ -659,9 +660,11 @@ Days to remember a video. Zero removes the age limit. History keeps at most %1$s
 Deactivate or delete account,Deactivate or delete account
 Default,Default
 Default playback speed,Default playback speed
+Delete,Delete
 Delete recording files,Delete recording files
 Delete search,Delete search
 Delete watched offline videos,Delete watched offline videos
+Delete your picked posts,Delete your picked posts
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
 Deletes every comment you've posted one after another.,Deletes every comment you've posted one after another.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
@@ -1784,6 +1787,8 @@ Post date's size,Post date's size
 Post dates in the feed,Post dates in the feed
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.
 Posting,Posting
+Posts deleted: %1$d of %2$d,Posts deleted: %1$d of %2$d
+Posts to delete: %1$d. Starting in %2$d,Posts to delete: %1$d. Starting in %2$d
 Prefer H.264 video,Prefer H.264 video
 Preset applied,Preset applied
 Preset doesn't match the gates. Nothing changed.,Preset doesn't match the gates. Nothing changed.

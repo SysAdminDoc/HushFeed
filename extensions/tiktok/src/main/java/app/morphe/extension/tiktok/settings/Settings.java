@@ -254,6 +254,9 @@ public class Settings extends BaseSettings {
             Setting.parentsAny(SAVE_STORY, SAVE_STORY_FROM_SHARE));
     /** A circle on each profile, Liked or Favorites grid cell, to pick posts and save them in one run (#27). */
     public static final BooleanSetting PICK_GRID_VIDEOS = new BooleanSetting("pick_grid_videos", FALSE);
+    /** Delete on the picking bar while every picked post is your own, to delete them in one run (#487). */
+    public static final BooleanSetting DELETE_PICKED_POSTS = new BooleanSetting("delete_picked_posts", FALSE, false,
+            Setting.parent(PICK_GRID_VIDEOS));
     /**
      * Each quarter of the video runs its own double tap choice (#232). The plain Double tap
      * choice then only covers a tap the window can't place.

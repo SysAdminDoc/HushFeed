@@ -345,7 +345,8 @@ val advancedDownloadsPatch = bytecodePatch(
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
         "sound on its own or a photo post as one video, hold a profile picture or story to save " +
         "it, save a story, a video's cover or a mini drama's episodes from the share sheet, put " +
-        "a save button on the video, and pick videos on a profile grid to save in one run. " +
+        "a save button on the video, and pick videos on a profile grid to save in one run (or " +
+        "delete your own picked posts). " +
         "Starts off. Turn it on in " +
         "Hushfeed settings > Downloads. The save button's switch is in Feed screen > Buttons " +
         "on videos.",

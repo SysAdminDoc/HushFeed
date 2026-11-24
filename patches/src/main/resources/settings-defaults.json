@@ -42,6 +42,7 @@
       "save_story_from_share",
       "save_story_pick",
       "pick_grid_videos",
+      "delete_picked_posts",
       "download_video_path",
       "download_photo_path",
       "download_video_filename_template",
@@ -1626,6 +1627,12 @@
     "default_speed_enabled": {
       "field": "DEFAULT_SPEED_ENABLED",
       "key": "default_speed_enabled",
+      "type": "boolean",
+      "default": false
+    },
+    "delete_picked_posts": {
+      "field": "DELETE_PICKED_POSTS",
+      "key": "delete_picked_posts",
       "type": "boolean",
       "default": false
     },

@@ -137,6 +137,11 @@ public final class AccountCleanup {
             SettingsActionBanner.showNotice(context, L10n.t(context, "Sign in to TikTok first"));
             return;
         }
+        if (PostDelete.running()) {
+            // Picked posts are being deleted from a grid, which has its own Stop.
+            SettingsActionBanner.showNotice(context, L10n.t(context, "A removal is already running"));
+            return;
+        }
         Run run;
         synchronized (LOCK) {
             if (active != null) {

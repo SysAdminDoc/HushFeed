@@ -202,6 +202,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "grid. Pick up to %1$s, then tap Save to save them one after another, "
                             + "with a count and Cancel.", String.valueOf(GridPicker.MAX_PICKED)),
                     Settings.PICK_GRID_VIDEOS));
+            addPreference(new TogglePreference(context, "Delete your picked posts",
+                    "Adds a trash button to the picking bar while every picked post is your own. It counts "
+                            + "down from 5 so you can stop it, then deletes them from your account "
+                            + "one at a time. A deleted post can't be brought back.",
+                    Settings.DELETE_PICKED_POSTS));
             addPreference(new LikesExportPreference(context));
             addPreference(new TogglePreference(context, "Save details beside the video",
                     "Saves the caption, creator, link and post date in a text file next to the "

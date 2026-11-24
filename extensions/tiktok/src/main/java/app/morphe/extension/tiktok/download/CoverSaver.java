@@ -39,6 +39,11 @@ public final class CoverSaver {
             {"getCover", "cover"},
             {"getLowResCover", "lowResCover"},
     };
+    /** The same covers in the order a grid tile wants them: the crop it draws, then the full one. */
+    private static final String[][] GRID_SIZES = {
+            {"getCover", "cover"},
+            {"getOriginCover", "originCoverValue"},
+    };
 
     private CoverSaver() {
     }
@@ -78,6 +83,29 @@ public final class CoverSaver {
             }
         }
         return List.copyOf(best);
+    }
+
+    /**
+     * The addresses of the still a grid tile draws, best mirror first, or empty when there's none.
+     * The smaller crop comes first, since that's the size a tile is. A photo post has one too:
+     * TikTok sends its first photo as the cover.
+     */
+    public static List<String> gridCoverUrls(Object aweme) {
+        Object video = aweme == null ? null : Reflect.property(aweme, "getVideo", "video");
+        if (video == null) return List.of();
+        for (String[] size : GRID_SIZES) {
+            List<String> urls = VideoDownloads.urls(Reflect.property(video, size[0], size[1]));
+            if (!urls.isEmpty()) return List.copyOf(urls);
+        }
+        return List.of();
+    }
+
+    /**
+     * Fetches a still from these addresses into {@code target}, rewritten as a JPEG where TikTok
+     * sent a HEIF or WebP one, so any decoder reads it. For Remember saved videos (#516).
+     */
+    public static void fetchTo(Context context, List<String> urls, File target) throws IOException {
+        PhotoToJpeg.rewrite(context, target, RemoteMedia.fetch(urls, target, RemoteMedia.Kind.IMAGE));
     }
 
     /** Width times height as the address names them, or 0 when it doesn't say. */

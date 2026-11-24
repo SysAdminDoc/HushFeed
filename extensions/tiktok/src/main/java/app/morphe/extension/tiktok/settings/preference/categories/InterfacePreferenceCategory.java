@@ -26,6 +26,7 @@ import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.PopupLabelChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.SwitchListPreference;
+import app.morphe.extension.tiktok.settings.preference.SavedVideoMemoryPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 
 /**
@@ -446,6 +447,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             "Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.",
                             Settings.FAVORITES_JUMP_TO_DATE
                     ));
+                    addPreference(new TogglePreference(
+                            context,
+                            "Remember saved videos",
+                            "Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.",
+                            Settings.REMEMBER_SAVED_VIDEOS
+                    ));
+                    addPreference(new SavedVideoMemoryPreference(context));
                 }
                 if (SettingsStatus.likedGridSortEnabled) {
                     addPreference(new TogglePreference(

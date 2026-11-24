@@ -40,6 +40,27 @@ internal fun MutableMethod.hookGridCorners(original: Method, superclassOf: (Stri
     )
 }
 
+internal const val SAVED_VIDEO_TILE_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feed/SavedVideoTile;"
+
+/**
+ * Hands a profile grid cell's root view and the post it is about to draw to Remember saved videos
+ * (#516), which puts the cover it kept over the tile of a saved video that's gone. The same bind
+ * and the same spot as [hookGridCorners], held to the same shape. Both go through locals, so the
+ * hook works whatever registers `this` and the post sit in.
+ */
+internal fun MutableMethod.hookSavedVideoTile(original: Method, superclassOf: (String) -> String?) {
+    original.gridPickProblem(superclassOf)?.let { throw PatchException("Always show publish date: $it.") }
+    addInstructions(
+        0,
+        """
+            move-object/from16 v0, p0
+            iget-object v0, v0, $VIEW_HOLDER->itemView:Landroid/view/View;
+            move-object/from16 v1, p1
+            invoke-static { v0, v1 }, $SAVED_VIDEO_TILE_CLASS_DESCRIPTOR->cell(Landroid/view/View;Ljava/lang/Object;)V
+        """,
+    )
+}
+
 /**
  * Where a Favorites collection folder's cell bind (CollectionGridHolderBindFingerprint's, X/0hmm.r0
  * on 47.9.3) takes the corners hook: right after its opening read of the post off the holder,

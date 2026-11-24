@@ -78,6 +78,7 @@
       "sound_grid_sort",
       "liked_jump_to_date",
       "favorites_jump_to_date",
+      "remember_saved_videos",
       "grid_search",
       "grid_position_controls"
     ],
@@ -4290,6 +4291,12 @@
       "key": "remember_playback_speed",
       "type": "boolean",
       "default": true
+    },
+    "remember_saved_videos": {
+      "field": "REMEMBER_SAVED_VIDEOS",
+      "key": "remember_saved_videos",
+      "type": "boolean",
+      "default": false
     },
     "remembered_live_quality": {
       "field": "REMEMBERED_LIVE_QUALITY",

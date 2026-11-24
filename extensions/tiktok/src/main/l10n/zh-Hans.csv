@@ -3063,3 +3063,13 @@ Posts to delete: %1$d. Starting in %2$d,要删除的帖子：%1$d。%2$d 秒后�
 Posts deleted: %1$d of %2$d,已删除帖子：%1$d / %2$d
 Swipe LIVEs in your Following row's order,按“正在关注”行的顺序滑动 LIVE
 "After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.",从“正在关注”顶部的行打开 LIVE 后，滑动会按该行中的顺序依次进入其他 LIVE，从下一个开始。TikTok 自己推荐的内容排在它们之后.
+Remember saved videos,记住收藏的视频
+"Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.",网格加载“收藏”中的视频时，把每个视频的封面、创作者、文案和发布日期保存在这部手机上。如果某个视频之后被删除或设为私密，它的格子会显示保存的封面和创作者，而不是灰色方块，轻点可查看其余内容。之前已经消失的视频无法恢复.
+Unavailable saved videos,不可用的收藏视频
+See the saved videos that went away after Hushfeed remembered them,查看在 Hushfeed 记住之后消失的收藏视频
+Saved videos that go away show up here,消失的收藏视频会显示在这里
+Unavailable saved videos cleared,不可用的收藏视频已清除
+Unavailable saved video,不可用的收藏视频
+Posted %1$s,发布于 %1$s
+Remembered %1$s,记住于 %1$s
+Unavailable since %1$s,自 %1$s 起不可用

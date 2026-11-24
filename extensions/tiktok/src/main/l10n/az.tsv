@@ -3236,3 +3236,13 @@ Posts to delete: %1$d. Starting in %2$d	Silinəcək paylaşımlar: %1$d. Başlan
 Posts deleted: %1$d of %2$d	Silinən paylaşımlar: %1$d / %2$d
 Swipe LIVEs in your Following row's order	LIVE-ları İzlənilənlər sırasının ardıcıllığı ilə sürüşdürün
 After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	İzlənilənlərin yuxarısındakı sıradan açdığınız LIVE-dan sonra sürüşdürmə sizi həmin sıradakı digər LIVE-lardan orada durduqları ardıcıllıqla, növbətisindən başlayaraq keçirir. TikTok-un öz seçimləri onlardan sonra gəlir.
+Remember saved videos	Saxlanılmış videoları xatırlayın
+Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.	Sevimlilərinizdəki hər videonun örtüyünü, yaradıcısını, başlığını və paylaşılma tarixini şəbəkə onu yüklədikcə bu telefonda saxlayır. Sonradan biri silinərsə və ya gizli edilərsə, onun xanası boz qutu əvəzinə saxlanılmış örtüyü və yaradıcını göstərir, toxunduqda isə qalanı görünür. Əvvəlcədən yoxa çıxmış videoları bərpa etmək mümkün deyil.
+Unavailable saved videos	Əlçatan olmayan saxlanılmış videolar
+See the saved videos that went away after Hushfeed remembered them	Hushfeed xatırladıqdan sonra yoxa çıxan saxlanılmış videolara baxın
+Saved videos that go away show up here	Yoxa çıxan saxlanılmış videolar burada görünür
+Unavailable saved videos cleared	Əlçatan olmayan videolar təmizləndi
+Unavailable saved video	Əlçatan olmayan saxlanılmış video
+Posted %1$s	Paylaşılıb: %1$s
+Remembered %1$s	Xatırlanıb: %1$s
+Unavailable since %1$s	%1$s tarixindən əlçatan deyil

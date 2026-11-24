@@ -3239,3 +3239,13 @@ Posts to delete: %1$d. Starting in %2$d	Zu löschende Beiträge: %1$d. Start in 
 Posts deleted: %1$d of %2$d	Gelöschte Beiträge: %1$d von %2$d
 Swipe LIVEs in your Following row's order	LIVEs in der Reihenfolge der „Gefolgt“-Leiste wischen
 After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	Nach einem LIVE, das du aus der Leiste oben bei „Gefolgt“ öffnest, führt dich Wischen durch die anderen LIVEs dieser Leiste in ihrer Reihenfolge, beginnend mit dem nächsten. TikToks eigene Vorschläge kommen danach.
+Remember saved videos	Gespeicherte Videos merken
+Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.	Behält Titelbild, Ersteller, Beschreibung und Veröffentlichungsdatum jedes Videos in deinen Favoriten auf diesem Handy, sobald das Raster es lädt. Wird eines später gelöscht oder auf privat gestellt, zeigt seine Kachel statt eines grauen Felds das behaltene Titelbild und den Ersteller, und ein Tippen zeigt den Rest. Videos, die schon vorher verschwunden waren, lassen sich nicht zurückholen.
+Unavailable saved videos	Nicht verfügbare gespeicherte Videos
+See the saved videos that went away after Hushfeed remembered them	Zeigt die gespeicherten Videos, die verschwunden sind, nachdem Hushfeed sie sich gemerkt hat
+Saved videos that go away show up here	Gespeicherte Videos, die verschwinden, erscheinen hier
+Unavailable saved videos cleared	Nicht verfügbare Videos geleert
+Unavailable saved video	Nicht verfügbares gespeichertes Video
+Posted %1$s	Gepostet am %1$s
+Remembered %1$s	Gemerkt am %1$s
+Unavailable since %1$s	Nicht verfügbar seit %1$s

@@ -100,6 +100,10 @@ val alwaysShowPublishDatePatch = bytecodePatch(
         ProfileGridHolderBindFingerprint.method.hookGridCorners(ProfileGridHolderBindFingerprint.originalMethod) {
             classDefByOrNull(it)?.superclass
         }
+        // Remember saved videos (#516): the same bind, with the post, for a gone video's tile.
+        ProfileGridHolderBindFingerprint.method.hookSavedVideoTile(ProfileGridHolderBindFingerprint.originalMethod) {
+            classDefByOrNull(it)?.superclass
+        }
         // A Favorites collection folder's posts, which have a holder of their own. Advanced
         // downloads may have hooked this bind already, so the hook reads it as it is now.
         CollectionGridHolderBindFingerprint.method.hookCollectionGridCorners {

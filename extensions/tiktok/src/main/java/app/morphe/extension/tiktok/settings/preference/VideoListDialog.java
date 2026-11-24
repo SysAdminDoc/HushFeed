@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +37,8 @@ import app.morphe.extension.tiktok.settings.TikTokActivityHook;
  * stays a tap away from coming back while the list is open. A tap opens the video over the list,
  * so Back returns to it with the search still typed. Thumbnails aren't kept, since TikTok's links
  * to them run out. My watch history (#172) and the likes Ghost mode keeps on the phone use it.
+ * The saved videos that are gone (#516) use it too, with the covers that list does keep, and a
+ * tap there shows what was kept of the video, which no longer opens.
  */
 final class VideoListDialog {
     /** Where a list's videos come from, and what it says. */
@@ -53,6 +57,21 @@ final class VideoListDialog {
         void clear(LocalWatchHistory.Listener listener);
 
         void restore(List<LocalWatchHistory.Entry> rows);
+
+        /** Whether this list's rows carry a picture, which makes room for one in every row. */
+        default boolean pictures() {
+            return false;
+        }
+
+        /** A row's picture, or null where none was kept. Only asked of a list that has pictures. */
+        default Bitmap picture(LocalWatchHistory.Entry row) {
+            return null;
+        }
+
+        /** A tap on a row. A list of videos that still play opens the video. */
+        default void open(Context context, LocalWatchHistory.Entry row) {
+            LocalWatchHistoryPreference.open(context, row.aid);
+        }
     }
 
     private VideoListDialog() {
@@ -78,7 +97,7 @@ final class VideoListDialog {
         empty.setPadding(gap, gap, gap, gap);
         empty.setVisibility(View.GONE);
 
-        Rows rows = new Rows(context);
+        Rows rows = new Rows(context, source);
         ListView list = new ListView(context);
         list.setAdapter(rows);
         list.setDivider(null);
@@ -149,7 +168,7 @@ final class VideoListDialog {
         boolean[] away = new boolean[1];
         list.setOnItemClickListener((parent, view, position, id) -> {
             away[0] = true;
-            LocalWatchHistoryPreference.open(context, rows.shown.get(position).aid);
+            source.open(context, rows.shown.get(position));
         });
         // Back from a video the list opened, it reads the list again: a like taken back on that
         // page, or the video just watched, would otherwise show the list from before.
@@ -183,11 +202,13 @@ final class VideoListDialog {
 
     private static final class Rows extends BaseAdapter {
         private final Context context;
+        private final Source source;
         List<LocalWatchHistory.Entry> all = Collections.emptyList();
         List<LocalWatchHistory.Entry> shown = Collections.emptyList();
 
-        Rows(Context context) {
+        Rows(Context context, Source source) {
             this.context = context;
+            this.source = source;
         }
 
         void show(List<LocalWatchHistory.Entry> rows) {
@@ -215,27 +236,43 @@ final class VideoListDialog {
             LinearLayout row = (LinearLayout) reused;
             if (row == null) {
                 int gap = SettingsUi.dp(context, 10);
-                row = new LinearLayout(context);
-                row.setOrientation(LinearLayout.VERTICAL);
-                // The search box's text sits a little inside its own edge.
-                row.setPaddingRelative(SettingsUi.dp(context, 4), gap, 0, gap);
-                row.addView(SettingsUi.text(context, "", SettingsUi.TEXT_BODY,
+                LinearLayout words = new LinearLayout(context);
+                words.setOrientation(LinearLayout.VERTICAL);
+                words.addView(SettingsUi.text(context, "", SettingsUi.TEXT_BODY,
                         SettingsUi.textPrimary(), Typeface.BOLD));
                 TextView caption = SettingsUi.text(context, "", SettingsUi.TEXT_BODY_SMALL,
                         SettingsUi.textSecondary(), Typeface.NORMAL);
                 caption.setMaxLines(2);
                 caption.setEllipsize(TextUtils.TruncateAt.END);
-                row.addView(caption);
+                words.addView(caption);
+                row = new LinearLayout(context);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                row.setGravity(Gravity.CENTER_VERTICAL);
+                // The search box's text sits a little inside its own edge.
+                row.setPaddingRelative(SettingsUi.dp(context, 4), gap, 0, gap);
+                if (source.pictures()) {
+                    // A cover's shape, so every row is the same height with or without one.
+                    ImageView picture = new ImageView(context);
+                    picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    picture.setBackgroundColor(SettingsUi.textSecondary() & 0x33FFFFFF);
+                    LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(
+                            SettingsUi.dp(context, 42), SettingsUi.dp(context, 56));
+                    size.setMarginEnd(gap);
+                    row.addView(picture, size);
+                }
+                row.addView(words, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
             }
             LocalWatchHistory.Entry entry = shown.get(position);
+            LinearLayout words = (LinearLayout) row.getChildAt(row.getChildCount() - 1);
+            if (source.pictures()) ((ImageView) row.getChildAt(0)).setImageBitmap(source.picture(entry));
             // Never younger than a minute, which would read "0 minutes ago".
             long now = System.currentTimeMillis();
             CharSequence when = DateUtils.getRelativeTimeSpanString(
                     Math.min(entry.watchedMs, now - DateUtils.MINUTE_IN_MILLIS), now,
                     DateUtils.MINUTE_IN_MILLIS);
-            TextView title = (TextView) row.getChildAt(0);
+            TextView title = (TextView) words.getChildAt(0);
             title.setText(entry.creator.isEmpty() ? when : entry.creator + " · " + when);
-            TextView caption = (TextView) row.getChildAt(1);
+            TextView caption = (TextView) words.getChildAt(1);
             caption.setText(entry.caption);
             caption.setVisibility(entry.caption.isEmpty() ? View.GONE : View.VISIBLE);
             return row;

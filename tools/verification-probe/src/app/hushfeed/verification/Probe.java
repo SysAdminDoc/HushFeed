@@ -1216,6 +1216,44 @@ public final class Probe extends Instrumentation {
                                 new java.util.IdentityHashMap<>((java.util.Map<?, ?>) handedField.get(null));
                         java.util.Map<?, ?> tabs =
                                 new java.util.IdentityHashMap<>((java.util.Map<?, ?>) tabsField.get(null));
+                        // -e gone <id> stands in for TikTok answering that one saved video can't
+                        // be played any more, and -e back <id> for one that plays again: the
+                        // video's own mark is set and its list goes through the memory's hook as
+                        // a freshly loaded one, the way a reload hands it over. A test account
+                        // can't make someone else's video go away, and its own deleted post
+                        // leaves Favorites instead of turning grey.
+                        String gone = intent.getStringExtra("gone");
+                        String back = intent.getStringExtra("back");
+                        if (gone != null || back != null) {
+                            String wanted = gone != null ? gone : back;
+                            Method listIn = loader.loadClass("app.morphe.extension.tiktok.feed.SavedVideoMemory")
+                                    .getDeclaredMethod("listIn", Object.class, List.class, boolean.class);
+                            listIn.setAccessible(true);
+                            int marked = 0;
+                            for (java.util.Map.Entry<?, ?> entry : handed.entrySet()) {
+                                if (!(entry.getValue() instanceof List)) continue;
+                                List<?> list = (List<?>) entry.getValue();
+                                for (Object aweme : list) {
+                                    if (!wanted.equals(String.valueOf(optional(aweme, "getAid")))) continue;
+                                    Field canPlay = null;
+                                    for (Class<?> type = aweme.getClass(); type != null && canPlay == null;
+                                            type = type.getSuperclass()) {
+                                        try {
+                                            canPlay = type.getDeclaredField("canPlay");
+                                        } catch (NoSuchFieldException absent) {
+                                            canPlay = null;
+                                        }
+                                    }
+                                    if (canPlay == null) throw new IllegalStateException("no canPlay field");
+                                    canPlay.setAccessible(true);
+                                    if (canPlay.getType() == boolean.class) canPlay.setBoolean(aweme, gone == null);
+                                    else canPlay.set(aweme, gone == null);
+                                    listIn.invoke(null, entry.getKey(), list, true);
+                                    marked++;
+                                }
+                            }
+                            Log.i(TAG, "favgrid marked canPlay=" + (gone == null) + " lists=" + marked);
+                        }
                         int most = 60;
                         String only = intent.getStringExtra("tab");
                         for (java.util.Map.Entry<?, ?> entry : handed.entrySet()) {

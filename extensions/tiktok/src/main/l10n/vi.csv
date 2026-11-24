@@ -3063,3 +3063,13 @@ Posts to delete: %1$d. Starting in %2$d,Bài đăng sẽ xóa: %1$d. Bắt đầ
 Posts deleted: %1$d of %2$d,Đã xóa bài đăng: %1$d trên %2$d
 Swipe LIVEs in your Following row's order,Vuốt LIVE theo thứ tự hàng Đang theo dõi
 "After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.","Sau một LIVE bạn mở từ hàng trên cùng của mục Đang theo dõi, vuốt sẽ đưa bạn qua các LIVE khác trong hàng đó theo đúng thứ tự, bắt đầu từ LIVE tiếp theo. Các đề xuất của TikTok đến sau."
+Remember saved videos,Ghi nhớ video đã lưu
+"Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.","Lưu trên điện thoại này ảnh bìa, nhà sáng tạo, chú thích và ngày đăng của từng video trong mục Yêu thích của bạn khi lưới tải video đó. Nếu sau này video bị xóa hoặc chuyển sang riêng tư, ô của video sẽ hiện ảnh bìa và nhà sáng tạo đã lưu thay cho ô màu xám, và chạm vào sẽ hiện phần còn lại. Những video đã biến mất từ trước thì không thể khôi phục."
+Unavailable saved videos,Video đã lưu không còn khả dụng
+See the saved videos that went away after Hushfeed remembered them,Xem các video đã lưu đã biến mất sau khi Hushfeed ghi nhớ chúng
+Saved videos that go away show up here,Video đã lưu bị biến mất sẽ hiện ở đây
+Unavailable saved videos cleared,Đã xóa video không khả dụng
+Unavailable saved video,Video đã lưu không khả dụng
+Posted %1$s,Đăng ngày %1$s
+Remembered %1$s,Ghi nhớ ngày %1$s
+Unavailable since %1$s,Không khả dụng từ %1$s

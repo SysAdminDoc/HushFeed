@@ -990,6 +990,15 @@
           "values": null
         },
         {
+          "key": "remember_saved_videos",
+          "title": "Default: remember saved videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "grid_search",
           "title": "Default: grid search",
           "description": null,

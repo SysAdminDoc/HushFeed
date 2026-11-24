@@ -1280,6 +1280,7 @@ Keep watching in a small window,Keep watching in a small window
 "Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.","Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record."
 Keep your place in chats,Keep your place in chats
 "Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on.","Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on."
+"Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.","Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered."
 Kept an interrupted change. Restart TikTok to apply.,Kept an interrupted change. Restart TikTok to apply.
 Kept so far: %1$d,Kept so far: %1$d
 "Kept to %1$s, the nearest value this row allows","Kept to %1$s, the nearest value this row allows"
@@ -1788,6 +1789,7 @@ Post age,Post age
 Post date's size,Post date's size
 Post dates in the feed,Post dates in the feed
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.
+Posted %1$s,Posted %1$s
 Posting,Posting
 Posts,Posts
 Posts deleted: %1$d of %2$d,Posts deleted: %1$d of %2$d
@@ -1900,7 +1902,9 @@ Recovered recording saved to %1$s,Recovered recording saved to %1$s
 Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
 Region,Region
+Remember saved videos,Remember saved videos
 Remember the last speed,Remember the last speed
+Remembered %1$s,Remembered %1$s
 "Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy."
 Remind me every,Remind me every
 Remove,Remove
@@ -2069,6 +2073,7 @@ Saved the photos as a video in %1$s,Saved the photos as a video in %1$s
 Saved videos forgotten. The files are still there.,Saved videos forgotten. The files are still there.
 Saved videos put back,Saved videos put back
 "Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.","Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed."
+Saved videos that go away show up here,Saved videos that go away show up here
 "Saved, but a later save may make a second copy","Saved, but a later save may make a second copy"
 "Saved, override off","Saved, override off"
 Saved. Restart TikTok to apply this.,Saved. Restart TikTok to apply this.
@@ -2130,6 +2135,7 @@ Seconds per photo,Seconds per photo
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty."
 "Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.","Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept."
 Security & permissions,Security & permissions
+See the saved videos that went away after Hushfeed remembered them,See the saved videos that went away after Hushfeed remembered them
 See-through bottom bar,See-through bottom bar
 See-through status bar,See-through status bar
 Seek bar on sound previews,Seek bar on sound previews
@@ -2840,6 +2846,10 @@ Type some sample text to see whether these rules match it.,Type some sample text
 Türkçe,Türkçe
 UI size,UI size
 Unavailable,Unavailable
+Unavailable saved video,Unavailable saved video
+Unavailable saved videos,Unavailable saved videos
+Unavailable saved videos cleared,Unavailable saved videos cleared
+Unavailable since %1$s,Unavailable since %1$s
 Unblock,Unblock
 Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s

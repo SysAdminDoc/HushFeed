@@ -3239,3 +3239,13 @@ Posts to delete: %1$d. Starting in %2$d	โพสต์ที่จะลบ: %1
 Posts deleted: %1$d of %2$d	ลบโพสต์แล้ว: %1$d จาก %2$d
 Swipe LIVEs in your Following row's order	ปัดดู LIVE ตามลำดับในแถวกำลังติดตาม
 After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	หลังจาก LIVE ที่คุณเปิดจากแถวด้านบนของกำลังติดตาม การปัดจะพาคุณไปยัง LIVE อื่นในแถวนั้นตามลำดับที่เรียงอยู่ โดยเริ่มจากรายการถัดไป ตัวเลือกของ TikTok จะมาหลังจากนั้น
+Remember saved videos	จำวิดีโอที่บันทึกไว้
+Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.	เก็บหน้าปก ครีเอเตอร์ คำบรรยาย และวันที่โพสต์ของวิดีโอแต่ละรายการในรายการโปรดของคุณไว้บนโทรศัพท์เครื่องนี้ขณะที่ตารางโหลดวิดีโอนั้น หากภายหลังวิดีโอถูกลบหรือถูกตั้งเป็นส่วนตัว ช่องของวิดีโอจะแสดงหน้าปกและครีเอเตอร์ที่เก็บไว้แทนกล่องสีเทา และแตะเพื่อดูส่วนที่เหลือ วิดีโอที่หายไปก่อนหน้านี้แล้วไม่สามารถกู้คืนได้
+Unavailable saved videos	วิดีโอที่บันทึกไว้ซึ่งไม่พร้อมใช้งาน
+See the saved videos that went away after Hushfeed remembered them	ดูวิดีโอที่บันทึกไว้ซึ่งหายไปหลังจากที่ Hushfeed จำไว้แล้ว
+Saved videos that go away show up here	วิดีโอที่บันทึกไว้ซึ่งหายไปจะแสดงที่นี่
+Unavailable saved videos cleared	ล้างรายการวิดีโอแล้ว
+Unavailable saved video	วิดีโอที่บันทึกไว้ซึ่งไม่พร้อมใช้งาน
+Posted %1$s	โพสต์เมื่อ %1$s
+Remembered %1$s	จำไว้เมื่อ %1$s
+Unavailable since %1$s	ไม่พร้อมใช้งานตั้งแต่ %1$s

@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Remember saved videos` is new in Feed screen, next to the Favorites grid options. As your Favorites load, Hushfeed keeps each video's cover, creator, caption and post date on your phone. When TikTok later marks a saved video as deleted or unplayable, its grey tile shows the kept cover and creator instead, and a tap shows the rest. `Unavailable saved videos` lists them all with a search box. It can only keep what it saw while a video was still up, so tiles that were already grey stay grey (#516).
 * `Fill wide videos too`, right under `Fill the screen with the video`, crops landscape and square videos to cover the screen as well. Fill on its own still leaves those whole, so you see all of a landscape video with bars above and below it. Turn this on and every video fills the screen, showing the middle of a wide one (#505).
 * `Keep your place in chats` stops a chat you've scrolled up in from jumping to the bottom on its own. Coming back from a video you opened in the chat leaves you where you were, and so does sending a reply to an older message. A plain message you send and the down arrow still take you to the newest. It starts off and sits under `Show message times` in Hushfeed settings > Inbox (#503).
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).

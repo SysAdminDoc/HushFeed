@@ -3239,3 +3239,13 @@ Posts to delete: %1$d. Starting in %2$d	Публикации за изтрива
 Posts deleted: %1$d of %2$d	Изтрити публикации: %1$d от %2$d
 Swipe LIVEs in your Following row's order	Плъзгане през LIVE излъчванията по реда в „Следвате“
 After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	След LIVE, отворен от реда горе в „Следвате“, плъзгането те води през другите LIVE излъчвания от този ред в същия порядък, като започва от следващото. Предложенията на TikTok идват след тях.
+Remember saved videos	Запомняне на запазените видеа
+Keeps the cover, creator, caption and post date of each video in your Favorites on this phone as the grid loads it. If one is later deleted or made private, its tile shows the kept cover and creator instead of a grey box, and a tap shows the rest. Videos that were already gone can't be recovered.	Пази на този телефон корицата, създателя, описанието и датата на публикуване на всяко видео в „Любими“, докато мрежата го зарежда. Ако някое по-късно бъде изтрито или стане лично, плочката му показва запазената корица и създателя вместо сиво поле, а докосване показва останалото. Видеата, които вече са изчезнали, не могат да се върнат.
+Unavailable saved videos	Неналични запазени видеа
+See the saved videos that went away after Hushfeed remembered them	Виж запазените видеа, които са изчезнали, след като Hushfeed ги е запомнил
+Saved videos that go away show up here	Запазените видеа, които изчезнат, се показват тук
+Unavailable saved videos cleared	Неналичните видеа са изчистени
+Unavailable saved video	Неналично запазено видео
+Posted %1$s	Публикувано на %1$s
+Remembered %1$s	Запомнено на %1$s
+Unavailable since %1$s	Не е налично от %1$s

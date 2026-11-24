@@ -405,6 +405,7 @@ public final class GridSort {
             });
             if (isLiked(adapter)) LikedJump.listIn(adapter, true);
             else if (tabOf(adapter) == TAB_FAVORITES) FavoritesJump.listIn(adapter, true);
+            SavedVideoMemory.listIn(adapter, list, true);
         }
         return out;
     }
@@ -432,6 +433,7 @@ public final class GridSort {
             });
             if (isLiked(adapter)) LikedJump.listIn(adapter, false);
             else if (tabOf(adapter) == TAB_FAVORITES) FavoritesJump.listIn(adapter, false);
+            SavedVideoMemory.listIn(adapter, list, false);
         }
         return out;
     }
@@ -1539,7 +1541,7 @@ public final class GridSort {
         return false;
     }
 
-    private static void refresh(Object adapter) {
+    static void refresh(Object adapter) {
         try {
             adapter.getClass().getMethod("notifyDataSetChanged").invoke(adapter);
         } catch (Throwable ex) {

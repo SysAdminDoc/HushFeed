@@ -31,6 +31,8 @@ public final class FavoritesJump {
      * page go as TikTok asked. TikTok never sends {@code minCursor} for tab 4, so it plays no part.
      */
     public static long cursor(String userId, String secUserId, int type, long minCursor, long maxCursor) {
+        // Remember saved videos (#516) reads only the reader's own Favorites, and this says whose these are.
+        SavedVideoMemory.requested(userId, secUserId, type);
         if (type != GridSort.TAB_FAVORITES) return maxCursor;
         String who = userId != null && !userId.isEmpty() ? userId : secUserId == null ? "" : secUserId;
         long sent = JUMP.cursor(who, maxCursor);

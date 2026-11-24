@@ -84,12 +84,13 @@ private object WebViewPageCallbackFingerprint : Fingerprint(
 @Suppress("unused")
 val systemFontPatch = bytecodePatch(
     name = "Use system font",
-    description = "Shows TikTok's text in your phone's own font or in a .ttf or .otf font file " +
-        "you import, instead of TikTok's, and can use your phone's emoji too. Starts off. Turn " +
-        "it on in Hushfeed settings > App, then restart TikTok.",
+    description = "Shows TikTok's text in your phone's own font, in one of 26 fonts that come " +
+        "with Hushfeed or in a .ttf or .otf font file you import, instead of TikTok's, and can " +
+        "use your phone's emoji too. Starts off. Turn it on in Hushfeed settings > App, then " +
+        "restart TikTok.",
 ) {
     category("Interface")
-    dependsOn(settingsPatch, sharedExtensionPatch)
+    dependsOn(settingsPatch, sharedExtensionPatch, builtInFontsPatch)
 
     compatibleWith(*AppCompatibilities.tiktok())
 

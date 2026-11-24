@@ -3051,3 +3051,6 @@ Latest time,Thời điểm muộn nhất
 Jump to a date on Favorites grids,Chuyển đến ngày trên lưới Yêu thích
 "Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Thêm một nút ở góc trên của lưới Yêu thích để bắt đầu danh sách video đã lưu từ năm hoặc tháng bạn chọn, nhờ đó video cũ hơn được tải mà không phải cuộn qua video mới hơn. Chọn Yêu thích mới nhất ở đó để quay lại."
 Newest saves,Yêu thích mới nhất
+Pick a built-in font,Chọn phông chữ có sẵn
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,Chọn một trong %1$s phông chữ đi kèm Hushfeed. Mỗi phông được hiển thị theo kiểu riêng của nó.
+Built-in fonts,Phông chữ có sẵn

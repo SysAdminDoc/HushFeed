@@ -3492,3 +3492,7 @@ The end of the random window, on the same day as When to send. If it isn't later
 Jump to a date on Favorites grids	الانتقال إلى تاريخ في شبكات المفضلات
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	يضيف زرًا إلى الزاوية العلوية لشبكة المفضلات يبدأ عرض فيديوهاتك المحفوظة من سنة أو شهر تختاره، بحيث يتم تحميل المحفوظات القديمة دون التمرير عبر الأحدث. اختر أحدث المحفوظات هناك للعودة.
 Newest saves	أحدث المحفوظات
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	اختر خطًا مدمجًا
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	اختر واحدًا من %1$s خطًا مضمّنة مع Hushfeed. يظهر كل خط بأسلوبه الخاص.
+Built-in fonts	الخطوط المدمجة

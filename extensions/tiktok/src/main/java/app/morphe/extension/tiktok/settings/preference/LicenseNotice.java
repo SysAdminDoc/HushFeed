@@ -190,6 +190,18 @@ public final class LicenseNotice {
             "signature generator and signature format (download/ShazamSignature.java), under\n" +
             "the same GPLv3 as the rest of Hushfeed.\n" +
             "\n" +
+            "Built-in fonts\n" +
+            "\n" +
+            "Copyright their designers, as each licence text names them\n" +
+            "Source: https://github.com/google/fonts\n" +
+            "SIL OPEN FONT LICENSE, Version 1.1 (https://openfontlicense.org), except Permanent\n" +
+            "Marker and Special Elite, which are under the Apache License, Version 2.0 below\n" +
+            "\n" +
+            "Pick a built-in font under Use system font offers 26 fonts from Google Fonts,\n" +
+            "unmodified. Each font's own licence text ships beside it in the patched app, in\n" +
+            "assets/hushfeed_builtin_fonts/LICENSES.txt, and in this repository in\n" +
+            "patches/src/main/resources/builtin-fonts/LICENSES.txt.\n" +
+            "\n" +
             "\n" +
             "Material Design icons\n" +
             "---------------------\n" +

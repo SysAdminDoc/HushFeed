@@ -162,6 +162,18 @@ Identify the song with Shazam makes its fingerprint with a Java port of SongRec'
 signature generator and signature format (download/ShazamSignature.java), under
 the same GPLv3 as the rest of Hushfeed.
 
+Built-in fonts
+
+Copyright their designers, as each licence text names them
+Source: https://github.com/google/fonts
+SIL OPEN FONT LICENSE, Version 1.1 (https://openfontlicense.org), except Permanent
+Marker and Special Elite, which are under the Apache License, Version 2.0 below
+
+Pick a built-in font under Use system font offers 26 fonts from Google Fonts,
+unmodified. Each font's own licence text ships beside it in the patched app, in
+assets/hushfeed_builtin_fonts/LICENSES.txt, and in this repository in
+patches/src/main/resources/builtin-fonts/LICENSES.txt.
+
 
 Material Design icons
 ---------------------

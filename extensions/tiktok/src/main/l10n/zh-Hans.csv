@@ -3051,3 +3051,6 @@ Latest time,最晚时间
 Jump to a date on Favorites grids,在“收藏”网格中跳到某个日期
 "Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.",在“收藏”网格的顶角添加一个按钮，让你收藏的视频从你选择的年份或月份开始，这样无需滑过较新的收藏就能加载较早的收藏。在那里选择“最新的收藏”即可返回.
 Newest saves,最新的收藏
+Pick a built-in font,选择内置字体
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,从 Hushfeed 自带的 %1$s 种字体中选择一种。每种字体都以其自身样式显示.
+Built-in fonts,内置字体

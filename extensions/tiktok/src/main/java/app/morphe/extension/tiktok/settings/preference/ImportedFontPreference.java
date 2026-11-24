@@ -5,18 +5,25 @@
 package app.morphe.extension.tiktok.settings.preference;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.Preference;
 import android.provider.OpenableColumns;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.font.BuiltInFonts;
 import app.morphe.extension.tiktok.font.ImportedFont;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -24,12 +31,14 @@ import app.morphe.extension.tiktok.settings.Settings;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The two rows under Use an imported font, and the same two under Use an imported emoji font:
- * one picks a font file and copies it into TikTok's files, the other removes it.
+ * one picks a font file and copies it into TikTok's files, the other removes it. The text font
+ * has a third, which copies in one of the fonts that come with Hushfeed instead (#487).
  *
  * <p>The picker answers the settings page, the way the watch-history import does, and the copy
  * runs on a {@link DocumentOperation} worker so a file app that keeps it waiting can't hold the
@@ -47,6 +56,7 @@ public final class ImportedFontPreference extends Preference {
     static final String EMOJI_PICK_KEY = "action_import_emoji_font";
     static final String EMOJI_REMOVE_KEY = "action_remove_imported_emoji_font";
     static final String EMOJI_RESTART_KEY = "hushfeed_imported_emoji_font_file";
+    static final String BUILT_IN_KEY = "action_pick_builtin_font";
 
     private static final AtomicBoolean BUSY = new AtomicBoolean();
     private static final CopyOnWriteArrayList<WeakReference<ImportedFontPreference>> ROWS =
@@ -65,13 +75,23 @@ public final class ImportedFontPreference extends Preference {
 
     private final boolean removes;
     private final boolean emoji;
+    /** The row that picks one of the fonts that come with Hushfeed (#487). */
+    private final boolean builtIn;
 
     private ImportedFontPreference(Context context, boolean removes, boolean emoji) {
+        this(context, removes, emoji, false);
+    }
+
+    private ImportedFontPreference(Context context, boolean removes, boolean emoji, boolean builtIn) {
         super(context);
         this.removes = removes;
         this.emoji = emoji;
+        this.builtIn = builtIn;
         setPersistent(false);
-        if (emoji) {
+        if (builtIn) {
+            setKey(BUILT_IN_KEY);
+            setTitle(L10n.t(context, "Pick a built-in font"));
+        } else if (emoji) {
             setKey(removes ? EMOJI_REMOVE_KEY : EMOJI_PICK_KEY);
             setTitle(removes ? L10n.t(context, "Remove the imported emoji font")
                     : L10n.t(context, "Import an emoji font file"));
@@ -82,7 +102,9 @@ public final class ImportedFontPreference extends Preference {
         ROWS.add(new WeakReference<>(this));
         refreshState();
         setOnPreferenceClickListener(preference -> {
-            if (removes) removeFont(getContext(), emoji);
+            if (builtIn) {
+                if (!BUSY.get()) showBuiltInFonts(getContext());
+            } else if (removes) removeFont(getContext(), emoji);
             else if (offersStop()) stopWaiting(getContext());
             else if (!BUSY.get() && !picking && !heldAfterStop()) {
                 TikTokPreferenceFragment.openImportedFontPicker(emoji);
@@ -99,6 +121,14 @@ public final class ImportedFontPreference extends Preference {
     /** The row that removes the imported font. */
     public static ImportedFontPreference removeRow(Context context) {
         return new ImportedFontPreference(context, true, false);
+    }
+
+    /**
+     * The row that picks one of the fonts that come with Hushfeed, or null where the patch put
+     * none in TikTok's assets.
+     */
+    public static ImportedFontPreference builtInRow(Context context) {
+        return BuiltInFonts.names(context).isEmpty() ? null : new ImportedFontPreference(context, false, false, true);
     }
 
     /** The row that picks an emoji font file. */
@@ -197,6 +227,81 @@ public final class ImportedFontPreference extends Preference {
                     : L10n.t(context, "Couldn't start the import. Try again in a moment."));
         }
         return true;
+    }
+
+    /**
+     * The built-in fonts, each name drawn in its own font. Picking one copies it in as the
+     * imported font, the same as a file from the file app, and says so the same way.
+     */
+    static void showBuiltInFonts(Context context) {
+        Activity activity = activityOf(context);
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
+        List<String> names = BuiltInFonts.names(activity);
+        if (names.isEmpty()) return;
+        SettingsUi.syncDarkMode(activity);
+        ArrayAdapter<String> rows = new ArrayAdapter<String>(activity, android.R.layout.select_dialog_item, names) {
+            @Override public View getView(int position, View recycled, ViewGroup parent) {
+                View row = super.getView(position, recycled, parent);
+                Typeface face = BuiltInFonts.face(getContext(), getItem(position));
+                row.setTag(face);
+                if (face != null && row instanceof TextView) ((TextView) row).setTypeface(face);
+                return row;
+            }
+        };
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setTitle(L10n.t(activity, "Built-in fonts"))
+                .setAdapter(rows, (picker, which) -> {
+                    picker.dismiss();
+                    installBuiltIn(activity, names.get(which));
+                })
+                .setNegativeButton(L10n.t(activity, "Cancel"), null)
+                .create();
+        dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
+        dialog.show();
+    }
+
+    /** Copies the built-in font {@code name} in as the imported font, off the main thread. */
+    static void installBuiltIn(Activity activity, String name) {
+        if (!BUSY.compareAndSet(false, true)) return;
+        Context context = activity.getApplicationContext();
+        WeakReference<Activity> window = new WeakReference<>(activity);
+        refreshRows();
+        boolean started = Utils.runOnBackgroundThread(() -> {
+            try {
+                ImportedFont.Incoming incoming = ImportedFont.TEXT.take(
+                        context, BuiltInFonts.open(context, name), BuiltInFonts.fileName(name));
+                String kept;
+                try {
+                    kept = incoming.install();
+                } catch (IOException failure) {
+                    incoming.discard();
+                    throw new NotSaved(failure);
+                }
+                Utils.runOnMainThread(() -> {
+                    finish();
+                    imported(TikTokPreferenceFragment.reportWindow(window, context), kept, false);
+                });
+            } catch (Exception failure) {
+                Logger.printException(() -> "Could not use the built-in font " + name, failure);
+                Utils.runOnMainThread(() -> {
+                    finish();
+                    SettingsActionBanner.showNotice(TikTokPreferenceFragment.reportWindow(window, context),
+                            failureMessage(context, failure, ImportedFont.TEXT.limit()));
+                });
+            }
+        });
+        if (!started) {
+            finish();
+            SettingsActionBanner.showNotice(activity, L10n.t(context, "Couldn't start the import. Try again in a moment."));
+        }
+    }
+
+    private static Activity activityOf(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return (Activity) context;
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     /** The name the file app shows for the document, or null when it gives none. */
@@ -302,6 +407,13 @@ public final class ImportedFontPreference extends Preference {
     private void refreshState() {
         Context context = getContext();
         ImportedFont font = fontFor(emoji);
+        if (builtIn) {
+            setEnabled(!BUSY.get());
+            setSummary(BUSY.get() ? L10n.t(context, "Reading the font file") : L10n.f(context,
+                    "Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.",
+                    NumberFormat.getInstance().format(BuiltInFonts.names(context).size())));
+            return;
+        }
         String name = font.fileName(context);
         if (removes) {
             setEnabled(name != null && !BUSY.get());

@@ -3221,3 +3221,7 @@ The end of the random window, on the same day as When to send. If it isn't later
 Jump to a date on Favorites grids	Favoriler ızgaralarında bir tarihe git
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Favoriler ızgarasının üst köşesine, kaydettiğiniz videoları seçtiğiniz yıl veya aydan başlatan bir düğme ekler. Böylece eski kayıtlar, yenilerin arasından kaydırmadan yüklenir. Geri dönmek için orada En yeni favoriler seçeneğini seçin.
 Newest saves	En yeni favoriler
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	Yerleşik bir yazı tipi seç
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Hushfeed ile gelen %1$s yazı tipinden birini seçin. Her biri kendi stilinde gösterilir.
+Built-in fonts	Yerleşik yazı tipleri

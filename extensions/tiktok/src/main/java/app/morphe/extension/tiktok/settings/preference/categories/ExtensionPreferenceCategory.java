@@ -178,6 +178,9 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.IMPORTED_FONT
             ));
             addPreference(ImportedFontPreference.pickRow(context));
+            // Only where the patch put the fonts that come with Hushfeed in TikTok's assets.
+            ImportedFontPreference builtIn = ImportedFontPreference.builtInRow(context);
+            if (builtIn != null) addPreference(builtIn);
             addPreference(ImportedFontPreference.removeRow(context));
             if (android.os.Build.VERSION.SDK_INT >= EmojiFont.MIN_SDK) {
                 addPreference(new TogglePreference(

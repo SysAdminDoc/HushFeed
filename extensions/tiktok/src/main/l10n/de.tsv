@@ -3224,3 +3224,7 @@ The end of the random window, on the same day as When to send. If it isn't later
 Jump to a date on Favorites grids	In Favoriten-Rastern zu einem Datum springen
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Fügt oben in der Ecke des Favoriten-Rasters eine Schaltfläche hinzu, die deine gespeicherten Videos bei einem gewählten Jahr oder Monat beginnen lässt, damit ältere laden, ohne an neueren vorbeizuscrollen. Wähle dort Neueste Favoriten, um zurückzukehren.
 Newest saves	Neueste Favoriten
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	Mitgelieferte Schrift wählen
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Wähle eine von %1$s Schriften, die bei Hushfeed dabei sind. Jede wird in ihrem eigenen Stil gezeigt.
+Built-in fonts	Mitgelieferte Schriften

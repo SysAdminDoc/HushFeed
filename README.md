@@ -293,7 +293,7 @@ Simple mode in Morphe Manager selects 137 of these patches. Each row says what t
 | `Turn profiles and comment pictures on tablets` | On a tablet where TikTok lets its main screen turn, a profile opened from search and a comment's picture turn with it instead of flipping the screen to portrait. Works as soon as you patch it in, with no switch. |
 | `UI scale` | Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. Starts at 100%, which changes nothing. Pick a size in Hushfeed settings > App, then restart TikTok. |
 | `Use non-personalized search` | Shows search results that aren't tailored to your account. Starts off. Turn it on in Hushfeed settings > App. |
-| `Use system font` | Shows TikTok's text in your phone's own font or in a .ttf or .otf font file you import, instead of TikTok's, and can use your phone's emoji too. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |
+| `Use system font` | Shows TikTok's text in your phone's own font, in one of 26 fonts that come with Hushfeed or in a .ttf or .otf font file you import, instead of TikTok's, and can use your phone's emoji too. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |
 
 Unreleased builds keep a profile grid's sort menu available after you choose Original order.
 
@@ -466,6 +466,7 @@ Hushfeed stands on a lot of other people's work, and the licence asks that this 
 - [@oscski](https://github.com/oscski) for `Disable the long press repost`.
 - [@inxomnyaa](https://github.com/inxomnyaa) for `Smaller text sizes`, `UI scale` and the home top bar hook in `Hide the Tako bubble`.
 - [marin-m/SongRec](https://github.com/marin-m/SongRec) for the Shazam fingerprint behind `Identify the song with Shazam`, ported to Java from its Rust code.
+- [Google Fonts](https://github.com/google/fonts) for the 26 fonts behind `Pick a built-in font`. They're under the SIL Open Font License 1.1, apart from Permanent Marker and Special Elite (Apache License 2.0).
 - The [Morphe](https://github.com/MorpheApp) team for the patcher, the manager and the patches template.
 
 Files that came from another project keep their original notices, and files written here say so in their header. A test holds every source file the bundle ships to having one, so a file cannot arrive without saying where it came from.

@@ -112,8 +112,15 @@ final class DialogChoices extends BaseAdapter {
             TextView choice = (TextView) row;
             float density = row.getResources().getDisplayMetrics().density;
             choice.setTextColor(ScreenColors.dimmedWhenDisabled(colors.title));
-            choice.setTextSize(SettingsUi.TEXT_TITLE);
-            choice.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            // A row that previews a font carries that font's face as its tag and keeps it, a
+            // step larger so the style reads (the built-in fonts, #487).
+            if (choice.getTag() instanceof Typeface) {
+                choice.setTextSize(SettingsUi.TEXT_HEADLINE);
+                choice.setTypeface((Typeface) choice.getTag());
+            } else {
+                choice.setTextSize(SettingsUi.TEXT_TITLE);
+                choice.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            }
             choice.setSingleLine(false);
             choice.setMaxLines(Integer.MAX_VALUE);
             int side = Math.round(18 * density);

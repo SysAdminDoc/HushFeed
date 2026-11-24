@@ -204,6 +204,65 @@ public class VideoMusicLineTest {
         }
     }
 
+    /**
+     * The title's wrapper keeps the margin TikTok gives it under the title, so a hidden title
+     * left its caption higher above the progress bar than a video with no music line (#512).
+     */
+    @Test public void aHiddenTitleLeavesTheCaptionWhereAVideoWithoutOneHasIt() {
+        for (String build : BUILDS) {
+            bindIds(build);
+            try (var controller = Robolectric.buildActivity(MainActivity.class).setup()) {
+                Activity activity = controller.get();
+                LinearLayout column = new LinearLayout(activity);
+                column.setOrientation(LinearLayout.VERTICAL);
+                View caption = new View(activity);
+                LinearLayout.LayoutParams captionParams = new LinearLayout.LayoutParams(821, 106);
+                captionParams.bottomMargin = 20;
+                column.addView(caption, captionParams);
+                Title title = new Title(activity, titleId(build), true);
+                FrameLayout wrapper = new FrameLayout(activity);
+                wrapper.addView(title.root);
+                LinearLayout.LayoutParams wrapperParams = new LinearLayout.LayoutParams(548, LinearLayout.LayoutParams.WRAP_CONTENT);
+                wrapperParams.bottomMargin = 20;
+                column.addView(wrapper, wrapperParams);
+                activity.setContentView(cell(activity, column));
+
+                Settings.HIDE_FEED_MUSIC.save(true);
+                VideoOverlayHider.applyTo(activity);
+                title.assertHidden();
+                assertEquals("the caption sits as it does with no music line", 126, heightOf(column));
+
+                // TikTok binds the next video into the cell and gives the wrapper its margin again.
+                wrapperParams = (LinearLayout.LayoutParams) wrapper.getLayoutParams();
+                wrapperParams.bottomMargin = 39;
+                wrapper.setLayoutParams(wrapperParams);
+                VideoOverlayHider.applyTo(activity);
+                assertEquals(126, heightOf(column));
+
+                // Something else showing in the wrapper keeps its place under the caption.
+                View other = new View(activity);
+                wrapper.addView(other, new FrameLayout.LayoutParams(100, 30));
+                VideoOverlayHider.applyTo(activity);
+                assertEquals(126 + 30 + 39, heightOf(column));
+                wrapper.removeView(other);
+                VideoOverlayHider.applyTo(activity);
+                assertEquals(126, heightOf(column));
+
+                Settings.HIDE_FEED_MUSIC.save(false);
+                VideoOverlayHider.applyTo(activity);
+                assertEquals(View.VISIBLE, title.root.getVisibility());
+                assertEquals(39, ((LinearLayout.LayoutParams) wrapper.getLayoutParams()).bottomMargin);
+                assertEquals(0, ((LinearLayout.LayoutParams) wrapper.getLayoutParams()).topMargin);
+            }
+        }
+    }
+
+    private static int heightOf(View column) {
+        column.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        return column.getMeasuredHeight();
+    }
+
     private static void bindIds(String build) {
         Utils.setContext(RuntimeEnvironment.getApplication());
         BuildNames.setRunningBuildForTests(build);

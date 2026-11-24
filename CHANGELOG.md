@@ -46,6 +46,7 @@ Every Hushfeed release, newest first.
 * Photo saves from TikTok's own servers now send the sign-in TikTok's app sends there. Photos from a friend's story were refused without it, every copy, while TikTok showed them fine, and so were photos from private accounts you follow. No other site gets a cookie (#464, #504).
 * Patching takes a lot less memory with most patches selected. All of them together now fit in a 1 GB patcher heap, where they used to run out at 1.5 GB. On a phone where Manager runs 32-bit, every patch now fits with TikTok's bundle and with the APK, where they ran out partway before. Several patches only look through TikTok's code, but every look made the patcher keep an editable copy of the method until the end. And each patch that changes TikTok's resources left the parsed resource table behind for the rest of the run, about 140 MB on the APK (#497, #460, #310, #441, #48).
 * Stickers made from a video get the save box in chats now. Tapping one opens it after TikTok's own preview, and holding one shows Save media, which photo stickers, GIF stickers and AI stickers get in that menu too. TikTok handles all of those apart from its own stickers, so neither showed up for them (#470).
+* With `Hide the music line` on, a video with a music line now has its caption the same distance above the progress bar as a video without one. The music line hid, but the space TikTok keeps under it stayed, so those captions sat a little higher (#512).
 
 ### Build
 

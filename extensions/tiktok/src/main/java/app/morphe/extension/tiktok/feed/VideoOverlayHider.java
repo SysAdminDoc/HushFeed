@@ -309,6 +309,11 @@ public final class VideoOverlayHider {
     private static final int RAIL_SLOT_DEPTH = 3;
     /** Wrappers collapseWrappers hid, so the pass keeps looking them up until they're back. */
     private static final Map<View, Boolean> RAIL_WRAPPERS_HIDDEN = new WeakHashMap<>();
+    /**
+     * Music-line wrappers whose vertical margins squeezeMusicWrapper took to 0, with the top and
+     * bottom margins TikTok last gave them.
+     */
+    private static final Map<View, int[]> MUSIC_WRAPPERS_SQUEEZED = new WeakHashMap<>();
     /** Whether the last pass left the rail buttons scaled, so the next one can put them back. */
     private static boolean scaledLastPass;
     /** The index of the music row in {@link #RAIL_BUTTON_IDS}; it spans the width and is not scaled. */
@@ -812,6 +817,7 @@ public final class VideoOverlayHider {
                     || seeThroughBar || lensBarNow || fillUnderBar || SeeThroughBottomBar.holdsBackground()
                     || openedBar != null || VideoUnderGestureBar.holdsAny()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
+                    || !MUSIC_WRAPPERS_SQUEEZED.isEmpty()
                     || !SEEK_BARS_LIFTED.isEmpty()
                     || !LIVE_CAPTIONS_LIFTED.isEmpty()
                     || fadeLevel != 100 || anchorLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
@@ -2142,6 +2148,38 @@ public final class VideoOverlayHider {
         }
     }
 
+    /**
+     * The music line sits alone in a wrapper of its own, and the wrapper keeps the margin TikTok
+     * gives it under the line, so with the line hidden a video with a music line had its caption
+     * that much higher above the progress bar than a video without one (#512). While this class
+     * hides the line and nothing else in the wrapper shows, the wrapper's vertical margins go to
+     * 0; they come back once the line does. TikTok sets them again for each video it binds into
+     * the cell, so each pass keeps the latest values it finds. The wrapper's own visibility is
+     * left alone: TikTok takes it away itself for a video with no music line, and a wrapper put
+     * back by this class would then show its margin under a caption that has no line.
+     */
+    static void squeezeMusicWrapper(View line, boolean hidden) {
+        if (!(line.getParent() instanceof ViewGroup)) return;
+        ViewGroup wrapper = (ViewGroup) line.getParent();
+        if (!(wrapper.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) wrapper.getLayoutParams();
+        if (hidden && HIDDEN_HERE.containsKey(line) && allChildrenGone(wrapper)) {
+            if (margins.topMargin != 0 || margins.bottomMargin != 0) {
+                MUSIC_WRAPPERS_SQUEEZED.put(wrapper, new int[]{margins.topMargin, margins.bottomMargin});
+                margins.topMargin = 0;
+                margins.bottomMargin = 0;
+                wrapper.setLayoutParams(margins);
+            }
+            return;
+        }
+        int[] before = MUSIC_WRAPPERS_SQUEEZED.remove(wrapper);
+        if (before != null && margins.topMargin == 0 && margins.bottomMargin == 0) {
+            margins.topMargin = before[0];
+            margins.bottomMargin = before[1];
+            wrapper.setLayoutParams(margins);
+        }
+    }
+
     private static boolean allChildrenGone(ViewGroup group) {
         for (int i = 0; i < group.getChildCount(); i++) {
             if (group.getChildAt(i).getVisibility() != View.GONE) return false;
@@ -2633,6 +2671,9 @@ public final class VideoOverlayHider {
                         if (target == FOLLOWING_STORY_TARGET) StoriesPillGlass.apply(view, storiesGlassNow);
                         setFaded(view, wanted ? 100 : ghostNow ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
                         setHidden(view, wanted);
+                    } else if (target == MUSIC_TARGET) {
+                        setHidden(view, wanted);
+                        squeezeMusicWrapper(view, wanted);
                     } else setHidden(view, wanted);
                 }
             // A survey is content TikTok inserts only on selected posts. Its absence from an

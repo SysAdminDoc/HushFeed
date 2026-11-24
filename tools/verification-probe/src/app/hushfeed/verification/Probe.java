@@ -2474,11 +2474,11 @@ public final class Probe extends Instrumentation {
                                 .getMethod("getActivity").invoke(null);
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
-                        // 47.7.2 names them dng and dnn (47.6.3 had dn7 and dnd, 47.5.3 dln and dlu): -e strip dn7 -e text dnd.
+                        // 47.9.3 names them dt6 and dtc (47.7.2 dng and dnn, 47.6.3 dn7 and dnd, 47.5.3 dln and dlu): -e strip dng -e text dnn.
                         String stripName = intent.getStringExtra("strip");
                         String textName = intent.getStringExtra("text");
-                        if (stripName == null) stripName = "dng";
-                        if (textName == null) textName = "dnn";
+                        if (stripName == null) stripName = "dt6";
+                        if (textName == null) textName = "dtc";
                         int strip = resources.getIdentifier(stripName, "id", activity.getPackageName());
                         int text = resources.getIdentifier(textName, "id", activity.getPackageName());
                         StringBuilder out = new StringBuilder();
@@ -2841,9 +2841,16 @@ public final class Probe extends Instrumentation {
                         Method clearNow = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch")
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
-                        int strip = resources.getIdentifier("dng", "id", activity.getPackageName());
-                        int drawn = resources.getIdentifier("dnn", "id", activity.getPackageName());
+                        // 47.9.3's strip dt6 holds the laid-out text dtc (GONE) and dtd, the view that
+                        // draws it, which is the one that shows a cue: -e strip and -e drawn override.
+                        String stripId = intent.getStringExtra("strip");
+                        String drawnId = intent.getStringExtra("drawn");
+                        int strip = resources.getIdentifier(stripId == null ? "dt6" : stripId, "id", activity.getPackageName());
+                        int drawn = resources.getIdentifier(drawnId == null ? "dtd" : drawnId, "id", activity.getPackageName());
                         int[] counts = new int[9];
+                        // When each first showed, in ms from the start: cleared, strip, line, cue.
+                        // A swipe sent right after the broadcast times the next video's first caption.
+                        long[] first = {-1, -1, -1, -1};
                         android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
                         long start = android.os.SystemClock.uptimeMillis();
                         main.post(new Runnable() {
@@ -2868,6 +2875,11 @@ public final class Probe extends Instrumentation {
                                     if (cleared && lineShown) counts[6]++;
                                     if (cleared && cue) counts[7]++;
                                     if (!cleared && lineShown) counts[8]++;
+                                    long at = android.os.SystemClock.uptimeMillis() - start;
+                                    boolean[] seen = {cleared, stripDrawn, lineShown, cue};
+                                    for (int i = 0; i < seen.length; i++) {
+                                        if (seen[i] && first[i] < 0) first[i] = at;
+                                    }
                                 } catch (Exception error) {
                                     Log.e(TAG, "failed captionwatch", error);
                                     return;
@@ -2880,6 +2892,8 @@ public final class Probe extends Instrumentation {
                                         + " strip=" + counts[2] + " line=" + counts[3] + " cue=" + counts[4]
                                         + " clearedStrip=" + counts[5] + " clearedLine=" + counts[6]
                                         + " clearedCue=" + counts[7] + " lineWithControls=" + counts[8]
+                                        + " firstCleared=" + first[0] + " firstStrip=" + first[1]
+                                        + " firstLine=" + first[2] + " firstCue=" + first[3]
                                         + (strip == 0 || drawn == 0 ? " dln/dlu=missing" : ""));
                             }
                         });

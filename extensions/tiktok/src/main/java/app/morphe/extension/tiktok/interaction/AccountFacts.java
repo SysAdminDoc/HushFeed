@@ -37,9 +37,9 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * Account facts: what TikTok's own account model already holds about a profile, shown from a
  * button on the profile's share sheet beside the copy buttons. Nothing is fetched. The fields
  * are filled from the profile response (create_time, region, account_region, language,
- * pay_grade, unique_id_modify_time, nick_name_modify_ts, secret, has_open_favorite and sec_uid,
- * has_open_favorite being what the profile's own tab pager reads to show the liked videos tab)
- * and read by their real names. pay_grade becomes the model's userHonor, whose level is the
+ * pay_grade, aweme_count, favoriting_count, collect_count, forward_count, unique_id_modify_time,
+ * nick_name_modify_ts, secret, has_open_favorite and sec_uid, has_open_favorite being what the
+ * profile's own tab pager reads to show the liked videos tab) and read by their real names. pay_grade becomes the model's userHonor, whose level is the
  * gifter level LIVE shows; nothing in TikTok's own screens reads it off this model (#487).
  * A date, name or level the server didn't send says Unknown rather than guessing. secret and
  * has_open_favorite can't say that, so they only get a line when they're true. When the
@@ -101,6 +101,20 @@ public final class AccountFacts {
         }
         facts.add(new Fact("Language", language(text(sources, "language"), locale)));
         facts.add(new Fact("Gifter level", level(gifterLevel(sources), locale)));
+        // The counts are plain ints on the model, so one the server left out reads 0 and gets no
+        // line. They come from the profile's own model only: a video's author model carries the
+        // counts of whenever that video was served, or none (#487).
+        addCount(facts, "Posts", Reflect.readField(user, "awemeCount"), locale);
+        String liked = count(Reflect.readField(user, "favoritingCount"), locale);
+        boolean likesPublic = Boolean.TRUE.equals(Reflect.readField(user, "hasOpenFavorite"));
+        if (liked != null || likesPublic) {
+            String isPublic = L10n.t("Public");
+            facts.add(new Fact("Liked videos",
+                    liked == null ? isPublic : likesPublic ? liked + " (" + isPublic + ")" : liked));
+        }
+        addCount(facts, "Favorites", Reflect.readField(user, "collectCount"), locale);
+        // forward_count, which the model calls repostCount.
+        addCount(facts, "Reposts", Reflect.readField(user, "repostCount"), locale);
         // A video's author model has unique_id_modify_time set to when the response was made
         // (Login2 47.4.3: 73 models of different accounts shared one second), so the change
         // dates come from the profile's own model only. Nothing here or in TikTok's client drops
@@ -110,15 +124,12 @@ public final class AccountFacts {
                 date(seconds(Reflect.readField(user, "uniqueIdModifyTime")), locale, zone)));
         facts.add(new Fact("Display name last changed",
                 date(seconds(Reflect.readField(user, "nickNameModifyTs")), locale, zone)));
-        // Both are plain booleans on the model, so one the server left out reads false. Only a
-        // true one is a fact, and false leaves its line out. 47.4.3 renamed secret to isSecret.
+        // A plain boolean on the model, so one the server left out reads false. Only true is a
+        // fact, and false leaves its line out. 47.4.3 renamed secret to isSecret.
         Object secret = Reflect.readField(user, "isSecret");
         if (secret == null) secret = Reflect.readField(user, "secret");
         if (Boolean.TRUE.equals(secret)) {
             facts.add(new Fact("Private account", L10n.t("Yes")));
-        }
-        if (Boolean.TRUE.equals(Reflect.readField(user, "hasOpenFavorite"))) {
-            facts.add(new Fact("Liked videos", L10n.t("Public")));
         }
         // Last, as it's long and only useful copied.
         String secUid = text(sources, "secUid");
@@ -189,6 +200,19 @@ public final class AccountFacts {
             if (level instanceof Number) return ((Number) level).intValue();
         }
         return null;
+    }
+
+    /** A count above zero in the phone's digits, or null for zero, below zero or no number. */
+    @Nullable
+    static String count(@Nullable Object value, Locale locale) {
+        if (!(value instanceof Number)) return null;
+        long count = ((Number) value).longValue();
+        return count > 0 ? NumberFormat.getIntegerInstance(locale).format(count) : null;
+    }
+
+    private static void addCount(List<Fact> facts, String label, @Nullable Object value, Locale locale) {
+        String count = count(value, locale);
+        if (count != null) facts.add(new Fact(label, count));
     }
 
     static String level(@Nullable Integer level, Locale locale) {

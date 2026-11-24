@@ -1734,6 +1734,8 @@ Long-press menu on every post	Menu de toque longo em todas as publicações
 TikTok's hold to speed up	Segurar para acelerar do TikTok
 TikTok's background play and Auto scroll	Reprodução em segundo plano e rolagem automática do TikTok
 Post dates in the feed	Datas das publicações no feed
+# context: a line of the Account facts sheet, the number of posts the account has
+Posts	Publicações
 Show exact counts	Mostrar números exatos
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Mostra os números completos, como 1.234.567 em vez de 1.2M.
 Play SDR instead of HDR	Reproduzir em SDR em vez de HDR
@@ -3139,7 +3141,7 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Nível de doador
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Desconhecido (o TikTok não enviou)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	O menu de compartilhar de um perfil ganha um botão Dados da conta. Ele mostra o que o TikTok já enviou sobre a conta: quando ela entrou, a região e o idioma, o nível de doador e o SecUID, quando o nome de usuário e o nome de exibição mudaram pela última vez, se ela é privada e se os vídeos curtidos são públicos. Nada a mais é baixado.
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	O menu de compartilhar de um perfil ganha um botão Dados da conta. Ele mostra o que o TikTok já enviou sobre a conta: quando ela entrou, a região e o idioma, o nível de doador e o SecUID, quantas publicações, vídeos curtidos, favoritos e republicações ela tem, quando o nome de usuário e o nome de exibição mudaram pela última vez, se ela é privada e se os vídeos curtidos são públicos. Nada a mais é baixado.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Mostrar o ID da sala e sua conexão
 Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Adiciona uma linha pequena às salas LIVE com o ID da sala e como está a sua própria conexão com a transmissão, como o player do TikTok mede: ping, latência e velocidade de download. Toque na linha para copiar o ID da sala.

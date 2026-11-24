@@ -1734,6 +1734,8 @@ Long-press menu on every post	Her gönderide uzun basma menüsü
 TikTok's hold to speed up	TikTok'un basılı tutarak hızlandırması
 TikTok's background play and Auto scroll	TikTok'un arka planda oynatma ve otomatik kaydırması
 Post dates in the feed	Akışta gönderi tarihleri
+# context: a line of the Account facts sheet, the number of posts the account has
+Posts	Gönderiler
 Show exact counts	Tam sayıları göster
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Sayıları tam olarak gösterir, örneğin 1.2M yerine 1.234.567.
 Play SDR instead of HDR	HDR yerine SDR oynat
@@ -3139,7 +3141,7 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Hediye veren seviyesi
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Bilinmiyor (TikTok göndermedi)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, hediye veren seviyesini ve SecUID'sini, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, hediye veren seviyesini ve SecUID'sini, kaç gönderisi, beğendiği video, favorisi ve yeniden göndereni olduğunu, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Oda kimliğini ve bağlantını göster
 Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	LIVE odalarına, oda kimliğini ve yayına olan kendi bağlantının durumunu TikTok oynatıcısının ölçtüğü şekliyle gösteren küçük bir satır ekler: ping, gecikme ve indirme hızı. Oda kimliğini kopyalamak için satıra dokun.

@@ -1331,6 +1331,7 @@ Popular,热门
 Popups,弹出窗口
 Post age,后期年龄
 Post dates in the feed,在信息流中发布日期
+Posts,帖子
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,发布每个视频就好像你在帖子页面上打开了 TikTok 自己的高清上传一样。剪辑 TikTok 不像以前那样算作高质量帖子.
 Hide the AI Cast button,隐藏 AI Cast 按钮
 Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,从相机侧边工具栏移除 TikTok 的 AI Cast 按钮。重新打开相机即可看到变化.
@@ -2979,7 +2980,7 @@ Round the corners on profile grids,个人资料网格显示圆角
 Gifter level,送礼等级
 SecUID,SecUID
 Unknown (TikTok didn't send it),未知 (TikTok 未发送)
-"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
+"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、帖子、喜欢的视频、收藏和转发的数量、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
 Show the room ID and your connection,显示直播间 ID 和你的连接
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.",在直播间加一行小字，显示直播间 ID 以及你自己到直播流的连接状况，数据来自 TikTok 播放器自己的测量：Ping 值、延迟和下载速度。点按这一行可复制直播间 ID.
 Room ID %1$s,直播间 ID %1$s

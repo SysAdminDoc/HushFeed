@@ -18,6 +18,10 @@ public class User {
     public int nickNameModifyTs;
     public boolean isSecret;
     public boolean hasOpenFavorite;
+    public int awemeCount;
+    public int favoritingCount;
+    public int collectCount;
+    public int repostCount;
     public String secUid;
     /** pay_grade in the profile response. */
     public UserHonor userHonor;

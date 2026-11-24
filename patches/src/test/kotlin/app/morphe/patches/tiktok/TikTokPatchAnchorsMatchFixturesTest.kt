@@ -1293,6 +1293,10 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 "nickNameModifyTs" to "I",
                 "isSecret" to "Z",
                 "hasOpenFavorite" to "Z",
+                "awemeCount" to "I",
+                "favoritingCount" to "I",
+                "collectCount" to "I",
+                "repostCount" to "I",
                 "secUid" to "Ljava/lang/String;",
                 "userHonor" to honor,
             )) {

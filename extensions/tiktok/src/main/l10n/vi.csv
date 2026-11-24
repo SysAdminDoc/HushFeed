@@ -1487,6 +1487,7 @@ Popular,Phổ biến
 Popups,Cửa sổ bật lên (Popups)
 Post age,Thời gian đăng bài
 Post dates in the feed,Ngày đăng bài trên bảng tin
+Posts,Bài đăng
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,Đăng mọi video như thể bạn đã bật tính năng tải lên HD của chính TikTok trên trang đăng bài. Các đoạn clip không đạt chuẩn HD vẫn sẽ giữ chất lượng tốt nhất có thể.
 Posting,Đăng bài
 Prefer H.264 video,Ưu tiên video H.264
@@ -2979,7 +2980,7 @@ Round the corners on profile grids,Bo tròn góc trên lưới trang cá nhân
 Gifter level,Cấp độ người tặng quà
 SecUID,SecUID
 Unknown (TikTok didn't send it),Không rõ (TikTok không gửi)
-"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
+"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, số bài đăng, video đã thích, mục yêu thích và bài đăng lại, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
 Show the room ID and your connection,Hiện ID phòng và kết nối của bạn
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Thêm một dòng nhỏ vào phòng LIVE với ID phòng và tình trạng kết nối của chính bạn tới luồng phát, theo đo đạc của trình phát TikTok: ping, độ trễ và tốc độ tải xuống. Nhấn vào dòng để sao chép ID phòng."
 Room ID %1$s,ID phòng %1$s

@@ -77,18 +77,64 @@ public class AccountFactsTest {
         user.hasOpenFavorite = true;
         user.userHonor = honor(12);
         user.secUid = SEC_UID;
+        user.awemeCount = 1_234;
+        user.favoritingCount = 56_789;
+        user.collectCount = 12;
+        user.repostCount = 3;
 
         assertEquals(List.of(
                 "Joined=" + when(1_615_819_200L),
                 "Region=Germany (DE)",
                 "Language=German (de)",
                 "Gifter level=12",
+                "Posts=1,234",
+                "Liked videos=56,789 (Public)",
+                "Favorites=12",
+                "Reposts=3",
                 "Username last changed=" + when(1_700_000_000L),
                 "Display name last changed=" + when(1_690_000_000L),
                 "Private account=Yes",
-                "Liked videos=Public",
                 "SecUID=" + SEC_UID
         ), lines(user));
+    }
+
+    @Test public void aCountGetsALineOnlyWhenTheServerSentOne() {
+        // The counts are plain ints, so a left-out one reads 0 like a real 0 and says nothing.
+        User user = new User();
+        user.favoritingCount = 7;
+        user.repostCount = 0;
+        List<String> lines = lines(user);
+        assertTrue(lines.toString(), lines.contains("Liked videos=7"));
+        assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Posts=")
+                || line.startsWith("Favorites=") || line.startsWith("Reposts=")));
+
+        user.favoritingCount = 0;
+        user.collectCount = 2_000;
+        lines = lines(user);
+        assertTrue(lines.toString(), lines.contains("Favorites=2,000"));
+        assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Liked videos=")));
+    }
+
+    @Test public void countsComeFromTheProfileNotAVideosCopy() {
+        User profile = new User();
+        User author = new User();
+        author.awemeCount = 40;
+        author.favoritingCount = 9;
+        List<String> lines = new ArrayList<>();
+        for (AccountFacts.Fact fact : AccountFacts.of(profile, List.of(author), LOCALE, UTC)) {
+            lines.add(fact.label + "=" + fact.value);
+        }
+        assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Posts=")
+                || line.startsWith("Liked videos=")));
+    }
+
+    @Test public void aCountIsInThePhonesDigits() {
+        assertNull(AccountFacts.count(null, LOCALE));
+        assertNull(AccountFacts.count(0, LOCALE));
+        assertNull(AccountFacts.count(-1, LOCALE));
+        assertNull("a number as text isn't a count", AccountFacts.count("12", LOCALE));
+        assertEquals("1,234,567", AccountFacts.count(1_234_567, LOCALE));
+        assertEquals("1.234.567", AccountFacts.count(1_234_567, Locale.GERMANY));
     }
 
     @Test public void whatTheServerLeftOutSaysItsUnknown() {

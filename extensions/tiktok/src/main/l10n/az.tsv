@@ -1734,6 +1734,8 @@ Long-press menu on every post	Hər paylaşımda uzun basma menyusu
 TikTok's hold to speed up	TikTok-un basıb saxlayaraq sürətləndirməsi
 TikTok's background play and Auto scroll	TikTok-un arxa planda oynatma və avtomatik sürüşdürməsi
 Post dates in the feed	Lentdə paylaşım tarixləri
+# context: a line of the Account facts sheet, the number of posts the account has
+Posts	Paylaşımlar
 Show exact counts	Dəqiq rəqəmləri göstər
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Sayları tam rəqəmlə göstərir, məsələn, 1.2M əvəzinə 1.234.567.
 Play SDR instead of HDR	HDR əvəzinə SDR oynat
@@ -3139,7 +3141,7 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Hədiyyəçi səviyyəsi
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Naməlum (TikTok göndərmədi)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Profilin paylaşma panelinə Hesab faktları düyməsi əlavə olunur. O, TikTok-un hesab haqqında artıq göndərdiklərini göstərir: nə vaxt qoşulduğunu, regionunu və dilini, hədiyyəçi səviyyəsini və SecUID-ni, istifadəçi adının və görünən adının sonuncu dəfə nə vaxt dəyişdiyini, hesabın gizli olub-olmadığını və bəyəndiyi videoların açıq olub-olmadığını. Əlavə heç nə yüklənmir.
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Profilin paylaşma panelinə Hesab faktları düyməsi əlavə olunur. O, TikTok-un hesab haqqında artıq göndərdiklərini göstərir: nə vaxt qoşulduğunu, regionunu və dilini, hədiyyəçi səviyyəsini və SecUID-ni, neçə paylaşımı, bəyəndiyi video, sevimlisi və repostu olduğunu, istifadəçi adının və görünən adının sonuncu dəfə nə vaxt dəyişdiyini, hesabın gizli olub-olmadığını və bəyəndiyi videoların açıq olub-olmadığını. Əlavə heç nə yüklənmir.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Otaq ID-sini və bağlantınızı göstərin
 Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	LIVE otaqlarına otağın ID-si və yayımla öz bağlantınızın vəziyyəti olan kiçik bir sətir əlavə edir, TikTok-un pleyerinin ölçdüyü kimi: ping, gecikmə və yükləmə sürəti. Otaq ID-sini kopyalamaq üçün sətrə toxunun.

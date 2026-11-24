@@ -1872,6 +1872,8 @@ Long-press menu on every post	Меню долгого нажатия на каж
 TikTok's hold to speed up	Ускорение удержанием от TikTok
 TikTok's background play and Auto scroll	Фоновое воспроизведение и автопрокрутка от TikTok
 Post dates in the feed	Даты публикаций в ленте
+# context: a line of the Account facts sheet, the number of posts the account has
+Posts	Публикации
 Show exact counts	Показывать точные числа
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Показывает числа полностью, например 1 234 567 вместо 1.2M.
 Play SDR instead of HDR	Воспроизводить SDR вместо HDR
@@ -3340,7 +3342,7 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Уровень дарителя
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, сколько у него публикаций, понравившихся видео, избранного и репостов, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Показывать ID комнаты и ваше соединение
 Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Добавляет в комнаты LIVE небольшую строку с ID комнаты и состоянием вашего собственного соединения с трансляцией, как его измеряет плеер TikTok: пинг, задержка и скорость загрузки. Нажмите на строку, чтобы скопировать ID комнаты.

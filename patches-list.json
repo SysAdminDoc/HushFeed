@@ -7383,6 +7383,24 @@
           "values": null
         },
         {
+          "key": "auto_streak_random",
+          "title": "Default: auto streak random",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "auto_streak_latest_minute",
+          "title": "Default: auto streak latest minute",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 1200,
+          "values": null
+        },
+        {
           "key": "auto_streak_message",
           "title": "Default: auto streak message",
           "description": null,

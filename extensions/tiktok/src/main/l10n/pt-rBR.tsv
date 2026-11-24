@@ -3212,3 +3212,8 @@ A chat you've scrolled up in stays where you were when you come back from a vide
 # context: #505 Fill wide videos too, a Playback switch right under Fill the screen with the video; it crops landscape and square videos to cover a phone held upright, which Fill alone leaves whole
 Fill wide videos too	Preencher também com vídeos largos
 With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.	Com a chave acima ativada, vídeos na horizontal e quadrados também são cortados para cobrir a tela, então só o meio deles aparece. Desativada, eles ficam inteiros.
+# context: Inbox > Streak: a random daily send time (#507)
+Random time each day	Horário aleatório todo dia
+Sends at a different time each day, somewhere between When to send and Latest time.	Envia em um horário diferente a cada dia, em algum momento entre Quando enviar e Horário mais tarde.
+Latest time	Horário mais tarde
+The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	O fim da janela aleatória, no mesmo dia de Quando enviar. Se não for mais tarde, a mensagem sai no horário de Quando enviar.

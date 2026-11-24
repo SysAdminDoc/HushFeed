@@ -3413,3 +3413,8 @@ A chat you've scrolled up in stays where you were when you come back from a vide
 # context: #505 Fill wide videos too, a Playback switch right under Fill the screen with the video; it crops landscape and square videos to cover a phone held upright, which Fill alone leaves whole
 Fill wide videos too	Заполнять экран и широкими видео
 With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.	Когда переключатель выше включён, горизонтальные и квадратные видео тоже обрезаются, чтобы закрыть весь экран, и видна только их середина. Когда выключен, они показываются целиком.
+# context: Inbox > Streak: a random daily send time (#507)
+Random time each day	Случайное время каждый день
+Sends at a different time each day, somewhere between When to send and Latest time.	Отправляет каждый день в разное время, где-то между «Когда отправлять» и «Самое позднее время».
+Latest time	Самое позднее время
+The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	Конец случайного окна, в тот же день, что и «Когда отправлять». Если оно не позже, сообщение уходит во время «Когда отправлять».

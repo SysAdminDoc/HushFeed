@@ -7,6 +7,7 @@
 package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
+import android.preference.Preference;
 import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.Utils;
@@ -418,20 +419,40 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         });
         addPreference(who);
 
+        // A moved time makes one already past today wait for tomorrow.
+        Preference.OnPreferenceChangeListener timeMoved = (preference, value) -> {
+            Utils.runOnMainThread(() -> {
+                AutoStreak.settingsChanged(context, true);
+                refresh.run();
+            });
+            return true;
+        };
         ClockTimePreference when = new ClockTimePreference(
                 context,
                 "When to send",
                 "The time of day the message goes out.",
                 Settings.AUTO_STREAK_MINUTE
         );
-        when.setOnPreferenceChangeListener((preference, value) -> {
-            Utils.runOnMainThread(() -> {
-                AutoStreak.settingsChanged(context, true);
-                refresh.run();
-            });
-            return true;
-        });
+        when.setOnPreferenceChangeListener(timeMoved);
         addPreference(when);
+
+        TogglePreference random = new TogglePreference(
+                context,
+                "Random time each day",
+                "Sends at a different time each day, somewhere between When to send and Latest time.",
+                Settings.AUTO_STREAK_RANDOM
+        );
+        random.setOnPreferenceChangeListener(timeMoved);
+        addPreference(random);
+
+        ClockTimePreference latest = new ClockTimePreference(
+                context,
+                "Latest time",
+                "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
+                Settings.AUTO_STREAK_LATEST_MINUTE
+        );
+        latest.setOnPreferenceChangeListener(timeMoved);
+        addPreference(latest);
 
         addPreference(new InputTextPreference(
                 context,

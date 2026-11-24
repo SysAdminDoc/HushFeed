@@ -60,6 +60,8 @@ public class AutoStreakTest {
         Settings.AUTO_STREAK.resetToDefault();
         Settings.AUTO_STREAK_RECIPIENT.resetToDefault();
         Settings.AUTO_STREAK_MINUTE.resetToDefault();
+        Settings.AUTO_STREAK_RANDOM.resetToDefault();
+        Settings.AUTO_STREAK_LATEST_MINUTE.resetToDefault();
         Settings.AUTO_STREAK_MESSAGE.resetToDefault();
         Settings.AUTO_STREAK_STATE.resetToDefault();
         PushQuickActionReceiver.RECEIVED.clear();
@@ -85,6 +87,8 @@ public class AutoStreakTest {
         Settings.AUTO_STREAK.resetToDefault();
         Settings.AUTO_STREAK_RECIPIENT.resetToDefault();
         Settings.AUTO_STREAK_MINUTE.resetToDefault();
+        Settings.AUTO_STREAK_RANDOM.resetToDefault();
+        Settings.AUTO_STREAK_LATEST_MINUTE.resetToDefault();
         Settings.AUTO_STREAK_MESSAGE.resetToDefault();
         Settings.AUTO_STREAK_STATE.resetToDefault();
         ReflectionHelpers.setStaticField(Setting.class, "pausedForProcess", false);
@@ -202,6 +206,86 @@ public class AutoStreakTest {
         state.sentDay = "2026-10-31";
         assertEquals(at(2026, Calendar.NOVEMBER, 1, 12, 0), AutoStreak.nextAlarm(state, saturday, NOON));
         assertEquals("2026-11-01", AutoStreak.day(at(2026, Calendar.NOVEMBER, 1, 0, 30)));
+    }
+
+    // #507: Random time each day.
+
+    @Test public void aRandomTimeStaysInsideTheWindowHoldsAllDayAndMovesTheNext() {
+        int from = 16 * 60;
+        int to = 20 * 60;
+        java.util.Set<Integer> times = new java.util.HashSet<>();
+        java.util.Set<Integer> steps = new java.util.HashSet<>();
+        Calendar day = Calendar.getInstance();
+        day.clear();
+        day.set(2026, Calendar.JANUARY, 1, 12, 0);
+        int previous = -1;
+        for (int i = 0; i < 60; i++) {
+            String name = AutoStreak.day(day.getTimeInMillis());
+            int minute = AutoStreak.randomMinute(name, from, to, 1234L);
+            assertTrue(name + " got " + minute, minute >= from && minute <= to);
+            assertEquals("the same all day", minute, AutoStreak.randomMinute(name, from, to, 1234L));
+            times.add(minute);
+            if (previous >= 0) steps.add(Math.floorMod(minute - previous, to - from + 1));
+            previous = minute;
+            day.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        assertTrue("only " + times.size() + " different times in 60 days", times.size() > 40);
+        // Not a fixed step through the window either, which friends would still notice.
+        assertTrue("only " + steps.size() + " different day-to-day steps", steps.size() > 40);
+    }
+
+    @Test public void twoPhonesWithTheSameWindowDontShareTheDaysTime() {
+        int same = 0;
+        for (long seed = 1; seed <= 30; seed++) {
+            if (AutoStreak.randomMinute("2026-11-24", 0, 8 * 60, seed)
+                    == AutoStreak.randomMinute("2026-11-24", 0, 8 * 60, seed * 7919)) same++;
+        }
+        assertTrue(same + " of 30 matched", same <= 2);
+    }
+
+    @Test public void aWindowThatDoesntEndLaterSendsAtWhenToSend() {
+        assertEquals(16 * 60, AutoStreak.randomMinute("2026-11-24", 16 * 60, 16 * 60, 7L));
+        assertEquals(16 * 60, AutoStreak.randomMinute("2026-11-24", 16 * 60, 9 * 60, 7L));
+    }
+
+    @Test public void withRandomTimeOffEveryDayGoesAtWhenToSend() {
+        Settings.AUTO_STREAK_MINUTE.save(16 * 60);
+        Settings.AUTO_STREAK_LATEST_MINUTE.save(20 * 60);
+        AutoStreak.Times times = AutoStreak.times();
+        assertEquals(16 * 60, times.minuteOn("2026-09-30"));
+        assertEquals(16 * 60, times.minuteOn("2026-10-01"));
+    }
+
+    @Test public void withRandomTimeOnTheAlarmGoesAtTheDaysTimeAndTomorrowGetsItsOwn() {
+        Settings.AUTO_STREAK_MINUTE.save(16 * 60);
+        Settings.AUTO_STREAK_RANDOM.save(true);
+        Settings.AUTO_STREAK_LATEST_MINUTE.save(20 * 60);
+        AutoStreak.Times times = AutoStreak.times();
+        int today = times.minuteOn("2026-09-30");
+        int tomorrow = times.minuteOn("2026-10-01");
+        assertTrue(today >= 16 * 60 && today <= 20 * 60);
+        assertTrue(tomorrow >= 16 * 60 && tomorrow <= 20 * 60);
+        long morning = at(2026, Calendar.SEPTEMBER, 30, 9, 0);
+        long todayAt = at(2026, Calendar.SEPTEMBER, 30, today / 60, today % 60);
+        AutoStreak.State state = active(morning - 1);
+        assertFalse(AutoStreak.isDue(state, morning, times));
+        assertEquals(todayAt, AutoStreak.nextAlarm(state, morning, times));
+        assertTrue(AutoStreak.isDue(state, todayAt, times));
+        state.sentDay = "2026-09-30";
+        assertFalse(AutoStreak.isDue(state, todayAt + 60_000, times));
+        assertEquals(at(2026, Calendar.OCTOBER, 1, tomorrow / 60, tomorrow % 60),
+                AutoStreak.nextAlarm(state, todayAt + 60_000, times));
+    }
+
+    @Test public void theReportNamesTheWindowAndTodaysTime() {
+        Settings.AUTO_STREAK.save(true);
+        Settings.AUTO_STREAK_MINUTE.save(16 * 60);
+        Settings.AUTO_STREAK_RANDOM.save(true);
+        Settings.AUTO_STREAK_LATEST_MINUTE.save(20 * 60);
+        int today = AutoStreak.times().minuteOn(AutoStreak.day(AutoStreak.now()));
+        String expected = String.format(java.util.Locale.US, "Random until: 20:00, today's time %02d:%02d",
+                today / 60, today % 60);
+        assertTrue(AutoStreak.Report.INSTANCE.lines().contains(expected));
     }
 
     @Test public void theHandleIsReadOutOfWhatWasTyped() {

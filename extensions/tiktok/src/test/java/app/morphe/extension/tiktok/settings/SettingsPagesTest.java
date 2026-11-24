@@ -2560,6 +2560,42 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         }
     }
 
+    /** #507: Latest time waits on two switches and names the one still off, the same way. */
+    @Test public void theLatestTimeRowNamesTheStreakSwitchThatIsActuallyOff() throws Exception {
+        boolean streak = SettingsStatus.autoStreakEnabled;
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            SettingsStatus.autoStreakEnabled = true;
+            Settings.AUTO_STREAK.save(true);
+            Settings.AUTO_STREAK_RANDOM.save(false);
+            TikTokPreferenceFragment page = attachSection(activity, "INBOX");
+            Preference latest = findPreference(page.getPreferenceScreen(), "Latest time");
+            assertNotNull("the Latest time row is not on the page", latest);
+            assertNotNull("the Random time row is not on the page",
+                    findPreference(page.getPreferenceScreen(), "Random time each day"));
+            assertFalse(latest.isEnabled());
+            String randomOff = String.valueOf(latest.getSummary());
+            assertTrue("the row named a switch that is already on: " + randomOff,
+                    randomOff.endsWith("Turn on Random time each day first."));
+
+            Settings.AUTO_STREAK_RANDOM.save(true);
+            Settings.AUTO_STREAK.save(false);
+            refreshAvailability(page);
+            String streakOff = String.valueOf(latest.getSummary());
+            assertTrue("with Random on, the streak switch is the one named: " + streakOff,
+                    streakOff.endsWith("Turn on Keep a streak going first."));
+
+            Settings.AUTO_STREAK.save(true);
+            refreshAvailability(page);
+            assertTrue("both on and the row is still greyed", latest.isEnabled());
+        } finally {
+            Settings.AUTO_STREAK.resetToDefault();
+            Settings.AUTO_STREAK_RANDOM.resetToDefault();
+            SettingsStatus.autoStreakEnabled = streak;
+        }
+    }
+
     /** A row waiting on a text field says what to put in it, not which switch to turn on. */
     @Test public void theYtdlnisRowsSayWhatToPutInTheField() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {

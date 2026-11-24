@@ -534,6 +534,29 @@ public class Settings extends BaseSettings {
     /** The time of day to send, in minutes after midnight. Noon leaves room for retries. */
     public static final IntegerSetting AUTO_STREAK_MINUTE = new IntegerSetting(
             "auto_streak_minute", 12 * 60, false, Setting.parent(AUTO_STREAK)).withRange(0, 24 * 60 - 1);
+    /**
+     * Sends at a different time each day, between {@link #AUTO_STREAK_MINUTE} and
+     * {@link #AUTO_STREAK_LATEST_MINUTE} (#507). Off by default.
+     */
+    public static final BooleanSetting AUTO_STREAK_RANDOM = new BooleanSetting(
+            "auto_streak_random", FALSE, false, Setting.parent(AUTO_STREAK));
+    /**
+     * The end of the random window, in minutes after midnight, on the same day as its start.
+     * Its row names the switch to turn on the way the store region row does: Random time each
+     * day while that's off, and Keep a streak going once it's on.
+     */
+    public static final IntegerSetting AUTO_STREAK_LATEST_MINUTE = new IntegerSetting(
+            "auto_streak_latest_minute", 20 * 60, false,
+            new Setting.Availability() {
+                @Override public boolean isAvailable() {
+                    return AUTO_STREAK.savedValue() && AUTO_STREAK_RANDOM.savedValue();
+                }
+
+                @Override public java.util.List<Setting<?>> getParentSettings() {
+                    return java.util.Collections.singletonList(
+                            AUTO_STREAK_RANDOM.savedValue() ? AUTO_STREAK : AUTO_STREAK_RANDOM);
+                }
+            }).withRange(0, 24 * 60 - 1);
     public static final StringSetting AUTO_STREAK_MESSAGE = new StringSetting(
             "auto_streak_message", "🔥", false, Setting.parent(AUTO_STREAK));
     /**

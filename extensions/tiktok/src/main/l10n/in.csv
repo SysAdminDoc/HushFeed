@@ -3046,3 +3046,7 @@ Keep your place in chats,Pertahankan posisi di obrolan
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,Obrolan yang sudah kamu gulir ke atas tetap di posisimu saat kembali dari video atau mengirim balasan. Mengirim pesan biasa atau mengetuk panah bawah tetap membawamu ke yang terbaru.
 Fill wide videos too,Penuhi juga dengan video lebar
 "With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.","Dengan sakelar di atas aktif, video lanskap dan persegi juga dipotong untuk menutupi layar, jadi hanya bagian tengahnya yang terlihat. Jika mati, video tetap utuh."
+Random time each day,Waktu acak setiap hari
+"Sends at a different time each day, somewhere between When to send and Latest time.","Mengirim pada waktu berbeda setiap hari, di antara Kapan dikirim dan Waktu paling lambat."
+Latest time,Waktu paling lambat
+"The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","Akhir rentang acak, pada hari yang sama dengan Kapan dikirim. Jika tidak lebih lambat, pesan dikirim pada waktu Kapan dikirim."

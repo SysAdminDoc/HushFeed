@@ -3044,3 +3044,7 @@ Keep your place in chats,保持聊天中的位置
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,在聊天中向上滚动后，从视频返回或发送回复时会停留在原处。发送普通消息或点按向下箭头仍会跳到最新消息.
 Fill wide videos too,宽视频也铺满
 "With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.",开启上面的开关后，横向和方形视频也会被裁剪以铺满屏幕，只显示中间部分。关闭时，它们保持完整.
+Random time each day,每天随机时间
+"Sends at a different time each day, somewhere between When to send and Latest time.",每天在不同时间发送，介于何时发送和最晚时间之间.
+Latest time,最晚时间
+"The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",随机时间段的结束时间，与何时发送在同一天。如果不晚于它，消息会在何时发送的时间发出.

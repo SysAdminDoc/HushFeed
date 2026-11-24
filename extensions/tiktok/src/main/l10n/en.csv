@@ -1313,6 +1313,7 @@ Last recording: 1 gate.,Last recording: 1 gate.
 Latency %1$s s,Latency %1$s s
 Later,Later
 Latest first on Following,Latest first on Following
+Latest time,Latest time
 Layout,Layout
 Layout not recorded. Try again from Diagnostics.,Layout not recorded. Try again from Diagnostics.
 Layout recorded. Export the report to send it.,Layout recorded. Export the report to send it.
@@ -1850,6 +1851,7 @@ QR code,QR code
 Quality,Quality
 "Quality, files, subtitles and hand-off","Quality, files, subtitles and hand-off"
 "Quality, speed and auto-advance","Quality, speed and auto-advance"
+Random time each day,Random time each day
 Read receipts hidden,Read receipts hidden
 Read receipts shown,Read receipts shown
 Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts won't be opened or unblocked.
@@ -2137,6 +2139,7 @@ Send links to another app,Send links to another app
 Sending feedback,Sending feedback
 Sending the message,Sending the message
 "Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Saves and short-link lookups from Hushfeed also connect directly, after their own address checks. Other apps aren't affected.","Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Saves and short-link lookups from Hushfeed also connect directly, after their own address checks. Other apps aren't affected."
+"Sends at a different time each day, somewhere between When to send and Latest time.","Sends at a different time each day, somewhere between When to send and Latest time."
 "Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.","Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok."
 Sends today's message right away. The daily one then waits for tomorrow.,Sends today's message right away. The daily one then waits for tomorrow.
 Sent to %1$d/%2$d chats. The rest still need a message.,Sent to %1$d/%2$d chats. The rest still need a message.
@@ -2574,6 +2577,7 @@ The comment button also opens a video's comments with its caption at the top. Th
 The cover couldn't be saved. Try again.,The cover couldn't be saved. Try again.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
+"The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send."
 The export wasn't saved. Try again.,The export wasn't saved. Try again.
 The feed capture is still being saved,The feed capture is still being saved
 The feed doesn't end. This is a fine time to leave it.,The feed doesn't end. This is a fine time to leave it.

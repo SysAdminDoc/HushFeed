@@ -285,11 +285,11 @@ public final class L10n {
      * Hushfeed language's choices (#431): TikTok's language, then English and every language
      * with a table, each listed in its own name.
      */
-    public static final String[] PICK_VALUES = {"tiktok", "en", "ar", "az", "de", "es", "in", "it",
+    public static final String[] PICK_VALUES = {"tiktok", "en", "ar", "az", "bg", "de", "es", "in", "it",
             "pt-rbr", "ru", "th", "tr", "vi", "zh-hans"};
     public static final String[] PICK_LABELS = {"Match TikTok", "English", "العربية", "Azərbaycan dili",
-            "Deutsch", "Español", "Bahasa Indonesia", "Italiano", "Português (Brasil)", "Русский", "ไทย",
-            "Türkçe", "Tiếng Việt", "简体中文"};
+            "Български", "Deutsch", "Español", "Bahasa Indonesia", "Italiano", "Português (Brasil)", "Русский",
+            "ไทย", "Türkçe", "Tiếng Việt", "简体中文"};
 
     /** Hushfeed language's saved key, shared with {@link Settings#HUSHFEED_LANGUAGE}. */
     public static final String PICK_KEY = "hushfeed_language";

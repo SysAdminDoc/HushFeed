@@ -466,9 +466,11 @@ public class SettingsL10nTest {
                             + "' where the key ends with '" + terminator(key) + "' in: " + key);
                 }
 
-                // German opens low and closes high. Everything else here uses the English pair.
-                char open = "de".equals(language) ? '\u201e' : '\u201c';
-                char close = "de".equals(language) ? '\u201c' : '\u201d';
+                // German and Bulgarian open low and close high. Everything else here uses the
+                // English pair.
+                boolean lowOpen = "de".equals(language) || "bg".equals(language);
+                char open = lowOpen ? '\u201e' : '\u201c';
+                char close = lowOpen ? '\u201c' : '\u201d';
                 long opened = value.chars().filter(c -> c == open).count();
                 long closed = value.chars().filter(c -> c == close).count();
                 if (opened != closed) {

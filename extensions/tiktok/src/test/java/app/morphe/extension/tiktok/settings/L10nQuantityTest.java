@@ -33,7 +33,7 @@ public class L10nQuantityTest {
     @Test @Config(sdk = {23, 24, 28})
     public void shippedIntegerRulesSelectEveryExpectedCategory() {
         long[] counts = {0, 1, 2, 5, 11, 21, 22, 101};
-        for (String language : new String[]{"en", "az", "de", "es", "it", "tr", "pt-BR", "ru", "ar", "id", "in"}) {
+        for (String language : new String[]{"en", "az", "bg", "de", "es", "it", "tr", "pt-BR", "ru", "ar", "id", "in"}) {
             String[] expected = language.equals("ru")
                     ? new String[]{"many", "one", "few", "many", "many", "one", "few", "one"}
                     : language.equals("ar")

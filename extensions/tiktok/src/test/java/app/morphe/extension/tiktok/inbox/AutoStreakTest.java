@@ -29,7 +29,9 @@ import com.ss.android.ugc.aweme.im.sdk.notification.PushQuickActionReceiver;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,7 +48,6 @@ import org.robolectric.util.ReflectionHelpers;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 34)
 public class AutoStreakTest {
-    private static final int NOON = 12 * 60;
     private TimeZone zone;
     private Context context;
 
@@ -60,6 +61,9 @@ public class AutoStreakTest {
         Settings.AUTO_STREAK.resetToDefault();
         Settings.AUTO_STREAK_RECIPIENT.resetToDefault();
         Settings.AUTO_STREAK_MINUTE.resetToDefault();
+        Settings.AUTO_STREAK_RANDOM_WINDOW.resetToDefault();
+        Settings.AUTO_STREAK_WINDOW_START.resetToDefault();
+        Settings.AUTO_STREAK_WINDOW_END.resetToDefault();
         Settings.AUTO_STREAK_MESSAGE.resetToDefault();
         Settings.AUTO_STREAK_STATE.resetToDefault();
         PushQuickActionReceiver.RECEIVED.clear();
@@ -85,6 +89,9 @@ public class AutoStreakTest {
         Settings.AUTO_STREAK.resetToDefault();
         Settings.AUTO_STREAK_RECIPIENT.resetToDefault();
         Settings.AUTO_STREAK_MINUTE.resetToDefault();
+        Settings.AUTO_STREAK_RANDOM_WINDOW.resetToDefault();
+        Settings.AUTO_STREAK_WINDOW_START.resetToDefault();
+        Settings.AUTO_STREAK_WINDOW_END.resetToDefault();
         Settings.AUTO_STREAK_MESSAGE.resetToDefault();
         Settings.AUTO_STREAK_STATE.resetToDefault();
         ReflectionHelpers.setStaticField(Setting.class, "pausedForProcess", false);
@@ -111,6 +118,93 @@ public class AutoStreakTest {
         AutoStreak.State state = new AutoStreak.State();
         state.activeSince = since;
         return state;
+    }
+
+    private static void randomWindow(int start, int end) {
+        Settings.AUTO_STREAK_RANDOM_WINDOW.save(true);
+        Settings.AUTO_STREAK_WINDOW_START.save(start);
+        Settings.AUTO_STREAK_WINDOW_END.save(end);
+    }
+
+    @Test public void theRandomTimeStaysTheSameForTheDayAcrossRestarts() {
+        randomWindow(16 * 60, 20 * 60);
+        AutoStreak.State state = active(at(2026, Calendar.SEPTEMBER, 30, 9, 0));
+        Set<Long> delays = new HashSet<>();
+        for (int date = 1; date <= 14; date++) {
+            long morning = at(2026, Calendar.OCTOBER, date, 9, 0);
+            long picked = AutoStreak.nextAlarm(state, morning);
+            assertTrue(picked >= at(2026, Calendar.OCTOBER, date, 16, 0));
+            assertTrue(picked <= at(2026, Calendar.OCTOBER, date, 20, 0));
+            assertEquals(picked, AutoStreak.nextAlarm(AutoStreak.State.parse(state.format()), morning + 60_000));
+            assertFalse(AutoStreak.isDue(state, picked - 1));
+            assertTrue(AutoStreak.isDue(state, picked));
+            delays.add(picked - morning);
+        }
+        assertTrue(delays.size() > 1);
+    }
+
+    @Test public void automaticCatchUpWaitsForTheNextDayAfterTheWindowCloses() throws Exception {
+        randomWindow(0, 8 * 60);
+        Settings.AUTO_STREAK.save(true);
+        Settings.AUTO_STREAK_RECIPIENT.save("friend.one");
+        contacts("200", "100", "friend.one", "First");
+
+        long afterWindow = at(2026, Calendar.SEPTEMBER, 30, 8, 1);
+        AutoStreak.nowForTests = afterWindow;
+        assertFalse(AutoStreak.isDue(AutoStreak.state(), afterWindow));
+        assertEquals(AutoStreak.Result.NONE, attemptOnWorker(true, false));
+        assertTrue(receivedChats().isEmpty());
+        long next = AutoStreak.nextAlarm(AutoStreak.state(), afterWindow);
+        assertTrue(next >= at(2026, Calendar.OCTOBER, 1, 0, 0));
+        assertTrue(next <= at(2026, Calendar.OCTOBER, 1, 8, 0));
+    }
+
+    @Test public void anOvernightWindowKeepsItsEarlyAndLateHoursOnEachCalendarDay() {
+        randomWindow(22 * 60, 2 * 60);
+        StreakSchedule schedule = new StreakSchedule(at(2026, Calendar.SEPTEMBER, 30, 9, 0));
+        boolean early = false;
+        boolean late = false;
+        for (int date = 1; date <= 14; date++) {
+            long day = at(2026, Calendar.OCTOBER, date, 12, 0);
+            long picked = schedule.timeOn(day, 0);
+            assertEquals(AutoStreak.day(day), AutoStreak.day(picked));
+            boolean beforeEnd = picked <= at(2026, Calendar.OCTOBER, date, 2, 0);
+            boolean afterStart = picked >= at(2026, Calendar.OCTOBER, date, 22, 0);
+            assertTrue(beforeEnd || afterStart);
+            early |= beforeEnd;
+            late |= afterStart;
+        }
+        assertTrue(early && late);
+        assertEquals(at(2026, Calendar.OCTOBER, 1, 22, 0),
+                schedule.retryTime(at(2026, Calendar.OCTOBER, 1, 1, 55)));
+        assertEquals(StreakSchedule.NO_TIME, schedule.retryTime(at(2026, Calendar.OCTOBER, 1, 23, 55)));
+    }
+
+    @Test public void aDaylightSavingGapCanMakeTheWholeWindowUnavailable() {
+        randomWindow(2 * 60 + 15, 2 * 60 + 30);
+        AutoStreak.State state = active(at(2026, Calendar.MARCH, 7, 12, 0));
+        long gapDay = at(2026, Calendar.MARCH, 8, 0, 0);
+        assertEquals(StreakSchedule.NO_TIME, new StreakSchedule(state.activeSince).timeOn(gapDay, 0));
+        assertFalse(AutoStreak.isDue(state, at(2026, Calendar.MARCH, 8, 3, 30)));
+        assertEquals("2026-03-09", AutoStreak.day(AutoStreak.nextAlarm(state, state.activeSince)));
+    }
+
+    @Test public void theRandomScheduleUsesTheSameDailyConversationReservationsAsFixedTime() throws Exception {
+        randomWindow(16 * 60, 20 * 60);
+        Settings.AUTO_STREAK.save(true);
+        Settings.AUTO_STREAK_RECIPIENT.save("friend.one, friend.two");
+        contacts("200", "100", "friend.one", "First");
+        contacts("200", "300", "friend.two", "Second");
+
+        AutoStreak.nowForTests = AutoStreak.nextAlarm(AutoStreak.state(), AutoStreak.now());
+        assertEquals(AutoStreak.Result.DISPATCHED, attemptOnWorker(true, false));
+        assertEquals(List.of("0:1:100:200", "0:1:200:300"), receivedChats());
+
+        resetProcessState();
+        Settings.AUTO_STREAK_RANDOM_WINDOW.save(false);
+        assertFalse(AutoStreak.isDue(AutoStreak.state(), AutoStreak.now()));
+        assertEquals(AutoStreak.Result.NONE, attemptOnWorker(false, true));
+        assertEquals(List.of("0:1:100:200", "0:1:200:300"), receivedChats());
     }
 
     @Test public void theStateReadsBackWhatWasWritten() {
@@ -146,31 +240,31 @@ public class AutoStreakTest {
     @Test public void beforeTheTimeTheAlarmIsSetForToday() {
         long morning = at(2026, Calendar.SEPTEMBER, 30, 9, 0);
         AutoStreak.State state = active(morning - 1);
-        assertFalse(AutoStreak.isDue(state, morning, NOON));
-        assertEquals(at(2026, Calendar.SEPTEMBER, 30, 12, 0), AutoStreak.nextAlarm(state, morning, NOON));
+        assertFalse(AutoStreak.isDue(state, morning));
+        assertEquals(at(2026, Calendar.SEPTEMBER, 30, 12, 0), AutoStreak.nextAlarm(state, morning));
     }
 
     @Test public void aTimeAlreadyPastWhenTurnedOnWaitsForTomorrow() {
         long afternoon = at(2026, Calendar.SEPTEMBER, 30, 15, 0);
         AutoStreak.State state = active(afternoon);
-        assertFalse(AutoStreak.isDue(state, afternoon + 60_000, NOON));
-        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, afternoon, NOON));
+        assertFalse(AutoStreak.isDue(state, afternoon + 60_000));
+        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, afternoon));
     }
 
     @Test public void aLateMessageRetriesUntilTheDaysTriesRunOut() {
         long late = at(2026, Calendar.SEPTEMBER, 30, 12, 20);
         AutoStreak.State state = active(at(2026, Calendar.SEPTEMBER, 29, 8, 0));
-        assertTrue(AutoStreak.isDue(state, late, NOON));
+        assertTrue(AutoStreak.isDue(state, late));
         state.tryDay = "2026-09-30";
         for (int tries = 0; tries < AutoStreak.TRIES_PER_DAY; tries++) {
             state.tries = tries;
-            assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late, NOON));
+            assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late));
         }
         state.tries = AutoStreak.TRIES_PER_DAY;
-        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, late, NOON));
+        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, late));
         // Yesterday's tries are not today's.
         state.tryDay = "2026-09-29";
-        assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late, NOON));
+        assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late));
     }
 
     @Test public void runsThatNeverReachARecipientStillEndTheDaysRetries() {
@@ -180,19 +274,19 @@ public class AutoStreakTest {
         AutoStreak.State state = active(at(2026, Calendar.SEPTEMBER, 29, 8, 0));
         state.tryDay = "2026-09-30";
         state.tries = 2 * AutoStreak.TRIES_PER_DAY - 1;
-        assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late, NOON));
+        assertEquals(late + AutoStreak.RETRY_MILLIS, AutoStreak.nextAlarm(state, late));
         state.tries = 2 * AutoStreak.TRIES_PER_DAY;
-        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, late, NOON));
+        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, late));
     }
 
     @Test public void aDayWhoseMessageWentWaitsForTomorrow() {
         long evening = at(2026, Calendar.SEPTEMBER, 30, 20, 0);
         AutoStreak.State state = active(0L);
         state.sentDay = "2026-09-30";
-        assertFalse(AutoStreak.isDue(state, evening, NOON));
-        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, evening, NOON));
+        assertFalse(AutoStreak.isDue(state, evening));
+        assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0), AutoStreak.nextAlarm(state, evening));
         // The next day it is due again.
-        assertTrue(AutoStreak.isDue(state, at(2026, Calendar.OCTOBER, 1, 12, 0), NOON));
+        assertTrue(AutoStreak.isDue(state, at(2026, Calendar.OCTOBER, 1, 12, 0)));
     }
 
     @Test public void theDayFollowsTheClockAcrossADaylightSavingChange() {
@@ -200,7 +294,7 @@ public class AutoStreakTest {
         long saturday = at(2026, Calendar.OCTOBER, 31, 13, 0);
         AutoStreak.State state = active(0L);
         state.sentDay = "2026-10-31";
-        assertEquals(at(2026, Calendar.NOVEMBER, 1, 12, 0), AutoStreak.nextAlarm(state, saturday, NOON));
+        assertEquals(at(2026, Calendar.NOVEMBER, 1, 12, 0), AutoStreak.nextAlarm(state, saturday));
         assertEquals("2026-11-01", AutoStreak.day(at(2026, Calendar.NOVEMBER, 1, 0, 30)));
     }
 
@@ -268,13 +362,13 @@ public class AutoStreakTest {
         Utils.awaitBackgroundTasksForTests();
         AutoStreak.State after = AutoStreak.state();
         assertEquals(AutoStreak.now(), after.recipient("someone").activeSince);
-        assertTrue(AutoStreak.isDue(after, at(2026, Calendar.SEPTEMBER, 30, 12, 0), NOON));
+        assertTrue(AutoStreak.isDue(after, at(2026, Calendar.SEPTEMBER, 30, 12, 0)));
 
         // Going back to the person who already had today's message doesn't send another.
         Settings.AUTO_STREAK_RECIPIENT.save("matt");
         AutoStreak.recipientChanged(context, "@someone");
         Utils.awaitBackgroundTasksForTests();
-        assertFalse(AutoStreak.isDue(AutoStreak.state(), at(2026, Calendar.SEPTEMBER, 30, 12, 0), NOON));
+        assertFalse(AutoStreak.isDue(AutoStreak.state(), at(2026, Calendar.SEPTEMBER, 30, 12, 0)));
     }
 
     @Test public void everyoneMessagedTodayStaysOnTheDaysList() {
@@ -354,7 +448,7 @@ public class AutoStreakTest {
         assertEquals(AutoStreak.Result.DISPATCHED, state.result);
         assertEquals("200", state.owner);
         assertEquals("friend.one", state.sentTo);
-        assertFalse(AutoStreak.isDue(state, at(2026, Calendar.SEPTEMBER, 30, 13, 0), NOON));
+        assertFalse(AutoStreak.isDue(state, at(2026, Calendar.SEPTEMBER, 30, 13, 0)));
     }
 
     @Test public void aGroupIsMessagedByTheNameTheInboxShowsWithEmojiIntact() throws Exception {
@@ -622,7 +716,7 @@ public class AutoStreakTest {
         assertEquals(AutoStreak.TRIES_PER_DAY, AutoStreak.state().recipient("friend.one").triesOn("2026-09-30"));
         assertEquals(1, AutoStreak.state().recipient("friend.two").triesOn("2026-09-30"));
         assertEquals(at(2026, Calendar.OCTOBER, 1, 12, 0),
-                AutoStreak.nextAlarm(AutoStreak.state(), AutoStreak.now(), NOON));
+                AutoStreak.nextAlarm(AutoStreak.state(), AutoStreak.now()));
         assertTrue(AutoStreak.statusLine(context).contains("Next message: tomorrow"));
     }
 
@@ -644,7 +738,7 @@ public class AutoStreakTest {
         assertEquals(configured, AutoStreak.state().recipient("friend.one").activeSince);
         assertEquals(AutoStreak.now(), AutoStreak.state().recipient("friend.two").activeSince);
         assertEquals(AutoStreak.now() + AutoStreak.RETRY_MILLIS,
-                AutoStreak.nextAlarm(AutoStreak.state(), AutoStreak.now(), NOON));
+                AutoStreak.nextAlarm(AutoStreak.state(), AutoStreak.now()));
     }
 
     @Test public void anAccountChangeWhileTheHandoffIsQueuedCancelsNativeInvocation() throws Exception {

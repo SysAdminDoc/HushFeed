@@ -1627,7 +1627,6 @@ Streak	Seri
 Keep a streak going	Bir seriyi sürdür
 Who to message	Kime yazılsın
 When to send	Ne zaman gönderilsin
-The time of day the message goes out.	Mesajın gönderileceği saat.
 Message	Mesaj
 What gets sent each day.	Her gün gönderilecek olan.
 Send it now	Şimdi gönder
@@ -3212,3 +3211,11 @@ A chat you've scrolled up in stays where you were when you come back from a vide
 # context: #505 Fill wide videos too, a Playback switch right under Fill the screen with the video; it crops landscape and square videos to cover a phone held upright, which Fill alone leaves whole
 Fill wide videos too	Geniş videolar da ekranı doldursun
 With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.	Yukarıdaki anahtar açıkken yatay ve kare videolar da ekranı kaplayacak şekilde kırpılır, bu yüzden yalnızca ortaları görünür. Kapalıyken tam görünürler.
+The fixed time to use when the random window is off.	Rastgele zaman aralığı kapalıyken kullanılan sabit saat.
+Random time window	Rastgele zaman aralığı
+Picks a time each day between the start and end, including windows that cross midnight.	Aralık gece yarısını geçse bile her gün başlangıç ile bitiş arasında bir saat seçer.
+Window start	Aralığın başlangıcı
+The first minute of the window.	Zaman aralığının ilk dakikası.
+Window end	Aralığın bitişi
+The last minute of the window.	Zaman aralığının son dakikası.
+Next message: %1$s at %2$s.	Sonraki mesaj: %1$s, saat %2$s.

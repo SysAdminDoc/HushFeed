@@ -10,6 +10,7 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.tiktok.inbox.AutoStreak;
 import app.morphe.extension.tiktok.inbox.KeepUnsent;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -418,20 +419,27 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         });
         addPreference(who);
 
-        ClockTimePreference when = new ClockTimePreference(
+        Runnable reschedule = () -> {
+            AutoStreak.settingsChanged(context, true);
+            refresh.run();
+        };
+        TogglePreference random = new TogglePreference(
                 context,
-                "When to send",
-                "The time of day the message goes out.",
-                Settings.AUTO_STREAK_MINUTE
+                "Random time window",
+                "Picks a time each day between the start and end, including windows that cross midnight.",
+                Settings.AUTO_STREAK_RANDOM_WINDOW
         );
-        when.setOnPreferenceChangeListener((preference, value) -> {
-            Utils.runOnMainThread(() -> {
-                AutoStreak.settingsChanged(context, true);
-                refresh.run();
-            });
+        random.setOnPreferenceChangeListener((preference, value) -> {
+            Utils.runOnMainThread(reschedule);
             return true;
         });
-        addPreference(when);
+        addStreakTime(context, "When to send", "The fixed time to use when the random window is off.",
+                Settings.AUTO_STREAK_MINUTE, reschedule);
+        addPreference(random);
+        addStreakTime(context, "Window start", "The first minute of the window.",
+                Settings.AUTO_STREAK_WINDOW_START, reschedule);
+        addStreakTime(context, "Window end", "The last minute of the window.",
+                Settings.AUTO_STREAK_WINDOW_END, reschedule);
 
         addPreference(new InputTextPreference(
                 context,
@@ -440,6 +448,18 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 Settings.AUTO_STREAK_MESSAGE
         ));
         addPreference(new SendStreakNowPreference(context, refresh));
+    }
+
+    private void addStreakTime(Context context, String title, String summary, IntegerSetting setting,
+                               Runnable reschedule) {
+        ClockTimePreference row = new ClockTimePreference(context, title, summary, setting);
+        row.setOnPreferenceChangeListener((preference, value) -> {
+            boolean fixedTimeInactive = setting == Settings.AUTO_STREAK_MINUTE
+                    && Settings.AUTO_STREAK_RANDOM_WINDOW.savedValue();
+            if (!fixedTimeInactive && !row.getValue().equals(value)) Utils.runOnMainThread(reschedule);
+            return true;
+        });
+        addPreference(row);
     }
 
     private void addKeepUnsentRows(Context context) {

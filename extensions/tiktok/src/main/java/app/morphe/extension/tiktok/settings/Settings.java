@@ -523,9 +523,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_READ_RECEIPTS =
             new BooleanSetting("hide_read_receipts", FALSE);
     /**
-     * Dispatches one message per selected chat a day at {@link #AUTO_STREAK_MINUTE},
-     * so a streak with them keeps going on a day nobody opens the app. Off by default. See
-     * AutoStreak.
+     * Dispatches one message per selected chat a day so a streak with them keeps going on a
+     * day nobody opens the app. Off by default. See AutoStreak.
      */
     public static final BooleanSetting AUTO_STREAK = new BooleanSetting("auto_streak", FALSE);
     /** Handles or profile links, separated by commas or lines. */
@@ -534,6 +533,14 @@ public class Settings extends BaseSettings {
     /** The time of day to send, in minutes after midnight. Noon leaves room for retries. */
     public static final IntegerSetting AUTO_STREAK_MINUTE = new IntegerSetting(
             "auto_streak_minute", 12 * 60, false, Setting.parent(AUTO_STREAK)).withRange(0, 24 * 60 - 1);
+    public static final BooleanSetting AUTO_STREAK_RANDOM_WINDOW = new BooleanSetting(
+            "auto_streak_random_window", FALSE, false, Setting.parent(AUTO_STREAK));
+    public static final IntegerSetting AUTO_STREAK_WINDOW_START = new IntegerSetting(
+            "auto_streak_window_start", 16 * 60, false, Setting.parentsAll(AUTO_STREAK, AUTO_STREAK_RANDOM_WINDOW))
+            .withRange(0, 24 * 60 - 1);
+    public static final IntegerSetting AUTO_STREAK_WINDOW_END = new IntegerSetting(
+            "auto_streak_window_end", 20 * 60, false, Setting.parentsAll(AUTO_STREAK, AUTO_STREAK_RANDOM_WINDOW))
+            .withRange(0, 24 * 60 - 1);
     public static final StringSetting AUTO_STREAK_MESSAGE = new StringSetting(
             "auto_streak_message", "🔥", false, Setting.parent(AUTO_STREAK));
     /**

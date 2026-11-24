@@ -8,7 +8,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.text.format.DateFormat;
 
-import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import app.morphe.extension.shared.settings.IntegerSetting;
 
@@ -26,10 +27,9 @@ public class ClockTimePreference extends NumberInputPreference {
     /** In the phone's own format: "8:30 PM" or "20:30". */
     @Override
     protected String displayValue(int value) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, value / 60);
-        calendar.set(Calendar.MINUTE, value % 60);
-        return DateFormat.getTimeFormat(getContext()).format(calendar.getTime());
+        java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return format.format(new Date(value * 60_000L));
     }
 
     /** The picker only offers times of day, so "12:00 AM to 11:59 PM" told the reader nothing. */

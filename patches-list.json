@@ -7383,6 +7383,33 @@
           "values": null
         },
         {
+          "key": "auto_streak_random_window",
+          "title": "Default: auto streak random window",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "auto_streak_window_start",
+          "title": "Default: auto streak window start",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 960,
+          "values": null
+        },
+        {
+          "key": "auto_streak_window_end",
+          "title": "Default: auto streak window end",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 1200,
+          "values": null
+        },
+        {
           "key": "auto_streak_message",
           "title": "Default: auto streak message",
           "description": null,

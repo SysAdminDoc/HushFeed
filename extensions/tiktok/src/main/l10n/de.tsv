@@ -1630,7 +1630,6 @@ Streak	Serie
 Keep a streak going	Eine Serie am Laufen halten
 Who to message	Wem schreiben
 When to send	Wann senden
-The time of day the message goes out.	Die Uhrzeit, zu der die Nachricht rausgeht.
 Message	Nachricht
 What gets sent each day.	Was jeden Tag geschickt wird.
 Send it now	Jetzt senden
@@ -3215,3 +3214,11 @@ A chat you've scrolled up in stays where you were when you come back from a vide
 # context: #505 Fill wide videos too, a Playback switch right under Fill the screen with the video; it crops landscape and square videos to cover a phone held upright, which Fill alone leaves whole
 Fill wide videos too	Auch breite Videos füllen
 With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.	Ist der Schalter darüber an, werden auch Quer- und quadratische Videos zugeschnitten, bis sie den Bildschirm füllen, sodass nur ihre Mitte zu sehen ist. Aus bleiben sie ganz.
+The fixed time to use when the random window is off.	Die feste Uhrzeit, wenn das zufällige Zeitfenster ausgeschaltet ist.
+Random time window	Zufälliges Zeitfenster
+Picks a time each day between the start and end, including windows that cross midnight.	Wählt jeden Tag eine Uhrzeit zwischen Anfang und Ende, auch bei Zeitfenstern über Mitternacht.
+Window start	Beginn des Zeitfensters
+The first minute of the window.	Die erste Minute des Zeitfensters.
+Window end	Ende des Zeitfensters
+The last minute of the window.	Die letzte Minute des Zeitfensters.
+Next message: %1$s at %2$s.	Nächste Nachricht: am %1$s um %2$s.

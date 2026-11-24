@@ -42,17 +42,17 @@ import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Keeps message streaks going: one message per selected chat every day at a set time.
+ * Keeps message streaks going with one message per selected chat each day.
  *
  * <p>An alarm wakes {@link AutoStreakReceiver}, which the patch adds to the manifest switched
  * off and which is only switched on while this is. The receiver starts TikTok's messaging when
  * the process was not running and hands the message to TikTok's notification quick reply, the
  * same path a reply typed into a notification takes (see {@link StreakMessenger}). Opening
- * TikTok sends a message the alarm missed, and puts the alarm back after a reboot, an update or
- * a force stop that cleared it.
+ * TikTok can send a missed message while the schedule allows it and puts the alarm back after a
+ * reboot, an update or a force stop that cleared it.
  *
- * <p>Nothing goes out because a setting changed. Turning the switch on, or moving the time, after
- * today's time has passed makes tomorrow the first day; Send it now is there for today.
+ * <p>Changing the schedule after today's send time puts the first automatic send tomorrow.
+ * The Send it now row can still send today's message.
  */
 public final class AutoStreak {
     static final String ACTION_SEND = "app.morphe.extension.tiktok.inbox.AUTO_STREAK";
@@ -284,36 +284,25 @@ public final class AutoStreak {
                 calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    /** {@code minute} after midnight on the day {@code now} falls on, {@code days} later. */
-    static long at(long now, int minute, int days) {
-        Calendar calendar = Calendar.getInstance(RegionSpoof.phoneTimeZone());
-        calendar.setTimeInMillis(now);
-        calendar.add(Calendar.DAY_OF_YEAR, days);
-        calendar.set(Calendar.HOUR_OF_DAY, minute / 60);
-        calendar.set(Calendar.MINUTE, minute % 60);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTimeInMillis();
-    }
-
     /** Whether today's message still has to go and its time has come. */
-    static boolean isDue(State state, long now, int minute) {
-        long today = at(now, minute, 0);
-        return now >= today - EARLY_MILLIS && counts(state, now, today);
+    static boolean isDue(State state, long now) {
+        StreakSchedule schedule = new StreakSchedule(state.activeSince);
+        long time = schedule.timeOn(now, 0);
+        return schedule.isDue(now, time) && counts(state, day(now), time);
     }
 
     /**
      * Whether today's time is one this setup covers and the person entered now hasn't had
      * today's message.
      */
-    private static boolean counts(State state, long now, long today) {
-        if (today < state.activeSince) return false;
+    private static boolean counts(State state, String day, long time) {
+        if (time < state.activeSince) return false;
         List<String> handles = recipients();
-        if (handles.isEmpty()) return !state.sentOn(day(now), "");
+        if (handles.isEmpty()) return !state.sentOn(day, "");
         for (String handle : handles) {
             RecipientState record = state.recipient(handle);
-            if (!wasDispatched(state, day(now), handle)
-                    && (record == null || (today >= record.activeSince && !day(now).equals(record.dispatchDay)))) {
+            if (!wasDispatched(state, day, handle)
+                    && (record == null || (time >= record.activeSince && !day.equals(record.dispatchDay)))) {
                 return true;
             }
         }
@@ -336,24 +325,36 @@ public final class AutoStreak {
      * When the alarm should next go off: today's time while it is ahead, a retry while today's
      * message is late and tries are left, and otherwise tomorrow's time.
      */
-    static long nextAlarm(State state, long now, int minute) {
-        long today = at(now, minute, 0);
-        if (counts(state, now, today)) {
-            if (now < today - EARLY_MILLIS) return today;
-            List<String> handles = recipients();
-            int runs = state.triesOn(day(now));
-            if (handles.isEmpty() && runs < TRIES_PER_DAY) return now + RETRY_MILLIS;
-            // A run that runs out of time before its first recipient counts no recipient's try,
-            // so the day's runs are capped too. That cap still leaves each recipient its own tries.
-            if (runs >= TRIES_PER_DAY * handles.size()) return at(now, minute, 1);
-            for (String handle : handles) {
-                RecipientState record = state.recipient(handle);
-                if (!wasDispatched(state, day(now), handle) && (record == null
-                        || (!day(now).equals(record.dispatchDay) && today >= record.activeSince
-                        && record.triesOn(day(now)) < TRIES_PER_DAY))) return now + RETRY_MILLIS;
+    static long nextAlarm(State state, long now) {
+        return nextAlarm(state, now, new StreakSchedule(state.activeSince));
+    }
+
+    private static long nextAlarm(State state, long now, StreakSchedule schedule) {
+        String today = day(now);
+        long time = schedule.timeOn(now, 0);
+        if (time != StreakSchedule.NO_TIME && counts(state, today, time)) {
+            if (now < schedule.earliest(time)) return time;
+            if (canRetry(state, today, time)) {
+                long retry = schedule.retryTime(now);
+                if (retry != StreakSchedule.NO_TIME) return retry;
             }
         }
-        return at(now, minute, 1);
+        return schedule.nextDay(now);
+    }
+
+    private static boolean canRetry(State state, String today, long time) {
+        List<String> handles = recipients();
+        int runs = state.triesOn(today);
+        if (handles.isEmpty()) return runs < TRIES_PER_DAY;
+        // A run that leaves every recipient unvisited counts only against the day's runs.
+        if (runs >= TRIES_PER_DAY * handles.size()) return false;
+        for (String handle : handles) {
+            RecipientState record = state.recipient(handle);
+            if (!wasDispatched(state, today, handle) && (record == null
+                    || (!today.equals(record.dispatchDay) && time >= record.activeSince
+                    && record.triesOn(today) < TRIES_PER_DAY))) return true;
+        }
+        return false;
     }
 
     // ---------------------------------------------------------------------------------------
@@ -370,8 +371,7 @@ public final class AutoStreak {
         onSendThread(() -> {
             try {
                 reconcile(context);
-                if (Settings.AUTO_STREAK.get()
-                        && isDue(state(), now(), Settings.AUTO_STREAK_MINUTE.get())) {
+                if (Settings.AUTO_STREAK.get() && isDue(state(), now())) {
                     run(context, OPEN_BUDGET_MILLIS, false);
                 }
             } catch (Exception ex) {
@@ -390,7 +390,7 @@ public final class AutoStreak {
                     reconcile(app);
                     return;
                 }
-                if (isDue(state(), now(), Settings.AUTO_STREAK_MINUTE.get())) {
+                if (isDue(state(), now())) {
                     run(app, ALARM_BUDGET_MILLIS, true);
                 } else {
                     reconcile(app);
@@ -404,8 +404,8 @@ public final class AutoStreak {
     }
 
     /**
-     * From the settings rows, once a change has been saved. {@code fresh} is true when the
-     * switch went on or the time moved, which makes a time already past today wait for tomorrow.
+     * From the settings rows, once a change has been saved. {@code fresh} starts the current
+     * schedule from this moment when the switch goes on or the schedule changes.
      */
     public static void settingsChanged(Context context, boolean fresh) {
         final Context app = context.getApplicationContext();
@@ -495,7 +495,7 @@ public final class AutoStreak {
     }
 
     /** Arms or clears the alarm and the receiver to match the switch. */
-    static void reconcile(Context context) {
+    static synchronized void reconcile(Context context) {
         boolean on = Settings.AUTO_STREAK.get();
         setReceiverEnabled(context, on);
         AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -504,16 +504,13 @@ public final class AutoStreak {
             alarms.cancel(alarmIntent(context));
             return;
         }
-        State state;
-        synchronized (AutoStreak.class) {
-            state = state();
-            if (state.activeSince == 0) {
-                // Turned on by a restore rather than by the switch: the same as turning it on now.
-                state.activeSince = now();
-                save(state);
-            }
+        State state = state();
+        if (state.activeSince == 0) {
+            // Turned on by a restore rather than by the switch: the same as turning it on now.
+            state.activeSince = now();
+            save(state);
         }
-        long next = nextAlarm(state, now(), Settings.AUTO_STREAK_MINUTE.get());
+        long next = nextAlarm(state, now());
         schedule(alarms, context, next);
         Logger.printInfo(() -> "Auto streak: next alarm " + new Date(next));
     }
@@ -597,8 +594,7 @@ public final class AutoStreak {
                 State latest = state();
                 RecipientState record = latest.record(self, handle);
                 if (wasDispatched(latest, today, handle) || today.equals(record.dispatchDay)
-                        || (!manual && at(now(), Settings.AUTO_STREAK_MINUTE.get(), 0)
-                        < Math.max(latest.activeSince, record.activeSince))
+                        || (!manual && !new StreakSchedule(latest.activeSince).allowsDispatch(now(), record.activeSince))
                         || (fromAlarm && record.triesOn(today) >= TRIES_PER_DAY)) continue;
                 if (SystemClock.elapsedRealtime() + StreakMessenger.settleMillis >= deadline) {
                     failure = Result.NOT_READY;
@@ -686,8 +682,11 @@ public final class AutoStreak {
         if (!self.equals(current) || !self.equals(state.owner)) throw new Cancelled(Result.OTHER_ACCOUNT);
         if (SystemClock.elapsedRealtime() >= deadline) throw new Cancelled(Result.NOT_READY);
         RecipientState record = state.record(handle);
-        if (!today.equals(day(now())) || (!manual && at(now(), Settings.AUTO_STREAK_MINUTE.get(), 0)
-                < Math.max(state.activeSince, record.activeSince))) throw new Cancelled(Result.NONE);
+        long dispatchAt = now();
+        StreakSchedule schedule = new StreakSchedule(state.activeSince);
+        if (!today.equals(day(dispatchAt)) || (!manual && !schedule.allowsDispatch(dispatchAt, record.activeSince))) {
+            throw new Cancelled(Result.NONE);
+        }
         RecipientState previous = state.dispatched(today, conversation);
         if (previous != null) {
             record.conversation = conversation;
@@ -706,14 +705,19 @@ public final class AutoStreak {
         if (!save(state)) throw new IllegalStateException("Could not reserve the streak dispatch");
         // Committing can take time too. A change here is a known cancellation, not a delivery.
         current = SignedInUser.id();
-        if (!self.equals(current)) {
+        long savedAt = now();
+        boolean outsideWindow = !manual && schedule.randomWindow
+                && (!today.equals(day(savedAt)) || !schedule.allowsDispatch(savedAt, record.activeSince));
+        if (!self.equals(current) || outsideWindow) {
             record.dispatchDay = "";
             List<String> reserved = new ArrayList<>(Arrays.asList(state.sentTo.split(",")));
             reserved.remove(handle);
             state.sentTo = TextUtils.join(",", reserved);
             if (state.sentTo.isEmpty()) state.sentDay = "";
             save(state); // Failure retains the durable reservation and still sends nothing.
-            throw new Cancelled(current == null ? Result.SIGNED_OUT : Result.OTHER_ACCOUNT, count);
+            Result result = self.equals(current) ? Result.NONE
+                    : current == null ? Result.SIGNED_OUT : Result.OTHER_ACCOUNT;
+            throw new Cancelled(result, count);
         }
     }
 
@@ -800,14 +804,18 @@ public final class AutoStreak {
             if (!on && Settings.AUTO_STREAK_STATE.get().isEmpty()) return lines;
             State state = state();
             long now = now();
-            int minute = Settings.AUTO_STREAK_MINUTE.get();
+            StreakSchedule schedule = new StreakSchedule(state.activeSince);
             lines.add("On: " + (on ? "yes" : "no"));
             lines.add("Recipients entered: " + recipients().size());
             String self = SignedInUser.id();
             lines.add("Account: " + (state.owner.isEmpty() ? "not seen yet"
                     : self == null ? "signed out" : state.owner.equals(self) ? "the one it was set up on"
                     : "a different one"));
-            lines.add(String.format(Locale.US, "Time: %02d:%02d", minute / 60, minute % 60));
+            int start = schedule.startMinute;
+            int end = schedule.endMinute;
+            lines.add(schedule.randomWindow
+                    ? String.format(Locale.US, "Random window: %02d:%02d to %02d:%02d", start / 60, start % 60, end / 60, end % 60)
+                    : String.format(Locale.US, "Time: %02d:%02d", start / 60, start % 60));
             lines.add("Last dispatch reserved: " + (state.sentDay.isEmpty() ? "never" : state.sentDay));
             lines.add("Last try: " + state.result.name()
                     + (state.resultAt == 0 ? "" : " at " + stamp(state.resultAt)));
@@ -820,7 +828,7 @@ public final class AutoStreak {
                         + ", dispatch reserved today=" + day(now).equals(record.dispatchDay)));
             }
             lines.add("Delivery: not confirmed by the quick-reply dispatch");
-            if (on) lines.add("Next alarm: " + stamp(nextAlarm(state, now, minute)));
+            if (on) lines.add("Next alarm: " + stamp(nextAlarm(state, now, schedule)));
             AlarmManager alarms = (AlarmManager) Utils.getContext().getSystemService(Context.ALARM_SERVICE);
             if (alarms != null) {
                 lines.add("Exact alarms: " + (exactAllowed(alarms) ? "allowed" : "refused, so an alarm can come late"));
@@ -878,22 +886,31 @@ public final class AutoStreak {
         }
         State state = state();
         long now = now();
-        int minute = Settings.AUTO_STREAK_MINUTE.get();
-        long next = nextAlarm(state, now, minute);
+        long next = nextAlarm(state, now);
         String today = day(now);
         boolean triedToday = today.equals(day(state.resultAt)) && state.resultAt > 0;
         String summary = dispatchSummary(context, state, today);
         if (summary != null) {
-            return summary + " " + (day(next).equals(today)
-                    ? L10n.f(context, "Next message: today at %1$s.", time(context, next))
-                    : L10n.f(context, "Next message: tomorrow at %1$s.", time(context, next)));
+            return summary + " " + nextMessageLine(context, now, next);
         }
         if (triedToday && state.result != Result.NONE) {
             return problem(context, state.result, next);
         }
-        return day(next).equals(today)
-                ? L10n.f(context, "Next message: today at %1$s.", time(context, next))
-                : L10n.f(context, "Next message: tomorrow at %1$s.", time(context, next));
+        return nextMessageLine(context, now, next);
+    }
+
+    private static String nextMessageLine(Context context, long now, long next) {
+        String nextDay = day(next);
+        String nextTime = time(context, next);
+        if (nextDay.equals(day(now))) return L10n.f(context, "Next message: today at %1$s.", nextTime);
+        Calendar tomorrow = Calendar.getInstance(RegionSpoof.phoneTimeZone());
+        tomorrow.setTimeInMillis(now);
+        tomorrow.add(Calendar.DATE, 1);
+        if (nextDay.equals(day(tomorrow.getTimeInMillis()))) {
+            return L10n.f(context, "Next message: tomorrow at %1$s.", nextTime);
+        }
+        String date = RegionSpoof.phoneClock(DateFormat.getMediumDateFormat(context)).format(new Date(next));
+        return L10n.f(context, "Next message: %1$s at %2$s.", date, nextTime);
     }
 
     private static int[] dispatchCounts(State state, String today) {
@@ -913,7 +930,7 @@ public final class AutoStreak {
     }
 
     private static String problem(Context context, Result result) {
-        return problem(context, result, nextAlarm(state(), now(), Settings.AUTO_STREAK_MINUTE.get()));
+        return problem(context, result, nextAlarm(state(), now()));
     }
 
     private static String notFound(Context context, String key) {

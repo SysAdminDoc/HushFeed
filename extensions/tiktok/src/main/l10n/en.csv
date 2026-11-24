@@ -1499,6 +1499,7 @@ Newest first,Newest first
 Newest likes,Newest likes
 Next LIVE,Next LIVE
 Next lock starts %1$s,Next lock starts %1$s
+Next message: %1$s at %2$s.,Next message: %1$s at %2$s.
 Next message: today at %1$s.,Next message: today at %1$s.
 Next message: tomorrow at %1$s.,Next message: tomorrow at %1$s.
 Next video,Next video
@@ -1744,6 +1745,7 @@ Pick videos to save from profile grids,Pick videos to save from profile grids
 Pick which stories to save,Pick which stories to save
 "Picked %1$s. Save, then tap Pick all for more.","Picked %1$s. Save, then tap Pick all for more."
 Picked videos,Picked videos
+"Picks a time each day between the start and end, including windows that cross midnight.","Picks a time each day between the start and end, including windows that cross midnight."
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.
 Pill,Pill
 Pill corners,Pill corners
@@ -1850,6 +1852,7 @@ QR code,QR code
 Quality,Quality
 "Quality, files, subtitles and hand-off","Quality, files, subtitles and hand-off"
 "Quality, speed and auto-advance","Quality, speed and auto-advance"
+Random time window,Random time window
 Read receipts hidden,Read receipts hidden
 Read receipts shown,Read receipts shown
 Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts won't be opened or unblocked.
@@ -2587,6 +2590,8 @@ The feed stops when this video ends.,The feed stops when this video ends.
 "The file app still has the last file. Try again once it lets go, or restart TikTok.","The file app still has the last file. Try again once it lets go, or restart TikTok."
 The file couldn't be saved. Try again.,The file couldn't be saved. Try again.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.
+The first minute of the window.,The first minute of the window.
+The fixed time to use when the random window is off.,The fixed time to use when the random window is off.
 The frame couldn't be read. Try again.,The frame couldn't be read. Try again.
 The frame couldn't be saved. Try again.,The frame couldn't be saved. Try again.
 "The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.","The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up."
@@ -2597,6 +2602,7 @@ The host sees you next time you open it,The host sees you next time you open it
 The host won't see you next time you open it,The host won't see you next time you open it
 "The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.","The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day."
 The last feed capture wasn't saved. Tap to try again.,The last feed capture wasn't saved. Tap to try again.
+The last minute of the window.,The last minute of the window.
 The last one is still waiting for Wi-Fi,The last one is still waiting for Wi-Fi
 The last one is still waiting to start,The last one is still waiting to start
 The last report is still being saved,The last report is still being saved
@@ -2636,7 +2642,6 @@ The sticker suggestion banner stops showing in a chat. Your own stickers are sti
 The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
 The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.
-The time of day the message goes out.,The time of day the message goes out.
 "The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.","The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box."
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this."
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.","The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays."
@@ -2967,6 +2972,8 @@ White on black,White on black
 Who to message,Who to message
 Whole year,Whole year
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.,Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.
+Window end,Window end
+Window start,Window start
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.
 "Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts."
 "With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.","With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas."

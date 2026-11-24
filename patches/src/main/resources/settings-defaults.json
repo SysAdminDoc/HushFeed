@@ -559,6 +559,9 @@
       "auto_streak",
       "auto_streak_recipient",
       "auto_streak_minute",
+      "auto_streak_random_window",
+      "auto_streak_window_start",
+      "auto_streak_window_end",
       "auto_streak_message"
     ],
     "Keep playing in the background": [
@@ -1048,11 +1051,33 @@
       "minimum": 0,
       "maximum": 1439
     },
+    "auto_streak_random_window": {
+      "field": "AUTO_STREAK_RANDOM_WINDOW",
+      "key": "auto_streak_random_window",
+      "type": "boolean",
+      "default": false
+    },
     "auto_streak_recipient": {
       "field": "AUTO_STREAK_RECIPIENT",
       "key": "auto_streak_recipient",
       "type": "string",
       "default": ""
+    },
+    "auto_streak_window_end": {
+      "field": "AUTO_STREAK_WINDOW_END",
+      "key": "auto_streak_window_end",
+      "type": "integer",
+      "default": 1200,
+      "minimum": 0,
+      "maximum": 1439
+    },
+    "auto_streak_window_start": {
+      "field": "AUTO_STREAK_WINDOW_START",
+      "key": "auto_streak_window_start",
+      "type": "integer",
+      "default": 960,
+      "minimum": 0,
+      "maximum": 1439
     },
     "automatic_clear_display": {
       "field": "AUTOMATIC_CLEAR_DISPLAY",

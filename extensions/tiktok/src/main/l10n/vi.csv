@@ -2194,7 +2194,6 @@ The sticker couldn't be saved. Try again.,Không thể lưu nhãn dán. Vui lòn
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,Biểu ngữ gợi ý nhãn dán sẽ dừng hiển thị trong đoạn chat. Nhãn dán của riêng bạn vẫn nằm trong trình chọn nhãn dán.
 The story couldn't be saved. Try again.,Không thể lưu tin (story). Vui lòng thử lại.
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,Kiểu rung trên các thẻ của bảng tin chính. Xung ngắn là một lực gõ nhanh của mô tơ. Nhấp chuột theo máy là tiếng nhấp máy bạn dùng ở nơi khác. Rung nhẹ ngân lâu hơn một chút. Rung đầy đủ là lực rung mạnh nhất của điện thoại.
-The time of day the message goes out.,Thời điểm trong ngày mà tin nhắn được gửi đi.
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","Video bạn đang xem vẫn tiếp tục phát đến hết sau khi bạn thoát TikTok hoặc tắt màn hình, đi kèm thông báo phương tiện của TikTok để tạm dừng. Công tắc phát ngầm của TikTok vẫn bật khi tùy chọn này đang hoạt động. Khởi động lại TikTok để áp dụng."
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.",Các nút gọi thoại và gọi video sẽ bị gỡ khỏi phần đầu đoạn chat. Cuộc gọi đến vẫn đổ chuông và nút chi tiết đoạn chat vẫn giữ nguyên.
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.",Chữ hiển thị dưới biểu tượng các thẻ dưới cùng sẽ biến mất. Các biểu tượng giữ nguyên và mỗi thẻ vẫn mở nội dung tương ứng như trước.
@@ -3044,3 +3043,11 @@ Keep your place in chats,Giữ vị trí trong cuộc trò chuyện
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,Cuộc trò chuyện bạn đã cuộn lên sẽ giữ nguyên chỗ khi bạn quay lại từ video hoặc gửi câu trả lời. Gửi tin nhắn thường hoặc chạm vào mũi tên xuống vẫn đưa bạn đến tin mới nhất.
 Fill wide videos too,Lấp đầy màn hình cả với video ngang
 "With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.","Khi bật công tắc ở trên, video ngang và video vuông cũng được cắt để phủ kín màn hình, nên chỉ thấy phần giữa. Khi tắt, chúng vẫn hiện trọn vẹn."
+The fixed time to use when the random window is off.,Giờ cố định được dùng khi tắt khung giờ ngẫu nhiên.
+Random time window,Khung giờ ngẫu nhiên
+"Picks a time each day between the start and end, including windows that cross midnight.","Mỗi ngày chọn một giờ giữa lúc bắt đầu và kết thúc, kể cả khi khung giờ kéo dài qua nửa đêm."
+Window start,Bắt đầu khung giờ
+The first minute of the window.,Phút đầu tiên của khung giờ.
+Window end,Kết thúc khung giờ
+The last minute of the window.,Phút cuối cùng của khung giờ.
+Next message: %1$s at %2$s.,Tin nhắn tiếp theo: %1$s lúc %2$s.

@@ -1604,7 +1604,6 @@ Streak,Rentetan
 Keep a streak going,Pertahankan rentetan
 Who to message,Kirim ke siapa
 When to send,Kapan dikirim
-The time of day the message goes out.,Jam berapa pesan dikirim setiap hari.
 Message,Pesan
 What gets sent each day.,Yang dikirim setiap hari.
 Send it now,Kirim sekarang
@@ -3046,3 +3045,11 @@ Keep your place in chats,Pertahankan posisi di obrolan
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,Obrolan yang sudah kamu gulir ke atas tetap di posisimu saat kembali dari video atau mengirim balasan. Mengirim pesan biasa atau mengetuk panah bawah tetap membawamu ke yang terbaru.
 Fill wide videos too,Penuhi juga dengan video lebar
 "With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.","Dengan sakelar di atas aktif, video lanskap dan persegi juga dipotong untuk menutupi layar, jadi hanya bagian tengahnya yang terlihat. Jika mati, video tetap utuh."
+The fixed time to use when the random window is off.,Waktu tetap yang digunakan saat rentang waktu acak dimatikan.
+Random time window,Rentang waktu acak
+"Picks a time each day between the start and end, including windows that cross midnight.","Memilih waktu setiap hari di antara awal dan akhir rentang, termasuk rentang yang melewati tengah malam."
+Window start,Awal rentang waktu
+The first minute of the window.,Menit pertama dalam rentang waktu.
+Window end,Akhir rentang waktu
+The last minute of the window.,Menit terakhir dalam rentang waktu.
+Next message: %1$s at %2$s.,Pesan berikutnya: %1$s pukul %2$s.

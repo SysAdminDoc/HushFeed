@@ -53,10 +53,10 @@ public class StreakRowsTest {
     @Test
     public void theTimeRowLeavesOutTheRangeItsPickerCannotLeave() {
         ClockTimePreference row = new ClockTimePreference(context, "When to send",
-                "The time of day the message goes out.", Settings.AUTO_STREAK_MINUTE);
+                "The fixed time to use when the random window is off.", Settings.AUTO_STREAK_MINUTE);
         String[] lines = row.getSummary().toString().split("\n");
         assertEquals(2, lines.length);
-        assertEquals("The time of day the message goes out.", lines[0]);
+        assertEquals("The fixed time to use when the random window is off.", lines[0]);
         assertTrue(lines[1], lines[1].startsWith("Current: "));
     }
 
@@ -68,7 +68,7 @@ public class StreakRowsTest {
             for (boolean dark : new boolean[]{true, false}) {
                 Utils.setIsDarkModeEnabled(dark);
                 ClockTimePreference row = new ClockTimePreference(owner.get(), "When to send",
-                        "The time of day the message goes out.", Settings.AUTO_STREAK_MINUTE);
+                        "The fixed time to use when the random window is off.", Settings.AUTO_STREAK_MINUTE);
                 Method click = Preference.class.getDeclaredMethod("onClick");
                 click.setAccessible(true);
                 click.invoke(row);

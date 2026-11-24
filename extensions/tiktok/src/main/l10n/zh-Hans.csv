@@ -2013,7 +2013,6 @@ The sound couldn't be saved. Try again.,声音无法保存。再试一次.
 The sticker couldn't be saved. Try again.,无法保存贴纸。再试一次.
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,贴纸建议横幅停止在聊天中显示。你自己的贴纸仍在贴纸选择器中.
 The story couldn't be saved. Try again.,故事无法保存。再试一次.
-The time of day the message goes out.,消息发出的时间.
 Couldn't make the video. Try again.,无法制作视频，请重试.
 "Couldn't save. Try again, or choose Automatic.",无法保存，请重试，或选择“自动”.
 "Saved, but a later save may make a second copy",已保存，但之后再保存可能产生第二份副本
@@ -3044,3 +3043,11 @@ Keep your place in chats,保持聊天中的位置
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,在聊天中向上滚动后，从视频返回或发送回复时会停留在原处。发送普通消息或点按向下箭头仍会跳到最新消息.
 Fill wide videos too,宽视频也铺满
 "With the switch above on, landscape and square videos are cropped to cover the screen too, so only their middle shows. Off, they stay whole.",开启上面的开关后，横向和方形视频也会被裁剪以铺满屏幕，只显示中间部分。关闭时，它们保持完整.
+The fixed time to use when the random window is off.,关闭随机时间段时使用的固定时间.
+Random time window,随机时间段
+"Picks a time each day between the start and end, including windows that cross midnight.",每天在开始和结束时间之间选一个时间，也支持跨午夜的时间段.
+Window start,时间段开始
+The first minute of the window.,时间段的第一分钟.
+Window end,时间段结束
+The last minute of the window.,时间段的最后一分钟.
+Next message: %1$s at %2$s.,下一条消息：%1$s %2$s.

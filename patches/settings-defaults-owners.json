@@ -556,6 +556,9 @@
       "AUTO_STREAK",
       "AUTO_STREAK_RECIPIENT",
       "AUTO_STREAK_MINUTE",
+      "AUTO_STREAK_RANDOM_WINDOW",
+      "AUTO_STREAK_WINDOW_START",
+      "AUTO_STREAK_WINDOW_END",
       "AUTO_STREAK_MESSAGE"
     ],
     "Keep playing in the background": [

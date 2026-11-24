@@ -87,6 +87,17 @@ public final class Probe extends Instrumentation {
 
     private static volatile boolean started;
 
+    /** The msgtap action's interceptor on TikTok's message service, and what it counted. */
+    private static volatile Object messageTap;
+    private static final java.util.concurrent.ConcurrentHashMap<String, java.util.concurrent.atomic.AtomicInteger>
+            MESSAGE_COUNTS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The msgstate action's event listener on one message channel, what it counted and the last failure. */
+    private static volatile Object channelEvents;
+    private static volatile String channelFailure;
+    private static final java.util.concurrent.ConcurrentHashMap<String, java.util.concurrent.atomic.AtomicInteger>
+            EVENT_COUNTS = new java.util.concurrent.ConcurrentHashMap<>();
+
     @Override
     public Application newApplication(ClassLoader loader, String className, Context context)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -1188,6 +1199,200 @@ public final class Probe extends Instrumentation {
                         Object agent = agentClass.getConstructor().newInstance();
                         call.invoke(agent, aid, on, new java.util.HashMap<String, Object>(), success, failure);
                         Log.i(TAG, "ok collect sent aid=" + aid + " on=" + on + " via " + call.getName());
+                        break;
+                    }
+                    case "msgtap": {
+                        // Every LIVE message TikTok's message channels parse, counted by its method
+                        // name (#513). Every channel passes each message to the message service's
+                        // interceptors (47.9.3: X.0J3q -> MessageService.notifyOnMessage), so one
+                        // interceptor there sees them all. -e mode start adds it and clears the
+                        // counts, -e mode report logs them (-e stop true also removes it). The
+                        // service comes from TikTok's service lookup, -e lookup (47.9.3: X.04nk)
+                        // and -e method (LIZJ). Names only, no message content.
+                        Class<?> serviceType = loader.loadClass("com.bytedance.android.message.IMessageService");
+                        Class<?> interceptorType = loader.loadClass("com.ss.ugc.live.sdk.message.interfaces.IInterceptor");
+                        java.lang.reflect.Method methodName = loader.loadClass("com.ss.ugc.live.sdk.message.data.IMessage")
+                                .getMethod("getMethodName");
+                        String lookup = intent.getStringExtra("lookup");
+                        String lookupMethod = intent.getStringExtra("method");
+                        Object service = loader.loadClass(lookup == null ? "X.04nk" : lookup)
+                                .getMethod(lookupMethod == null ? "LIZJ" : lookupMethod, Class.class)
+                                .invoke(null, serviceType);
+                        if (service == null) throw new IllegalStateException("no message service");
+                        String mode = required(intent, "mode");
+                        if ("start".equals(mode)) {
+                            if (messageTap != null) {
+                                serviceType.getMethod("removeMessageInterceptor", interceptorType).invoke(service, messageTap);
+                            }
+                            MESSAGE_COUNTS.clear();
+                            messageTap = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{interceptorType},
+                                    (proxy, method, a) -> {
+                                        switch (method.getName()) {
+                                            case "onMessage":
+                                                Object name = a == null || a[0] == null ? null : methodName.invoke(a[0]);
+                                                MESSAGE_COUNTS.computeIfAbsent(String.valueOf(name),
+                                                        k -> new java.util.concurrent.atomic.AtomicInteger()).incrementAndGet();
+                                                return false;
+                                            case "hashCode": return System.identityHashCode(proxy);
+                                            case "equals": return a != null && proxy == a[0];
+                                            default: return "hushfeed message tap";
+                                        }
+                                    });
+                            serviceType.getMethod("addMessageInterceptor", interceptorType).invoke(service, messageTap);
+                            Log.i(TAG, "ok msgtap started");
+                        } else {
+                            java.util.List<java.util.Map.Entry<String, java.util.concurrent.atomic.AtomicInteger>> counts =
+                                    new java.util.ArrayList<>(MESSAGE_COUNTS.entrySet());
+                            counts.sort((x, y) -> y.getValue().get() - x.getValue().get());
+                            int total = 0;
+                            StringBuilder out = new StringBuilder();
+                            for (java.util.Map.Entry<String, java.util.concurrent.atomic.AtomicInteger> entry : counts) {
+                                total += entry.getValue().get();
+                                out.append(' ').append(entry.getKey()).append('=').append(entry.getValue().get());
+                            }
+                            if (Boolean.parseBoolean(intent.getStringExtra("stop")) && messageTap != null) {
+                                serviceType.getMethod("removeMessageInterceptor", interceptorType).invoke(service, messageTap);
+                                messageTap = null;
+                            }
+                            Log.i(TAG, "ok msgtap total=" + total + (messageTap == null ? " (stopped)" : "") + out);
+                        }
+                        break;
+                    }
+                    case "roompost": {
+                        // Posts the room page in front's own room to the page's RoomChannel, the
+                        // way a room enter's success does (47.9.3: X.0K9Z.LJ, DataChannel.D10), to
+                        // see what binds from it in a room whose enter Ghost mode held (#513).
+                        // -e field names the page's DataChannel field (47.9.3: S), -e post its
+                        // posting method (D10).
+                        Class<?> owner = loader.loadClass("app.morphe.extension.tiktok.live.LiveRecordChip");
+                        Field held = owner.getDeclaredField("page");
+                        held.setAccessible(true);
+                        Object fragment = ((java.lang.ref.Reference<?>) held.get(null)).get();
+                        if (fragment == null) throw new IllegalStateException("no room page held");
+                        Method roomOf = owner.getDeclaredMethod("roomOf", Object.class);
+                        roomOf.setAccessible(true);
+                        Object room = roomOf.invoke(null, fragment);
+                        if (room == null) throw new IllegalStateException("no room on the page");
+                        String fieldName = intent.getStringExtra("field");
+                        String postName = intent.getStringExtra("post");
+                        Object channel = fieldValue(fragment, fieldName == null ? "S" : fieldName);
+                        if (channel == null) throw new IllegalStateException("no data channel on the page");
+                        Class<?> roomChannel = loader.loadClass("com.bytedance.android.livesdk.dataChannel.RoomChannel");
+                        channel.getClass().getMethod(postName == null ? "D10" : postName, Class.class, Object.class)
+                                .invoke(channel, roomChannel, room);
+                        Object ownerUser = room.getClass().getMethod("getOwner").invoke(room);
+                        Object nickname = ownerUser == null ? null : optional(ownerUser, "getNickName");
+                        Log.i(TAG, "ok roompost owner=" + (ownerUser != null)
+                                + " nickname=" + (nickname == null ? "none" : "set/" + String.valueOf(nickname).length()));
+                        break;
+                    }
+                    case "msgstate": {
+                        // The message channel in the room page in front (#513): its fields one
+                        // level down (need-message flag, state machine, kind) and whether it is the
+                        // SDK's current channel. It sits in the page's DataChannel (47.9.3: field
+                        // S) under the channel key (X.0KDL), read with -e get (Cm0). -e call
+                        // needMessage or startMessage calls that on it first.
+                        // -e source current reads the SDK's current channel instead, with no room
+                        // page needed (a feed LIVE preview's, say).
+                        Class<?> owner = loader.loadClass("app.morphe.extension.tiktok.live.LiveRecordChip");
+                        boolean fromCurrent = "current".equals(intent.getStringExtra("source"));
+                        Object fragment = null;
+                        Object manager;
+                        if (fromCurrent) {
+                            Field slot = loader.loadClass("X.0Ix3").getDeclaredField("LIZIZ");
+                            slot.setAccessible(true);
+                            manager = slot.get(null);
+                        } else {
+                            Field held = owner.getDeclaredField("page");
+                            held.setAccessible(true);
+                            fragment = ((java.lang.ref.Reference<?>) held.get(null)).get();
+                            if (fragment == null) throw new IllegalStateException("no room page held");
+                            Object channel = fieldValue(fragment, "S");
+                            if (channel == null) throw new IllegalStateException("no data channel on the page");
+                            String key = intent.getStringExtra("key");
+                            String getter = intent.getStringExtra("get");
+                            manager = channel.getClass().getMethod(getter == null ? "Cm0" : getter, Class.class)
+                                    .invoke(channel, loader.loadClass(key == null ? "X.0KDL" : key));
+                        }
+                        if (manager == null) {
+                            Log.i(TAG, "ok msgstate no channel on the page");
+                            break;
+                        }
+                        // -e events start adds a listener for the channel's events (fetch started,
+                        // succeeded or failed, socket connected, messages queued) and clears the
+                        // counts; -e events report logs them with the last failure's class and
+                        // message, cut short.
+                        String events = intent.getStringExtra("events");
+                        if ("start".equals(events)) {
+                            Class<?> listenerType = loader.loadClass("com.ss.ugc.live.sdk.message.interfaces.EventListener");
+                            if (channelEvents != null) {
+                                try {
+                                    manager.getClass().getMethod("removeEventListener", listenerType).invoke(manager, channelEvents);
+                                } catch (ReflectiveOperationException gone) {
+                                    // another channel's listener; nothing to take off this one
+                                }
+                            }
+                            EVENT_COUNTS.clear();
+                            channelFailure = null;
+                            channelEvents = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{listenerType},
+                                    (proxy, method, a) -> {
+                                        switch (method.getName()) {
+                                            case "hashCode": return System.identityHashCode(proxy);
+                                            case "equals": return a != null && proxy == a[0];
+                                            case "toString": return "hushfeed channel events";
+                                            default:
+                                                EVENT_COUNTS.computeIfAbsent(method.getName(),
+                                                        k -> new java.util.concurrent.atomic.AtomicInteger()).incrementAndGet();
+                                                if (a != null && a.length == 1 && a[0] instanceof Throwable) {
+                                                    Throwable failure = (Throwable) a[0];
+                                                    String text = String.valueOf(failure.getMessage());
+                                                    channelFailure = method.getName() + " " + failure.getClass().getName() + ": "
+                                                            + (text.length() > 160 ? text.substring(0, 160) : text);
+                                                }
+                                                return null;
+                                        }
+                                    });
+                            manager.getClass().getMethod("addEventListener", listenerType).invoke(manager, channelEvents);
+                        } else if ("report".equals(events)) {
+                            StringBuilder counted = new StringBuilder();
+                            for (java.util.Map.Entry<String, java.util.concurrent.atomic.AtomicInteger> entry : EVENT_COUNTS.entrySet()) {
+                                counted.append(' ').append(entry.getKey()).append('=').append(entry.getValue().get());
+                            }
+                            Log.i(TAG, "ok msgstate events" + counted + " wsConnected="
+                                    + manager.getClass().getMethod("isWsConnected").invoke(manager)
+                                    + (channelFailure == null ? "" : " failure=" + channelFailure));
+                        }
+                        String call = intent.getStringExtra("call");
+                        if (call != null) manager.getClass().getMethod(call).invoke(manager);
+                        // The SDK's current channel and its room (47.9.3: X.0Ix3.LIZIZ and LIZ), what
+                        // the chat's own start asks for by room id (MessageService.get(J)).
+                        Class<?> builder = loader.loadClass("X.0Ix3");
+                        Field current = builder.getDeclaredField("LIZIZ");
+                        current.setAccessible(true);
+                        Field currentRoom = builder.getDeclaredField("LIZ");
+                        currentRoom.setAccessible(true);
+                        Method roomOf = owner.getDeclaredMethod("roomOf", Object.class);
+                        roomOf.setAccessible(true);
+                        Object room = fragment == null ? null : roomOf.invoke(null, fragment);
+                        Object roomId = room == null ? null : room.getClass().getMethod("getId").invoke(room);
+                        Object configuration = manager.getClass().getMethod("getMessageConfiguration").invoke(manager);
+                        Object scene = configuration == null ? null : fieldValue(configuration, "LIZ");
+                        Log.i(TAG, "ok msgstate " + manager.getClass().getName()
+                                + (call == null ? "" : " called=" + call)
+                                + " current=" + (current.get(null) == manager)
+                                + " currentRoomIsThis=" + (roomId != null && roomId.equals(currentRoom.get(null)))
+                                + " kind=" + (scene == null ? null : fieldValue(scene, "LJIILIIL"))
+                                + describe(manager, 2));
+                        // The channel's core (47.9.3: X.0J46 in field LIZ) and its state machine
+                        // (LJIIJ, X.0J4l), one line each.
+                        Object core = fieldValue(manager, "LIZ");
+                        if (core != null) {
+                            Log.i(TAG, "ok msgstate core " + core.getClass().getName() + describe(core, 0));
+                            Object machine = fieldValue(core, "LJIIJ");
+                            if (machine != null) {
+                                Log.i(TAG, "ok msgstate machine " + machine.getClass().getName() + describe(machine, 1));
+                            }
+                        }
                         break;
                     }
                     case "textviews": {

@@ -883,6 +883,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting LIVE_RUNNING_TIME = new BooleanSetting("live_running_time", FALSE);
     /**
+     * A LIVE opened from the row at the top of Following is followed, on a swipe, by the row's
+     * other LIVEs in the row's order (#511); the LIVE controls patch. Read as the room opens.
+     */
+    public static final BooleanSetting LIVE_FOLLOWING_ROW_ORDER = new BooleanSetting("live_following_row_order", FALSE);
+    /**
      * Offers TikTok's quality picker in more LIVE rooms and carries the last pick to the next
      * room; the LIVE controls patch. Read when a room builds its menu and picks its starting
      * quality, so the next room follows a change.

@@ -2712,7 +2712,8 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count and battle scores instead of rounded ones, offer a quality choice and " +
-        "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
+        "clear screen in more LIVE rooms, keep your quality pick after TikTok restarts, and " +
+        "line up the LIVEs you swipe to after one from the Following row in that row's order. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it " +
         "(or hides that row altogether), can hide the AI summary on LIVE previews, " +
@@ -3040,6 +3041,10 @@ val liveControlsPatch = bytecodePatch(
 
         // A battle's scores past the server's high score cap, shown whole on request (#495).
         installBattleScoreHooks()
+
+        // A LIVE opened from the Following row is followed by the row's other LIVEs, in the
+        // row's order, on request (#511).
+        installRowOrderHook()
 
         // A LIVE preview bound to a LIVE with no Service+ item runs the row's own hide first
         // when it's still showing the last LIVE's row (#94). Matched and checked in full before

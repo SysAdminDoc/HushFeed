@@ -3431,3 +3431,5 @@ Delete your picked posts	Удалять выбранные свои публик
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Добавляет кнопку корзины на панель выбора, когда все выбранные публикации ваши. Отсчитывает от 5, чтобы вы могли остановить, затем удаляет их из аккаунта по одной. Удалённую публикацию нельзя вернуть.
 Posts to delete: %1$d. Starting in %2$d	Публикаций для удаления: %1$d. Начало через %2$d
 Posts deleted: %1$d of %2$d	Удалено публикаций: %1$d из %2$d
+Swipe LIVEs in your Following row's order	Листать LIVE в порядке ряда «Подписок»
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	После LIVE, открытого из ряда вверху «Подписок», свайп ведёт по остальным LIVE этого ряда в том порядке, в каком они там стоят, начиная со следующего. Подборка TikTok идёт после них.

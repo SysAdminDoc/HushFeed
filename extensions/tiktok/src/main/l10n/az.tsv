@@ -3230,3 +3230,5 @@ Delete your picked posts	Seçdiyiniz paylaşımlarınızı silin
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Seçilən bütün paylaşımlar sizin olduqda seçim panelinə zibil qutusu düyməsi əlavə edir. Dayandıra bilməniz üçün 5-dən geri sayır, sonra onları hesabınızdan bir-bir silir. Silinmiş paylaşım geri qaytarıla bilməz.
 Posts to delete: %1$d. Starting in %2$d	Silinəcək paylaşımlar: %1$d. Başlanğıc: %2$d
 Posts deleted: %1$d of %2$d	Silinən paylaşımlar: %1$d / %2$d
+Swipe LIVEs in your Following row's order	LIVE-ları İzlənilənlər sırasının ardıcıllığı ilə sürüşdürün
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	İzlənilənlərin yuxarısındakı sıradan açdığınız LIVE-dan sonra sürüşdürmə sizi həmin sıradakı digər LIVE-lardan orada durduqları ardıcıllıqla, növbətisindən başlayaraq keçirir. TikTok-un öz seçimləri onlardan sonra gəlir.

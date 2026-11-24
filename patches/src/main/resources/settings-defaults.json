@@ -601,6 +601,7 @@
       "show_exact_battle_scores",
       "live_room_info",
       "live_running_time",
+      "live_following_row_order",
       "offer_live_quality",
       "remember_live_quality",
       "live_start_quality",
@@ -3529,6 +3530,12 @@
     "live_feed_filter": {
       "field": "LIVE_FEED_FILTER",
       "key": "live_feed_filter",
+      "type": "boolean",
+      "default": false
+    },
+    "live_following_row_order": {
+      "field": "LIVE_FOLLOWING_ROW_ORDER",
+      "key": "live_following_row_order",
       "type": "boolean",
       "default": false
     },

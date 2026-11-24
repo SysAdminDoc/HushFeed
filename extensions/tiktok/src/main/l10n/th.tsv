@@ -3233,3 +3233,5 @@ Delete your picked posts	ลบโพสต์ของคุณที่เล�
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	เพิ่มปุ่มถังขยะในแถบเลือกเมื่อโพสต์ที่เลือกทั้งหมดเป็นของคุณ จะนับถอยหลังจาก 5 เพื่อให้คุณหยุดได้ แล้วลบออกจากบัญชีของคุณทีละโพสต์ โพสต์ที่ลบแล้วจะกู้คืนไม่ได้
 Posts to delete: %1$d. Starting in %2$d	โพสต์ที่จะลบ: %1$d เริ่มใน %2$d
 Posts deleted: %1$d of %2$d	ลบโพสต์แล้ว: %1$d จาก %2$d
+Swipe LIVEs in your Following row's order	ปัดดู LIVE ตามลำดับในแถวกำลังติดตาม
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	หลังจาก LIVE ที่คุณเปิดจากแถวด้านบนของกำลังติดตาม การปัดจะพาคุณไปยัง LIVE อื่นในแถวนั้นตามลำดับที่เรียงอยู่ โดยเริ่มจากรายการถัดไป ตัวเลือกของ TikTok จะมาหลังจากนั้น

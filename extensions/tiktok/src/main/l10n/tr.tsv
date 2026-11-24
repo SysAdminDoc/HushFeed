@@ -3230,3 +3230,5 @@ Delete your picked posts	Seçtiğin gönderilerini sil
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Seçilen tüm gönderiler senin olduğunda seçim çubuğuna bir çöp kutusu düğmesi ekler. Durdurabilmen için 5'ten geri sayar, sonra onları hesabından tek tek siler. Silinen bir gönderi geri getirilemez.
 Posts to delete: %1$d. Starting in %2$d	Silinecek gönderiler: %1$d. Başlamasına %2$d
 Posts deleted: %1$d of %2$d	Silinen gönderiler: %1$d / %2$d
+Swipe LIVEs in your Following row's order	CANLI yayınları Takip Edilenler satırının sırasıyla kaydır
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	Takip Edilenler'in üstündeki satırdan açtığın bir CANLI yayından sonra kaydırmak, o satırdaki diğer CANLI yayınları orada durdukları sırayla, bir sonrakinden başlayarak gösterir. TikTok'un kendi önerileri onlardan sonra gelir.

@@ -7897,7 +7897,7 @@
     },
     {
       "name": "LIVE controls",
-      "description": "Stops a LIVE in the feed from opening by itself after a countdown. It can show a LIVE's exact viewer count and battle scores instead of rounded ones, offer a quality choice and clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. Starts off. Turn it on in Hushfeed settings > Playback. It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it (or hides that row altogether), can hide the AI summary on LIVE previews, and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
+      "description": "Stops a LIVE in the feed from opening by itself after a countdown. It can show a LIVE's exact viewer count and battle scores instead of rounded ones, offer a quality choice and clear screen in more LIVE rooms, keep your quality pick after TikTok restarts, and line up the LIVEs you swipe to after one from the Following row in that row's order. Starts off. Turn it on in Hushfeed settings > Playback. It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it (or hides that row altogether), can hide the AI summary on LIVE previews, and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
       "category": "Playback",
       "use": true,
       "dependencies": [
@@ -7990,6 +7990,15 @@
         {
           "key": "live_running_time",
           "title": "Default: live running time",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_following_row_order",
+          "title": "Default: live following row order",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

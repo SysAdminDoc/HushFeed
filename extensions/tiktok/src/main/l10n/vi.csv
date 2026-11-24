@@ -3059,3 +3059,5 @@ Delete your picked posts,Xóa bài đăng đã chọn của bạn
 "Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Thêm nút thùng rác vào thanh chọn khi mọi bài đăng đã chọn đều là của bạn. Đếm ngược từ 5 để bạn có thể dừng, sau đó xóa từng bài khỏi tài khoản của bạn. Bài đăng đã xóa không thể khôi phục."
 Posts to delete: %1$d. Starting in %2$d,Bài đăng sẽ xóa: %1$d. Bắt đầu sau %2$d
 Posts deleted: %1$d of %2$d,Đã xóa bài đăng: %1$d trên %2$d
+Swipe LIVEs in your Following row's order,Vuốt LIVE theo thứ tự hàng Đang theo dõi
+"After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.","Sau một LIVE bạn mở từ hàng trên cùng của mục Đang theo dõi, vuốt sẽ đưa bạn qua các LIVE khác trong hàng đó theo đúng thứ tự, bắt đầu từ LIVE tiếp theo. Các đề xuất của TikTok đến sau."

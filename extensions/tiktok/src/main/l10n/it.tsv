@@ -3230,3 +3230,5 @@ Delete your picked posts	Elimina i tuoi post scelti
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Aggiunge un pulsante cestino alla barra di selezione quando tutti i post scelti sono tuoi. Fa un conto alla rovescia da 5 per permetterti di fermarlo, poi li elimina dal tuo account uno alla volta. Un post eliminato non si può recuperare.
 Posts to delete: %1$d. Starting in %2$d	Post da eliminare: %1$d. Inizio tra %2$d
 Posts deleted: %1$d of %2$d	Post eliminati: %1$d di %2$d
+Swipe LIVEs in your Following row's order	Scorri i LIVE nell'ordine della fila Seguiti
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	Dopo un LIVE aperto dalla fila in alto in Seguiti, scorrendo passi agli altri LIVE di quella fila nell'ordine in cui compaiono, a partire dal successivo. Le proposte di TikTok vengono dopo.

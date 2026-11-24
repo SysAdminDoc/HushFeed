@@ -3501,3 +3501,5 @@ Delete your picked posts	حذف منشوراتك المختارة
 Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	يضيف زر سلة المهملات إلى شريط الاختيار عندما تكون كل المنشورات المختارة منشوراتك. يعدّ تنازليًا من 5 لتتمكن من إيقافه، ثم يحذفها من حسابك واحدًا تلو الآخر. لا يمكن استعادة المنشور المحذوف.
 Posts to delete: %1$d. Starting in %2$d	منشورات للحذف: %1$d. البدء خلال %2$d
 Posts deleted: %1$d of %2$d	المنشورات المحذوفة: %1$d من %2$d
+Swipe LIVEs in your Following row's order	التمرير بين LIVE بترتيب صف أتابعه
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	بعد LIVE تفتحه من الصف أعلى أتابعه، ينقلك التمرير بين بقية LIVE في ذلك الصف بالترتيب الذي تظهر به، بدءًا من التالي. تأتي اختيارات TikTok بعدها.

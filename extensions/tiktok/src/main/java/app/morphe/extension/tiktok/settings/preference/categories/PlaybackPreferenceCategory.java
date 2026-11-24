@@ -146,6 +146,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Adds a small line to LIVE rooms with how long the host has been live, counted from "
                             + "when the room started. With the room ID on too, it goes under that.",
                     Settings.LIVE_RUNNING_TIME));
+            addPreference(new TogglePreference(context, "Swipe LIVEs in your Following row's order",
+                    "After a LIVE you open from the row at the top of Following, swiping takes you "
+                            + "through the row's other LIVEs in the order they sit there, starting with the "
+                            + "next one. TikTok's own picks come after them.",
+                    Settings.LIVE_FOLLOWING_ROW_ORDER));
             addPreference(new TogglePreference(context, "Offer LIVE quality in more rooms",
                     "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video "
                             + "quality to the menu in most of the others, and the next room opens at the quality "

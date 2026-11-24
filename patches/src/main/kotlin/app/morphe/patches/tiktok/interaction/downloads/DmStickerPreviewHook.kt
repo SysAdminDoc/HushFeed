@@ -16,6 +16,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -23,6 +24,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -117,6 +119,79 @@ internal fun hookDmStickerPreview() {
         throw PatchException("Downloads: the DM sticker preview service is no longer empty")
     }
     mutableClassDefBy(handler).findMutableMethodOf(anchor.method).addDmStickerPreviewHook(anchor.previewCall)
+    val video = dmStickerVideoTap(handler, anchor.service) { classDefByOrNull(it) }
+    if (video == null) {
+        println("[Downloads] Left the save box off stickers made from a video: no video sticker tap found.")
+        return
+    }
+    mutableClassDefBy(handler).findMutableMethodOf(video.method).addDmStickerVideoTapHook(video)
+}
+
+/**
+ * The tap on a sticker made from a video (#470), which TikTok sends through a method of its own:
+ * it takes one click object, logs "chat_video_sticker_click" and ends with the same preview
+ * service call as the other sticker tap. [click] is the click made from a chat bubble, and
+ * [view] and [template] its tapped view and sticker template.
+ */
+internal data class DmStickerVideoTap(
+    val method: Method,
+    val previewCall: Int,
+    val click: String,
+    val view: FieldReference,
+    val template: FieldReference,
+)
+
+/** The video sticker tap in [handler], or null when TikTok no longer has one this shape. */
+internal fun dmStickerVideoTap(handler: ClassDef, service: MethodReference, classOf: (String) -> ClassDef?): DmStickerVideoTap? {
+    val matches = handler.methods.mapNotNull { method ->
+        if (AccessFlags.STATIC.isSet(method.accessFlags) || method.returnType != "V"
+            || method.parameterTypes.size != 1) return@mapNotNull null
+        val instructions = method.implementation?.instructions?.toList() ?: return@mapNotNull null
+        if (instructions.none { it.getReference<StringReference>()?.string == "chat_video_sticker_click" }) {
+            return@mapNotNull null
+        }
+        val call = instructions.withIndex().singleOrNull { (_, instruction) ->
+            instruction.opcode in setOf(Opcode.INVOKE_INTERFACE, Opcode.INVOKE_INTERFACE_RANGE)
+                && instruction.getReference<MethodReference>()?.let { signature(it) == signature(service) } == true
+        } ?: return@mapNotNull null
+        if (instructions.getOrNull(call.index + 1)?.opcode != Opcode.RETURN_VOID) return@mapNotNull null
+        // The click a chat bubble makes is the one that keeps the tapped view.
+        val parameter = method.parameterTypes.single().toString()
+        val clicks = instructions.filter { it.opcode == Opcode.INSTANCE_OF }
+            .mapNotNull { it.getReference<TypeReference>()?.type?.let(classOf) }
+            .filter { parameter in it.interfaces }
+            .mapNotNull { click ->
+                val view = click.fields.singleOrNull { it.type == "Landroid/view/View;" }
+                val template = click.fields.singleOrNull { it.type == DM_STICKER_TEMPLATE }
+                if (view == null || template == null || !AccessFlags.PUBLIC.isSet(view.accessFlags)
+                    || !AccessFlags.PUBLIC.isSet(template.accessFlags)
+                    || !AccessFlags.PUBLIC.isSet(click.accessFlags)) null
+                else DmStickerVideoTap(method, call.index, click.type, view, template)
+            }
+        clicks.singleOrNull()
+    }
+    return matches.singleOrNull()
+}
+
+/**
+ * Opens the save box after TikTok's own preview call on a video sticker tap, the way the other
+ * sticker tap does. Only the call falls through to it: TikTok's early exits branch to the return
+ * itself and skip it. A click from anything but a chat bubble carries no view and is left alone.
+ */
+internal fun MutableMethod.addDmStickerVideoTapHook(tap: DmStickerVideoTap) {
+    requireLocals("Downloads DM video sticker preview", 2)
+    // The service returns void straight into RETURN_VOID, so v0 and v1 are dead there.
+    addInstructionsWithLabels(tap.previewCall + 1, """
+        move-object/from16 v0, p1
+        instance-of v1, v0, ${tap.click}
+        if-eqz v1, :hushfeed_no_bubble
+        check-cast v0, ${tap.click}
+        iget-object v1, v0, ${tap.view}
+        iget-object v0, v0, ${tap.template}
+        invoke-static {v1, v0}, $SAVER->openDmStickerPreview(Landroid/view/View;Ljava/lang/Object;)V
+        :hushfeed_no_bubble
+        nop
+    """)
 }
 
 // ---- Save media in the long-press menu of a sticker message (#470) ---------------------------
@@ -415,4 +490,111 @@ internal fun hookDmStickerMenu() {
     val menu = dmStickerMenu(rows, DmStickerMenuRowsFingerprint.classDef) { classDefByOrNull(it) }
     mutableClassDefBy(SAVER).swapDmStickerMenuStubs(menu)
     rows.addDmStickerMenuHook(menu)
+    val picker = DmStickerMenuPickerFingerprint.method
+    picker.addDmStickerOtherRowsHooks(dmStickerOtherRows(picker, DmStickerMenuRowsFingerprint.classDef.type, menu.builderType))
+}
+
+// ---- The other sticker kinds' menus (#470) ----------------------------------------------------
+
+/** The message extra TikTok keeps a sticker's kind in. */
+internal const val DM_STICKER_TYPE_EXTRA = "a:sticker_type"
+
+/**
+ * The method that picks a sticker message's rows by the sticker's kind: it reads the message as
+ * a StickerTemplate, then switches on [DM_STICKER_TYPE_EXTRA]. A static sticker and an animated
+ * one get the rows lambda hooked above; a sticker made from a video, a photo sticker, a Tenor GIF
+ * and an AI self sticker get a lambda of their own.
+ */
+internal object DmStickerMenuPickerFingerprint : Fingerprint(
+    returnType = DM_MENU_LIST,
+    strings = listOf(DM_STICKER_TYPE_EXTRA),
+    custom = { method, _ ->
+        AccessFlags.STATIC.isSet(method.accessFlags) && method.parameterTypes.size == 2
+            && method.implementation?.instructions?.any {
+                it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == DM_STICKER_TEMPLATE
+            } == true
+    },
+)
+
+/** One of the picker's returns that hands back another lambda's rows, and the registers the hook reads. */
+internal data class DmStickerOtherRows(val returnIndex: Int, val rows: Int, val template: Int, val builder: Int)
+
+/**
+ * The picker's returns whose rows another lambda built, one that holds the message's template
+ * and the menu too, so Save media can join them (#470: holding a sticker made from a video showed
+ * no Save media). The rows lambda's own return already has the hook, and a lambda without the
+ * template or the menu has nothing the row can use.
+ */
+internal fun dmStickerOtherRows(picker: Method, rowsLambda: String, builderType: String): List<DmStickerOtherRows> {
+    fun refuse(what: String): Nothing = throw PatchException("Downloads: the DM sticker menu picker $what")
+    val code = picker.implementation?.instructions?.toList() ?: refuse("has no code")
+    val made = code.indexOfFirst { it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == rowsLambda }
+    if (made < 0) refuse("no longer makes the rows lambda")
+    // The list maker the rows lambda goes through, which every other kind's lambda goes through too.
+    val builds = code.drop(made).firstNotNullOfOrNull { instruction ->
+        instruction.takeIf { it.opcode == Opcode.INVOKE_STATIC }?.getReference<MethodReference>()?.takeIf {
+            it.returnType == DM_MENU_LIST && it.parameterTypes.map(CharSequence::toString) == listOf(DM_MENU_FUNCTION1)
+        }
+    } ?: refuse("no longer builds the rows lambda's list")
+    val found = mutableListOf<DmStickerOtherRows>()
+    for (index in code.indices) {
+        val call = code[index]
+        if (call.opcode != Opcode.INVOKE_STATIC || call.getReference<MethodReference>()?.let(::signature) != signature(builds)) continue
+        val result = code.getOrNull(index + 1)?.takeIf { it.opcode == Opcode.MOVE_RESULT_OBJECT } as? OneRegisterInstruction ?: continue
+        val back = code.getOrNull(index + 2)?.takeIf { it.opcode == Opcode.RETURN_OBJECT } as? OneRegisterInstruction ?: continue
+        if (back.registerA != result.registerA) continue
+        val function = registersOf(call).singleOrNull() ?: continue
+        val init = (index - 1 downTo 0).firstOrNull { at ->
+            code[at].getReference<MethodReference>()?.name == "<init>"
+                && (code[at].opcode == Opcode.INVOKE_DIRECT || code[at].opcode == Opcode.INVOKE_DIRECT_RANGE)
+                && registersOf(code[at]).firstOrNull() == function
+        } ?: continue
+        val constructor = code[init].getReference<MethodReference>()!!
+        if (constructor.definingClass == rowsLambda) continue
+        // Each parameter's first register, a long or double taking two.
+        val arguments = registersOf(code[init]).drop(1)
+        val starts = constructor.parameterTypes.map(CharSequence::toString)
+            .runningFold(0) { at, type -> at + if (type == "J" || type == "D") 2 else 1 }
+        val parameters = constructor.parameterTypes.map(CharSequence::toString)
+        val templateAt = parameters.indexOf(DM_STICKER_TEMPLATE)
+        val builderAt = parameters.indexOf(builderType)
+        if (templateAt < 0 || builderAt < 0) continue
+        val template = arguments[starts[templateAt]]
+        val builder = arguments[starts[builderAt]]
+        val written = (init + 1 until index + 2).any { at ->
+            val register = (code[at] as? OneRegisterInstruction)?.registerA ?: return@any false
+            code[at].opcode.setsRegister() && (register == template || register == builder
+                || (code[at].opcode.setsWideRegister() && (register + 1 == template || register + 1 == builder)))
+        }
+        if (written) refuse("writes over the template or the menu before a return")
+        if (listOf(result.registerA, template, builder).any { it > 15 }) refuse("keeps its rows past v15")
+        found += DmStickerOtherRows(index + 2, result.registerA, template, builder)
+    }
+    if (found.isEmpty()) refuse("hands back no other sticker kind's rows")
+    return found
+}
+
+private fun signature(reference: MethodReference) =
+    "${reference.definingClass}->${reference.name}(${reference.parameterTypes.joinToString("")})${reference.returnType}"
+
+private fun registersOf(instruction: Instruction): List<Int> = when (instruction) {
+    is RegisterRangeInstruction -> (instruction.startRegister until instruction.startRegister + instruction.registerCount).toList()
+    is FiveRegisterInstruction -> listOf(instruction.registerC, instruction.registerD, instruction.registerE,
+        instruction.registerF, instruction.registerG).take(instruction.registerCount)
+    else -> emptyList()
+}
+
+/**
+ * Hands each other kind's finished rows, its template and the menu to the extension right before
+ * the picker returns them, at the return's label so a branch onto it reaches the hook too. The
+ * three registers are the ones already there, so nothing of TikTok's changes.
+ */
+internal fun MutableMethod.addDmStickerOtherRowsHooks(returns: List<DmStickerOtherRows>) {
+    for (other in returns.sortedByDescending { it.returnIndex }) {
+        addInstructionsAtControlFlowLabel(
+            other.returnIndex,
+            "invoke-static { v${other.rows}, v${other.template}, v${other.builder} }, " +
+                "$SAVER->addDmStickerSaveRow(Ljava/util/List;Ljava/lang/Object;Ljava/lang/Object;)V",
+        )
+    }
 }

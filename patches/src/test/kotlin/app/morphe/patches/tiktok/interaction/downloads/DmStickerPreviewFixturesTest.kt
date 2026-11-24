@@ -1,5 +1,6 @@
 package app.morphe.patches.tiktok.interaction.downloads
 
+import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
@@ -9,9 +10,11 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -106,6 +109,68 @@ class DmStickerPreviewFixturesTest {
             assertEquals(12, (nonceSize as NarrowLiteralInstruction).narrowLiteral)
             assertTrue(calls.any { it.definingClass == "Ljavax/crypto/spec/IvParameterSpec;" && it.name == "<init>" })
             assertTrue(calls.any { it.definingClass == "Ljavax/crypto/spec/SecretKeySpec;" && it.name == "<init>" })
+        }
+    }
+
+    /**
+     * #470: tapping a sticker made from a video opened no save box. The chat bubble sends those
+     * taps through their own method, which ends in the same preview service; the save box goes
+     * after that call, reads the bubble's view and template, and TikTok's early exits skip it.
+     */
+    @Test
+    fun `a sticker made from a video opens the save box after TikTok's own preview call`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val all = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
+            val byType = all.associateBy { it.type }
+            val handler = byType.getValue(DM_STICKER_HANDLER)
+            val anchor = dmStickerPreviewAnchor(handler)
+            val video = dmStickerVideoTap(handler, anchor.service) { byType[it] }
+            assertNotNull(apk.name, video)
+            video!!
+            assertEquals(apk.name, "Landroid/view/View;", video.view.type)
+            assertEquals(apk.name, DM_STICKER_TEMPLATE, video.template.type)
+
+            // The bubble's own tap makes that click from the rounded sticker view and hands it over.
+            val maker = handler.methods.single { method ->
+                method.implementation?.instructions?.any { it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == video.click } == true
+            }
+            assertTrue(apk.name, maker.references().any { it.name == video.method.name && it.definingClass == DM_STICKER_HANDLER })
+            assertEquals(apk.name, listOf("Landroid/view/View;", DM_STICKER_TEMPLATE),
+                maker.parameterTypes.map(CharSequence::toString).let { listOf(it.first(), it.last()) })
+            val slot = byType.getValue(SLOT)
+            val tap = slot.methods.single { method -> method.references().any { it.definingClass == DM_STICKER_ABILITY && it.name == maker.name } }
+            val code = tap.implementation!!.instructions.toList()
+            code.forEachIndexed { index, instruction ->
+                val reference = instruction.getReference<MethodReference>()
+                if (reference?.definingClass != DM_STICKER_ABILITY || reference.name != maker.name) return@forEachIndexed
+                val viewRegister = (instruction as FiveRegisterInstruction).registerD
+                val viewRead = (index - 1 downTo 1).first { previous ->
+                    code[previous].opcode == Opcode.MOVE_RESULT_OBJECT && (code[previous] as OneRegisterInstruction).registerA == viewRegister
+                }
+                assertEquals("${apk.name}: only the sticker bubble is passed to the video tap", ROUNDING_VIEW,
+                    code[viewRead - 1].getReference<MethodReference>()!!.returnType)
+            }
+
+            val patched = MutableMethod(video.method)
+            patched.addDmStickerVideoTapHook(video)
+            val before = video.method.implementation!!.instructions.toList()
+            val after = patched.implementation!!.instructions.toList()
+            assertEquals("${apk.name} gains the hook and its landing", before.size + 8, after.size)
+            val call = after.indexOfFirst { it.getReference<MethodReference>()?.name == "openDmStickerPreview" }
+            assertEquals(apk.name, video.previewCall + 7, call)
+            assertEquals(apk.name, Opcode.RETURN_VOID, after[video.previewCall + 9].opcode)
+            assertEquals(apk.name, listOf("Landroid/view/View;", "Ljava/lang/Object;"),
+                after[call].getReference<MethodReference>()!!.parameterTypes.map(CharSequence::toString))
+            // Only TikTok's preview call falls into the hook. Every branch of TikTok's own still lands
+            // where it did, so an early exit returns without the save box.
+            val offsets = after.runningFold(0) { offset, instruction -> offset + instruction.codeUnits }
+            val hook = (video.previewCall + 1..video.previewCall + 8).map { offsets[it] }.toSet()
+            after.forEachIndexed { index, instruction ->
+                if (index in video.previewCall + 1..video.previewCall + 8 || instruction !is OffsetInstruction) return@forEachIndexed
+                assertTrue("${apk.name}: ${instruction.opcode} at $index lands in the hook", offsets[index] + instruction.codeOffset !in hook)
+            }
+            assertEquals(apk.name, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(patched))
         }
     }
 

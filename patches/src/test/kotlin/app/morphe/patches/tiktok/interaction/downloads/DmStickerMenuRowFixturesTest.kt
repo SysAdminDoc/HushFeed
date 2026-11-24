@@ -18,6 +18,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -126,6 +127,47 @@ class DmStickerMenuRowFixturesTest {
             val registers = after[call] as FiveRegisterInstruction
             val list = hooked.implementation!!.registerCount - 1
             assertEquals(apk, listOf(list) + menu.scratch, listOf(registers.registerC, registers.registerD, registers.registerE))
+            assertEquals(apk, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+        }
+    }
+
+    /**
+     * #470: holding a sticker made from a video showed no Save media, because TikTok builds those
+     * rows with another lambda. The picker that chooses between them is found, and its one other
+     * lambda holding the template and the menu gets the same call right before its rows go back.
+     */
+    @Test
+    fun `a sticker made from a video gets the row through the picker's other rows`() {
+        forEachBuild { apk, classes, byType ->
+            val (owner, rows) = rowsLambdas(classes).single()
+            val menu = dmStickerMenu(rows, owner) { byType[it] }
+            val pickers = classes.flatMap { classDef ->
+                classDef.methods.filter { DmStickerMenuPickerFingerprint.takes(it, classDef) }
+            }
+            assertEquals(apk, 1, pickers.size)
+            val picker = pickers.single()
+            assertTrue("$apk: the picker makes the rows lambda",
+                picker.code().any { it.opcode == Opcode.NEW_INSTANCE && it.type() == owner.type })
+            val others = dmStickerOtherRows(picker, owner.type, menu.builderType)
+            assertEquals(apk, 1, others.size)
+            val other = others.single()
+            // That return comes after the picker checks for a sticker made from a video.
+            val video = picker.code().indexOfFirst { it.getReference<FieldReference>()?.name == "VIDEO_STICKER_ANIMATED" }
+            assertTrue("$apk: the picker checks for video stickers before that return", video in 0 until other.returnIndex)
+
+            val hooked = MutableMethod(picker)
+            hooked.addDmStickerOtherRowsHooks(others)
+            val before = picker.code().filter { it.opcode != Opcode.NOP }
+            val after = hooked.code().filter { it.opcode != Opcode.NOP }
+            assertEquals("$apk gains one line", before.size + 1, after.size)
+            val call = after.indexOfFirst { it.getReference<MethodReference>()?.name == "addDmStickerSaveRow" }
+            assertEquals(apk, Opcode.RETURN_OBJECT, after[call + 1].opcode)
+            val registers = after[call] as FiveRegisterInstruction
+            assertEquals(apk, listOf(other.rows, other.template, other.builder),
+                listOf(registers.registerC, registers.registerD, registers.registerE))
+            assertEquals(apk, other.rows, (after[call + 1] as OneRegisterInstruction).registerA)
+            assertEquals("$apk keeps TikTok's code as it was", before.map(::shape),
+                (after.subList(0, call) + after.subList(call + 1, after.size)).map(::shape))
             assertEquals(apk, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
         }
     }

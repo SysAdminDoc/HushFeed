@@ -197,6 +197,12 @@ public class FeedScreenCoverageTest {
         put("grid_search", NONE, YES, NONE);
         // Where the Liked grid's list starts, which neither window draws (#350).
         put("liked_jump_to_date", NONE, NONE, NONE);
+        // The same for the Favorites grid (#508).
+        put("favorites_jump_to_date", NONE, NONE, NONE);
+        // A deleted favorite's kept cover and creator, drawn on the Favorites grid tile, and the
+        // page listing them (#516). Neither window draws either.
+        put("remember_saved_videos", NONE, NONE, NONE);
+        put("action_unavailable_saved_videos", NONE, NONE, NONE);
         // Controls over the profile, Liked and sound grids, which neither window draws (#378).
         put("grid_position_controls", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);

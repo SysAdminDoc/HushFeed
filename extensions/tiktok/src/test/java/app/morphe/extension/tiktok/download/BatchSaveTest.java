@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -231,6 +232,35 @@ public class BatchSaveTest {
 
         gear.videoExtra = "{\"audio_file_id\":\"missing\"}";
         assertTrue("a silent video was offered as a complete one", BatchSave.source(video, "highest", false).video.isEmpty());
+    }
+
+    /** A drama episode as its episode list hands over one the account hasn't unlocked: no video. */
+    public static final class LockedEpisode {
+        public final String aid = "batch-locked-14";
+        public final DramaEpisodesTest.Paid mPaidContentInfo = new DramaEpisodesTest.Paid(7431100L, "Night Shift");
+    }
+
+    /**
+     * #463, #527: a drama episode with no video stops with its reason. TikTok is never asked for
+     * the episode some other way, since the whole of a locked one is what TikTok sells.
+     */
+    @Test public void aLockedDramaEpisodeIsNeverFetchedAnotherWay() {
+        List<String> asked = new ArrayList<>();
+        DramaEpisodes.sourceForTests = (path, query) -> {
+            asked.add(path);
+            return "{\"status_code\":0,\"aweme_detail\":{\"aweme_id\":\"batch-locked-14\",\"video\":"
+                    + "{\"play_addr\":{\"url_list\":[\"https://example.com/whole.mp4\"]}}}}";
+        };
+        DramaEpisodes.readerForTests = json -> null;
+        try {
+            IOException stopped = assertThrows(IOException.class,
+                    () -> BatchSave.saveOne(context, new LockedEpisode(), new MediaFileWriter.Saved[]{null}));
+            assertEquals("This video isn't available as a complete file", stopped.getMessage());
+            assertTrue("TikTok was asked for the locked episode: " + asked, asked.isEmpty());
+        } finally {
+            DramaEpisodes.sourceForTests = null;
+            DramaEpisodes.readerForTests = null;
+        }
     }
 
     private static AdvancedDownloadsTest.PhotoPost photoPost(String id, AdvancedDownloadsTest.Photo... photos) {

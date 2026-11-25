@@ -9,13 +9,13 @@ private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val PAID_INFO = "Lcom/ss/android/ugc/aweme/feed/model/PaidContentInfo;"
 
 /**
- * #527: DramaEpisodes.locked reads a post's paid struct by these names, by reflection, to keep a
- * drama episode TikTok shows only a preview of from being fetched whole. A rename would read as
- * unlocked, so every declared build has to carry them.
+ * #444: DramaEpisodes.collectionId reads a post's paid struct and its drama id by these names, by
+ * reflection, to tell an episode of a drama from any other post. A rename would hide Save
+ * episodes on every episode, so every declared build has to carry them.
  */
-class DramaEpisodeLockAnchorsTest {
+class DramaEpisodeAnchorsTest {
     @Test
-    fun `each declared build names a post's paid struct and its preview flag as the episode lock reads them`() {
+    fun `each declared build names a post's paid struct and its drama id as the episode list reads them`() {
         Fixtures.forEachDeclared { apk ->
             val classes = Fixtures.dexContainer(apk, Opcodes.getDefault()).let { container ->
                 container.dexEntryNames.asSequence()
@@ -28,11 +28,9 @@ class DramaEpisodeLockAnchorsTest {
                 aweme!!.fields.any { it.name == "mPaidContentInfo" && it.type == PAID_INFO })
             val info = classes[PAID_INFO]
             assertTrue("${apk.name}: no $PAID_INFO", info != null)
-            assertTrue("${apk.name}: PaidContentInfo.isPartialPreview()Z", info!!.methods.any {
-                it.name == "isPartialPreview" && it.parameterTypes.isEmpty() && it.returnType == "Z"
-            })
-            assertTrue("${apk.name}: PaidContentInfo.isPartialPreview:Z",
-                info.fields.any { it.name == "isPartialPreview" && it.type == "Z" })
+            assertTrue("${apk.name}: PaidContentInfo.getPaidCollectionId() or paidCollectionId",
+                info!!.methods.any { it.name == "getPaidCollectionId" && it.parameterTypes.isEmpty() } ||
+                    info.fields.any { it.name == "paidCollectionId" })
         }
     }
 }

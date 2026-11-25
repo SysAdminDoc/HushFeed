@@ -101,7 +101,11 @@ public class EpisodePickerTest {
     }
 
     private static DramaEpisodes.Episode episode(String id, int number, boolean preview) {
-        return new DramaEpisodes.Episode(new Post(id, 7431100L), id, number, preview);
+        return episode(id, number, preview, false);
+    }
+
+    private static DramaEpisodes.Episode episode(String id, int number, boolean preview, boolean locked) {
+        return new DramaEpisodes.Episode(new Post(id, 7431100L), id, number, preview, locked);
     }
 
     private static List<DramaEpisodes.Episode> episodes(int count) {
@@ -135,8 +139,9 @@ public class EpisodePickerTest {
 
     @Test public void eachRowSaysItsNumberAndWhetherItsAPreviewOrOnScreen() {
         List<DramaEpisodes.Episode> list = Arrays.asList(episode("a", 1, false), episode("b", 2, true),
-                episode("c", 3, false));
-        assertArrayEquals(new String[]{"Episode 1", "Episode 2 · Preview only", "Episode 3 · On screen"},
+                episode("c", 3, false), episode("d", 4, false, true), episode("e", 5, true, true));
+        assertArrayEquals(new String[]{"Episode 1", "Episode 2 · Preview only", "Episode 3 · On screen",
+                        "Episode 4 · Locked", "Episode 5 · Locked"},
                 EpisodePicker.labels(activity, list, "c"));
         assertEquals("Pick episodes to save\nNight Shift", EpisodePicker.title(activity, "Night Shift"));
         assertEquals("Pick episodes to save", EpisodePicker.title(activity, null));
@@ -188,6 +193,27 @@ public class EpisodePickerTest {
         tap(dialog, DialogInterface.BUTTON_POSITIVE);
         assertEquals(1, runs.size());
         assertEquals(3, runs.get(0).size());
+    }
+
+    /** #463: an episode TikTok sent no video for is never checked, by a tap, Pick all or being on screen. */
+    @Test public void aLockedEpisodeCantBeCheckedAndPickAllLeavesItOut() {
+        drama = Arrays.asList(episode("e1", 1, false), episode("e2", 2, false, true), episode("e3", 3, true, true));
+        AlertDialog dialog = open("e2");
+        ListView list = dialog.getListView();
+        assertFalse("the locked episode on screen started checked", list.isItemChecked(1));
+
+        tapRow(dialog, 2);
+        assertFalse("a tap checked a locked episode", list.isItemChecked(2));
+        tap(dialog, DialogInterface.BUTTON_POSITIVE);
+        assertTrue("a locked episode was saved", runs.isEmpty());
+        assertEquals("Pick at least one episode", ShadowToast.getTextOfLatestToast());
+
+        tap(dialog, DialogInterface.BUTTON_NEUTRAL);
+        assertTrue(list.isItemChecked(0));
+        assertFalse("Pick all checked a locked episode", list.isItemChecked(1));
+        assertFalse(list.isItemChecked(2));
+        tap(dialog, DialogInterface.BUTTON_POSITIVE);
+        assertEquals(List.of(List.of(drama.get(0).post)), runs);
     }
 
     @Test public void moreThanOneRunsWorthIsSavedInTurns() {

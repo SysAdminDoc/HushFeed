@@ -30,7 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * any episode, that saves the picked ones as one {@link BatchSave} run with one progress row and
  * one banner. The episode on screen starts checked. A run takes at most
  * {@link GridPicker#MAX_PICKED}; with more checked, Save starts that many and leaves the rest
- * checked for the next tap.
+ * checked for the next tap. An episode TikTok sent no video for says it's locked and can't be
+ * checked (#463).
  */
 public final class EpisodePicker {
     static final String DIALOG_KEY = "episode picker";
@@ -112,13 +113,14 @@ public final class EpisodePicker {
         }
     }
 
-    /** Each row: the episode's number, then whether TikTok sent only a preview or it's on screen. */
+    /** Each row: the episode's number, then whether it's locked, only a preview, or on screen. */
     static String[] labels(Context context, List<DramaEpisodes.Episode> episodes, String current) {
         String[] labels = new String[episodes.size()];
         for (int i = 0; i < labels.length; i++) {
             DramaEpisodes.Episode episode = episodes.get(i);
             StringBuilder label = new StringBuilder(L10n.f(context, "Episode %1$s", String.valueOf(episode.number)));
-            if (episode.preview) label.append(" · ").append(L10n.t(context, "Preview only"));
+            if (episode.locked) label.append(" · ").append(L10n.t(context, "Locked"));
+            else if (episode.preview) label.append(" · ").append(L10n.t(context, "Preview only"));
             if (episode.id.equals(current)) label.append(" · ").append(L10n.t(context, "On screen"));
             labels[i] = label.toString();
         }
@@ -131,11 +133,11 @@ public final class EpisodePicker {
         return name == null ? title : title + "\n" + name;
     }
 
-    /** The checked episodes' posts, in episode order. */
+    /** The checked episodes' posts, in episode order, never a locked one. */
     static List<Object> picked(List<DramaEpisodes.Episode> episodes, boolean[] checked) {
         List<Object> picked = new ArrayList<>();
         for (int i = 0; i < checked.length && i < episodes.size(); i++) {
-            if (checked[i]) picked.add(episodes.get(i).post);
+            if (checked[i] && !episodes.get(i).locked) picked.add(episodes.get(i).post);
         }
         return picked;
     }
@@ -146,7 +148,9 @@ public final class EpisodePicker {
      */
     static boolean save(Context context, List<DramaEpisodes.Episode> episodes, boolean[] checked, ListView list) {
         List<Integer> rows = new ArrayList<>();
-        for (int i = 0; i < checked.length && i < episodes.size(); i++) if (checked[i]) rows.add(i);
+        for (int i = 0; i < checked.length && i < episodes.size(); i++) {
+            if (checked[i] && !episodes.get(i).locked) rows.add(i);
+        }
         List<Integer> run = rows.subList(0, Math.min(rows.size(), GridPicker.MAX_PICKED));
         List<Object> posts = new ArrayList<>();
         for (int row : run) posts.add(episodes.get(row).post);
@@ -163,12 +167,16 @@ public final class EpisodePicker {
     private static void show(Activity activity, String name, List<DramaEpisodes.Episode> episodes, String current) {
         List<DramaEpisodes.Episode> rows = Collections.unmodifiableList(new ArrayList<>(episodes));
         boolean[] checked = new boolean[rows.size()];
-        for (int i = 0; i < checked.length; i++) checked[i] = rows.get(i).id.equals(current);
+        for (int i = 0; i < checked.length; i++) checked[i] = rows.get(i).id.equals(current) && !rows.get(i).locked;
         SettingsUi.syncDarkMode(activity);
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(title(activity, name))
-                .setMultiChoiceItems(labels(activity, rows, current), checked,
-                        (ignored, which, isChecked) -> checked[which] = isChecked)
+                .setMultiChoiceItems(labels(activity, rows, current), checked, (shown, which, isChecked) -> {
+                    // A locked row's tap is undone: there's nothing of it to save.
+                    boolean locked = rows.get(which).locked;
+                    checked[which] = isChecked && !locked;
+                    if (isChecked && locked) ((AlertDialog) shown).getListView().setItemChecked(which, false);
+                })
                 .setPositiveButton(L10n.t(activity, "Save"), null)
                 .setNegativeButton(L10n.t(activity, "Cancel"), null)
                 .setNeutralButton(L10n.t(activity, "Pick all"), null)
@@ -181,6 +189,7 @@ public final class EpisodePicker {
             if (all != null) all.setOnClickListener(view -> {
                 ListView list = dialog.getListView();
                 for (int i = 0; i < checked.length; i++) {
+                    if (rows.get(i).locked) continue;
                     checked[i] = true;
                     if (list != null) list.setItemChecked(i, true);
                 }

@@ -33,6 +33,11 @@ public class RuntimePatchListTest {
     /** What follows a registration: execute's closing brace, then the patch's. Nothing runs after it. */
     private static final String END_OF_EXECUTE = "\n    }\n}\n";
     /**
+     * A resource patch may end with releaseResourceTable() after its record (92679641a): it only
+     * lets the patcher drop the parsed table and can't undo or skip the patch's work.
+     */
+    private static final String RELEASE_THEN_END = "\n        releaseResourceTable()" + END_OF_EXECUTE;
+    /**
      * bytecodePatch and resourcePatch are the settings wrappers' import aliases. A named plain
      * patch() is a resource patch: since patcher 2.3 that's what the resource patches declare with.
      */
@@ -128,7 +133,8 @@ public class RuntimePatchListTest {
                                 || source.contains("val " + name + "Patch = patch("));
                 assertTrue(file + " already records " + name, applied.add(name));
                 assertTrue(file + " records " + name + " as the last statement of execute, at its indent",
-                        call.group(1).equals("        ") && source.startsWith(END_OF_EXECUTE, call.end()));
+                        call.group(1).equals("        ") && (source.startsWith(END_OF_EXECUTE, call.end())
+                                || source.startsWith(RELEASE_THEN_END, call.end())));
             }
         }
         assertEquals(new TreeSet<>(Arrays.asList("accentColor", "changeAppName", "customLauncherIcon", "trustUserCertificates",

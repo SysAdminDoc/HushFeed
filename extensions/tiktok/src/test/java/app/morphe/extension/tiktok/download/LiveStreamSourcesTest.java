@@ -17,9 +17,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** #37: pulling a LIVE's FLV download or HLS pieces into the recorder's spool. */
 public class LiveStreamSourcesTest {
@@ -30,6 +34,8 @@ public class LiveStreamSourcesTest {
         final Map<String, ArrayDeque<byte[]>> answers = new HashMap<>();
         final List<String> requested = new ArrayList<>();
         final List<InputStream> opened = new ArrayList<>();
+        final Set<String> once = new HashSet<>();
+        final Set<byte[]> dropping = Collections.newSetFromMap(new IdentityHashMap<>());
 
         FakeHttp serve(String url, byte[]... bodies) {
             ArrayDeque<byte[]> queue = answers.get(url);
@@ -41,16 +47,70 @@ public class LiveStreamSourcesTest {
             return this;
         }
 
+        /** Each answer is given once, then the address stops answering, like a LIVE that ended. */
+        FakeHttp serveOnce(String url, byte[]... bodies) {
+            once.add(url);
+            return serve(url, bodies);
+        }
+
+        /** This answer's connection drops at its end instead of closing. */
+        FakeHttp dropAtEnd(byte[] body) {
+            dropping.add(body);
+            return this;
+        }
+
         @Override public InputStream open(String url) throws IOException {
             requested.add(url);
             ArrayDeque<byte[]> queue = answers.get(url);
             if (queue == null || queue.isEmpty()) throw new IOException("No answer for " + url);
             // The last answer repeats, like a playlist that has nothing new.
-            byte[] body = queue.size() > 1 ? queue.poll() : queue.peek();
+            byte[] body = queue.size() > 1 || once.contains(url) ? queue.poll() : queue.peek();
             InputStream stream = new ByteArrayInputStream(body);
+            if (dropping.contains(body)) {
+                stream = new java.io.FilterInputStream(stream) {
+                    @Override public int read(byte[] bytes, int offset, int length) throws IOException {
+                        int count = super.read(bytes, offset, length);
+                        if (count < 0) throw new IOException("Connection reset");
+                        return count;
+                    }
+                };
+            }
             opened.add(stream);
             return stream;
         }
+    }
+
+    /** Every video sample the reader takes from a spool, as "time:key". */
+    private static List<String> videoSamples(byte[] spool) throws IOException {
+        List<String> samples = new ArrayList<>();
+        FlvReader.read(new ByteArrayInputStream(spool), new FlvReader.Listener() {
+            @Override public void onVideoConfig(String mime, byte[] csd0, byte[] csd1, int width, int height) { }
+
+            @Override public void onAudioConfig(byte[] specific, int sampleRate, int channels) { }
+
+            @Override public void onVideo(byte[] annexB, long presentationUs, boolean keyFrame) {
+                samples.add(presentationUs / 1000 + (keyFrame ? ":key" : ""));
+            }
+
+            @Override public void onAudio(byte[] aac, long presentationUs) { }
+        });
+        return samples;
+    }
+
+    private static byte[] join(byte[]... parts) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for (byte[] part : parts) out.write(part, 0, part.length);
+        return out.toByteArray();
+    }
+
+    private static final String FLV = "https://pull.example.com/room.flv";
+
+    private static byte[] config() {
+        return FlvFixtures.avcConfigTag(0, FlvFixtures.baselineSps(20, 15, 0), FlvFixtures.pps());
+    }
+
+    private static byte[] frame(long ms, boolean key) {
+        return FlvFixtures.avcFrameTag(ms, key, 0, new byte[]{(byte) (key ? 0x65 : 0x41), 1, 2});
     }
 
     private static final class Spool implements LiveRecorder.Output {
@@ -205,13 +265,66 @@ public class LiveStreamSourcesTest {
         byte[] stream = FlvFixtures.stream(
                 FlvFixtures.avcConfigTag(0, FlvFixtures.baselineSps(20, 15, 0), FlvFixtures.pps()),
                 FlvFixtures.avcFrameTag(0, true, 0, new byte[]{0x65, 1, 2}));
-        FakeHttp http = new FakeHttp().serve("https://pull.example.com/room.flv", stream);
+        FakeHttp http = new FakeHttp().serveOnce("https://pull.example.com/room.flv", stream);
         Spool spool = new Spool();
         FakeControl control = new FakeControl();
         new LiveStreamSources.Flv(http, "https://pull.example.com/room.flv").pump(spool, control);
         assertArrayEquals(stream, spool.bytes.toByteArray());
         assertEquals(1, control.registered.size());
         assertEquals(1, control.released);
+        // The LIVE ended: five tries to open it again brought nothing, so the recording ends.
+        assertEquals(1 + 5, http.requested.size());
+    }
+
+    /** #526: a slow patch of internet dropped the download and ended the recording with it. */
+    @Test public void flvOpensADroppedDownloadAgainAndJoinsBothIntoOneStream() throws IOException {
+        byte[] cut = join(FlvFixtures.stream(config(), frame(0, true), frame(40, false), frame(80, false)),
+                Arrays.copyOf(frame(120, false), 9));
+        // The new connection's clock starts over.
+        byte[] again = FlvFixtures.stream(config(), frame(0, true), frame(40, false));
+        FakeHttp http = new FakeHttp().serveOnce(FLV, cut, again).dropAtEnd(cut);
+        Spool spool = new Spool();
+        FakeControl control = new FakeControl();
+        new LiveStreamSources.Flv(http, FLV).pump(spool, control);
+
+        byte[] saved = spool.bytes.toByteArray();
+        assertEquals("one header", 1, new String(saved, StandardCharsets.ISO_8859_1).split("FLV\u0001", -1).length - 1);
+        assertEquals(Arrays.asList("0:key", "40", "80", "113:key", "153"), videoSamples(saved));
+        assertEquals(2, control.registered.size());
+        assertEquals(2, control.released);
+    }
+
+    @Test public void flvKeepsTheTimesOfAConnectionWhoseClockCarriesOn() throws IOException {
+        byte[] first = FlvFixtures.stream(config(), frame(1000, true), frame(1040, false));
+        byte[] again = FlvFixtures.stream(config(), frame(6000, true), frame(6040, false));
+        FakeHttp http = new FakeHttp().serveOnce(FLV, first, again).dropAtEnd(first);
+        Spool spool = new Spool();
+        new LiveStreamSources.Flv(http, FLV).pump(spool, new FakeControl());
+        assertEquals(Arrays.asList("0:key", "40", "5000:key", "5040"), videoSamples(spool.bytes.toByteArray()));
+    }
+
+    @Test public void flvThatNeverOpensGivesUpAfterFiveTriesAndSaysWhy() {
+        FakeHttp http = new FakeHttp();
+        FakeControl control = new FakeControl();
+        try {
+            new LiveStreamSources.Flv(http, FLV).pump(new Spool(), control);
+            fail("nothing ever came");
+        } catch (IOException expected) {
+            assertEquals("No answer for " + FLV, expected.getMessage());
+        }
+        assertEquals(5, http.requested.size());
+        assertEquals(4, control.pauses);
+    }
+
+    @Test public void flvStopTappedWhileWaitingToReconnectEndsIt() throws IOException {
+        byte[] cut = FlvFixtures.stream(config(), frame(0, true));
+        FakeHttp http = new FakeHttp().serveOnce(FLV, cut, cut.clone()).dropAtEnd(cut);
+        FakeControl control = new FakeControl();
+        control.stopAfterPauses = 1;
+        Spool spool = new Spool();
+        new LiveStreamSources.Flv(http, FLV).pump(spool, control);
+        assertEquals(1, http.requested.size());
+        assertArrayEquals(cut, spool.bytes.toByteArray());
     }
 
     @Test public void flvRefusesAnUnsupportedVideoFormatFromTheFirstBytes() {

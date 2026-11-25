@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import app.morphe.extension.shared.Logger;
+
 /** The two ways a LIVE's video reaches the recorder: one long FLV download, or HLS pieces polled. */
 final class LiveStreamSources {
     private LiveStreamSources() {
@@ -56,7 +58,13 @@ final class LiveStreamSources {
     private static final int MAX_FAILURES = 5;
     private static final long STALL_NANOS = 45_000_000_000L;
 
-    /** A LIVE's flv address: the stream is one never-ending download, written to the spool as it arrives. */
+    /**
+     * A LIVE's flv address: the stream is one never-ending download, written to the spool as it
+     * arrives. A connection that drops or stalls past the read timeout is opened again while the
+     * viewer is still in the room, so a slow patch of internet no longer ends the recording
+     * (#526). Only {@link #MAX_FAILURES} tries in a row that bring nothing end it, which is also
+     * how a LIVE that really ended looks.
+     */
     static final class Flv implements LiveRecorder.Source {
         private final Http http;
         private final String url;
@@ -67,28 +75,57 @@ final class LiveStreamSources {
         }
 
         @Override public void pump(LiveRecorder.Output out, LiveRecorder.Control control) throws IOException {
-            InputStream in = http.open(url);
-            control.onStop(in);
-            try {
-                byte[] buffer = new byte[BUFFER_BYTES];
-                ByteArrayOutputStream head = new ByteArrayOutputStream();
-                boolean checked = false;
-                int count;
-                while ((count = in.read(buffer)) >= 0) {
-                    if (control.stopRequested()) return;
-                    out.write(buffer, 0, count);
-                    if (!checked) {
-                        head.write(buffer, 0, Math.min(count, HEAD_BYTES - head.size()));
-                        if (head.size() >= HEAD_BYTES) {
+            FlvTags tags = new FlvTags(out);
+            byte[] buffer = new byte[BUFFER_BYTES];
+            ByteArrayOutputStream head = new ByteArrayOutputStream();
+            boolean checked = false;
+            int failures = 0;
+            while (!control.stopRequested()) {
+                long before = tags.written();
+                IOException lost = null;
+                try {
+                    InputStream in = http.open(url);
+                    control.onStop(in);
+                    try {
+                        tags.newConnection();
+                        // A download dropped before its head was looked at leaves part of a tag,
+                        // and the next one's FLV header would land in the middle of it.
+                        if (!checked) head.reset();
+                        int count;
+                        while ((count = in.read(buffer)) >= 0) {
+                            if (control.stopRequested()) return;
+                            if (!checked) {
+                                head.write(buffer, 0, Math.min(count, HEAD_BYTES - head.size()));
+                                if (head.size() >= HEAD_BYTES) {
+                                    checked = true;
+                                    checkHead(head.toByteArray(), HEVC_WRITABLE);
+                                }
+                            }
+                            tags.write(buffer, 0, count);
+                        }
+                        if (!checked && head.size() > 0) {
                             checked = true;
                             checkHead(head.toByteArray(), HEVC_WRITABLE);
                         }
+                    } finally {
+                        control.release(in);
+                        in.close();
                     }
+                } catch (FlvReader.UnsupportedStream | LiveRecorder.SpoolFull fatal) {
+                    throw fatal;
+                } catch (IOException failure) {
+                    if (control.stopRequested()) return;
+                    lost = failure;
+                    Logger.printDebug(() -> "LIVE recording connection lost, opening it again: " + failure);
                 }
-                if (!checked && head.size() > 0) checkHead(head.toByteArray(), HEVC_WRITABLE);
-            } finally {
-                control.release(in);
-                in.close();
+                if (tags.written() > before) {
+                    failures = 0;
+                } else if (++failures >= MAX_FAILURES) {
+                    // A recording that never got a tag says why; one that did ends as the LIVE ending.
+                    if (lost != null && tags.written() == 0) throw lost;
+                    return;
+                }
+                if (!control.pause(failures == 0 ? 500 : 1000L * failures)) return;
             }
         }
 
@@ -104,6 +141,143 @@ final class LiveStreamSources {
             } catch (IOException cutOff) {
                 // The head ends mid-tag, which is only the slice looked at.
             }
+        }
+    }
+
+    /**
+     * Writes FLV downloads to the spool one whole tag at a time, so several connections join into
+     * one readable FLV (#526). A connection cut off mid-tag leaves no half tag behind. The first
+     * header goes through and later connections' headers are dropped. A tag whose time runs back,
+     * or jumps far ahead, as a new connection's clock can, is moved on to just after the last one,
+     * so the recording keeps running forward the way an MP4 needs.
+     */
+    static final class FlvTags {
+        private static final int MAX_TAG_BYTES = 8 * 1024 * 1024;
+        private static final int TAG_HEADER = 11;
+        private static final int TAG_TRAILER = 4;
+        private static final long JUMP_MS = 2_000;
+        private static final long STEP_MS = 33;
+
+        private final LiveRecorder.Output out;
+        private byte[] buffer = new byte[64 * 1024];
+        private int start;
+        private int end;
+        private boolean inHeader = true;
+        private boolean headerWritten;
+        private boolean freshConnection;
+        private boolean rejoined;
+        private long written;
+        private boolean started;
+        private long offset;
+        private long highest;
+
+        FlvTags(LiveRecorder.Output out) {
+            this.out = out;
+        }
+
+        /** How many whole tags have gone to the spool. */
+        long written() {
+            return written;
+        }
+
+        /** A new download starts: whatever was left of the last one's tag is dropped. */
+        void newConnection() {
+            start = 0;
+            end = 0;
+            inHeader = true;
+            freshConnection = started;
+            rejoined = started;
+        }
+
+        void write(byte[] bytes, int from, int length) throws IOException {
+            append(bytes, from, length);
+            while (true) {
+                int available = end - start;
+                if (inHeader) {
+                    if (available < 9) return;
+                    if (buffer[start] != 'F' || buffer[start + 1] != 'L' || buffer[start + 2] != 'V') {
+                        throw new IOException("Not an FLV stream");
+                    }
+                    long size = ((buffer[start + 5] & 0xFFL) << 24) | ((buffer[start + 6] & 0xFF) << 16)
+                            | ((buffer[start + 7] & 0xFF) << 8) | (buffer[start + 8] & 0xFF);
+                    if (size < 9 || size > 1024) throw new IOException("FLV header size " + size + " is not believable");
+                    int total = (int) size + TAG_TRAILER;
+                    if (available < total) return;
+                    if (!headerWritten) {
+                        out.write(buffer, start, total);
+                        headerWritten = true;
+                    }
+                    start += total;
+                    inHeader = false;
+                    continue;
+                }
+                if (available < TAG_HEADER) return;
+                int size = ((buffer[start + 1] & 0xFF) << 16) | ((buffer[start + 2] & 0xFF) << 8)
+                        | (buffer[start + 3] & 0xFF);
+                if (size > MAX_TAG_BYTES) throw new IOException("FLV tag size " + size + " is not believable");
+                int total = TAG_HEADER + size + TAG_TRAILER;
+                if (available < total) return;
+                long raw = ((buffer[start + 4] & 0xFFL) << 16) | ((buffer[start + 5] & 0xFF) << 8)
+                        | (buffer[start + 6] & 0xFF) | ((buffer[start + 7] & 0xFFL) << 24);
+                // Settings and metadata tags come at time 0 on every connection, whatever the
+                // stream's clock reads, so only samples decide whether that clock started over.
+                long time = isSettings(start, size) ? (rejoined ? highest : raw) : map(raw);
+                if (time != raw) {
+                    buffer[start + 4] = (byte) (time >> 16);
+                    buffer[start + 5] = (byte) (time >> 8);
+                    buffer[start + 6] = (byte) time;
+                    buffer[start + 7] = (byte) (time >> 24);
+                }
+                out.write(buffer, start, total);
+                written++;
+                start += total;
+            }
+        }
+
+        /** A metadata tag, or the video or AAC settings a stream sends before its samples. */
+        private boolean isSettings(int at, int size) {
+            int type = buffer[at] & 0x1F;
+            if (type == 18) return true;
+            if (size < 2) return false;
+            int first = buffer[at + TAG_HEADER] & 0xFF;
+            int packet = buffer[at + TAG_HEADER + 1] & 0xFF;
+            if (type == 9) return (first & 0x80) == 0 && packet == 0;
+            return type == 8 && (first >> 4) == 10 && packet == 0;
+        }
+
+        private long map(long raw) {
+            if (!started) {
+                started = true;
+                highest = raw;
+                return raw;
+            }
+            long mapped = raw + offset;
+            boolean restart = freshConnection && mapped <= highest;
+            freshConnection = false;
+            if (restart || mapped < highest - JUMP_MS || mapped > highest + 5 * JUMP_MS) {
+                offset = highest + STEP_MS - raw;
+                mapped = highest + STEP_MS;
+            }
+            mapped = Math.max(0, Math.min(0xFFFFFFFFL, mapped));
+            if (mapped > highest) highest = mapped;
+            return mapped;
+        }
+
+        private void append(byte[] bytes, int from, int length) {
+            if (buffer.length - end < length) {
+                int kept = end - start;
+                if (buffer.length - kept < length) {
+                    byte[] bigger = new byte[Math.max(buffer.length * 2, kept + length)];
+                    System.arraycopy(buffer, start, bigger, 0, kept);
+                    buffer = bigger;
+                } else {
+                    System.arraycopy(buffer, start, buffer, 0, kept);
+                }
+                start = 0;
+                end = kept;
+            }
+            System.arraycopy(bytes, from, buffer, end, length);
+            end += length;
         }
     }
 

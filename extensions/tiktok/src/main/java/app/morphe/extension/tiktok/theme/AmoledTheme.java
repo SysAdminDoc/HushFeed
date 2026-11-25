@@ -78,6 +78,7 @@ public final class AmoledTheme {
         if (known != null) return known;
         // Settings can't load before the app has a context; TikTok builds no screen before then.
         if (amoledColor() == 0 || Utils.getContext() == null) return false;
+        if (SettingsStatus.amoledDarkModeEnabled) Settings.rememberAmoledSwitchBuiltIn();
         // Patched with the switch left out (AMOLED dark theme's inAppSwitch option off), nothing
         // puts the grays back on the themes, so an off saved by an earlier build would leave
         // the Compose cards and the comment bar gray on black pages. AMOLED stays on.

@@ -62,6 +62,8 @@ public class AmoledThemeTest {
     @Before public void setUp() {
         AmoledTheme.resetForTests();
         HookStatus.clear();
+        // Every test here runs the switch, which saves the marker, and a setting's value is static.
+        Settings.AMOLED_SWITCH_BUILT_IN.resetToDefault();
         // The switch patch's registration, as a build with the default option has it.
         SettingsStatus.amoledDarkModeEnabled = true;
     }
@@ -108,6 +110,24 @@ public class AmoledThemeTest {
         AmoledTheme.setForTests(BLACK, lightRestore());
         assertTrue(AmoledTheme.on());
         assertFalse(AmoledTheme.restoring());
+    }
+
+    /** #521: what lets AMOLED dark theme be picked by default later without turning anyone's dark mode black. */
+    @Test public void aBuildWithTheSwitchRemembersThePhoneHadIt() {
+        assertFalse(Settings.amoledSwitchWasBuiltIn());
+        AmoledTheme.setForTests(BLACK, lightRestore());
+        assertTrue(AmoledTheme.on());
+        assertTrue(Settings.amoledSwitchWasBuiltIn());
+    }
+
+    @Test public void aBuildWithoutTheSwitchOrTheThemeRemembersNothing() {
+        SettingsStatus.amoledDarkModeEnabled = false;
+        AmoledTheme.setForTests(BLACK, lightRestore());
+        assertTrue(AmoledTheme.on());
+        SettingsStatus.amoledDarkModeEnabled = true;
+        AmoledTheme.resetForTests();
+        assertTrue(AmoledTheme.on());
+        assertFalse(Settings.amoledSwitchWasBuiltIn());
     }
 
     @Test public void offPutsTikToksGraysBack() {

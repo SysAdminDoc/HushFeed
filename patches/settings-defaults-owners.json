@@ -954,6 +954,7 @@
     "LAUNCHER_SHORTCUTS_REMOVED": "Runtime state or legacy migration data; not a configurable feature default.",
     "REMOTE_CONFIG_STAMP": "Runtime state or legacy migration data; not a configurable feature default.",
     "AUTO_STREAK_STATE": "Runtime state or legacy migration data; not a configurable feature default.",
+    "AMOLED_SWITCH_BUILT_IN": "Runtime state or legacy migration data; not a configurable feature default.",
     "FEED_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
     "BOTTOM_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
     "COMMENT_TRANSLATE_BUTTON_TURNED_ON": "Runtime state or legacy migration data; not a configurable feature default.",

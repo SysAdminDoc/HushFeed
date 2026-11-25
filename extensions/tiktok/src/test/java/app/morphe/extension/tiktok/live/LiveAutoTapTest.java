@@ -422,18 +422,36 @@ public class LiveAutoTapTest {
         }
     }
 
-    @Test public void aBattleDrawnAsTwoSeatsStillNeverTapsEitherPane() {
-        // On 47.9.3 each creator's battle pane is a guest seat view, so the taps stay off both
-        // panes rather than reaching the other creator's (#335).
-        List<Rect> panes = List.of(new Rect(0, 396, 358, 897), new Rect(361, 396, 720, 897));
-        List<Rect> taken = List.of(new Rect(24, 236, 230, 284), new Rect(24, 152, 442, 224));
+    @Test public void aBattleTapsTheHostsOwnPaneAndNeverItsBars() {
+        // A battle read off a 1080x2316 screen (#335). On 47.9.3 each creator's pane is a guest
+        // seat view, the other creator's listed first. A tap on the host's pane opens nothing, but
+        // above the panes sit the host's name and the score, and under them the top supporters.
+        Rect host = new Rect(0, 441, 537, 1420);
+        Rect other = new Rect(542, 441, 1080, 1420);
+        List<Rect> panes = List.of(other, host);
+        List<Rect> taken = List.of(new Rect(34, 98, 773, 199), new Rect(34, 216, 308, 284),
+                new Rect(552, 109, 760, 188), new Rect(0, 1420, 321, 1549), new Rect(759, 1420, 1080, 1549),
+                new Rect(207, 1441, 872, 1520), new Rect(996, 1335, 1035, 1397));
         for (int seed = 0; seed < 200; seed++) {
-            float[] point = LiveAutoTap.tapPoint(720, 1600, taken, panes, 32, 0, new Random(seed));
+            float[] point = LiveAutoTap.tapPoint(1080, 2316, taken, panes, 45, 0, new Random(seed));
             assertNotNull("seed " + seed, point);
-            assertClear(point, taken, panes, 32);
-            assertTrue("open room by the panes", (int) point[2] == LiveAutoTap.ABOVE_SEATS
-                    || (int) point[2] == LiveAutoTap.BELOW_SEATS);
+            assertTrue("a host-side spot " + point[2], point[2] < LiveAutoTap.ABOVE_SEATS);
+            assertTrue("in the host's pane " + point[0] + "," + point[1], point[0] > host.left
+                    && point[0] < host.right && point[1] > host.top && point[1] < host.bottom);
+            assertClear(point, taken, List.of(other), 45);
         }
+
+        // The same on a 720x1600 screen, panes listed host first.
+        List<Rect> small = List.of(new Rect(0, 396, 358, 897), new Rect(361, 396, 720, 897));
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.tapPoint(720, 1600, List.of(), small, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertTrue("in the host's pane", point[0] < 358 - 32 && point[1] > 396 && point[1] < 897);
+        }
+
+        // Once every spot in the host's pane has opened something, no tap goes out rather than
+        // one on the bars.
+        assertNull(LiveAutoTap.tapPoint(1080, 2316, taken, panes, 45, 0b11111, new Random(1)));
     }
 
     @Test public void aSpotThatOpenedACardIsSkippedUntilEveryOneHas() {

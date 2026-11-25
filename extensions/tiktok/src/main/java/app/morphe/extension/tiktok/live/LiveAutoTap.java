@@ -371,9 +371,8 @@ public final class LiveAutoTap {
 
     /**
      * Where the taps go, as fractions of the room's width and height, tried in this order. All five
-     * sit on the host's side: the left pane in a battle is drawn into one mixed stream with no views
-     * to dodge, and the other creator's half opens their card when tapped (#335). In a room with
-     * only the host, the left side likes the same as the middle.
+     * sit on the host's side: in a battle the other creator's half opens their card when tapped
+     * (#335). In a room with only the host, the left side likes the same as the middle.
      *
      * In a guest grid the room's like layer opens a seat's card or the gift panel when a tap lands
      * over that seat, the host's seat too, even where none of the seat's own views take it. So the
@@ -381,6 +380,11 @@ public final class LiveAutoTap {
      * the seats ({@link #ABOVE_SEATS}) or, failing that, just below them ({@link #BELOW_SEATS}),
      * which like the room the same as open space does. A seat covering half the room or more is
      * the host's own picture with guests along its edge, and taps on it like as in a solo room.
+     *
+     * A battle is two seats side by side that split the room ({@link #splitHost}), and a tap on
+     * the host's pane, the left one, opens nothing. The rows above and below the panes are the
+     * battle's own bars there (the host's name, the score, the top supporters), so the taps stay
+     * in the host's pane or don't go out at all.
      */
     private static final float[][] SPOTS = {{0.25f, 0.38f}, {0.25f, 0.30f}, {0.25f, 0.46f}, {0.15f, 0.38f}, {0.36f, 0.38f}};
     /** The spot index for taps in the open row above a guest grid's seats. */
@@ -415,11 +419,12 @@ public final class LiveAutoTap {
     static float[] tapPoint(int width, int height, List<Rect> taken, List<Rect> seats, int clear, int skip,
             Random random) {
         if (width <= 0 || height <= 0) return null;
+        Rect host = splitHost(width, seats, clear);
         List<Rect> small = new ArrayList<>();
         int top = height;
         int bottom = 0;
         for (Rect seat : seats) {
-            if ((long) seat.width() * seat.height() * 2 >= (long) width * height) continue;
+            if (seat == host || (long) seat.width() * seat.height() * 2 >= (long) width * height) continue;
             small.add(seat);
             top = Math.min(top, seat.top);
             bottom = Math.max(bottom, seat.bottom);
@@ -430,7 +435,8 @@ public final class LiveAutoTap {
             float y = height * (SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
             if (free(x, y, small, clear) && free(x, y, taken, clear)) return new float[]{x, y, i};
         }
-        if (small.isEmpty()) return null;
+        // By a battle's panes the rows are its bars, and a tap there opens a profile or the ranking.
+        if (small.isEmpty() || host != null) return null;
         // Rows a half clear apart, nearest the seats first, each tried from the host's side out.
         // The first row moves by up to a step, but never out of a band that has room for one.
         int step = Math.max(1, clear / 2);
@@ -453,6 +459,22 @@ public final class LiveAutoTap {
             }
         }
         return null;
+    }
+
+    /**
+     * The host's pane when {@code seats} are two pictures side by side splitting the room's width
+     * between them, each at least two fifths of it and level within {@code clear}, as in a battle;
+     * else null. The host's pane is the left one.
+     */
+    private static Rect splitHost(int width, List<Rect> seats, int clear) {
+        if (seats.size() != 2) return null;
+        boolean firstLeft = seats.get(0).left <= seats.get(1).left;
+        Rect left = seats.get(firstLeft ? 0 : 1);
+        Rect right = seats.get(firstLeft ? 1 : 0);
+        boolean spans = left.left <= clear && right.right >= width - clear && left.right <= right.left + clear;
+        boolean level = Math.abs(left.top - right.top) <= clear && Math.abs(left.bottom - right.bottom) <= clear;
+        boolean halves = left.width() * 5L >= width * 2L && right.width() * 5L >= width * 2L;
+        return spans && level && halves ? left : null;
     }
 
     /** The first free place across the row at {@code y}, moved up to 1.5% of the room each way, as {x, y, spot}. */

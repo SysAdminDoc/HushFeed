@@ -423,8 +423,8 @@ public class LiveAutoTapTest {
     }
 
     @Test public void aBattleDrawnAsTwoSeatsStillNeverTapsEitherPane() {
-        // A battle shows no seat views today. Should one ever give each creator a seat, the taps
-        // stay off both panes rather than reaching the other creator's (#335).
+        // On 47.9.3 each creator's battle pane is a guest seat view, so the taps stay off both
+        // panes rather than reaching the other creator's (#335).
         List<Rect> panes = List.of(new Rect(0, 396, 358, 897), new Rect(361, 396, 720, 897));
         List<Rect> taken = List.of(new Rect(24, 236, 230, 284), new Rect(24, 152, 442, 224));
         for (int seed = 0; seed < 200; seed++) {

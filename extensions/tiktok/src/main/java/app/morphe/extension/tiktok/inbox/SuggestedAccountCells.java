@@ -6,6 +6,9 @@
  */
 package app.morphe.extension.tiktok.inbox;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -56,6 +59,13 @@ public final class SuggestedAccountCells {
      * the profile's suggestion panel, so it marks that panel wherever the profile is hosted.
      */
     static final String PANEL_HEADER = "user_card_horizontal_right_widget";
+    /**
+     * The page the panel's "View all" opens, on its Suggested tab, with a profile's Following and
+     * Followers beside it. Keep suggestions on profiles kept the panel but not this page's cells,
+     * so View all opened an empty list (#462).
+     */
+    static final String PROFILE_RELATIONS =
+            "com.ss.android.ugc.profile.business.ur.following.ui.FollowRelationTabActivity";
     /** How far up from the list the panel is looked for. */
     private static final int MAX_DEPTH = 16;
 
@@ -72,7 +82,8 @@ public final class SuggestedAccountCells {
             Object found = Reflect.readField(cell, "itemView");
             if (!(found instanceof View)) return;
             View view = (View) found;
-            apply(view, Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.get());
+            apply(view, Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.get()
+                    && !(Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.get() && onProfileRelations(view)));
             // A cell is bound before it's added to its list, so where it sits is read once it's
             // there; a post on a view that isn't attached yet runs as it attaches.
             view.post(() -> placeOnProfile(view));
@@ -126,6 +137,16 @@ public final class SuggestedAccountCells {
             panel = (View) panel.getParent();
         }
         return panel;
+    }
+
+    /** Whether the cell is drawn in a profile's {@link #PROFILE_RELATIONS} page. */
+    private static boolean onProfileRelations(View cell) {
+        Context context = cell.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return PROFILE_RELATIONS.equals(context.getClass().getName());
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return false;
     }
 
     /** Whether the group or a view up to {@code depth} levels into it has the entry name. */

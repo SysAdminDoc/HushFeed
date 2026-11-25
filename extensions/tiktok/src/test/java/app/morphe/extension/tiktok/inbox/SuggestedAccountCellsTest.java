@@ -7,6 +7,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Activity;
 import android.os.Looper;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -15,6 +16,8 @@ import android.widget.LinearLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+
+import com.ss.android.ugc.profile.business.ur.following.ui.FollowRelationTabActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -174,6 +177,34 @@ public class SuggestedAccountCellsTest {
             assertEquals(416, fromFeed.card.getLayoutParams().width);
             assertEquals(View.VISIBLE, fromFeed.outer.getVisibility());
             assertEquals(669, fromFeed.outer.getLayoutParams().height);
+        }
+    }
+
+    /**
+     * #462: View all on a profile's suggestions opens the relations page on its Suggested tab.
+     * With Keep suggestions on profiles on, that list came up empty, so its cells now stay, drawn
+     * through a themed wrapper like TikTok's inflater gives them. With Keep off they still go.
+     */
+    @Test public void keepSuggestionsOnProfilesFillsThePageViewAllOpens() {
+        try (var owner = Robolectric.buildActivity(FollowRelationTabActivity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            LinearLayout list = new LinearLayout(activity);
+            View item = new View(new ContextThemeWrapper(activity, android.R.style.Theme));
+            list.addView(item, new LinearLayout.LayoutParams(1080, 220));
+            activity.setContentView(list);
+            Cell cell = new Cell(item);
+
+            Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(cell);
+            runPosted();
+            assertEquals("Keep is off, so the page's cells go", View.GONE, item.getVisibility());
+
+            Settings.KEEP_PROFILE_SUGGESTED_ACCOUNTS.save(true);
+            SuggestedAccountCells.onBind(cell);
+            runPosted();
+            assertEquals("View all opened an empty list", View.VISIBLE, item.getVisibility());
+            assertEquals(220, item.getLayoutParams().height);
         }
     }
 

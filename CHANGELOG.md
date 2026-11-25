@@ -9,6 +9,7 @@ Every Hushfeed release, newest first.
 * `SIM spoof` no longer leaves TikTok saying "No internet connection" on a phone with a SIM from China, Hong Kong, India and the other places TikTok isn't offered, or while a VPN is on. TikTok's network side keeps the preset there instead of going back to the real SIM (#523).
 * A LIVE recording now carries on when the stream's connection drops for a moment. It reconnects and keeps writing to the same file instead of stopping with `Nothing was recorded` or a cut-off video (#526).
 * `Hide search rewards` now also hides the points bubble by the search icon ("Type 12 searches to get 864 points") (#522).
+* With `Keep suggestions on profiles` on, `View all` above a profile's suggestions opens a full list again instead of an empty page (#462).
 
 ## 0.85.0 (2026-11-24)
 

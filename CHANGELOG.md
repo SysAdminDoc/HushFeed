@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.85.0 (2026-11-24)
+
 ### Features
 
 * `Remember saved videos` is new in Feed screen, next to the Favorites grid options. As your Favorites load, Hushfeed keeps each video's cover, creator, caption and post date on your phone. When TikTok later marks a saved video as deleted or unplayable, its grey tile shows the kept cover and creator instead, and a tap shows the rest. `Unavailable saved videos` lists them all with a search box. It can only keep what it saw while a video was still up, so tiles that were already grey stay grey (#516).

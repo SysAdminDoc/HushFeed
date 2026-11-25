@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.telephony.TelephonyManager;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
@@ -18,6 +21,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowNetworkCapabilities;
 import org.robolectric.shadows.ShadowTelephonyManager;
 
 /**
@@ -106,10 +110,52 @@ public class NetworkStackSimTest {
         assertEquals("BD", NetworkStackSim.region("US"));
         assertEquals("47002", NetworkStackSim.networkOperator("310260"));
         assertEquals("47002", NetworkStackSim.simOperator("310260"));
-        phone("bd", "in", "47001", "40445");
+        phone("bd", "lk", "47001", "41302");
         assertEquals("BD", NetworkStackSim.region("US"));
-        assertEquals("40445", NetworkStackSim.networkOperator("310260"));
+        assertEquals("41302", NetworkStackSim.networkOperator("310260"));
         assertEquals("47001", NetworkStackSim.simOperator("310260"));
+    }
+
+    /** #523: with a Chinese SIM the stack routed by CN and TikTok said "No internet connection". */
+    @Test public void aSimFromWhereTikTokIsNotOfferedKeepsThePresetEverywhere() {
+        phone("cn", "cn", "46001", "46001");
+        assertEquals("US", NetworkStackSim.region("US"));
+        assertEquals("us", NetworkStackSim.region("us"));
+        assertEquals("310260", NetworkStackSim.networkOperator("310260"));
+        assertEquals("310260", NetworkStackSim.simOperator("310260"));
+        assertEquals(INIT, NetworkStackSim.initRegion(INIT));
+        phone("HK ", "", "45400", "");
+        assertEquals("US", NetworkStackSim.region("US"));
+        assertEquals("310260", NetworkStackSim.simOperator("310260"));
+        assertEquals(0, NetworkStackSim.swapped());
+    }
+
+    @Test public void aSimRoamingWhereTikTokIsNotOfferedKeepsThePresetToo() {
+        phone("bd", "in", "47001", "40445");
+        assertEquals("US", NetworkStackSim.region("US"));
+        assertEquals("310260", NetworkStackSim.networkOperator("310260"));
+        assertEquals(INIT, NetworkStackSim.initRegion(INIT));
+        assertEquals(0, NetworkStackSim.swapped());
+    }
+
+    /** Through a VPN TikTok sees the VPN's address, which the preset matches (#415 loaded with one). */
+    @Test public void aVpnKeepsThePreset() {
+        ConnectivityManager connectivity = (ConnectivityManager)
+            RuntimeEnvironment.getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network active = connectivity.getActiveNetwork();
+        NetworkCapabilities vpn = ShadowNetworkCapabilities.newInstance();
+        Shadows.shadowOf(vpn).addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+        Shadows.shadowOf(vpn).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
+        Shadows.shadowOf(connectivity).setNetworkCapabilities(active, vpn);
+        assertEquals("US", NetworkStackSim.region("US"));
+        assertEquals("310260", NetworkStackSim.networkOperator("310260"));
+        assertEquals(INIT, NetworkStackSim.initRegion(INIT));
+        assertEquals(0, NetworkStackSim.swapped());
+
+        NetworkCapabilities wifi = ShadowNetworkCapabilities.newInstance();
+        Shadows.shadowOf(wifi).addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+        Shadows.shadowOf(connectivity).setNetworkCapabilities(active, wifi);
+        assertEquals("BD", NetworkStackSim.region("US"));
     }
 
     @Test public void anUnusablePresetIsNotOneTikTokWasToldSoNothingIsSwapped() {

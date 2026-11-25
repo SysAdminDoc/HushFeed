@@ -5,6 +5,9 @@
 package app.morphe.extension.tiktok.spoof.sim;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.telephony.TelephonyManager;
 
 import java.util.Locale;
@@ -28,10 +31,22 @@ import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
  * TikTok wrote it in. Anything else came from somewhere the preset doesn't reach and stays, and so
  * does every answer when the phone has no SIM to read or the spoof is off. The app's own requests
  * and screens keep the preset, since the getters TikTok reads for them aren't these.
+ *
+ * <p>Two phones need the stack to keep the preset, and every answer stays for them (#523). One
+ * whose SIM or network is from a country TikTok isn't offered in: with a Chinese SIM the stack
+ * routed by CN and the app showed "No internet connection" for everyone in China who uses the
+ * spoof to get in. And one whose traffic goes through a VPN, since the address TikTok sees is
+ * then the VPN's and the preset is what matches it, which is how #415's phone loaded images too.
  */
 @SuppressWarnings("unused")
 public final class NetworkStackSim {
     private static final AtomicLong SWAPPED = new AtomicLong();
+
+    /**
+     * Where TikTok isn't offered, so a SIM from there is the one the spoof hides: mainland China,
+     * Hong Kong (TikTok left in 2020), India (banned since 2020), Iran, Afghanistan and North Korea.
+     */
+    private static final String[] NO_TIKTOK = {"cn", "hk", "in", "ir", "af", "kp"};
 
     private NetworkStackSim() {
     }
@@ -42,7 +57,7 @@ public final class NetworkStackSim {
             String preset = presetCountry();
             if (preset == null || value == null || !value.trim().equalsIgnoreCase(preset)) return value;
             TelephonyManager phone = phone();
-            if (phone == null) return value;
+            if (phone == null || keepsThePreset(phone)) return value;
             String real = firstOf(phone.getSimCountryIso(), phone.getNetworkCountryIso());
             if (real.isEmpty() || real.equalsIgnoreCase(preset)) return value;
             SWAPPED.incrementAndGet();
@@ -113,7 +128,7 @@ public final class NetworkStackSim {
             String preset = presetOperator();
             if (preset == null || value == null || !value.trim().equals(preset)) return value;
             TelephonyManager phone = phone();
-            if (phone == null) return value;
+            if (phone == null || keepsThePreset(phone)) return value;
             String real = network
                     ? firstOf(phone.getNetworkOperator(), phone.getSimOperator())
                     : firstOf(phone.getSimOperator(), phone.getNetworkOperator());
@@ -142,6 +157,39 @@ public final class NetworkStackSim {
     private static TelephonyManager phone() {
         Context context = Utils.getContext();
         return context == null ? null : (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    }
+
+    /** True when the stack should keep the preset: a SIM or network where TikTok isn't offered, or a VPN. */
+    private static boolean keepsThePreset(TelephonyManager phone) {
+        return noTikTok(phone.getSimCountryIso()) || noTikTok(phone.getNetworkCountryIso()) || onVpn();
+    }
+
+    static boolean noTikTok(String country) {
+        if (country == null) return false;
+        String code = country.trim().toLowerCase(Locale.ROOT);
+        for (String blocked : NO_TIKTOK) {
+            if (blocked.equals(code)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether TikTok's traffic goes through a VPN. Hide VPN answers TikTok's own checks false, but
+     * not this class's, so this reads the real answer. Anything unreadable counts as no VPN.
+     */
+    private static boolean onVpn() {
+        try {
+            Context context = Utils.getContext();
+            ConnectivityManager connectivity = context == null
+                    ? null : (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity == null) return false;
+            Network active = connectivity.getActiveNetwork();
+            NetworkCapabilities capabilities = active == null ? null : connectivity.getNetworkCapabilities(active);
+            return capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN);
+        } catch (RuntimeException failure) {
+            Logger.printInfo(() -> "Network stack VPN check unreadable, counted as no VPN", failure);
+            return false;
+        }
     }
 
     private static String firstOf(String first, String second) {

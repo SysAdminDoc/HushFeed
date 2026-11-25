@@ -5,6 +5,7 @@ Every Hushfeed release, newest first.
 ## Unreleased
 
 * `Random time each day` can now run past midnight. Set `Latest time` earlier than `When to send`, like 11 PM to 2 AM, and each day's message goes out late that evening or early that morning (rimixyz's idea, from their pull request, #507).
+* `SIM spoof` no longer leaves TikTok saying "No internet connection" on a phone with a SIM from China, Hong Kong, India and the other places TikTok isn't offered, or while a VPN is on. TikTok's network side keeps the preset there instead of going back to the real SIM (#523).
 
 ## 0.85.0 (2026-11-24)
 

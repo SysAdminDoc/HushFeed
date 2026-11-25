@@ -126,6 +126,11 @@ public class AndroidTargetChangesGuardTest {
                     "safe: writes sdkKey, name and level on a quality row this class just built "
                             + "with newInstance, and the current-quality mark on the picker row it "
                             + "just built; instanceField() drops a static field before any write"),
+            new ReviewedWrites("live/LiveRowOrder.java", 1,
+                    "safe: set() writes the room and log fields (roomId, userId, the enter "
+                            + "strings, preLoadRoomInfo, requestId) on enter configs this class "
+                            + "just built with newInstance, and moreConfig on the log data of the "
+                            + "config TikTok handed the hook; all per-room instance fields"),
             new ReviewedWrites("navigation/DiscoverTab.java", 2,
                     "safe: writes bottomTab on the tab layout TikTok parsed and handed the hook, "
                             + "and bottomTabKey on a bottom tab this class just built; findField() "
@@ -270,8 +275,9 @@ public class AndroidTargetChangesGuardTest {
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
         // The grid search's reshow on 2026-11-10, App lock's watched window list on 2026-11-12.
         // Tap to remove's fixed-list grid copy on 2026-11-17, Group likes per comment's folded rows
-        // the same day, and the profile background queue's session switch for #292.
-        assertEquals("the audit counted twenty-eight reflective writes on 2026-11-20", 28, total);
+        // the same day, and the profile background queue's session switch for #292. The Following
+        // row's LIVE order for #511 on 2026-11-23.
+        assertEquals("the audit counted twenty-nine reflective writes on 2026-11-25", 29, total);
     }
 
     @Test

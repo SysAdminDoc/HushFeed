@@ -91,6 +91,48 @@ public final class Probe extends Instrumentation {
     private static volatile Object messageTap;
     private static final java.util.concurrent.ConcurrentHashMap<String, java.util.concurrent.atomic.AtomicInteger>
             MESSAGE_COUNTS = new java.util.concurrent.ConcurrentHashMap<>();
+    /** msgtap -e self: an account id whose appearance in a message counts as self:<method>. */
+    private static volatile long tapSelf;
+
+    /**
+     * Whether the value, or a field up to depth levels down, holds the id as a long or its
+     * digits (msgtap -e self, #513: does a held room's message name your own account).
+     */
+    private static boolean mentions(Object value, long id, int depth,
+            java.util.IdentityHashMap<Object, Boolean> seen) {
+        if (value == null) return false;
+        if (value instanceof Long) return (Long) value == id;
+        if (value instanceof String) return value.equals(Long.toString(id));
+        if (depth == 0 || value instanceof Number || value instanceof Boolean
+                || value instanceof Character || value instanceof Enum
+                || seen.put(value, Boolean.TRUE) != null) return false;
+        if (value instanceof Iterable) {
+            int items = 0;
+            for (Object item : (Iterable<?>) value) {
+                if (items++ > 200) break;
+                if (mentions(item, id, depth - 1, seen)) return true;
+            }
+            return false;
+        }
+        Class<?> type = value.getClass();
+        if (type.isArray() || type.getName().startsWith("java.") || type.getName().startsWith("android.")) return false;
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+                try {
+                    field.setAccessible(true);
+                    if (field.getType() == long.class) {
+                        if (field.getLong(value) == id) return true;
+                    } else if (!field.getType().isPrimitive() && mentions(field.get(value), id, depth - 1, seen)) {
+                        return true;
+                    }
+                } catch (ReflectiveOperationException | RuntimeException unreadable) {
+                    // A field the runtime won't open says nothing either way; the next one might.
+                }
+            }
+        }
+        return false;
+    }
 
     /** The msgstate action's event listener on one message channel, what it counted and the last failure. */
     private static volatile Object channelEvents;
@@ -1321,13 +1363,20 @@ public final class Probe extends Instrumentation {
                                 serviceType.getMethod("removeMessageInterceptor", interceptorType).invoke(service, messageTap);
                             }
                             MESSAGE_COUNTS.clear();
-                            messageTap = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{interceptorType},
+                            String self = intent.getStringExtra("self");
+                            tapSelf = self == null ? 0 : Long.parseLong(self);
+                            messageTap =java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{interceptorType},
                                     (proxy, method, a) -> {
                                         switch (method.getName()) {
                                             case "onMessage":
                                                 Object name = a == null || a[0] == null ? null : methodName.invoke(a[0]);
                                                 MESSAGE_COUNTS.computeIfAbsent(String.valueOf(name),
                                                         k -> new java.util.concurrent.atomic.AtomicInteger()).incrementAndGet();
+                                                if (tapSelf != 0 && a[0] != null
+                                                        && mentions(a[0], tapSelf, 5, new java.util.IdentityHashMap<>())) {
+                                                    MESSAGE_COUNTS.computeIfAbsent("self:" + name,
+                                                            k -> new java.util.concurrent.atomic.AtomicInteger()).incrementAndGet();
+                                                }
                                                 return false;
                                             case "hashCode": return System.identityHashCode(proxy);
                                             case "equals": return a != null && proxy == a[0];

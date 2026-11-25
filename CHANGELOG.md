@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* `Random time each day` can now run past midnight. Set `Latest time` earlier than `When to send`, like 11 PM to 2 AM, and each day's message goes out late that evening or early that morning (rimixyz's idea, from their pull request, #507).
+
 ## 0.85.0 (2026-11-24)
 
 ### Features
@@ -24,7 +26,7 @@ Every Hushfeed release, newest first.
 * `Fade the controls out` is new under `Automatic Clear display`. The buttons, caption and tabs fade away over a quarter second before the clear instead of vanishing at once, and a touch during the fade brings them back. It starts off (#501).
 * `Date instead of age` is new next to the publish date options. Recent videos show the day they were posted, like 10-12 or Oct 12, where TikTok writes 2d ago, and today's and yesterday's videos get a date too. `Day before month` and `Write the month as a word` change it the same way. It starts off (#461).
 * `SIM spoof`, `Ghost mode`, `Always show publish date` and `Show author region` work on TikTok Lite now. SIM spoof uses the same Region settings as in TikTok. Lite's Ghost mode has `Hide story views`, `Hide profile visits`, `Hide typing` and `Hide online status`. The publish date shows next to the creator's name on every Lite video, For You included, and the date options change it there too. With `Show where a video was posted` on, the country comes after the date, or stands alone where Lite leaves the date off. Lite's video data does carry it, but Lite throws it away while it reads the feed, so Hushfeed picks it up there (#502).
-* `Random time each day` is new under `Keep a streak going`. The message goes out at a different time every day, somewhere between `When to send` and `Latest time`, so friends don't get it at the same minute each day. Set `Latest time` earlier than `When to send` and the window runs past midnight, like 11 PM to 2 AM (rimixyz's idea, from their pull request). It starts off (#507).
+* `Random time each day` is new under `Keep a streak going`. The message goes out at a different time every day, somewhere between `When to send` and `Latest time`, so friends don't get it at the same minute each day. It starts off (#507).
 * `Jump to a date on Favorites grids` does for your saved videos what the Liked one does for likes. A button in the Favorites grid's top corner starts the list at the year or month you pick, so old saves load without scrolling through thousands of newer ones, and Newest saves goes back. It starts off and sits under `Jump to a date on Liked grids` in Hushfeed settings > Feed screen (#508).
 * `Pick a built-in font` is new under `Import a font file` on the App page. It lists 26 fonts that come with Hushfeed, like Bebas Neue, Lobster, Press Start 2P and VT323, and each name in the list is drawn in its own font. The one you pick becomes your imported font, so turn on `Use an imported font` and restart TikTok to see it (#487).
 * `Delete your picked posts` is new under `Pick videos to save from profile grids` in Downloads. While every post you've picked on a grid is your own, the picking bar gets a trash button. It counts down from 5 with Stop, then deletes the posts from your account one at a time with a short pause between them, and each one leaves the grid as it goes. A deleted post can't be brought back, so it starts off (#487).

@@ -322,6 +322,7 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         // rather than half applied.
         val rewards = SearchRewardsServiceFingerprint.method
         val rewardsGetters = searchRewardsGetters()
+        val coinHotWord = coinHotWordServiceMethods()
         val nativeGuess = NativeGuessSearchFingerprint.method
         val searchHint = SearchHintObserverFingerprint.method
         val hintApplier = SearchHintApplierFingerprint.method
@@ -350,6 +351,7 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         // The accessor above reaches the banner's service only. The coin and the other rewards
         // services come straight from their getters, so those take the not-downloaded branch.
         rewardsGetters.forEach { (method, getter) -> method.askBeforeLoadingSearchRewards(getter) }
+        coinHotWord.forEach { it.answerLikeTheSwitchedOffHotWordService() }
 
         IntermediatePreloadEnableFingerprint.method.guard("const/4 v0, 0x0\n                    return v0")
         nativeGuess.guard("const/4 v0, 0x0\n                    return v0")

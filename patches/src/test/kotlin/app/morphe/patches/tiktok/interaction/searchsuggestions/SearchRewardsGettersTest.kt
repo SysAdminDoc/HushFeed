@@ -4,12 +4,14 @@ import app.morphe.Fixtures
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
+import app.morphe.util.namedRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
@@ -78,6 +80,71 @@ class SearchRewardsGettersTest {
             searchRewardsGetter(getter("coin", "Lcom/ss/android/ugc/aweme/dummyspi/DummySearchAdapter;")))
         assertNull("never asks pluggableSpi", searchRewardsGetter(getter("coin", COIN_CONTROL, asksForService = false)))
     }
+
+    /** #522: the points bubble by the search icon comes from a service the getters above never reach. */
+    @Test
+    fun `every coin hot word service method answers like TikTok's switched-off copy while rewards are hidden`() {
+        val emptyPopup = "Lcom/ss/android/ugc/aweme/search/service/EmptyCoinIncentivePopupTask;"
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .filter { it.type in setOf(COIN_HOT_WORD_SERVICE, COIN_HOT_WORD_IMPL, COIN_HOT_WORD_OFF) }
+                .associateBy { it.type }
+            val declared = classes.getValue(COIN_HOT_WORD_SERVICE).methods.map { it.signature() }.toSet()
+            val real = classes.getValue(COIN_HOT_WORD_IMPL).methods.filter { it.name != "<init>" }
+            val off = classes.getValue(COIN_HOT_WORD_OFF).methods.filter { it.name != "<init>" }
+            assertTrue("$version: the interface declares the service", declared.isNotEmpty())
+            assertEquals("$version: the real service", declared, real.map { it.signature() }.toSet())
+            assertEquals("$version: the switched-off copy", declared, off.map { it.signature() }.toSet())
+            // The copy reads nothing and builds nothing but TikTok's empty popup.
+            for (method in off) {
+                for (instruction in method.implementation!!.instructions) {
+                    assertNull("$version ${method.name} reads a field", instruction.getReference<FieldReference>())
+                    instruction.getReference<TypeReference>()?.let {
+                        assertEquals("$version ${method.name}", emptyPopup, it.type)
+                    }
+                    instruction.getReference<MethodReference>()?.let {
+                        assertEquals("$version ${method.name}", "$emptyPopup-><init>", "${it.definingClass}->${it.name}")
+                    }
+                }
+            }
+            for (native in real) assertAnswersLikeTheCopy(version, native)
+        }
+    }
+
+    private fun assertAnswersLikeTheCopy(version: String, native: Method) {
+        val mutable = MutableMethod(native)
+        val before = mutable.implementation!!.instructions.toList()
+        mutable.answerLikeTheSwitchedOffHotWordService()
+        val after = mutable.implementation!!.instructions.toList()
+        val where = "$version ${native.name}"
+        val ask = after[0].getReference<MethodReference>()!!
+        assertEquals(where, "Lapp/morphe/extension/tiktok/search/SearchSuggestions;->shouldHideRewards",
+            "${ask.definingClass}->${ask.name}")
+        assertEquals(where, listOf(Opcode.MOVE_RESULT, Opcode.IF_EQZ, Opcode.NEW_INSTANCE, Opcode.INVOKE_DIRECT, Opcode.INVOKE_VIRTUAL),
+            after.subList(1, 6).map { it.opcode })
+        assertEquals(where, COIN_HOT_WORD_OFF, after[3].getReference<TypeReference>()!!.type)
+        val call = after[5]
+        val reference = call.getReference<MethodReference>()!!
+        assertEquals(where, COIN_HOT_WORD_OFF, reference.definingClass)
+        assertEquals(where, native.signature(), reference.signature())
+        // The copy is v0, then the method's own arguments in order.
+        val firstParameter = native.implementation!!.registerCount - native.parameterTypes.size
+        assertEquals(where, listOf(0) + native.parameterTypes.indices.map { firstParameter + it }, call.namedRegisters())
+        val returns = after.subList(6, after.size - before.size - 1).map { it.opcode }
+        assertEquals(where, when {
+            native.returnType == "V" -> listOf(Opcode.RETURN_VOID)
+            native.returnType.startsWith("L") -> listOf(Opcode.MOVE_RESULT_OBJECT, Opcode.RETURN_OBJECT)
+            else -> listOf(Opcode.MOVE_RESULT, Opcode.RETURN)
+        }, returns)
+        assertEquals(where, Opcode.NOP, after[after.size - before.size - 1].opcode)
+        before.forEachIndexed { index, instruction -> assertSame(where, instruction, after[after.size - before.size + index]) }
+    }
+
+    private fun Method.signature() = "$name(${parameterTypes.joinToString("")})$returnType"
+    private fun MethodReference.signature() = "$name(${parameterTypes.joinToString("")})$returnType"
 
     /** The answer goes through the switch, and TikTok's own branch on it follows unchanged. */
     private fun assertHooked(native: Method, getter: SearchRewardsGetter) {

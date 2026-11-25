@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.interaction.searchsuggestions
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.classDefByStrings
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -13,6 +14,8 @@ import app.morphe.util.addInstructions
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import app.morphe.util.namedRegisters
+import app.morphe.patches.tiktok.shared.guardAtEntry
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -104,6 +107,64 @@ internal fun searchRewardsGetters(): List<Pair<MutableMethod, SearchRewardsGette
     return found.map { (classDef, method, getter) ->
         mutableClassDefBy(classDef).findMutableMethodOf(method) to getter
     }
+}
+
+internal const val COIN_HOT_WORD_SERVICE =
+    "Lcom/ss/android/ugc/aweme/search/service/ISearchCoinIncentiveHotWordService;"
+internal const val COIN_HOT_WORD_IMPL =
+    "Lcom/ss/android/ugc/aweme/search/common/communicate/SearchCoinIncentiveHotWordServiceImpl;"
+internal const val COIN_HOT_WORD_OFF =
+    "Lcom/ss/android/ugc/aweme/search/service/SearchCoinIncentiveHotWordServiceDowngradeImpl;"
+
+/**
+ * The points bubble by the search icon ("Type 12 searches to get 864 points", #522) is a popup
+ * the coin hot-word service builds, and that service ships in the base APK, so the feature check
+ * above never sees it. TikTok also ships a switched-off copy of it, the one it falls back to
+ * when the service can't be had, and every answer of that copy is empty: no word, false, null,
+ * or its empty popup. Returns each method of the real service that the interface declares, after
+ * checking the copy has the same one. Fails before anything is written if either has changed.
+ */
+internal fun coinHotWordServiceMethods(): List<MutableMethod> {
+    val declared = classDefBy(COIN_HOT_WORD_SERVICE).methods.filter { AccessFlags.ABSTRACT.isSet(it.accessFlags) }
+    if (declared.isEmpty()) throw PatchException("Hide search suggestions: the coin hot-word service declares nothing.")
+    val off = classDefBy(COIN_HOT_WORD_OFF)
+    val real = mutableClassDefBy(COIN_HOT_WORD_IMPL)
+    return declared.map { method ->
+        if (off.methods.none { it.sameSignatureAs(method) && it.implementation != null }) {
+            throw PatchException("Hide search suggestions: the switched-off coin hot-word service has no ${method.name}.")
+        }
+        real.methods.firstOrNull { it.sameSignatureAs(method) && it.implementation != null }
+            ?: throw PatchException("Hide search suggestions: the coin hot-word service has no ${method.name}.")
+    }
+}
+
+private fun Method.sameSignatureAs(other: Method) = name == other.name && returnType == other.returnType &&
+    parameterTypes.map(CharSequence::toString) == other.parameterTypes.map(CharSequence::toString)
+
+/** With search rewards hidden, hands the call to TikTok's switched-off service and returns its answer. */
+internal fun MutableMethod.answerLikeTheSwitchedOffHotWordService() {
+    val parameters = parameterTypes.map(CharSequence::toString)
+    if (AccessFlags.STATIC.isSet(accessFlags) || parameters.size > 4 || parameters.any { it == "J" || it == "D" } ||
+        returnType == "J" || returnType == "D" || implementation!!.registerCount > 16
+    ) {
+        throw PatchException("Hide search suggestions: the coin hot-word service's $name no longer fits a plain call.")
+    }
+    val arguments = (listOf("v0") + parameters.indices.map { "p${it + 1}" }).joinToString(", ")
+    val answer = when {
+        returnType == "V" -> "return-void"
+        returnType.startsWith("L") || returnType.startsWith("[") -> "move-result-object v0\nreturn-object v0"
+        else -> "move-result v0\nreturn v0"
+    }
+    guardAtEntry(
+        "Hide search suggestions",
+        "invoke-static {}, $EXTENSION->shouldHideRewards()Z",
+        """
+            new-instance v0, $COIN_HOT_WORD_OFF
+            invoke-direct {v0}, $COIN_HOT_WORD_OFF-><init>()V
+            invoke-virtual {$arguments}, $COIN_HOT_WORD_OFF->$name(${parameters.joinToString("")})$returnType
+            $answer
+        """,
+    )
 }
 
 /** Passes the getter's "is it loaded" answer through the switch, so hidden rewards read as not downloaded. */

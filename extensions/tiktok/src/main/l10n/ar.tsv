@@ -3491,7 +3491,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	وقت عشوائي كل يوم
 Sends at a different time each day, somewhere between When to send and Latest time.	يرسل في وقت مختلف كل يوم، في وقت ما بين وقت الإرسال وآخر وقت.
 Latest time	آخر وقت
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	نهاية النافذة العشوائية، في نفس يوم وقت الإرسال. إذا لم يكن لاحقًا، تُرسل الرسالة في وقت الإرسال.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	نهاية النافذة العشوائية. إذا كانت أبكر من وقت الإرسال، تمتد النافذة إلى ما بعد منتصف الليل.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	الانتقال إلى تاريخ في شبكات المفضلات
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	يضيف زرًا إلى الزاوية العلوية لشبكة المفضلات يبدأ عرض فيديوهاتك المحفوظة من سنة أو شهر تختاره، بحيث يتم تحميل المحفوظات القديمة دون التمرير عبر الأحدث. اختر أحدث المحفوظات هناك للعودة.

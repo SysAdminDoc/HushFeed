@@ -5399,8 +5399,8 @@ final class L10nTranslationsIt {
                 "Il rapporto diagnostico non è ancora stato salvato. Riprova tra poco.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "Il rapporto diagnostico non è stato salvato. Riprova.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "La fine della finestra casuale, nello stesso giorno di Quando inviare. Se non è più tardi, il messaggio parte all'orario di Quando inviare.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "La fine della finestra casuale. Se è prima di Quando inviare, la finestra va oltre la mezzanotte.");
         table.put("The export wasn't saved. Try again.",
                 "Esportazione non salvata. Riprova.");
         table.put("The feed capture is still being saved",

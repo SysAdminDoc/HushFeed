@@ -3220,7 +3220,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	Horário aleatório todo dia
 Sends at a different time each day, somewhere between When to send and Latest time.	Envia em um horário diferente a cada dia, em algum momento entre Quando enviar e Horário mais tarde.
 Latest time	Horário mais tarde
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	O fim da janela aleatória, no mesmo dia de Quando enviar. Se não for mais tarde, a mensagem sai no horário de Quando enviar.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	O fim da janela aleatória. Se for antes de Quando enviar, a janela passa da meia-noite.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	Ir para uma data nas grades de Favoritos
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Adiciona um botão no canto superior da grade de Favoritos que começa seus vídeos salvos no ano ou mês que você escolher, para que os mais antigos carreguem sem rolar pelos mais novos. Escolha Favoritos mais recentes ali para voltar.

@@ -5777,8 +5777,8 @@ final class L10nTranslationsRu {
                 "Диагностический отчёт пока не удалось сохранить. Повторите попытку через момент.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "Не удалось сохранить диагностический отчёт. Повторите попытку.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "Конец случайного окна, в тот же день, что и «Когда отправлять». Если оно не позже, сообщение уходит во время «Когда отправлять».");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "Конец случайного окна. Если оно раньше, чем «Когда отправлять», окно переходит через полночь.");
         table.put("The export wasn't saved. Try again.",
                 "Экспорт не сохранён. Повторите.");
         table.put("The feed capture is still being saved",

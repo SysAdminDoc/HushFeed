@@ -5399,8 +5399,8 @@ final class L10nTranslationsTh {
                 "ยังไม่สามารถบันทึกรายงานการวินิจฉัยได้ โปรดลองอีกครั้งในอีกสักครู่");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "ไม่สามารถบันทึกรายงานการวินิจฉัยได้ โปรดลองอีกครั้ง");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "จุดสิ้นสุดของช่วงเวลาสุ่ม ในวันเดียวกับเวลาที่จะส่ง หากไม่ช้ากว่านั้น ข้อความจะส่งตามเวลาที่จะส่ง");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "จุดสิ้นสุดของช่วงเวลาสุ่ม หากเร็วกว่าเวลาที่จะส่ง ช่วงเวลาจะต่อเลยเที่ยงคืนไป");
         table.put("The export wasn't saved. Try again.",
                 "ไม่ได้บันทึกการส่งออก โปรดลองอีกครั้ง");
         table.put("The feed capture is still being saved",

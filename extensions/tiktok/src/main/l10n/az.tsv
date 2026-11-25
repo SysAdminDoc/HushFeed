@@ -3220,7 +3220,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	Hər gün təsadüfi vaxt
 Sends at a different time each day, somewhere between When to send and Latest time.	Hər gün fərqli vaxtda, Nə vaxt göndərilsin ilə Ən gec vaxt arasında göndərir.
 Latest time	Ən gec vaxt
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	Təsadüfi aralığın sonu, Nə vaxt göndərilsin ilə eyni gündə. Ondan gec deyilsə, mesaj Nə vaxt göndərilsin vaxtında gedir.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	Təsadüfi aralığın sonu. Nə vaxt göndərilsin vaxtından tezdirsə, aralıq gecə yarısından sonraya keçir.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	Sevimlilər şəbəkələrində tarixə keçin
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Sevimlilər şəbəkəsinin yuxarı küncünə düymə əlavə edir. O, yadda saxladığınız videoları seçdiyiniz il və ya aydan başladır, beləliklə köhnə yadda saxlananlar yeniləri keçmədən yüklənir. Geri qayıtmaq üçün orada Ən yeni yadda saxlananlar seçin.

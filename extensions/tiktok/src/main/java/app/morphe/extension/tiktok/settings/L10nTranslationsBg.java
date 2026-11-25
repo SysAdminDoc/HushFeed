@@ -5399,8 +5399,8 @@ final class L10nTranslationsBg {
                 "Диагностичният отчет още не можа да се запази. Опитай пак след малко.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "Диагностичният отчет не можа да се запази. Опитай пак.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "Краят на случайния интервал, в същия ден като „Кога да се изпрати“. Ако не е по-късно, съобщението се изпраща в часа от „Кога да се изпрати“.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "Краят на случайния интервал. Ако е по-рано от „Кога да се изпрати“, интервалът продължава след полунощ.");
         table.put("The export wasn't saved. Try again.",
                 "Експортът не е запазен. Опитай пак.");
         table.put("The feed capture is still being saved",

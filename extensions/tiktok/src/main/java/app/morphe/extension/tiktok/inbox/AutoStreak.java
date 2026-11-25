@@ -296,6 +296,8 @@ public final class AutoStreak {
         return calendar.getTimeInMillis();
     }
 
+    private static final int MINUTES_A_DAY = 24 * 60;
+
     /** The minute after midnight each day's message is set for, by the day it goes on. */
     interface Times {
         int minuteOn(String day);
@@ -320,16 +322,19 @@ public final class AutoStreak {
 
     /**
      * A minute from {@code earliest} to {@code latest}, both included, always the same for one
-     * day and seed. A window that doesn't end after it starts is just {@code earliest}.
+     * day and seed. A {@code latest} before {@code earliest} runs past midnight, so 23:00 to
+     * 02:00 gives that day's late evening or its early morning, one time per calendar day
+     * (rimixyz, PR #510). A window that ends where it starts is just {@code earliest}.
      */
     static int randomMinute(String day, int earliest, int latest, long seed) {
-        if (latest <= earliest) return earliest;
+        if (latest == earliest) return earliest;
+        int length = Math.floorMod(latest - earliest, MINUTES_A_DAY) + 1;
         // SplitMix64's finalizer, so neighboring days don't step through the window evenly.
         long z = seed + 0x9E3779B97F4A7C15L * day.hashCode();
         z = (z ^ (z >>> 30)) * 0xBF58476D1CE4E5B9L;
         z = (z ^ (z >>> 27)) * 0x94D049BB133111EBL;
         z ^= z >>> 31;
-        return earliest + (int) Math.floorMod(z, (long) (latest - earliest + 1));
+        return (earliest + (int) Math.floorMod(z, (long) length)) % MINUTES_A_DAY;
     }
 
     /**

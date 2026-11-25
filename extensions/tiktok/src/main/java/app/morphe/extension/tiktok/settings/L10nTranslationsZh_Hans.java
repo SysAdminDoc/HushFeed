@@ -5399,8 +5399,8 @@ final class L10nTranslationsZh_Hans {
                 "诊断报告尚无法保存。稍后再试一次.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "无法保存诊断报告。再试一次.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "随机时间段的结束时间，与何时发送在同一天。如果不晚于它，消息会在何时发送的时间发出.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "随机时间段的结束时间。如果早于何时发送，时间段会跨过午夜.");
         table.put("The export wasn't saved. Try again.",
                 "导出未保存，请重试.");
         table.put("The feed capture is still being saved",

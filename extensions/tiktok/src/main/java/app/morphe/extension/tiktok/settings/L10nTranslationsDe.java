@@ -5399,8 +5399,8 @@ final class L10nTranslationsDe {
                 "Der Diagnosebericht ließ sich noch nicht speichern. Versuche es gleich noch einmal.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "Der Diagnosebericht ließ sich nicht speichern. Versuch es noch einmal.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "Das Ende des Zufallsfensters, am selben Tag wie „Wann senden“. Liegt es nicht später, geht die Nachricht zur Uhrzeit von „Wann senden“ raus.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "Das Ende des Zufallsfensters. Liegt es vor „Wann senden“, reicht das Fenster über Mitternacht hinaus.");
         table.put("The export wasn't saved. Try again.",
                 "Export nicht gespeichert. Versuch es erneut.");
         table.put("The feed capture is still being saved",

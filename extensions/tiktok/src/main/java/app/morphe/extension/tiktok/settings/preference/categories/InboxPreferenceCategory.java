@@ -448,7 +448,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         ClockTimePreference latest = new ClockTimePreference(
                 context,
                 "Latest time",
-                "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
+                "The end of the random window. If it's earlier than When to send, the window runs past midnight.",
                 Settings.AUTO_STREAK_LATEST_MINUTE
         );
         latest.setOnPreferenceChangeListener(timeMoved);

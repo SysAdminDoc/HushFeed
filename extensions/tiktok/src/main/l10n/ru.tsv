@@ -3421,7 +3421,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	Случайное время каждый день
 Sends at a different time each day, somewhere between When to send and Latest time.	Отправляет каждый день в разное время, где-то между «Когда отправлять» и «Самое позднее время».
 Latest time	Самое позднее время
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	Конец случайного окна, в тот же день, что и «Когда отправлять». Если оно не позже, сообщение уходит во время «Когда отправлять».
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	Конец случайного окна. Если оно раньше, чем «Когда отправлять», окно переходит через полночь.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	Переход к дате в сетках «Избранное»
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Добавляет кнопку в верхний угол сетки «Избранное», которая начинает список сохранённых видео с выбранного года или месяца, чтобы старые загружались без прокрутки мимо новых. Чтобы вернуться, выберите там «Последние в избранном».

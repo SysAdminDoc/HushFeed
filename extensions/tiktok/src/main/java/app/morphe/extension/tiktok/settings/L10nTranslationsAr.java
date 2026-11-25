@@ -5903,8 +5903,8 @@ final class L10nTranslationsAr {
                 "تعذر حفظ تقرير التشخيص بعد. حاول مرة أخرى بعد قليل.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "تعذر حفظ تقرير التشخيص. حاول مجددا.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "نهاية النافذة العشوائية، في نفس يوم وقت الإرسال. إذا لم يكن لاحقًا، تُرسل الرسالة في وقت الإرسال.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "نهاية النافذة العشوائية. إذا كانت أبكر من وقت الإرسال، تمتد النافذة إلى ما بعد منتصف الليل.");
         table.put("The export wasn't saved. Try again.",
                 "لم يتم حفظ التصدير. حاول مرة أخرى.");
         table.put("The feed capture is still being saved",

@@ -243,9 +243,37 @@ public class AutoStreakTest {
         assertTrue(same + " of 30 matched", same <= 2);
     }
 
-    @Test public void aWindowThatDoesntEndLaterSendsAtWhenToSend() {
+    @Test public void aWindowThatEndsWhenItStartsSendsAtWhenToSend() {
         assertEquals(16 * 60, AutoStreak.randomMinute("2026-11-24", 16 * 60, 16 * 60, 7L));
-        assertEquals(16 * 60, AutoStreak.randomMinute("2026-11-24", 16 * 60, 9 * 60, 7L));
+    }
+
+    @Test public void aLatestTimeBeforeWhenToSendRunsPastMidnight() {
+        // 23:00 to 02:00 (PR #510): each day's time is late that evening or early that morning,
+        // never in the 02:01 to 22:59 gap, and both sides of midnight come up.
+        int from = 23 * 60;
+        int to = 2 * 60;
+        boolean evening = false;
+        boolean morning = false;
+        Calendar day = Calendar.getInstance();
+        day.clear();
+        day.set(2026, Calendar.JANUARY, 1, 12, 0);
+        for (int i = 0; i < 90; i++) {
+            String name = AutoStreak.day(day.getTimeInMillis());
+            int minute = AutoStreak.randomMinute(name, from, to, 1234L);
+            assertTrue(name + " got " + minute, minute >= from && minute < 24 * 60 || minute >= 0 && minute <= to);
+            assertEquals("the same all day", minute, AutoStreak.randomMinute(name, from, to, 1234L));
+            if (minute >= from) evening = true;
+            if (minute <= to) morning = true;
+            day.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        assertTrue("never before midnight", evening);
+        assertTrue("never after midnight", morning);
+        // The ends are both reachable: 23:00 through 02:00 is 181 minutes.
+        java.util.Set<Integer> seen = new java.util.HashSet<>();
+        for (long seed = 0; seed < 4000; seed++) seen.add(AutoStreak.randomMinute("2026-11-24", from, to, seed));
+        assertEquals(181, seen.size());
+        assertTrue(seen.contains(from));
+        assertTrue(seen.contains(to));
     }
 
     @Test public void withRandomTimeOffEveryDayGoesAtWhenToSend() {

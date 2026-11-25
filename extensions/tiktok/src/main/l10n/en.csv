@@ -2598,7 +2598,7 @@ The comment button also opens a video's comments with its caption at the top. Th
 The cover couldn't be saved. Try again.,The cover couldn't be saved. Try again.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
-"The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send."
+"The end of the random window. If it's earlier than When to send, the window runs past midnight.","The end of the random window. If it's earlier than When to send, the window runs past midnight."
 The export wasn't saved. Try again.,The export wasn't saved. Try again.
 The feed capture is still being saved,The feed capture is still being saved
 The feed doesn't end. This is a fine time to leave it.,The feed doesn't end. This is a fine time to leave it.

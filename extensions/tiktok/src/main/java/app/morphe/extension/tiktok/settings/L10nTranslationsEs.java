@@ -5399,8 +5399,8 @@ final class L10nTranslationsEs {
                 "Todavía no se pudo guardar el informe de diagnóstico. Inténtalo de nuevo en un momento.");
         table.put("The diagnostic report couldn't be saved. Try again.",
                 "No se pudo guardar el informe de diagnóstico. Inténtalo de nuevo.");
-        table.put("The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.",
-                "El final del intervalo aleatorio, el mismo día que Cuándo enviar. Si no es más tarde, el mensaje sale a la hora de Cuándo enviar.");
+        table.put("The end of the random window. If it's earlier than When to send, the window runs past midnight.",
+                "El final del intervalo aleatorio. Si es antes que Cuándo enviar, el intervalo pasa de la medianoche.");
         table.put("The export wasn't saved. Try again.",
                 "No se guardó la exportación. Reintenta.");
         table.put("The feed capture is still being saved",

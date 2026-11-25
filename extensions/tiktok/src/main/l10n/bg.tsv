@@ -3223,7 +3223,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	Случаен час всеки ден
 Sends at a different time each day, somewhere between When to send and Latest time.	Изпраща в различен час всеки ден, някъде между „Кога да се изпрати“ и „Най-късен час“.
 Latest time	Най-късен час
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	Краят на случайния интервал, в същия ден като „Кога да се изпрати“. Ако не е по-късно, съобщението се изпраща в часа от „Кога да се изпрати“.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	Краят на случайния интервал. Ако е по-рано от „Кога да се изпрати“, интервалът продължава след полунощ.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	Преминаване към дата в мрежите „Любими“
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Добавя бутон в горния ъгъл на мрежата „Любими“, който започва запазените ти видеа от година или месец по твой избор, така че по-старите се зареждат, без да превърташ през по-новите. Избери „Най-нови запазвания“ там, за да се върнеш.

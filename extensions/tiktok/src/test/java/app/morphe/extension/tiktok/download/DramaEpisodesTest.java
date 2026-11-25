@@ -68,9 +68,10 @@ public class DramaEpisodesTest {
     @Test public void aPageReadsEachEpisodesPostNumberAndPreviewFlag() throws Exception {
         JSONObject intro = item("100", 0, false).put("is_intro", true);
         JSONObject locked = item("103", 3, true);
-        // A locked episode can come with the whole episode next to its preview.
-        JSONObject unlockedCopy = item("104", 4, true);
-        unlockedCopy.put("full_paid_videos_for_partial_preview", new JSONObject().put("aweme_id", "104")
+        // A locked episode can come with the whole paid episode next to its preview, which is
+        // what TikTok sells, so it's never the one listed (#527).
+        JSONObject paidCopy = item("104", 4, true);
+        paidCopy.put("full_paid_videos_for_partial_preview", new JSONObject().put("aweme_id", "904")
                 .put("paid_content_info", new JSONObject().put("is_partial_preview", false)));
         JSONObject unnumbered = new JSONObject().put("aweme", new JSONObject().put("aweme_id", "105")
                 .put("paid_content_info", new JSONObject().put("episode_num", "9")));
@@ -78,7 +79,7 @@ public class DramaEpisodesTest {
         JSONObject noPost = new JSONObject().put("seq_id", 7);
 
         DramaEpisodes.Page page = DramaEpisodes.page(reply(2, true, intro, item("101", 1, false), locked,
-                unlockedCopy, unnumbered, rowOnly, noPost), DramaEpisodes.readerForTests);
+                paidCopy, unnumbered, rowOnly, noPost), DramaEpisodes.readerForTests);
 
         assertTrue(page.hasNext);
         assertEquals(2, page.page);
@@ -90,7 +91,8 @@ public class DramaEpisodesTest {
         assertEquals(1, first.number);
         assertFalse(first.preview);
         assertTrue("a locked episode is marked a preview", page.episodes.get(1).preview);
-        assertFalse("the whole episode is used when TikTok sends it", page.episodes.get(2).preview);
+        assertEquals("the paid copy was listed in place of the preview", "post 104", page.episodes.get(2).post);
+        assertTrue(page.episodes.get(2).preview);
         assertEquals(4, page.episodes.get(2).number);
         assertEquals("episode_num stands in for a missing seq_id", 9, page.episodes.get(3).number);
         assertEquals("the row stands in for both", 6, page.episodes.get(4).number);
@@ -232,6 +234,16 @@ public class DramaEpisodesTest {
         assertNull("a post that isn't a drama's isn't asked for", DramaEpisodes.whole(new Post(null), "14"));
         assertNull(DramaEpisodes.whole(episode, ""));
         assertEquals(1, asked.size());
+        // #527: an episode TikTok shows this account only a preview of is never fetched whole.
+        Paid lockedPaid = new Paid(7431100L, "Night Shift");
+        lockedPaid.isPartialPreview = true;
+        assertNull("a locked episode was fetched whole", DramaEpisodes.whole(new Post(lockedPaid), "18"));
+        assertEquals(1, asked.size());
+
+        DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 0)
+                .put("aweme_detail", new JSONObject().put("aweme_id", "19").put("video", video(2))
+                        .put("paid_content_info", new JSONObject().put("is_partial_preview", true))).toString();
+        assertNull("the reply says it's locked", DramaEpisodes.whole(episode, "19"));
 
         DramaEpisodes.sourceForTests = (path, query) -> new JSONObject().put("status_code", 0)
                 .put("aweme_detail", new JSONObject().put("aweme_id", "15")
@@ -304,6 +316,7 @@ public class DramaEpisodesTest {
     public static final class Paid {
         public long paidCollectionId;
         public String collectionName;
+        public boolean isPartialPreview;
 
         Paid(long paidCollectionId, String collectionName) {
             this.paidCollectionId = paidCollectionId;

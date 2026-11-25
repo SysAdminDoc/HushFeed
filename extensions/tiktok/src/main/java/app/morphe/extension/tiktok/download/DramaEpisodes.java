@@ -33,8 +33,10 @@ import java.util.Set;
  * episode is the same post TikTok would play.
  *
  * <p>An episode the account can't watch yet comes back as a short preview with
- * {@code is_partial_preview} set. Where the reply also carries the whole episode it is used;
- * otherwise the row says it's a preview, and saving it saves what TikTok sent.
+ * {@code is_partial_preview} set, and the row says it's a preview. Saving it saves that preview,
+ * what TikTok shows anyone. The reply can also carry the whole paid episode next to it
+ * ({@code full_paid_videos_for_partial_preview}); that's what TikTok sells, so it's never read
+ * (#527).
  */
 final class DramaEpisodes {
     static final String PATH = "/tiktok/v1/paid_content/collection/video";
@@ -98,6 +100,12 @@ final class DramaEpisodes {
         Object info = Reflect.property(post, "getMPaidContentInfo", "mPaidContentInfo");
         Object id = Reflect.property(info, "getPaidCollectionId", "paidCollectionId");
         return id instanceof Number ? ((Number) id).longValue() : 0L;
+    }
+
+    /** Whether TikTok shows this account only a preview of the episode. */
+    static boolean locked(Object post) {
+        Object info = Reflect.property(post, "getMPaidContentInfo", "mPaidContentInfo");
+        return Boolean.TRUE.equals(Reflect.property(info, "isPartialPreview", "isPartialPreview"));
     }
 
     /** The drama's name on an episode of it, or null. */
@@ -171,15 +179,8 @@ final class DramaEpisodes {
         for (int index = 0; index < rows; index++) {
             JSONObject item = videos.optJSONObject(index);
             if (item == null || item.optBoolean("is_intro", false)) continue;
-            Episode episode = null;
-            // The whole episode first, then the post as listed: a locked episode's whole-episode
-            // slot can come back without a post in it (#463).
-            JSONObject used = null;
-            for (String slot : POST_SLOTS) {
-                used = item.optJSONObject(slot);
-                episode = episode(used, item, index, reader);
-                if (episode != null) break;
-            }
+            JSONObject used = item.optJSONObject("aweme");
+            Episode episode = episode(used, item, index, reader);
             if (episode != null) {
                 episodes.add(episode);
                 if (addresses(used) == 0) {
@@ -206,10 +207,7 @@ final class DramaEpisodes {
         return new Page(episodes, hasNext, page, root.optInt("num_videos", 0));
     }
 
-    /** Where an episode's post can be in its row, in the order they're tried. */
-    private static final String[] POST_SLOTS = {"full_paid_videos_for_partial_preview", "aweme"};
-
-    /** The row's episode from one post in it, or null when that slot has no readable post. */
+    /** The row's episode from its post, or null when the row has no readable post. */
     private static Episode episode(JSONObject post, JSONObject item, int index, Reader reader) throws Exception {
         String id = post == null ? "" : post.optString("aweme_id", "");
         if (id.isEmpty()) return null;
@@ -294,10 +292,12 @@ final class DramaEpisodes {
      * A drama episode as TikTok plays it, for a listed one that came without a video. Past the
      * free episodes, the list sends an episode the account can watch with an ad or for free with
      * no address in it, though TikTok plays it (#463), so the post's own reply is asked for it.
-     * Null for any other post, and when that reply has no video either.
+     * Null for any other post, when that reply has no video either, and for an episode TikTok
+     * shows this account only a preview of, by the listed post or the reply: the whole of that
+     * one is what TikTok sells (#527).
      */
     static Object whole(Object post, String id) {
-        if (id == null || id.isEmpty() || collectionId(post) == 0) return null;
+        if (id == null || id.isEmpty() || collectionId(post) == 0 || locked(post)) return null;
         try {
             Map<String, String> query = new LinkedHashMap<>();
             query.put("aweme_id", id);
@@ -308,7 +308,8 @@ final class DramaEpisodes {
             int found = addresses(detail);
             Logger.printDebug(() -> "Drama episode " + id + " asked for on its own: status "
                     + root.optInt("status_code", -1) + ", " + found + " video addresses" + paidFlags(detail));
-            if (found == 0) return null;
+            JSONObject paid = detail == null ? null : detail.optJSONObject("paid_content_info");
+            if (found == 0 || (paid != null && paid.optBoolean("is_partial_preview", false))) return null;
             return reader().post(detail.toString());
         } catch (Exception failure) {
             Logger.printInfo(() -> "Could not ask TikTok for drama episode " + id, failure);

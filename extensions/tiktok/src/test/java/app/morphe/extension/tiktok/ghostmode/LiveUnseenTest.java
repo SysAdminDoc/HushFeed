@@ -411,6 +411,41 @@ public class LiveUnseenTest {
         LiveUnseen.hideAgain(null);
     }
 
+    /** D#359: in the long-press menu, the eye's row says what a tap on it will do in that room. */
+    @Test public void theEyesMenuRowSaysWhatATapWillDo() throws Exception {
+        on();
+        assertEquals("Let the host see you", LiveUnseenButton.menuLabel(ROOM));
+        reveal(ROOM);
+        assertEquals("Hide from the host next time", LiveUnseenButton.menuLabel(ROOM));
+        LiveUnseen.hideAgain(ROOM);
+        assertEquals("Let the host see you", LiveUnseenButton.menuLabel(ROOM));
+    }
+
+    /** D#359: with LIVE buttons in the long-press menu on, nothing of the eye covers the stream. */
+    @Test public void theEyeLeavesTheVideoForTheMenu() {
+        on();
+        android.app.Activity activity = org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        android.view.ViewGroup content = activity.findViewById(android.R.id.content);
+        try {
+            int before = content.getChildCount();
+            LiveUnseenButton.refresh(activity);
+            assertEquals("the eye is on the video", before + 1, content.getChildCount());
+            assertFalse(LiveUnseenButton.inMenu());
+
+            Settings.LIVE_BUTTONS_IN_MENU.save(true);
+            assertTrue(LiveUnseenButton.inMenu());
+            LiveUnseenButton.refresh(activity);
+            assertEquals("the eye is in the menu instead", before, content.getChildCount());
+
+            Settings.GHOST_HIDE_LIVE_VIEWS.save(false);
+            assertFalse("no eye without Watch LIVEs unseen", LiveUnseenButton.inMenu());
+        } finally {
+            Settings.LIVE_BUTTONS_IN_MENU.resetToDefault();
+            LiveUnseenButton.resetForTests();
+            activity.finish();
+        }
+    }
+
     @Test public void noRoomReadsAsNoRoom() {
         assertNull(app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(null));
         assertEquals(ROOM, app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(new Request(ENTER)));

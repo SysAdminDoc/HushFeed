@@ -58,6 +58,7 @@ public class ShareLiveButtonsTest {
     private int constructed;
     private int recordTaps;
     private int autoTaps;
+    private int unseenTaps;
 
     @Before public void setUp() {
         activity = Robolectric.buildActivity(Activity.class).setup().get();
@@ -73,12 +74,14 @@ public class ShareLiveButtonsTest {
         };
         ShareLiveButtons.recordTapForTests = () -> recordTaps++;
         ShareLiveButtons.autoTapForTests = () -> autoTaps++;
+        ShareLiveButtons.unseenTapForTests = () -> unseenTaps++;
     }
 
     @After public void tearDown() {
         ShareLiveButtons.nativeForTests = null;
         ShareLiveButtons.recordTapForTests = null;
         ShareLiveButtons.autoTapForTests = null;
+        ShareLiveButtons.unseenTapForTests = null;
         ((List<?>) ReflectionHelpers.getStaticField(ShareLiveButtons.class, "BUILT")).clear();
         LiveRecordChip.holdForTests(null, false);
         Settings.RECORD_LIVE.resetToDefault();
@@ -219,6 +222,36 @@ public class ShareLiveButtonsTest {
             OwnedShareActions.bindMenuRow(model, icon, text);
             assertEquals("Report", text.getText().toString());
             assertSame(flag, icon.getDrawable());
+        }
+    }
+
+    /** D#359: with Watch LIVEs unseen on, the eye is a row too, and a tap does what the eye does. */
+    @Test public void theEyeJoinsALiveMenuWhileWatchLivesUnseenIsOn() {
+        boolean installed = SettingsStatus.ghostModeEnabled;
+        SettingsStatus.ghostModeEnabled = true;
+        Settings.GHOST_MODE.save(true);
+        Settings.GHOST_HIDE_LIVE_VIEWS.save(true);
+        try {
+            Package live = new Package("live");
+            List<?> finished = ShareLiveButtons.actions(live, row());
+            assertEquals(5, finished.size());
+            assertEquals(ShareLiveButtons.RECORD_KEY, key(finished.get(2)));
+            assertEquals(ShareLiveButtons.AUTO_TAP_KEY, key(finished.get(3)));
+            assertEquals(ShareLiveButtons.UNSEEN_KEY, key(finished.get(4)));
+            assertEquals("Let the host see you", OwnedShareActions.label(finished.get(4)));
+            assertTrue(OwnedShareActions.click(finished.get(4), activity, live));
+            assertEquals(1, unseenTaps);
+            assertEquals(0, recordTaps);
+
+            Settings.GHOST_HIDE_LIVE_VIEWS.save(false);
+            List<?> without = ShareLiveButtons.actions(live, new ArrayList<>(finished));
+            assertEquals(4, without.size());
+            assertTrue("the old eye row is dead", OwnedShareActions.click(finished.get(4), activity, live));
+            assertEquals(1, unseenTaps);
+        } finally {
+            SettingsStatus.ghostModeEnabled = installed;
+            Settings.GHOST_MODE.resetToDefault();
+            Settings.GHOST_HIDE_LIVE_VIEWS.resetToDefault();
         }
     }
 

@@ -663,6 +663,7 @@ Hide the tab names above the feed	Скрывать названия вкладо
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	Названия Подписки и Рекомендации над лентой исчезают. Переключение между лентами свайпом и кнопка поиска остаются как есть.
 Hide floating promotion badges, coins, and timer banners on the feed.	Скрывать плавающие рекламные значки, монеты и баннеры таймера в ленте.
 Hide floating promotions	Скрывать плавающую рекламу
+Hide from the host next time	Скрыться от ведущего в следующий раз
 Hide inserted cards	Скрывать вставленные карточки
 Hide message requests	Скрывать запросы на сообщения
 Hide message streaks	Скрывать серии сообщений
@@ -3317,7 +3318,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Приглушить имя, дату и подпись
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Показывает имя автора, дату, подпись и строку с музыкой поверх видео на этом уровне, и на них по-прежнему можно нажимать. При 100 они следуют настройке Приглушить кнопки поверх видео. При 0 они скрыты.
 LIVE buttons in the long-press menu	Кнопки LIVE в меню долгого нажатия
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Убирает кнопки Запись и Автонажатие с видео и помещает их в меню, которое открывается при долгом нажатии на середину LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Убирает кнопки Запись и Автонажатие и глаз Режима призрака с видео и помещает их в меню, которое открывается при долгом нажатии на середину LIVE.
 Auto tap started	Автонажатие запущено
 Hide stories from accounts you don't follow	Скрывать истории аккаунтов, на которые вы не подписаны
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Истории аккаунтов, на которые вы не подписаны, исчезают из панели историй. Истории аккаунтов, на которые вы подписаны, остаются.

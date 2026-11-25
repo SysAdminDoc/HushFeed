@@ -784,6 +784,7 @@ Hide every direct message conversation. Leaves the Inbox empty apart from whatev
 "Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.","Ẩn các video trên bảng tin có huy hiệu địa điểm, ngay cả khi chúng không phải là quảng cáo trả phí. Để giữ video và chỉ ẩn huy hiệu, hãy sử dụng tính năng Ẩn nhãn vị trí trong màn hình Bảng tin."
 "Hide floating promotion badges, coins, and timer banners on the feed.","Ẩn các huy hiệu quảng cáo nổi, đồng xu và biểu ngữ hẹn giờ trên bảng tin."
 Hide floating promotions,Ẩn khuyến mại nổi
+Hide from the host next time,Ẩn khỏi chủ phòng lần sau
 Hide gaming LIVEs,Ẩn luồng LIVE chơi game
 Hide inserted cards,Ẩn các thẻ được chèn vào
 Hide location labels,Ẩn nhãn vị trí
@@ -2955,7 +2956,7 @@ Write the month as a word,Viết tháng bằng chữ
 "Fade the name, date and caption","Làm mờ tên, ngày và chú thích"
 "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.","Hiển thị tên nhà sáng tạo, ngày, chú thích và dòng nhạc trên video ở mức này, và vẫn nhấn được. Ở 100 chúng theo Làm mờ điều khiển video. Ở 0 chúng bị ẩn."
 LIVE buttons in the long-press menu,Nút LIVE trong menu nhấn giữ
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.,Bỏ nút Ghi hình và Tự động chạm khỏi video và đưa chúng vào menu hiện ra khi nhấn giữ giữa LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.,Bỏ nút Ghi hình và Tự động chạm cùng con mắt của Chế độ ẩn danh khỏi video và đưa chúng vào menu hiện ra khi nhấn giữ giữa LIVE.
 Auto tap started,Đã bắt đầu tự động chạm
 Hide stories from accounts you don't follow,Ẩn tin từ tài khoản bạn không theo dõi
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.,Tin từ các tài khoản bạn không theo dõi sẽ rời khỏi khay chứa tin. Tin từ các tài khoản bạn theo dõi vẫn ở lại.

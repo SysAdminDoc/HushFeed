@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.tiktok.blockauthor.OverlayGlyphDrawable;
+import app.morphe.extension.tiktok.ghostmode.LiveUnseenButton;
 import app.morphe.extension.tiktok.live.LiveAutoTap;
 import app.morphe.extension.tiktok.live.LivePanelTheme;
 import app.morphe.extension.tiktok.live.LiveRecordChip;
@@ -23,60 +25,73 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Record and Auto tap as rows of a LIVE's menu (#359), for people who'd rather have nothing over
- * the stream. With LIVE buttons in the long-press menu on, the two chips stay off the video and
- * these rows do their job, each present only while its own switch is on. They're built on the same
- * native Report carrier as LIVE recording quality, and say what a tap will do when the menu opens.
+ * Record, Auto tap and Ghost mode's eye as rows of a LIVE's menu (#359), for people who'd rather
+ * have nothing over the stream. With LIVE buttons in the long-press menu on, the buttons stay off
+ * the video and these rows do their job, each present only while its own switch is on. They're
+ * built on the same native Report carrier as LIVE recording quality, and say what a tap will do
+ * when the menu opens.
  */
 public final class ShareLiveButtons {
     static final String RECORD_KEY = "hushfeed_live_record";
     static final String AUTO_TAP_KEY = "hushfeed_live_auto_tap";
+    static final String UNSEEN_KEY = "hushfeed_live_unseen";
     private static final String FAMILY = "live buttons in menu";
     private static final List<Built> BUILT = new ArrayList<>();
 
     private ShareLiveButtons() {}
 
+    /** The rows, in the order they follow TikTok's own. */
+    enum Kind { RECORD, AUTO_TAP, UNSEEN }
+
     private static final class Built {
         final WeakReference<Object> action;
         final WeakReference<Object> sharePackage;
-        final boolean record;
+        final Kind kind;
         volatile boolean retired;
 
-        Built(Object action, Object sharePackage, boolean record) {
+        Built(Object action, Object sharePackage, Kind kind) {
             this.action = new WeakReference<>(action);
             this.sharePackage = new WeakReference<>(sharePackage);
-            this.record = record;
+            this.kind = kind;
+        }
+    }
+
+    /** Whether {@code kind}'s row belongs in the menu now, its button's switch being on. */
+    private static boolean inMenu(Kind kind) {
+        switch (kind) {
+            case RECORD: return LiveRecordChip.inMenu();
+            case AUTO_TAP: return LiveAutoTap.inMenu();
+            default: return LiveUnseenButton.inMenu();
         }
     }
 
     /** Finished native row. Stale owned actions come out when off or on another surface. */
     public static List<?> actions(Object sharePackage, List<?> actions) {
         if (actions == null) return null;
-        List<Object> row = new ArrayList<>(actions.size() + 2);
+        Kind[] kinds = Kind.values();
+        List<Object> row = new ArrayList<>(actions.size() + kinds.length);
         try {
             boolean live = ShareLiveQuality.isLive(sharePackage);
-            boolean wantRecord = live && LiveRecordChip.inMenu();
-            boolean wantAutoTap = live && LiveAutoTap.inMenu();
-            Built record = null;
-            Built autoTap = null;
+            boolean[] wanted = new boolean[kinds.length];
+            for (Kind kind : kinds) wanted[kind.ordinal()] = live && inMenu(kind);
+            Built[] kept = new Built[kinds.length];
             for (Object item : actions) {
                 Built built = find(item);
                 if (built == null) {
                     row.add(item);
                     continue;
                 }
-                boolean wanted = built.record ? wantRecord : wantAutoTap;
-                boolean free = (built.record ? record : autoTap) == null;
-                if (!wanted || !free || built.retired || built.sharePackage.get() != sharePackage) {
+                int slot = built.kind.ordinal();
+                if (!wanted[slot] || kept[slot] != null || built.retired
+                        || built.sharePackage.get() != sharePackage) {
                     built.retired = true;
-                } else if (built.record) {
-                    record = built;
                 } else {
-                    autoTap = built;
+                    kept[slot] = built;
                 }
             }
-            if (wantRecord) add(row, record, true, sharePackage);
-            if (wantAutoTap) add(row, autoTap, false, sharePackage);
+            for (Kind kind : kinds) {
+                if (wanted[kind.ordinal()]) add(row, kept[kind.ordinal()], kind, sharePackage);
+            }
             return sameRow(actions, row) ? actions : row;
         } catch (Throwable failure) {
             row.clear();
@@ -91,14 +106,14 @@ public final class ShareLiveButtons {
         }
     }
 
-    private static void add(List<Object> row, Built reusable, boolean record, Object sharePackage) {
+    private static void add(List<Object> row, Built reusable, Kind kind, Object sharePackage) {
         Object action = reusable == null ? null : reusable.action.get();
         if (action == null) {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
             action = newAction(activity);
             if (action == null) return;
-            remember(new Built(action, sharePackage, record));
+            remember(new Built(action, sharePackage, kind));
         }
         row.add(action);
         HookStatus.bound(FAMILY, "share sheet row");
@@ -133,20 +148,37 @@ public final class ShareLiveButtons {
     public static String key(Object action) {
         Built built = find(action);
         if (built == null) return null;
-        return built.record ? RECORD_KEY : AUTO_TAP_KEY;
+        switch (built.kind) {
+            case RECORD: return RECORD_KEY;
+            case AUTO_TAP: return AUTO_TAP_KEY;
+            default: return UNSEEN_KEY;
+        }
     }
 
     public static String label(Object action) {
         Built built = find(action);
         if (built == null) return null;
-        return built.record ? LiveRecordChip.menuLabel() : LiveAutoTap.menuLabel();
+        switch (built.kind) {
+            case RECORD: return LiveRecordChip.menuLabel();
+            case AUTO_TAP: return LiveAutoTap.menuLabel();
+            default: return LiveUnseenButton.menuLabel();
+        }
     }
 
     public static void bindIcon(Object action, ImageView image) {
         Built built = find(action);
         if (built == null) return;
-        NativeShareIcon.Glyph glyph = built.record
-                ? LiveButtonGlyphDrawable::forRecord : LiveButtonGlyphDrawable::forAutoTap;
+        NativeShareIcon.Glyph glyph;
+        switch (built.kind) {
+            case RECORD: glyph = LiveButtonGlyphDrawable::forRecord; break;
+            case AUTO_TAP: glyph = LiveButtonGlyphDrawable::forAutoTap; break;
+            default: {
+                // The same eye the button draws: crossed out while the host can't see you.
+                OverlayGlyphDrawable.Shape eye = LiveUnseenButton.menuRevealed()
+                        ? OverlayGlyphDrawable.Shape.EYE : OverlayGlyphDrawable.Shape.EYE_OFF;
+                glyph = (color, stroke) -> new OverlayGlyphDrawable(eye, color, stroke);
+            }
+        }
         Drawable icon = NativeShareIcon.restyle(image.getDrawable(), glyph);
         if (icon == null) {
             Context context = Utils.getVisibleActivity();
@@ -167,12 +199,14 @@ public final class ShareLiveButtons {
         try {
             if (built.retired || built.sharePackage.get() != sharePackage
                     || !ShareLiveQuality.isLive(sharePackage)) return true;
-            if (!(built.record ? LiveRecordChip.inMenu() : LiveAutoTap.inMenu())) return true;
+            if (!inMenu(built.kind)) return true;
             LivePanelTheme.closeLiveMenu();
-            Runnable stand = built.record ? recordTapForTests : autoTapForTests;
+            Runnable stand = built.kind == Kind.RECORD ? recordTapForTests
+                    : built.kind == Kind.AUTO_TAP ? autoTapForTests : unseenTapForTests;
             if (stand != null) stand.run();
-            else if (built.record) LiveRecordChip.menuTap();
-            else LiveAutoTap.menuTap();
+            else if (built.kind == Kind.RECORD) LiveRecordChip.menuTap();
+            else if (built.kind == Kind.AUTO_TAP) LiveAutoTap.menuTap();
+            else LiveUnseenButton.menuTap();
         } catch (Throwable failure) {
             HookStatus.threw(FAMILY, "share sheet row", failure);
             Logger.printException(() -> "Could not use a LIVE button from the menu", failure);
@@ -184,6 +218,7 @@ public final class ShareLiveButtons {
     static volatile Native nativeForTests;
     static volatile Runnable recordTapForTests;
     static volatile Runnable autoTapForTests;
+    static volatile Runnable unseenTapForTests;
 
     /** A native Report carrier from the shared bridge the patch fills in; it takes no post. */
     static Object newAction(Activity activity) {

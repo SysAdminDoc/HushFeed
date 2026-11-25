@@ -605,6 +605,7 @@ Hide conversations	Söhbətləri gizlədin
 Hide every direct message conversation. Leaves the Inbox empty apart from whatever else is still turned on.	Bütün birbaşa mesaj söhbətlərini gizlədin. Hələ də yandırılmış başqa şeylər istisna olmaqla, Gələnlər boş qalır.
 Hide floating promotion badges, coins, and timer banners on the feed.	Lentdəki üzən tanıtım nişanlarını, sikkələri və taymer bannerlərini gizlədin.
 Hide floating promotions	Üzən tanıtımları gizlədin
+Hide from the host next time	Növbəti dəfə aparıcıdan gizlən
 Hide inserted cards	Əlavə edilmiş kartları gizlədin
 Hide location labels	Məkan etiketlərini gizlədin
 Hide message requests	Mesaj sorğularını gizlədin
@@ -3116,7 +3117,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Ad, tarix və açıqlamanı solğunlaşdır
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Yaradıcının adını, tarixi, açıqlamanı və musiqi sətrini videonun üzərində bu səviyyədə göstərir, onlara toxunmaq yenə mümkündür. 100 olduqda Video idarəetmələrini solğunlaşdır ayarına uyğun olur. 0 olduqda gizlənir.
 LIVE buttons in the long-press menu	LIVE düymələri uzun basma menyusunda
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Yaz və Avto toxunma düymələrini videodan götürür və LIVE-ın ortasına basıb saxlayanda açılan menyuya qoyur.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Yaz və Avto toxunma düymələrini və Xəyal rejiminin gözünü videodan götürür və LIVE-ın ortasına basıb saxlayanda açılan menyuya qoyur.
 Auto tap started	Avto toxunma başladı
 Hide stories from accounts you don't follow	İzləmədiyiniz hesabların hekayələrini gizlədin
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	İzləmədiyiniz hesabların hekayələri hekayə panelindən çıxır. İzlədiyiniz hesabların hekayələri qalır.

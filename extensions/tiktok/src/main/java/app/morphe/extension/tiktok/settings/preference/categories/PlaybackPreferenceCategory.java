@@ -252,8 +252,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     new String[]{"Smallest", "Small", "Normal"},
                     new String[]{"32", "40", "48"}));
             addPreference(new TogglePreference(context, "LIVE buttons in the long-press menu",
-                    "Takes the Record and Auto tap buttons off the video and puts them in the menu you "
-                            + "get by holding the middle of a LIVE.",
+                    "Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts "
+                            + "them in the menu you get by holding the middle of a LIVE.",
                     Settings.LIVE_BUTTONS_IN_MENU));
             addPreference(new TogglePreference(context, "LIVE name alerts",
                     "Tells you when your name comes up in a LIVE, in the chat or said out loud in a room "

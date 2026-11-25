@@ -606,6 +606,7 @@ Hide the tab names above the feed	Скриване на имената на ра
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	Имената „Следвате“ и „За вас“ над лентата изчезват. Плъзгането между лентите и бутонът за търсене остават както са.
 Hide floating promotion badges, coins, and timer banners on the feed.	Скрива плаващите рекламни значки, монети и банери с таймер в лентата.
 Hide floating promotions	Скриване на плаващите промоции
+Hide from the host next time	Скрий се от водещия следващия път
 Hide inserted cards	Скриване на вмъкнатите карти
 Hide message requests	Скриване на заявките за съобщения
 Hide message streaks	Скриване на поредиците със съобщения
@@ -3119,7 +3120,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Избледняване на името, датата и описанието
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Показва името на създателя, датата, описанието и реда с музиката върху видеото с тази плътност, като те пак приемат докосвания. При 100 следват „Избледняване на контролите на видеото“. При 0 са скрити.
 LIVE buttons in the long-press menu	Бутоните за LIVE в менюто при дълго натискане
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Премахва бутоните „Запис“ и „Автоматично докосване“ от видеото и ги слага в менюто, което се отваря, когато задържиш средата на LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Премахва бутоните „Запис“ и „Автоматично докосване“ и окото на режим призрак от видеото и ги слага в менюто, което се отваря, когато задържиш средата на LIVE.
 Auto tap started	Автоматичното докосване започна
 Hide stories from accounts you don't follow	Скриване на историите от акаунти, които не следваш
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Историите от акаунти, които не следваш, изчезват от реда с истории. Историите от акаунтите, които следваш, остават.

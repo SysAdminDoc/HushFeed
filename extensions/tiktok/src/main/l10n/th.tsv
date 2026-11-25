@@ -606,6 +606,7 @@ Hide the tab names above the feed	ซ่อนชื่อแท็บเหน�
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	ชื่อกำลังติดตามและสำหรับคุณเหนือฟีดจะหายไป การปัดระหว่างฟีดและปุ่มค้นหาจะยังคงเหมือนเดิม
 Hide floating promotion badges, coins, and timer banners on the feed.	ซ่อนป้ายโปรโมชันแบบลอย เหรียญ และแบนเนอร์จับเวลาบนฟีด
 Hide floating promotions	ซ่อนโปรโมชันแบบลอย
+Hide from the host next time	ซ่อนจากโฮสต์ครั้งหน้า
 Hide inserted cards	ซ่อนการ์ดที่แทรกเข้ามา
 Hide message requests	ซ่อนคำขอส่งข้อความ
 Hide message streaks	ซ่อนสตรีคข้อความ
@@ -3119,7 +3120,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	เฟดชื่อ วันที่ และคำบรรยาย
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	แสดงชื่อครีเอเตอร์ วันที่ คำบรรยาย และบรรทัดเพลงบนวิดีโอที่ระดับนี้ และยังแตะได้ตามเดิม ที่ 100 จะเป็นไปตาม เฟดตัวควบคุมวิดีโอ. ที่ 0 จะถูกซ่อน
 LIVE buttons in the long-press menu	ปุ่ม LIVE ในเมนูกดค้าง
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	นำปุ่ม บันทึก และ แตะอัตโนมัติ ออกจากวิดีโอ แล้วไปไว้ในเมนูที่เปิดขึ้นเมื่อกดค้างตรงกลาง LIVE
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	นำปุ่ม บันทึก และ แตะอัตโนมัติ รวมถึงไอคอนตาของโหมดล่องหน ออกจากวิดีโอ แล้วไปไว้ในเมนูที่เปิดขึ้นเมื่อกดค้างตรงกลาง LIVE
 Auto tap started	เริ่มแตะอัตโนมัติแล้ว
 Hide stories from accounts you don't follow	ซ่อนสตอรี่จากบัญชีที่คุณไม่ได้ติดตาม
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	สตอรี่จากบัญชีที่คุณไม่ได้ติดตามจะหายไปจากถาดสตอรี่ ส่วนสตอรี่จากบัญชีที่คุณติดตามยังคงอยู่

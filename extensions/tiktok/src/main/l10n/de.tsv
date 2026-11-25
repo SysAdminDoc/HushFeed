@@ -606,6 +606,7 @@ Hide the tab names above the feed	Tab-Namen über dem Feed ausblenden
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	Die Namen Folge ich und Für dich über dem Feed verschwinden. Das Wischen zwischen den Feeds und die Suchschaltfläche bleiben wie sie sind.
 Hide floating promotion badges, coins, and timer banners on the feed.	Schwebende Werbe-Abzeichen, Münzen und Timer-Banner auf der Startseite ausblenden.
 Hide floating promotions	Schwebende Werbeaktionen ausblenden
+Hide from the host next time	Beim nächsten Mal vor dem Host verbergen
 Hide inserted cards	Eingeschobene Karten ausblenden
 Hide message requests	Nachrichtenanfragen ausblenden
 Hide message streaks	Nachrichten-Serien ausblenden
@@ -3119,7 +3120,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Name, Datum und Beschreibung ausblenden lassen
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Zeigt den Namen des Creators, das Datum, die Beschreibung und die Musikzeile über dem Video in dieser Stärke an, und sie reagieren weiter auf Tippen. Bei 100 folgen sie Videosteuerung ausblenden lassen. Bei 0 werden sie ausgeblendet.
 LIVE buttons in the long-press menu	LIVE-Schaltflächen im Langdruck-Menü
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Entfernt die Schaltflächen Aufnehmen und Auto-Tippen vom Video und legt sie in das Menü, das sich öffnet, wenn du die Mitte eines LIVE gedrückt hältst.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Entfernt die Schaltflächen Aufnehmen und Auto-Tippen und das Auge des Geistermodus vom Video und legt sie in das Menü, das sich öffnet, wenn du die Mitte eines LIVE gedrückt hältst.
 Auto tap started	Auto-Tippen gestartet
 Hide stories from accounts you don't follow	Storys von Konten ausblenden, denen du nicht folgst
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Storys von Konten, denen du nicht folgst, verschwinden aus der Story-Leiste. Storys von Konten, denen du folgst, bleiben.

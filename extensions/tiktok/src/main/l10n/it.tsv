@@ -606,6 +606,7 @@ Hide the tab names above the feed	Nascondi i nomi delle schede sopra il feed
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	I nomi “Seguiti” e “Per te” sopra il feed scompaiono. Scorrere tra i feed e il pulsante di ricerca restano come sono.
 Hide floating promotion badges, coins, and timer banners on the feed.	Nascondi i badge promozionali fluttuanti, le monete e i banner con timer nel feed.
 Hide floating promotions	Nascondi le promozioni fluttuanti
+Hide from the host next time	Nasconditi da chi conduce la prossima volta
 Hide inserted cards	Nascondi le card inserite
 Hide message requests	Nascondi le richieste di messaggio
 Hide message streaks	Nascondi le serie di messaggi
@@ -3116,7 +3117,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Attenua nome, data e descrizione
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Mostra il nome del creator, la data, la descrizione e la riga della musica sul video a questo livello, e restano toccabili. A 100 seguono Attenua i controlli del video. A 0 vengono nascosti.
 LIVE buttons in the long-press menu	Pulsanti LIVE nel menu a pressione prolungata
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Toglie i pulsanti Registra e Tocco automatico dal video e li mette nel menu che si apre tenendo premuto il centro di un LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Toglie i pulsanti Registra e Tocco automatico e l'occhio della Modalità fantasma dal video e li mette nel menu che si apre tenendo premuto il centro di un LIVE.
 Auto tap started	Tocco automatico avviato
 Hide stories from accounts you don't follow	Nascondi le storie degli account che non segui
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Le storie degli account che non segui escono dalla barra delle storie. Le storie degli account che segui restano.

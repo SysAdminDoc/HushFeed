@@ -588,6 +588,7 @@ Hide the tab names above the feed,Sembunyikan nama tab di atas feed
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,Nama Mengikuti dan Untuk Anda di atas feed hilang. Menggeser antar feed dan tombol pencarian tetap seperti semula.
 "Hide floating promotion badges, coins, and timer banners on the feed.","Sembunyikan lencana promosi mengambang, koin, dan spanduk penghitung waktu di beranda."
 Hide floating promotions,Sembunyikan promosi mengambang
+Hide from the host next time,Sembunyi dari host lain kali
 Hide inserted cards,Sembunyikan kartu sisipan
 Hide message requests,Sembunyikan permintaan pesan
 Hide message streaks,Sembunyikan rentetan pesan
@@ -2957,7 +2958,7 @@ Write the month as a word,Tulis bulan sebagai kata
 "Fade the name, date and caption","Pudarkan nama, tanggal, dan keterangan"
 "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.","Menampilkan nama kreator, tanggal, keterangan, dan baris musik di atas video pada level ini, dan semuanya tetap bisa diketuk. Di 100 mengikuti Pudarkan kontrol video. Di 0 disembunyikan."
 LIVE buttons in the long-press menu,Tombol LIVE di menu tekan lama
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.,Memindahkan tombol Rekam dan Ketuk otomatis dari video ke menu yang muncul saat menekan lama bagian tengah LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.,Memindahkan tombol Rekam dan Ketuk otomatis serta mata Mode siluman dari video ke menu yang muncul saat menekan lama bagian tengah LIVE.
 Auto tap started,Ketuk otomatis dimulai
 Hide stories from accounts you don't follow,Sembunyikan Story dari akun yang tidak kamu ikuti
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.,Story dari akun yang tidak kamu ikuti hilang dari deret Story. Story dari akun yang kamu ikuti tetap ada.

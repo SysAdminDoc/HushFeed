@@ -738,6 +738,7 @@ Hide every direct message conversation. Leaves the Inbox empty apart from whatev
 "Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.",隐藏带有地点徽章的信息流视频，即使它们不是付费广告。要保留视频并仅隐藏其徽章，请使用“信息流”屏幕中的“隐藏位置标签”.
 "Hide floating promotion badges, coins, and timer banners on the feed.",隐藏动态上的浮动促销徽章、硬币和计时器横幅.
 Hide floating promotions,隐藏浮动促销
+Hide from the host next time,下次对主播隐身
 Hide gaming LIVEs,隐藏游戏直播
 Hide inserted cards,隐藏插入的卡片
 Hide location labels,隐藏位置标签
@@ -2955,7 +2956,7 @@ Write the month as a word,用文字写月份
 "Fade the name, date and caption",淡化名称、日期和说明文字
 "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.",以此级别在视频上显示创作者名称、日期、说明文字和音乐行，它们仍可点按。为 100 时跟随淡入淡出视频控件。为 0 时隐藏.
 LIVE buttons in the long-press menu,长按菜单中的 LIVE 按钮
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.,将记录和自动点击按钮从视频上移到长按 LIVE 中间时出现的菜单中.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.,将记录和自动点击按钮以及幽灵模式的眼睛从视频上移到长按 LIVE 中间时出现的菜单中.
 Auto tap started,自动点击已开始
 Hide stories from accounts you don't follow,隐藏你未关注账号的故事
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.,你未关注账号的故事会离开故事托盘。你关注账号的故事会保留.

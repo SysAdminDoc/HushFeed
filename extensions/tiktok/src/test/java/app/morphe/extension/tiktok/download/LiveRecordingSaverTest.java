@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.download;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -14,15 +15,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import android.os.Looper;
 import static org.robolectric.Shadows.shadowOf;
 
+import java.nio.file.Files;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicReference;
 
 /** #37: what a LIVE recording is called and what the viewer is told when it ends. */
 @RunWith(RobolectricTestRunner.class)
@@ -150,5 +154,36 @@ public class LiveRecordingSaverTest {
                 .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY));
         shadowOf(Looper.getMainLooper()).idle();
         assertEquals("Nothing was recorded", ShadowToast.getTextOfLatestToast());
+    }
+
+    /** #531: stopped or left before any video came in, a few header bytes block nothing after it. */
+    @Test public void aRecordingWithOnlyAFewBytesLeavesNothingToBlockTheNextOne() throws Exception {
+        RecordingRetention store = RecordingRetention.in(RuntimeEnvironment.getApplication());
+        for (boolean sourceClosed : new boolean[] {false, true}) {
+            RecordingRetention.Record record = store.begin("flv", "someone", start());
+            Files.write(record.source().toPath(), new byte[] {'F', 'L', 'V', 1, 5, 0, 0, 0, 9, 0, 0, 0, 0});
+            // A spool past the useful size that remuxes to nothing closes its source first.
+            if (sourceClosed) record.update("captureClosed", true);
+            AtomicReference<LiveRecorder.Result> told = new AtomicReference<>();
+            LiveRecordingSaver.finished(record,
+                    result(LiveRecorder.Outcome.NOTHING_SAVED, LiveRecorder.End.LEFT_ROOM, null), told::set);
+            assertNull("nothing is offered for Retry", told.get().retainedId);
+            assertTrue(store.ids().isEmpty());
+            assertFalse(record.directory.exists());
+            store.begin("flv", "next", start() + 1000).close();
+        }
+    }
+
+    /** A save that failed keeps its bytes for Retry, Export or Delete, as before. */
+    @Test public void aRecordingThatFailedToSaveKeepsItsFiles() throws Exception {
+        RecordingRetention store = RecordingRetention.in(RuntimeEnvironment.getApplication());
+        RecordingRetention.Record record = store.begin("flv", "someone", start());
+        Files.write(record.source().toPath(), new byte[64 * 1024]);
+        record.update("captureClosed", true);
+        AtomicReference<LiveRecorder.Result> told = new AtomicReference<>();
+        LiveRecordingSaver.finished(record,
+                result(LiveRecorder.Outcome.FAILED, LiveRecorder.End.STOPPED, null), told::set);
+        assertEquals(record.id, told.get().retainedId);
+        assertEquals(java.util.Collections.singletonList(record.id), store.ids());
     }
 }

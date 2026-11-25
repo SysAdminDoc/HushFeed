@@ -96,12 +96,34 @@ public final class LiveRecordingSaver {
         record.update("captureClosed", true);
         if (listener != null) listener.run();
     }
-    private static void finished(RecordingRetention.Record record, LiveRecorder.Result result, LiveRecorder.Listener listener) {
-        rememberStopReason(record, result.end);
+    static void finished(RecordingRetention.Record record, LiveRecorder.Result result, LiveRecorder.Listener listener) {
+        if (result.outcome != LiveRecorder.Outcome.NOTHING_SAVED || !discardNothing(record))
+            rememberStopReason(record, result.end);
         close(record);
         boolean retained = !record.acknowledged() && !"DISCARDED".equals(record.get("state"));
         listener.onFinished(retained ? result.withRetainedId(record.id) : result);
     }
+    /**
+     * #531: a stream recording that ended before a playable frame (a few bytes, or a remux with
+     * no video) has nothing to keep. Left retained, its folder refused every later Record and
+     * Retry. Screen captures, and anything with a publication receipt, stay retained.
+     */
+    private static boolean discardNothing(RecordingRetention.Record record) {
+        String format = record.get("format");
+        if (record.quarantined || record.acknowledged() || !"CAPTURING".equals(record.get("state"))
+                || "true".equals(record.get("capture")) || !("flv".equals(format) || "ts".equals(format)))
+            return false;
+        for (String receipt : new String[] {"final", "intentKey", "uri", "file", "legacy"})
+            if (!record.get(receipt).isEmpty()) return false;
+        try {
+            record.update("state", "DISCARDED");
+            return true;
+        } catch (IOException failure) {
+            Logger.printException(() -> "An empty LIVE recording could not be discarded", failure);
+            return false;
+        }
+    }
+
     private static void rememberStopReason(RecordingRetention.Record record, LiveRecorder.End end) {
         if (end == null || end == LiveRecorder.End.RECOVERED || record.quarantined || record.acknowledged()) return;
         try {

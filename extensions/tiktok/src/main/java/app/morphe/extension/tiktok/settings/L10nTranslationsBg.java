@@ -5147,8 +5147,8 @@ final class L10nTranslationsBg {
                 "Поредица");
         table.put("Stream only",
                 "Само потока");
-        table.put("Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.",
-                "„Само потока“ запазва само видеото на стаята, както досега. „Екран“ записва това, което показва телефонът ти, докато гледаш, заедно със звука от приложението, ако TikTok има разрешение за микрофона. Android всеки път пита дали разрешаваш записа на екрана и показва свое известие, докато записва.");
+        table.put("Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records. A screen recording looks as sharp as the quality you're watching. Hold the Record button in a LIVE to change it.",
+                "„Само потока“ запазва само видеото на стаята, както досега. „Екран“ записва това, което показва телефонът ти, докато гледаш, заедно със звука от приложението, ако TikTok има разрешение за микрофона. Android всеки път пита дали разрешаваш записа на екрана и показва свое известие, докато записва. Записът на екрана е толкова ясен, колкото качеството, което гледаш. Задръж бутона „Запиши“ в LIVE, за да го смениш.");
         table.put("Stretch the video to the screen",
                 "Разпъване на видеото до екрана");
         table.put("Strong blur",

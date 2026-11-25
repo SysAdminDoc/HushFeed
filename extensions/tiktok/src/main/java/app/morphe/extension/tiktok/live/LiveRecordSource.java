@@ -4,7 +4,13 @@
  */
 package app.morphe.extension.tiktok.live;
 
+import android.app.AlertDialog;
+import android.content.Context;
+
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 /** What a LIVE recording is made from (#37): the room's own stream file, or the phone's screen. */
 public final class LiveRecordSource {
@@ -33,5 +39,30 @@ public final class LiveRecordSource {
     /** The choice in effect now. */
     public static boolean screen() {
         return screen(Settings.LIVE_RECORD_SOURCE.get());
+    }
+
+    /**
+     * Lists both choices with the one in effect marked, from holding the Record button in a room
+     * (#529). A pick is saved and named in a toast at once, and the next recording is made from it.
+     */
+    public static void pick(Context context) {
+        String[] labels = new String[LABELS.length];
+        for (int i = 0; i < labels.length; i++) labels[i] = L10n.t(LABELS[i]);
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(L10n.t("LIVE recording source"))
+                .setSingleChoiceItems(labels, screen() ? 1 : 0, (shown, which) -> {
+                    choose(which);
+                    shown.dismiss();
+                })
+                .create();
+        dialog.show();
+        SettingsUi.styleStandardAlertDialog(dialog);
+    }
+
+    /** Saves choice number {@code which} and says what it is. */
+    static void choose(int which) {
+        if (which < 0 || which >= VALUES.length) return;
+        Settings.LIVE_RECORD_SOURCE.save(VALUES[which]);
+        Utils.showToastShort(L10n.t(LABELS[which]));
     }
 }

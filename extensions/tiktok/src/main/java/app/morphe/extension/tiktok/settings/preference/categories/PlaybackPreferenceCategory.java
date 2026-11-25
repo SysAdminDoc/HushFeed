@@ -237,7 +237,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     .withNote("Stream only saves the room's own video, as before. Screen records what your "
                             + "phone shows while you watch, with the sound the app plays when TikTok has the "
                             + "microphone permission. Android asks you to allow screen recording each time, and "
-                            + "shows its own notice while it records."));
+                            + "shows its own notice while it records. A screen recording looks as sharp as the "
+                            + "quality you're watching. Hold the Record button in a LIVE to change it."));
             addPreference(new TogglePreference(context, "Auto tap in LIVE rooms",
                     "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady "
                             + "pace, and tap it again to stop. It also stops when you leave or swipe to "

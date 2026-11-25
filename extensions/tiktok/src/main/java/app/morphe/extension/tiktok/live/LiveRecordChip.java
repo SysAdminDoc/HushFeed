@@ -385,9 +385,7 @@ public final class LiveRecordChip {
         removeChip();
         ViewGroup content = activity.findViewById(android.R.id.content);
         if (content == null) return;
-        TextView view = new TextView(activity);
-        styleChip(view);
-        view.setOnClickListener(clicked -> onChipTap());
+        TextView view = buildChip(activity);
         markStacked(view, STACK_RECORD, dp(activity, TOP_DP), dp(activity, GAP_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -397,6 +395,25 @@ public final class LiveRecordChip {
         content.addView(view, params);
         chip = view;
         view.post(() -> stayClear(activity));
+    }
+
+    /**
+     * The Record chip: a tap starts or stops a recording, and holding it lists what recordings
+     * are made from, the stream or the screen (#529).
+     */
+    static TextView buildChip(Activity activity) {
+        TextView view = new TextView(activity);
+        styleChip(view);
+        view.setOnClickListener(clicked -> onChipTap());
+        view.setOnLongClickListener(held -> {
+            try {
+                LiveRecordSource.pick(held.getContext());
+            } catch (Throwable failure) {
+                Logger.printException(() -> "Could not list the LIVE recording sources", failure);
+            }
+            return true;
+        });
+        return view;
     }
 
     /** Below the room's top bar, where the chip sits unless something to tap is there. */

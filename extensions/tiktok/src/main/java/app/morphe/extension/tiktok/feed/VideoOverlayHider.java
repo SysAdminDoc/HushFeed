@@ -1843,9 +1843,8 @@ public final class VideoOverlayHider {
         Window window = activity == null ? null : activity.getWindow();
         View root = window == null ? null : window.peekDecorView();
         if (root == null) return out;
-        String packageName = activity.getPackageName();
-        int cellId = identifier(activity, packageName, CELL_ROOT_ID);
-        int layerId = identifier(activity, packageName, WIDGET_LAYER_ID);
+        int cellId = identifier(activity, activity.getPackageName(), CELL_ROOT_ID);
+        int layerId = identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID);
         int[] barIds = {firstIdentifier(activity, TAB_STRIP_IDS), firstIdentifier(activity, BOTTOM_TABS_IDS),
                 firstIdentifier(activity, DETAIL_COMMENT_BAR_IDS), firstIdentifier(activity, DETAIL_MESSAGE_BAR_IDS)};
         collectClearFadeTargets(root, cellId, layerId, barIds, new Rect(), out);

@@ -59,8 +59,22 @@ public class LiveStreamSourcesTest {
             return this;
         }
 
+        int offlineFrom;
+        long offlineCount;
+
+        /** Requests {@code from} to {@code from + count - 1} (counting from 1) find the phone offline. */
+        FakeHttp offline(int from, long count) {
+            offlineFrom = from;
+            offlineCount = count;
+            return this;
+        }
+
         @Override public InputStream open(String url) throws IOException {
             requested.add(url);
+            int request = requested.size();
+            if (offlineCount > 0 && request >= offlineFrom && request - offlineFrom < offlineCount) {
+                throw new java.net.UnknownHostException("Unable to resolve host \"pull.example.com\"");
+            }
             ArrayDeque<byte[]> queue = answers.get(url);
             if (queue == null || queue.isEmpty()) throw new IOException("No answer for " + url);
             // The last answer repeats, like a playlist that has nothing new.
@@ -140,10 +154,17 @@ public class LiveStreamSourcesTest {
             released++;
         }
 
+        long now;
+
         @Override public boolean pause(long millis) {
             pauses++;
+            now += millis;
             if (pauses >= stopAfterPauses) stopped = true;
             return !stopped;
+        }
+
+        @Override public long nowMs() {
+            return now;
         }
     }
 
@@ -314,6 +335,42 @@ public class LiveStreamSourcesTest {
         }
         assertEquals(5, http.requested.size());
         assertEquals(4, control.pauses);
+    }
+
+    /** #526 on a phone: Wi-Fi off for 12 seconds took more than five quick tries to come back. */
+    @Test public void flvWaitsOutAnOutageLongerThanFiveTries() throws IOException {
+        byte[] cut = FlvFixtures.stream(config(), frame(0, true), frame(40, false));
+        byte[] again = FlvFixtures.stream(config(), frame(5000, true), frame(5040, false));
+        FakeHttp http = new FakeHttp().serveOnce(FLV, cut, again).dropAtEnd(cut).offline(2, 8);
+        Spool spool = new Spool();
+        FakeControl control = new FakeControl();
+        new LiveStreamSources.Flv(http, FLV).pump(spool, control);
+        assertEquals(Arrays.asList("0:key", "40", "5000:key", "5040"), videoSamples(spool.bytes.toByteArray()));
+        // Then the LIVE ends: five empty tries, not two minutes of them.
+        assertEquals(1 + 8 + 1 + 5, http.requested.size());
+    }
+
+    @Test public void flvGivesUpOnceThePhoneHasBeenOfflineForTwoMinutes() {
+        FakeHttp http = new FakeHttp().offline(1, Long.MAX_VALUE);
+        FakeControl control = new FakeControl();
+        try {
+            new LiveStreamSources.Flv(http, FLV).pump(new Spool(), control);
+            fail("the connection never came back");
+        } catch (IOException expected) {
+            assertTrue(expected instanceof java.net.UnknownHostException);
+        }
+        assertTrue("waited out the outage: " + control.now, control.now >= LiveStreamSources.OUTAGE_MS);
+        assertTrue("then stopped: " + control.now, control.now < LiveStreamSources.OUTAGE_MS + 5_000);
+    }
+
+    @Test public void hlsWaitsOutAnOutageLongerThanFiveTries() throws IOException {
+        FakeHttp http = new FakeHttp()
+                .serve(LIST, text(playlist(1, 1, false)), text(playlist(2, 2, true)))
+                .serve(seg(2), piece(2)).serve(seg(3), piece(3))
+                .offline(2, 8);
+        Spool spool = new Spool();
+        new LiveStreamSources.Hls(http, LIST).pump(spool, new FakeControl());
+        assertEquals("pieces 2 and 3 after the outage", 10, spool.bytes.size());
     }
 
     @Test public void flvStopTappedWhileWaitingToReconnectEndsIt() throws IOException {

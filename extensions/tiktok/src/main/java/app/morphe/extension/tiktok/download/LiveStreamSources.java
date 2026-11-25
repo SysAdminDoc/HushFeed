@@ -56,14 +56,67 @@ final class LiveStreamSources {
     private static final long PLAYLIST_LIMIT_BYTES = 512 * 1024;
     private static final long SEGMENT_LIMIT_BYTES = 64L * 1024 * 1024;
     private static final int MAX_FAILURES = 5;
+    /** How long the phone's own connection may stay down before a recording gives up (#526). */
+    static final long OUTAGE_MS = 120_000L;
+    private static final long LONGEST_PAUSE_MS = 5_000L;
     private static final long STALL_NANOS = 45_000_000_000L;
+
+    /**
+     * The tries in a row that brought nothing. Most mean the LIVE is gone (its server said no, or
+     * closed the stream with nothing in it), and {@link #MAX_FAILURES} of those end the recording.
+     * A failure of the phone's own connection waits out an outage of up to {@link #OUTAGE_MS}
+     * instead: Wi-Fi or mobile data often takes longer than five quick tries to come back, and a
+     * 12 second drop ended a recording it should only have paused (#526).
+     */
+    static final class Tries {
+        private final LiveRecorder.Control control;
+        private int quiet;
+        private int inRow;
+        private long outageSince = -1;
+
+        Tries(LiveRecorder.Control control) {
+            this.control = control;
+        }
+
+        void succeeded() {
+            quiet = 0;
+            inRow = 0;
+            outageSince = -1;
+        }
+
+        /** Counts a try that brought nothing ({@code failure} null when it closed empty); true to try again. */
+        boolean failed(IOException failure) {
+            inRow++;
+            if (failure != null && offline(failure)) {
+                long now = control.nowMs();
+                if (outageSince < 0) outageSince = now;
+                return now - outageSince < OUTAGE_MS;
+            }
+            return ++quiet < MAX_FAILURES;
+        }
+
+        /** How long to wait before the next try: half a second after a good one, then longer, up to five. */
+        long pauseMs() {
+            return inRow == 0 ? 500 : Math.min(1000L * inRow, LONGEST_PAUSE_MS);
+        }
+    }
+
+    /**
+     * True for a failure of the phone's own connection (no network, a lookup that can't resolve,
+     * a socket that dropped or timed out) rather than an answer from the LIVE's server.
+     */
+    static boolean offline(IOException failure) {
+        return failure instanceof java.net.SocketException
+                || failure instanceof java.net.UnknownHostException
+                || failure instanceof java.io.InterruptedIOException
+                || failure instanceof javax.net.ssl.SSLException;
+    }
 
     /**
      * A LIVE's flv address: the stream is one never-ending download, written to the spool as it
      * arrives. A connection that drops or stalls past the read timeout is opened again while the
      * viewer is still in the room, so a slow patch of internet no longer ends the recording
-     * (#526). Only {@link #MAX_FAILURES} tries in a row that bring nothing end it, which is also
-     * how a LIVE that really ended looks.
+     * (#526). {@link Tries} decides when the LIVE has really ended.
      */
     static final class Flv implements LiveRecorder.Source {
         private final Http http;
@@ -79,7 +132,7 @@ final class LiveStreamSources {
             byte[] buffer = new byte[BUFFER_BYTES];
             ByteArrayOutputStream head = new ByteArrayOutputStream();
             boolean checked = false;
-            int failures = 0;
+            Tries tries = new Tries(control);
             while (!control.stopRequested()) {
                 long before = tags.written();
                 IOException lost = null;
@@ -119,13 +172,13 @@ final class LiveStreamSources {
                     Logger.printDebug(() -> "LIVE recording connection lost, opening it again: " + failure);
                 }
                 if (tags.written() > before) {
-                    failures = 0;
-                } else if (++failures >= MAX_FAILURES) {
+                    tries.succeeded();
+                } else if (!tries.failed(lost)) {
                     // A recording that never got a tag says why; one that did ends as the LIVE ending.
                     if (lost != null && tags.written() == 0) throw lost;
                     return;
                 }
-                if (!control.pause(failures == 0 ? 500 : 1000L * failures)) return;
+                if (!control.pause(tries.pauseMs())) return;
             }
         }
 
@@ -309,7 +362,7 @@ final class LiveStreamSources {
             String playlistUrl = url;
             HlsPlaylist.Follower follower = new HlsPlaylist.Follower();
             long lastFresh = System.nanoTime();
-            int failures = 0;
+            Tries tries = new Tries(control);
             while (!control.stopRequested()) {
                 try {
                     HlsPlaylist playlist = HlsPlaylist.parse(readText(control, playlistUrl), playlistUrl);
@@ -335,10 +388,10 @@ final class LiveStreamSources {
                             // One piece missing is a short skip in the video; the rest still count.
                             if (control.stopRequested()) return;
                             allFetched = false;
-                            if (++failures >= MAX_FAILURES) throw lost;
+                            if (!tries.failed(lost)) throw lost;
                         }
                     }
-                    if (allFetched) failures = 0;
+                    if (allFetched) tries.succeeded();
                     if (playlist.ended) return;
                     if (System.nanoTime() - lastFresh > STALL_NANOS) {
                         throw new IOException("The stream stopped sending video");
@@ -349,7 +402,7 @@ final class LiveStreamSources {
                     throw full;
                 } catch (IOException failure) {
                     if (control.stopRequested()) return;
-                    if (++failures >= MAX_FAILURES) throw failure;
+                    if (!tries.failed(failure)) throw failure;
                 }
                 if (!control.pause(1500)) return;
             }

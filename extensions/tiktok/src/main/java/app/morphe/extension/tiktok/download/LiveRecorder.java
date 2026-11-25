@@ -160,6 +160,11 @@ public final class LiveRecorder {
 
         /** Waits, returning false at once if the recording is stopped meanwhile. */
         boolean pause(long millis);
+
+        /** The time in milliseconds, from the clock {@link #pause} waits by. */
+        default long nowMs() {
+            return System.currentTimeMillis();
+        }
     }
 
     /** Pulls the stream and writes it to {@code out} until it ends, fails or is stopped. */
@@ -377,6 +382,10 @@ public final class LiveRecorder {
                 }
             }
             return false;
+        }
+
+        @Override public long nowMs() {
+            return clock.now();
         }
     };
 

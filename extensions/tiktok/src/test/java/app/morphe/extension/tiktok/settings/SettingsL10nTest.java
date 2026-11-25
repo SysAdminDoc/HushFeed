@@ -3512,7 +3512,8 @@ public class SettingsL10nTest {
         return text.matches("\\d+p")
                 || text.matches("\\d+(\\.\\d+)?x")
                 // Its key, %1$s Mb/s, is too nearly all placeholder for the template check.
-                || text.matches("\\d+ Mb/s")
+                // 1.5 Mb/s (#533) takes the shown language's decimal mark and digits.
+                || text.matches("\\p{Nd}+(\\p{P}\\p{Nd}+)? Mb/s")
                 || text.matches("[A-Za-z]+(/[A-Za-z0-9_-]+)+")
                 || text.matches(".*\\(\\d{5,6}\\)");
     }

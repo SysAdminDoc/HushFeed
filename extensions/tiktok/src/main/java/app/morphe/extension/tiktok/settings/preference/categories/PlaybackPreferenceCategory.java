@@ -21,6 +21,7 @@ import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.SwitchListPreference;
+import app.morphe.extension.tiktok.playback.PlaybackQuality;
 import app.morphe.extension.tiktok.speed.HoldSpeedHud;
 import app.morphe.extension.tiktok.speed.PlaybackSpeedPatch;
 import java.util.ArrayList;
@@ -590,11 +591,13 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new ChoicePreference(context, "On mobile data", Settings.PLAYBACK_QUALITY_METERED,
                     new String[]{"No limit", "Highest", "Lowest", "1080p", "720p", "540p", "480p", "360p"},
                     new String[]{"off", "highest", "lowest", "1080", "720", "540", "480", "360"}));
-            String[] limits = {"off", "1", "2", "4", "8", "16"};
+            String[] limits = PlaybackQuality.BITRATE_LIMITS;
             String[] limitLabels = new String[limits.length];
             limitLabels[0] = "No limit";
+            // 1.5 Mb/s (#533) reads with the decimal mark of the language the settings show.
+            java.text.NumberFormat rate = java.text.NumberFormat.getNumberInstance(L10n.shownLocale(context));
             for (int i = 1; i < limits.length; i++) {
-                limitLabels[i] = L10n.f(context, "%1$s Mb/s", limits[i]);
+                limitLabels[i] = L10n.f(context, "%1$s Mb/s", rate.format(new java.math.BigDecimal(limits[i])));
             }
             addPreference(new ChoicePreference(context, "Video bitrate limit",
                     Settings.PLAYBACK_BITRATE_LIMIT, limitLabels, limits)

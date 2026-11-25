@@ -117,12 +117,16 @@ public final class PlaybackQuality {
         }
     }
 
-    /** The Video bitrate limit in bits a second, or 0 with none set (#454). */
+    /** The Video bitrate limit's choices, in Mb/s after "off". */
+    public static final String[] BITRATE_LIMITS = {"off", "1", "1.5", "2", "4", "8", "16"};
+
+    /** The Video bitrate limit in bits a second, or 0 with none set (#454). 1.5 Mb/s is one (#533). */
     static long bitrateCap() {
         String limit = Settings.PLAYBACK_BITRATE_LIMIT.get();
         if (limit == null || "off".equals(limit)) return 0;
         try {
-            return Math.max(0, Long.parseLong(limit)) * 1_000_000L;
+            java.math.BigDecimal bits = new java.math.BigDecimal(limit).movePointRight(6);
+            return bits.signum() <= 0 ? 0 : bits.longValue();
         } catch (NumberFormatException ignored) {
             return 0;
         }

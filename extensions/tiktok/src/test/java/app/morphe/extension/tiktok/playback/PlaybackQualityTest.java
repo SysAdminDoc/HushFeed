@@ -72,6 +72,22 @@ public class PlaybackQualityTest {
                 PlaybackQuality.filterVideoGears(gears));
     }
 
+    /** #533: 1.5 Mb/s sits between 1 and 2, and keeps a 1.4 Mb/s gear while dropping a 1.6 one. */
+    @Test public void aLimitOfOneAndAHalfMegabitsIsAChoiceAndHolds() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        assertEquals(List.of("off", "1", "1.5", "2", "4", "8", "16"), List.of(PlaybackQuality.BITRATE_LIMITS));
+        var under = new AdvancedDownloadsTest.Gear("540p", 1_400_000, "https://example.com/under");
+        var over = new AdvancedDownloadsTest.Gear("720p", 1_600_000, "https://example.com/over");
+        Settings.PLAYBACK_QUALITY.save("auto");
+        Settings.PLAYBACK_BITRATE_LIMIT.save("1.5");
+        assertEquals(1_500_000L, PlaybackQuality.bitrateCap());
+        assertEquals(List.of(under), PlaybackQuality.filterVideoGears(List.of(over, under)));
+
+        Settings.PLAYBACK_BITRATE_LIMIT.save("nonsense");
+        assertEquals("a value it can't read is no limit", 0L, PlaybackQuality.bitrateCap());
+    }
+
     @Test public void theBitrateLimitReachesTheAdaptiveModels() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
         PlaybackQuality.resetForTests();

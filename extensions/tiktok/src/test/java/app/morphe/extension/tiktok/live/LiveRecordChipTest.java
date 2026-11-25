@@ -401,6 +401,28 @@ public class LiveRecordChipTest {
         }
     }
 
+    @Test public void aStreamThatFillsOneVideoGoesOnInANewOneWhileItsRoomIsInFront() {
+        // #526: a three hour LIVE at a high quality is more than one video's size limit holds.
+        assertTrue(LiveRecordChip.continuesInNewVideo(LiveRecorder.End.SIZE_LIMIT,
+                LiveRecorder.Transport.FLV, true, true));
+        assertTrue(LiveRecordChip.continuesInNewVideo(LiveRecorder.End.SIZE_LIMIT,
+                LiveRecorder.Transport.HLS, true, true));
+        assertFalse("Android asks again before every screen recording",
+                LiveRecordChip.continuesInNewVideo(LiveRecorder.End.SIZE_LIMIT,
+                        LiveRecorder.Transport.SCREEN, true, true));
+        assertFalse("LIVE controls were turned off",
+                LiveRecordChip.continuesInNewVideo(LiveRecorder.End.SIZE_LIMIT,
+                        LiveRecorder.Transport.FLV, false, true));
+        assertFalse("another room is in front",
+                LiveRecordChip.continuesInNewVideo(LiveRecorder.End.SIZE_LIMIT,
+                        LiveRecorder.Transport.FLV, true, false));
+        for (LiveRecorder.End end : LiveRecorder.End.values()) {
+            if (end == LiveRecorder.End.SIZE_LIMIT) continue;
+            assertFalse("a recording that ended with " + end + " stays ended",
+                    LiveRecordChip.continuesInNewVideo(end, LiveRecorder.Transport.FLV, true, true));
+        }
+    }
+
     @Test public void aStaleFailureCannotRestartTheWrongRoomOrBlockANewOne() {
         LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
         assertFalse(visit.observe("first", true, false, 100));

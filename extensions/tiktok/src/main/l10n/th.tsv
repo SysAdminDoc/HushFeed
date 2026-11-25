@@ -2288,6 +2288,7 @@ LIVE recording saved to %1$s	บันทึกการอัด LIVE ไปย
 LIVE ended or dropped. Recording saved to %1$s	LIVE จบหรือหลุด บันทึกการอัดไว้ที่ %1$s แล้ว
 Storage almost full. Recording saved to %1$s	พื้นที่จัดเก็บข้อมูลใกล้เต็ม บันทึกการอัดไปยัง %1$s แล้ว
 Size limit reached. Recording saved to %1$s	ถึงขีดจำกัดขนาดไฟล์แล้ว บันทึกการอัดไปยัง %1$s แล้ว
+2 GB reached. Recording goes on in a new video.	ครบ 2 GB แล้ว การอัดจะต่อในวิดีโอใหม่
 TikTok closed. What was recorded is saved to %1$s	TikTok ปิดแล้ว ส่วนที่อัดไว้บันทึกที่ %1$s
 Recording stopped early. Saved to %1$s	การบันทึกหยุดลงก่อนกำหนด บันทึกไปยัง %1$s แล้ว
 This LIVE's stream can't be saved	ไม่สามารถบันทึกสตรีมของ LIVE นี้ได้

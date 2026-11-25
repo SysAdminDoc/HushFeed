@@ -8,6 +8,7 @@ Every Hushfeed release, newest first.
 * New `Hide LIVE chat` switch under LIVE controls. It hides the messages that scroll over a LIVE so you only see the stream, and the comment box stays where it was (#525).
 * `SIM spoof` no longer leaves TikTok saying "No internet connection" on a phone with a SIM from China, Hong Kong, India and the other places TikTok isn't offered, or while a VPN is on. TikTok's network side keeps the preset there instead of going back to the real SIM (#523).
 * A LIVE recording now carries on when your internet drops out. It waits up to two minutes for Wi-Fi or data to come back, then reconnects and keeps writing to the same file instead of stopping with `Nothing was recorded` or a cut-off video (#526).
+* A long LIVE recording no longer stops at the 2 GB size limit. With `Stream only`, the recording goes on in a new video while you're still in the LIVE, so a three hour stream is saved as a few videos (#526).
 * Hold the Record button in a LIVE to switch between `Stream only` and `Screen` without going into settings. The next recording uses whichever you pick (#529).
 * In a LIVE battle, `Auto tap` now taps the host's side of the screen. It used to hit the streamer's name at the top or the supporters bar at the bottom (#335).
 * `Hide search rewards` now also hides the points bubble by the search icon ("Type 12 searches to get 864 points") (#522).

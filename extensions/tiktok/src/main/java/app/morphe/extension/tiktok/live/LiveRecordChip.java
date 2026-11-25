@@ -770,6 +770,14 @@ public final class LiveRecordChip {
     }
 
     private static void start() throws Exception {
+        start(false);
+    }
+
+    /**
+     * {@code nextVideo}: the room's stream outgrew its last video (#526) and carries on in a new
+     * one, from the stream again whatever the source setting now says.
+     */
+    private static void start(boolean nextVideo) throws Exception {
         Activity activity = host.get();
         Object fragment = page.get();
         if (activity == null || fragment == null || !enabled()) return;
@@ -780,7 +788,7 @@ public final class LiveRecordChip {
             return;
         }
         Object room = roomOf(fragment);
-        if (LiveRecordSource.screen()) {
+        if (!nextVideo && LiveRecordSource.screen()) {
             startScreen(activity, fragment, room);
             return;
         }
@@ -802,7 +810,9 @@ public final class LiveRecordChip {
         saving = false;
         started.start();
         autoVisit.startedManually(roomKey(room));
-        Utils.showToastShort(L10n.t("Recording this LIVE from now"));
+        Utils.showToastShort(nextVideo
+                ? L10n.t("2 GB reached. Recording goes on in a new video.")
+                : L10n.t("Recording this LIVE from now"));
         refresh();
         scheduleTick();
     }
@@ -862,9 +872,28 @@ public final class LiveRecordChip {
     /** Capture stopped and its source is durable. Saving can continue without holding the chip. */
     private static void onSourceClosed(LiveRecorder owner) {
         if (recorder != owner) return;
-        streamEnded(owner, owner.sourceEnd());
+        LiveRecorder.End end = owner.sourceEnd();
+        streamEnded(owner, end);
         releaseChip();
+        if (continuesInNewVideo(end, owner.target().transport, enabled(), sameRoom(owner, page.get()))) {
+            try {
+                start(true);
+            } catch (Throwable failure) {
+                Logger.printException(() -> "Could not go on recording the LIVE in a new video", failure);
+            }
+        }
         if (enabled() && Settings.AUTO_RECORD_LIVE.get()) scheduleTick();
+    }
+
+    /**
+     * A stream recording that reached the size of one video goes on in the next while its room is
+     * still in front, so a long LIVE is saved as a few videos instead of stopping (#526). A screen
+     * recording can't: Android asks again before every one.
+     */
+    static boolean continuesInNewVideo(LiveRecorder.End end, LiveRecorder.Transport transport,
+                                       boolean controls, boolean sameRoomInFront) {
+        return end == LiveRecorder.End.SIZE_LIMIT && transport != LiveRecorder.Transport.SCREEN
+                && controls && sameRoomInFront;
     }
 
     private static void streamEnded(LiveRecorder owner, LiveRecorder.End reason) {

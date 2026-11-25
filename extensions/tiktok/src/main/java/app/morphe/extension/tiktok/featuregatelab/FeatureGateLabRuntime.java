@@ -857,7 +857,8 @@ public final class FeatureGateLabRuntime {
         boolean forThisBuild = FeatureGateLabStore.storedForRunningBuild();
         for (FeatureGateLabStore.Rule rule : forThisBuild
                 ? FeatureGateLabStore.rules() : Collections.<FeatureGateLabStore.Rule>emptyList()) {
-            if (rule.enabled && FeatureGateLabStore.supportsOverride(rule.manager, rule.type)) {
+            if (rule.enabled && FeatureGateLabStore.supportsOverride(rule.manager, rule.type)
+                    && !PaidGates.isPaid(rule.key)) {
                 active.put(identity(rule.manager, rule.key, rule.type), rule);
             }
         }

@@ -367,7 +367,7 @@ public final class FeatureGateCatalog {
         // the key, which is what merge does by removing the key as it walks the static entries.
         for (Map.Entry<String, Object> item
                 : readKevaMapSafely("libra_config_center_repo").entrySet()) {
-            if (result.containsKey(item.getKey())) {
+            if (result.containsKey(item.getKey()) || PaidGates.isPaid(item.getKey())) {
                 continue;
             }
             String dynamicType = runtimeType(item.getValue());
@@ -391,11 +391,12 @@ public final class FeatureGateCatalog {
             if (fields.length != 10) {
                 return;
             }
-            // The same three conditions an Entry would have to meet to reach byIdentity:
-            // the AB manager, actionable, and a type the Lab can override.
+            // The same conditions an Entry would have to meet to reach byIdentity: the AB
+            // manager, actionable, a type the Lab can override, and not a paid gate.
             if (!FeatureGateLabStore.MANAGER_ABMOCK.equals(fields[1])
                     || !"1".equals(fields[3])
-                    || !FeatureGateLabStore.supportsOverride(fields[1], fields[2])) {
+                    || !FeatureGateLabStore.supportsOverride(fields[1], fields[2])
+                    || PaidGates.isPaid(fields[0])) {
                 return;
             }
             result.put(fields[0], share(shared, fields[2]));
@@ -637,6 +638,14 @@ public final class FeatureGateCatalog {
             }
         }
         loaded += mergeStructuredObservations(result, byIdentity);
+        // The Lab never offers a paid gate (PaidGates).
+        for (java.util.Iterator<Entry> it = result.iterator(); it.hasNext(); ) {
+            Entry entry = it.next();
+            if (!PaidGates.isPaid(entry.key)) continue;
+            it.remove();
+            byIdentity.remove(entry.identity());
+            if (entry.loaded) loaded--;
+        }
         Collections.sort(result, (left, right) ->
                 left.title.toLowerCase(Locale.ROOT).compareTo(right.title.toLowerCase(Locale.ROOT)));
         return new Snapshot(

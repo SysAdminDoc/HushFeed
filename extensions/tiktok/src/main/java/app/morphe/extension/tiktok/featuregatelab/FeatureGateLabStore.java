@@ -136,7 +136,9 @@ public final class FeatureGateLabStore {
         List<Rule> result = new ArrayList<>();
         for (String id : ruleIds(prefs)) {
             Rule rule = loadRule(id);
-            if (rule != null) {
+            // A paid gate saved before PaidGates existed stays stored but is never listed,
+            // exported or applied.
+            if (rule != null && !PaidGates.isPaid(rule.key)) {
                 result.add(rule);
             }
         }
@@ -155,6 +157,10 @@ public final class FeatureGateLabStore {
      */
     public static boolean saveRule(String manager, String key, String type, String value, boolean enabled) {
         if (!canWrite()) return false;
+        if (PaidGates.isPaid(key)) {
+            Logger.printInfo(() -> "Refused a Lab rule for a paid gate: " + key);
+            return false;
+        }
         SharedPreferences prefs = prefs();
         if (prefs == null) {
             return false;
@@ -376,6 +382,8 @@ public final class FeatureGateLabStore {
             String id = idFor(manager, key, type);
             if (key.isEmpty() || !(item.get("force") instanceof Boolean) || !ids.add(id)
                     || validateValue(type, value) != null) throw new JSONException("Invalid Lab rule: " + key);
+            // An older backup may hold a paid gate; it's dropped and the other rules restore.
+            if (PaidGates.isPaid(key)) continue;
             rules.add(new Rule(id, manager, key, type, value, item.getBoolean("force"), System.currentTimeMillis()));
         }
         return forRunningBuild(root.getString("tiktok_version"), rules);
@@ -497,6 +505,11 @@ public final class FeatureGateLabStore {
             String importedType = item.optString("type", "");
             String type = normalizeType(importedType);
             String value = item.optString("value", "");
+            if (PaidGates.isPaid(key)) {
+                rejected.add(ImportRejection.forKey(
+                        ImportRejectionCode.UNSUPPORTED_BOUNDARY, i + 1, key));
+                continue;
+            }
             FeatureGateCatalog.Entry entry = catalog.get(manager + "\n" + key);
             if (entry == null) {
                 rejected.add(ImportRejection.forKey(

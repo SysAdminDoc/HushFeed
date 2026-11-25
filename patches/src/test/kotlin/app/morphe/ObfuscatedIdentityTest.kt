@@ -193,9 +193,10 @@ class ObfuscatedIdentityTest {
 
         /**
          * Names that match a shape above and are nobody's invention: framework and interface
-         * members compared by name, the resource types handed to a lookup, file extensions and
-         * codec names.
+         * members compared by name, the resource types handed to a lookup, file extensions,
+         * codec names, and the word for monetization TikTok's own gate keys are written with
+         * (`m10n_coupon_for_pii_show`), which PaidGates matches.
          */
-        val REAL_NAMES = setOf("get", "put", "run", "key", "id", "raw", "mp3", "mp4", "m4a", "m4v", "jpg", "png", "h264")
+        val REAL_NAMES = setOf("get", "put", "run", "key", "id", "raw", "mp3", "mp4", "m4a", "m4v", "jpg", "png", "h264", "m10n")
     }
 }

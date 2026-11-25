@@ -608,6 +608,7 @@
       "live_start_quality",
       "offer_live_clear_screen",
       "keep_live_clear_screen",
+      "hide_live_chat",
       "offer_live_full_screen",
       "dark_live_panels",
       "live_card_background",
@@ -2813,6 +2814,12 @@
     "hide_live_card_shop_rating": {
       "field": "HIDE_LIVE_CARD_SHOP_RATING",
       "key": "hide_live_card_shop_rating",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_chat": {
+      "field": "HIDE_LIVE_CHAT",
+      "key": "hide_live_chat",
       "type": "boolean",
       "default": false
     },

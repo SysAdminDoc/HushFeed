@@ -180,6 +180,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "A LIVE you swipe to comes back with its chat, gifts and buttons showing. This "
                             + "keeps clear screen on from room to room until you turn it off.",
                     Settings.KEEP_LIVE_CLEAR_SCREEN));
+            addPreference(new TogglePreference(context, "Hide LIVE chat",
+                    "Hides the chat messages that scroll over a LIVE's video. The comment box and "
+                            + "the room's buttons stay.",
+                    Settings.HIDE_LIVE_CHAT));
             addPreference(new TogglePreference(context, "Offer full screen in more LIVEs",
                     "TikTok shows its full screen button only in LIVEs streamed from a computer or "
                             + "a shared screen. This shows it in every other LIVE with a wide video.",

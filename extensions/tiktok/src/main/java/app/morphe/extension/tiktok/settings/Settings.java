@@ -938,6 +938,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting KEEP_LIVE_CLEAR_SCREEN = new BooleanSetting("keep_live_clear_screen", FALSE);
     /**
+     * Keeps a LIVE room's chat, the messages scrolling over the stream, out of sight (#525); the
+     * LIVE controls patch. Read before each frame the chat would draw, so a change shows the next
+     * time the room draws. See LiveChat.
+     */
+    public static final BooleanSetting HIDE_LIVE_CHAT = new BooleanSetting("hide_live_chat", FALSE);
+    /**
      * Gives every LIVE room TikTok's full screen button, which it attaches only in LIVE Studio
      * and screen share rooms (#57); the LIVE controls patch. TikTok still shows the button only
      * while the room's video is wide. Read as each room loads its widgets, so the next room

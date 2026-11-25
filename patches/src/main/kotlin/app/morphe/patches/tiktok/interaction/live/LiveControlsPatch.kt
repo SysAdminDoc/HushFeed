@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
@@ -27,6 +28,7 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.AMOLED_THEME_EXTENSION
 import app.morphe.patches.tiktok.shared.guardAtEntry
+import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.ControlFlow
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -322,6 +324,52 @@ internal object LiveFullVideoButtonV2AttachFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(),
 )
+
+/** A LIVE room's chat, real-named on 47.9.3. The portrait, landscape, extended and game chats extend it. */
+internal const val LIVE_PUBLIC_SCREEN = "Lcom/bytedance/android/live/publicscreen/impl/widget/PublicScreenWidget;"
+
+/**
+ * The chat's load (#525), once the widget's view is inflated and before anything shows it. The
+ * portrait and landscape chats run it first from their own onLoad. The extended and game chats
+ * replace it without running it, so theirs are hooked as well ([liveChatLoadsSkippingTheBase]).
+ */
+internal object LivePublicScreenLoadFingerprint : Fingerprint(
+    definingClass = LIVE_PUBLIC_SCREEN,
+    name = "onLoad",
+    returnType = "V",
+    parameters = listOf("Lcom/bytedance/ies/sdk/widgets/RecycleSource;", "[Ljava/lang/Object;"),
+)
+
+/** Hands the chat's own view, not the container getView falls back to, to the extension as it loads (#525). */
+internal fun MutableMethod.hookLiveChatLoad() {
+    requireLocals("LIVE controls", 1)
+    addInstructions(
+        0,
+        """
+            iget-object v0, p0, $LIVE_WIDGET->contentView:Landroid/view/View;
+            invoke-static {v0}, Lapp/morphe/extension/tiktok/live/LiveChat;->onLoad(Landroid/view/View;)V
+        """,
+    )
+}
+
+/**
+ * Each chat's own load that never runs the base one, which a hook in the base alone would miss:
+ * on 47.9.3 the extended and the game dual-device chats (#525).
+ */
+internal fun liveChatLoadsSkippingTheBase(chats: Iterable<ClassDef>, base: Method): List<Method> =
+    chats.filter { it.superclass == LIVE_PUBLIC_SCREEN }.flatMap { chat ->
+        chat.methods.filter { own ->
+            own.name == base.name && own.returnType == base.returnType && own.implementation != null &&
+                own.parameterTypes.map(CharSequence::toString) == base.parameterTypes.map(CharSequence::toString)
+        }
+    }.filter { own ->
+        own.implementation!!.instructions.none { instruction ->
+            (instruction.opcode == Opcode.INVOKE_SUPER || instruction.opcode == Opcode.INVOKE_SUPER_RANGE) &&
+                ((instruction as ReferenceInstruction).reference as? MethodReference)?.let {
+                    it.definingClass == LIVE_PUBLIC_SCREEN && it.name == base.name
+                } == true
+        }
+    }
 
 /**
  * Hands a full screen button's shouldAttach answer to the extension at its last return, on that
@@ -2712,7 +2760,8 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count and battle scores instead of rounded ones, offer a quality choice and " +
-        "clear screen in more LIVE rooms, keep your quality pick after TikTok restarts, and " +
+        "clear screen in more LIVE rooms, hide the chat that scrolls over a LIVE, keep your quality pick " +
+        "after TikTok restarts, and " +
         "line up the LIVEs you swipe to after one from the Following row in that row's order. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it " +
@@ -2776,6 +2825,14 @@ val liveControlsPatch = bytecodePatch(
         listOf(LiveFullVideoButtonAttachFingerprint, LiveFullVideoButtonV2AttachFingerprint).forEach {
             hookFullScreenAttach(it.method)
         }
+        // The room's chat hands its view to the extension as it loads, which keeps the view
+        // invisible while Hide LIVE chat is on (#525).
+        val chatLoad = LivePublicScreenLoadFingerprint.method
+        val chats = mutableListOf<ClassDef>()
+        classDefForEach { if (it.superclass == LIVE_PUBLIC_SCREEN) chats += it }
+        val ownLoads = liveChatLoadsSkippingTheBase(chats, chatLoad)
+        chatLoad.hookLiveChatLoad()
+        ownLoads.forEach { mutableClassDefBy(it.definingClass).findMutableMethodOf(it).hookLiveChatLoad() }
         // Answers true while its switch is on and the panel's context is in dark mode, so LIVE
         // panels take TikTok's dark LIVE theme in rooms too (#159).
         LiveDarkThemeFingerprint.method.guardAtEntry(

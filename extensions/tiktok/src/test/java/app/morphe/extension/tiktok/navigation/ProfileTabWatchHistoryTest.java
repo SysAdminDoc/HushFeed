@@ -160,7 +160,11 @@ public class ProfileTabWatchHistoryTest {
         assertNotNull("nothing was opened", opened);
         assertEquals(Intent.ACTION_VIEW, opened.getAction());
         assertEquals(ProfileTabWatchHistory.WATCH_HISTORY_URI, String.valueOf(opened.getData()));
-        assertTrue(opened.getDataString().contains("pns_product_poseidon%2Fwatch_history"));
+        // The page TikTok's own Watch history chip opens (48.0.2): the poseidon page it replaced
+        // stays white, its stylesheet gone from TikTok's servers (Login2, 2026-11-26).
+        assertTrue(opened.getDataString().contains(
+                "pns_product_activity_center%2Fac%2Fwatch_history.html%3Fenable_biometrics%3Dtrue"));
+        assertFalse(opened.getDataString().contains("pns_product_poseidon"));
         assertEquals("the page could open in another TikTok", activity.getPackageName(), opened.getPackage());
         assertEquals("a long press also counted as a tap", 0, taps.get());
         assertTrue("a tap on Profile stopped reaching TikTok", profile.performClick());

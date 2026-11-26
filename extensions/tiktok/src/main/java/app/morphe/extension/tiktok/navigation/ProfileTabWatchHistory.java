@@ -49,13 +49,18 @@ import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreferen
  * same main activity and the same rebuilt tab bars.
  */
 public final class ProfileTabWatchHistory {
-    /** The address TikTok's profile menu opens for Watch history, as 47.4.3 ships it. */
-    static final String WATCH_HISTORY_URI = "snssdk1233://webview?_pia_=1&hide_nav_bar=1&use_spark=1"
-            + "&show_loading=1&should_full_screen=1&allow_webview_gesture=1&url=https%3A%2F%2F"
-            + "inapp.tiktokv.com%2Ftpp%2Finapp%2Fpns_product_poseidon%2Fwatch_history%3F_pia_%3D1"
-            + "%26hide_nav_bar%3D1%26use_spark%3D1%26show_loading%3D1%26should_full_screen%3D1"
-            + "%26allow_webview_gesture%3D1%26bdhm_bid%3Dtiktok_privacy_product_hybrid"
-            + "%26enable_search_history%3D1%26enter_from%3Dprofile_menu";
+    /**
+     * The address TikTok's own Watch history chip opens (48.0.2, Login2, 2026-11-26). The
+     * pns_product_poseidon page 47.4.3's profile menu opened now stays white: TikTok's servers no
+     * longer have its stylesheet. The address isn't in the app's code, TikTok's servers hand it to
+     * the chip, so this is the one the chip was handed.
+     */
+    static final String WATCH_HISTORY_URI = "snssdk1233://webview?url=https%3A%2F%2Finapp.tiktokv.com"
+            + "%2Ftpp%2Finapp%2Fpns_product_activity_center%2Fac%2Fwatch_history.html"
+            + "%3Fenable_biometrics%3Dtrue%26biometrics_prompt%3D1%26enter_from%3Dsetting_panel"
+            + "%26_pia_%3D1%26bdhm_bid%3Dtiktok_privacy_product_hybrid_ac%26hide_nav_bar%3D1"
+            + "%26should_full_screen%3D1&allow_webview_gesture=1&disable_ttnet_proxy=0&hide_nav_bar=1"
+            + "&should_full_screen=1&show_loading=1&use_spark=1&target_handler=crossPlatform";
 
     /**
      * Where TikTok keeps the Activity center address its Settings and privacy row opens (#425).

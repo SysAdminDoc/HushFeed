@@ -217,10 +217,12 @@ public final class BlockAuthorOverlay {
         if (activity == null) {
             return;
         }
-        // Clear display is the feed, but with TikTok's controls put away the chips go too.
+        // Clear display is the feed, but with TikTok's controls put away the chips go too. A top
+        // tab with no videos (Community's grid) keeps the Home tab selected, and isn't the feed.
         setFeedVisible(FeedVisibility.isOnFeed(activity)
                 && !FeedVisibility.isFeedCleared(activity)
                 && !FeedVisibility.isCommentSheetVisible(activity)
+                && !FeedVisibility.onTopTabWithoutVideos(activity)
                 && CurrentVideoAuthor.get() != null);
     }
 

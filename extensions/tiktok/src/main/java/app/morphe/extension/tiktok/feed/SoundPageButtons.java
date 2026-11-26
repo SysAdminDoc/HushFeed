@@ -5,15 +5,18 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -156,11 +159,13 @@ public final class SoundPageButtons {
     private static void collect(View view, View content, int contentTop, int height, List<View> into) {
         if (view.getVisibility() != View.VISIBLE || isHushfeeds(view)) return;
         if (view != content && scrollsItsContent(view)) return;
-        if (isButton(view)) {
+        boolean button = isButton(view);
+        if (button || view instanceof TextView) {
             int[] at = new int[2];
             view.getLocationInWindow(at);
             int top = at[1] - contentTop;
-            if (view.getHeight() > 0 && top >= height * LOWER_PART && top + view.getHeight() <= height) {
+            if (view.getHeight() > 0 && top >= height * LOWER_PART && top + view.getHeight() <= height
+                    && (button || announcesButton(view))) {
                 View box = boxOf(view);
                 if (!into.contains(box)) into.add(box);
             }
@@ -174,10 +179,27 @@ public final class SoundPageButtons {
         }
     }
 
-    /** TikTok draws these as its own button type, which reports itself to accessibility as a Button. */
+    /** TikTok draws Jam Sound as its own button type, which reports itself to accessibility as a Button. */
     private static boolean isButton(View view) {
-        CharSequence role = view.getAccessibilityClassName();
-        return view instanceof Button || (role != null && Button.class.getName().contentEquals(role));
+        return view instanceof Button || isButtonRole(view.getAccessibilityClassName());
+    }
+
+    /**
+     * Use sound's label is a text view that only calls itself a Button while it takes taps, and it
+     * doesn't (its box does), so its role comes from its accessibility delegate. That's read from
+     * the node it gives accessibility, as a screen reader would, and only for text low on the page.
+     */
+    private static boolean announcesButton(View view) {
+        AccessibilityNodeInfo node = view.createAccessibilityNodeInfo();
+        try {
+            return isButtonRole(node.getClassName());
+        } finally {
+            if (Build.VERSION.SDK_INT < 33) node.recycle();
+        }
+    }
+
+    private static boolean isButtonRole(CharSequence role) {
+        return role != null && Button.class.getName().contentEquals(role);
     }
 
     /** The button's own tappable box: itself when it takes the tap, else the small parent that does. */

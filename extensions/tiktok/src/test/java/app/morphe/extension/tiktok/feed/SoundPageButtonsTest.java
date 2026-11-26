@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -47,8 +49,9 @@ public class SoundPageButtonsTest {
         Button inList;
         Button jam;
         View useBox;
-        Button use;
+        TextView use;
         ImageView useIcon;
+        TextView caption;
         Button ours;
 
         @Override
@@ -91,9 +94,18 @@ public class SoundPageButtonsTest {
             RelativeLayout inside = new RelativeLayout(this);
             useIcon = new ImageView(this);
             inside.addView(useIcon, new RelativeLayout.LayoutParams(67, 67));
-            use = new Button(this);
+            // TikTok's label view only calls itself a Button while it takes taps, and this one
+            // doesn't; the role comes from its accessibility delegate, as on the S22 (47.9.3).
+            use = new TextView(this);
             use.setText("Use sound");
             use.setClickable(false);
+            use.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setClassName(Button.class.getName());
+                }
+            });
             RelativeLayout.LayoutParams label = new RelativeLayout.LayoutParams(234, 174);
             label.leftMargin = 83;
             inside.addView(use, label);
@@ -102,6 +114,13 @@ public class SoundPageButtonsTest {
             FrameLayout.LayoutParams useAt = new FrameLayout.LayoutParams(518, 174, Gravity.BOTTOM | Gravity.END);
             useAt.setMargins(0, 0, 28, 45);
             root.addView(box, useAt);
+
+            // Plain text low on the page, which no one calls a button, stays.
+            caption = new TextView(this);
+            caption.setText("16 posts");
+            FrameLayout.LayoutParams captionAt = new FrameLayout.LayoutParams(300, 60, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            captionAt.setMargins(0, 0, 0, 450);
+            root.addView(caption, captionAt);
 
             // Hushfeed's own Block sound row, were it ever this low, is never one of TikTok's buttons.
             ours = new Button(this);
@@ -149,6 +168,7 @@ public class SoundPageButtonsTest {
         assertEquals("Save is in the header's row of buttons", View.VISIBLE, page.save.getVisibility());
         assertEquals("A button in the list of videos stays", View.VISIBLE, page.inList.getVisibility());
         assertEquals("Hushfeed's own row stays", View.VISIBLE, page.ours.getVisibility());
+        assertEquals("Plain text isn't a button", View.VISIBLE, page.caption.getVisibility());
     }
 
     @Test public void aButtonTikTokShowsAgainIsHiddenAgain() {

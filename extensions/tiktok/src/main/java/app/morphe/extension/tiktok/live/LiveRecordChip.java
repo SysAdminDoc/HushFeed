@@ -75,6 +75,12 @@ public final class LiveRecordChip {
      * page to resume is usually one that isn't shown.
      */
     private static final Map<Object, Boolean> PAGES = new WeakHashMap<>();
+    /**
+     * The room pagers those pages sat in (#413). In TikTok's small window no new page resumes, and
+     * the pager drops pages more than one room from the one shown, so after a few arrow taps every
+     * page seen is gone. Its pager still says which room it plays.
+     */
+    private static final Map<Object, Boolean> PAGERS = new WeakHashMap<>();
     /** Clear-screen controllers can be created before their room page resumes. */
     private static final Map<String, Boolean> CLEAR_ROOM_STATES = new HashMap<>();
     private static WeakReference<Object> page = new WeakReference<>(null);
@@ -217,6 +223,7 @@ public final class LiveRecordChip {
             if (!(activityObject instanceof Activity)) return;
             Activity activity = (Activity) activityObject;
             PAGES.put(fragment, Boolean.TRUE);
+            notePager(fragment);
             host = new WeakReference<>(activity);
             hostResumed = true;
             registerCallbacks(activity);
@@ -747,13 +754,32 @@ public final class LiveRecordChip {
         try {
             Activity activity = host.get();
             if (!saving && (recorder == null || !recorder.recording()) && nativePip(activity)) {
-                Object playing = currentPipPage(activity);
-                if (playing != null) follow(playing);
+                Object shown = pipRecordPage(activity, currentPipPage(activity), page.get());
+                if (shown == null) {
+                    int pagers = PAGERS.size();
+                    int pages = PAGES.size();
+                    Logger.printInfo(() -> "LIVE record: the window's room wasn't found ("
+                            + pagers + " room pagers, " + pages + " pages seen)");
+                    Utils.showToastShort(L10n.t("No stream found to record. Reopen the LIVE."));
+                    return;
+                }
+                follow(shown);
             }
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not find the LIVE in the window", failure);
         }
         onChipTap();
+    }
+
+    /**
+     * The page the window's Record takes (#413): the one TikTok's pager plays, else the page the
+     * button follows while it's still in the window's activity. A page the arrows left behind is
+     * never recorded, not even before it's collected.
+     */
+    static Object pipRecordPage(Activity activity, Object playing, Object remembered) {
+        if (playing != null) return playing;
+        return remembered != null && Reflect.invoke(remembered, "getActivity") == activity
+                ? remembered : null;
     }
 
     /** Stops a running recording so it's saved; false when none is running. */
@@ -802,7 +828,7 @@ public final class LiveRecordChip {
             startScreen(activity, fragment, room);
             return;
         }
-        LiveRoomStream.Pick pick = LiveRoomStream.fromRoom(room,
+        LiveRoomStream.Pick pick = LiveRoomStream.fromPage(fragment, room,
                 LiveRoomStream.forRecording(Settings.LIVE_RECORD_QUALITY.get(), LiveControls.lastQualityPick()));
         if (pick.target == null) {
             Logger.printInfo(() -> "LIVE record: no stream to record (" + pick.problem + ", room offers [" + pick.offered + "])");
@@ -946,6 +972,19 @@ public final class LiveRecordChip {
             clearScreen = Boolean.TRUE.equals(CLEAR_ROOM_STATES.get(roomKey(roomOf(fragment))));
         }
         page = new WeakReference<>(fragment);
+        notePager(fragment);
+    }
+
+    private static void notePager(Object fragment) {
+        Object pager = pagerOf(fragment);
+        if (pager != null) PAGERS.put(pager, Boolean.TRUE);
+    }
+
+    /** The room pager a room page sits in: its parent, when that reports a current page. */
+    static Object pagerOf(Object fragment) {
+        Object parent = Reflect.invoke(fragment, "getParentFragment");
+        return parent != null && Reflect.method(parent.getClass(), "getCurrentFragment") != null
+                ? parent : null;
     }
 
     /** Stops a running recording because the room is no longer in front. */
@@ -976,14 +1015,18 @@ public final class LiveRecordChip {
     /** A LIVE page's parent is its room pager, which reports the selected, not preloaded, page. */
     private static Object playingFromParent(Object fragment, Activity activity) {
         if (fragment == null || Reflect.invoke(fragment, "getActivity") != activity) return null;
-        Object parent = Reflect.invoke(fragment, "getParentFragment");
-        Object playing = Reflect.invoke(parent, "getCurrentFragment");
+        return playingIn(Reflect.invoke(fragment, "getParentFragment"), activity);
+    }
+
+    private static Object playingIn(Object pager, Activity activity) {
+        Object playing = Reflect.invoke(pager, "getCurrentFragment");
         return playing != null && Reflect.invoke(playing, "getActivity") == activity
                 && roomKey(roomOf(playing)) != null ? playing : null;
     }
 
     /** In PiP the activity's getter can return null, although its child room pager is still active. */
-    private static Object retainedPipPage(Activity activity, Object remembered, Iterable<?> seenPages) {
+    private static Object retainedPipPage(Activity activity, Object remembered, Iterable<?> seenPages,
+                                          Iterable<?> pagers) {
         Object unique = playingFromParent(remembered, activity);
         for (Object candidate : seenPages) {
             Object playing = playingFromParent(candidate, activity);
@@ -993,18 +1036,33 @@ public final class LiveRecordChip {
             if (unique != null && unique != playing) return null;
             unique = playing;
         }
+        if (unique != null) return unique;
+        // Every page seen is gone once the window's arrows move two rooms past them (#413).
+        for (Object pager : pagers) {
+            if (Reflect.invoke(pager, "getActivity") != activity) continue;
+            Object playing = playingIn(pager, activity);
+            if (playing == null) continue;
+            if (unique != null && unique != playing) return null;
+            unique = playing;
+        }
         return unique;
     }
 
     /** Select only the room that TikTok's current pager is actually playing in native PiP. */
     static Object currentPipPage(Activity activity) {
-        return currentPipPage(activity, page.get(), new ArrayList<>(PAGES.keySet()));
+        return currentPipPage(activity, page.get(), new ArrayList<>(PAGES.keySet()),
+                new ArrayList<>(PAGERS.keySet()));
     }
 
     static Object currentPipPage(Activity activity, Object remembered, Iterable<?> seenPages) {
+        return currentPipPage(activity, remembered, seenPages, Collections.emptyList());
+    }
+
+    static Object currentPipPage(Activity activity, Object remembered, Iterable<?> seenPages,
+                                 Iterable<?> pagers) {
         if (activity == null) return null;
         Object selected = Reflect.invoke(activity, "getCurrentFragment");
-        if (selected == null) return retainedPipPage(activity, remembered, seenPages);
+        if (selected == null) return retainedPipPage(activity, remembered, seenPages, pagers);
         if (Reflect.invoke(selected, "getActivity") != activity) return null;
         if (roomKey(roomOf(selected)) != null) return selected;
 
@@ -1031,7 +1089,7 @@ public final class LiveRecordChip {
                 // An inaccessible or unknown pager cannot authorize an automatic recording.
             }
         }
-        return playing != null ? playing : retainedPipPage(activity, remembered, seenPages);
+        return playing != null ? playing : retainedPipPage(activity, remembered, seenPages, pagers);
     }
 
     private static boolean nativePip(Activity activity) {

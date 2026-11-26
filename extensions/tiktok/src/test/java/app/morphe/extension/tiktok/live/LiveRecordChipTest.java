@@ -23,6 +23,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -181,6 +182,70 @@ public class LiveRecordChipTest {
         pager.current = next;
         old.detach();
         assertEquals(next, LiveRecordChip.currentPipPage(activity, old, Arrays.asList(old, next)));
+    }
+
+    /** What androidx does to a page its pager drops: no activity and no parent any more. */
+    private static void destroy(PipRoomPage page) {
+        page.detach();
+        page.parent = null;
+    }
+
+    /**
+     * #413: in the window no new room page resumes, and the pager drops pages more than a room
+     * from the one shown, so after a few arrow taps every page seen was gone and Record found none.
+     */
+    @Test public void pipFindsTheRoomTheArrowsReachedPastEveryPageSeen() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomPager pager = new PipRoomPager(activity);
+        PipRoomPage seen = new PipRoomPage(activity, "seen");
+        seen.parent = pager;
+        assertEquals(pager, LiveRecordChip.pagerOf(seen));
+        PipRoomPage twoOn = new PipRoomPage(activity, "two rooms on");
+        twoOn.parent = pager;
+        pager.current = twoOn;
+        destroy(seen);
+        List<PipRoomPage> resumed = Arrays.asList(seen);
+        assertNull("no page seen leads to the pager any more", LiveRecordChip.currentPipPage(activity, seen, resumed));
+        assertEquals(twoOn, LiveRecordChip.currentPipPage(activity, seen, resumed, Arrays.asList(pager)));
+        pager.current = null;
+        assertNull(LiveRecordChip.currentPipPage(activity, seen, resumed, Arrays.asList(pager)));
+    }
+
+    @Test public void pipNeverTakesARoomFromAnotherActivitysPagerOrGuessesBetweenPagers() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        Activity closed = Robolectric.buildActivity(Activity.class).setup().get();
+        PipRoomPager old = new PipRoomPager(closed);
+        old.current = new PipRoomPage(closed, "old");
+        assertNull(LiveRecordChip.currentPipPage(activity, null, Collections.emptyList(), Arrays.asList(old)));
+        PipRoomPager first = new PipRoomPager(activity);
+        first.current = new PipRoomPage(activity, "first");
+        PipRoomPager second = new PipRoomPager(activity);
+        second.current = new PipRoomPage(activity, "second");
+        assertNull(LiveRecordChip.currentPipPage(activity, null, Collections.emptyList(), Arrays.asList(first, second)));
+        assertEquals(first.current, LiveRecordChip.currentPipPage(activity, null, Collections.emptyList(),
+                Arrays.asList(first, old)));
+    }
+
+    @Test public void onlyAParentThatReportsACurrentPageIsARoomPager() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomPage page = new PipRoomPage(activity, "room");
+        assertNull(LiveRecordChip.pagerOf(page));
+        page.parent = new Object();
+        assertNull(LiveRecordChip.pagerOf(page));
+        assertNull(LiveRecordChip.pagerOf(null));
+    }
+
+    /** #413: a page the arrows left behind is never recorded, not even before it's collected. */
+    @Test public void theWindowsRecordNeverTakesAPageTheArrowsLeftBehind() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomPage playing = new PipRoomPage(activity, "playing");
+        PipRoomPage remembered = new PipRoomPage(activity, "remembered");
+        assertEquals(playing, LiveRecordChip.pipRecordPage(activity, playing, remembered));
+        assertEquals("still in the window's activity", remembered,
+                LiveRecordChip.pipRecordPage(activity, null, remembered));
+        destroy(remembered);
+        assertNull(LiveRecordChip.pipRecordPage(activity, null, remembered));
+        assertNull(LiveRecordChip.pipRecordPage(activity, null, null));
     }
 
     @Test public void pipNeverGuessesBetweenTwoIndependentActiveRoomPagers() {

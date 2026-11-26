@@ -26,6 +26,7 @@ class LiveRecordAnchorsTest {
     private val streamUrlType = "Lcom/bytedance/android/livesdkapi/depend/model/live/StreamUrl;"
     private val coreDataType = "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveCoreSDKData;"
     private val pullDataType = "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveCoreSDKData\$PullData;"
+    private val enterConfigType = "Lcom/bytedance/android/livesdkapi/session/EnterRoomConfig;"
 
     @Test
     fun `each declared build has one room page resume and the room members the recorder reads`() {
@@ -64,6 +65,15 @@ class LiveRecordAnchorsTest {
             requireFields(streamUrlType, "flvPullUrl", "hlsPullUrl", "hlsPullUrlMap", "liveCoreSDKData")
             requireFields(coreDataType, "pullData")
             requireFields(pullDataType, "streamData")
+
+            // #413: a room whose enter Ghost mode held back records the stream its page opened with.
+            assertTrue(
+                "${apk.name}: the page's enter config field",
+                page.fields.any { it.type == enterConfigType },
+            )
+            requireFields(enterConfigType, "mStreamData", "mRoomsData")
+            requireFields("${enterConfigType.dropLast(1)}\$StreamData;", "pullStreamData", "streamRoomId")
+            requireFields("${enterConfigType.dropLast(1)}\$RoomsData;", "roomId", "enterRoomCache")
 
             // The creator's handle, wherever in the user's class chain it sits.
             var user: ClassDef? = byType["Lcom/bytedance/android/live/base/model/user/User;"]

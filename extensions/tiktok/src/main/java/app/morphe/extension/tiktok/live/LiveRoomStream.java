@@ -9,6 +9,8 @@ import app.morphe.extension.tiktok.download.LiveRecorder;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -328,5 +330,70 @@ public final class LiveRoomStream {
         } catch (Throwable failure) {
             return new Pick(null, "Unreadable room");
         }
+    }
+
+    private static final String ENTER_ROOM_CONFIG = "com.bytedance.android.livesdkapi.session.EnterRoomConfig";
+
+    /**
+     * What to record on a room page (#413). The page's room gets its stream from TikTok's answer
+     * to the room enter, so a room whose enter Ghost mode held back has none. The player plays the
+     * stream the page was opened with instead, kept in the page's enter config: that one is used
+     * when it was given for this same room. Never throws.
+     */
+    public static Pick fromPage(Object page, Object room, String preferred) {
+        Pick fromRoom = fromRoom(room, preferred);
+        if (fromRoom.target != null || page == null || room == null) return fromRoom;
+        try {
+            String roomId = LiveRecordChip.roomKey(room);
+            Object config = fieldOfType(page, ENTER_ROOM_CONFIG);
+            if (roomId == null || config == null) return explained(fromRoom, "no enter config");
+            Object rooms = Reflect.readField(config, "mRoomsData");
+            Object cached = Reflect.readField(rooms, "enterRoomCache");
+            if (cached != null && cached != room && roomId.equals(LiveRecordChip.roomKey(cached))) {
+                Pick fromCache = fromRoom(cached, preferred);
+                if (fromCache.target != null) return fromCache;
+            }
+            Object stream = Reflect.readField(config, "mStreamData");
+            Object json = Reflect.readField(stream, "pullStreamData");
+            if (!(json instanceof String) || ((String) json).isEmpty()) {
+                return explained(fromRoom, "the page opened with no stream");
+            }
+            if (!roomId.equals(streamRoomOf(stream, rooms))) {
+                return explained(fromRoom, "the page opened with another room's stream");
+            }
+            Object owner = Reflect.readField(room, "owner");
+            String creator = owner == null ? null : Reflect.string(owner, "getUsername", "username");
+            Pick fromConfig = choose((String) json, null, null, null, preferred, creator, roomId);
+            return fromConfig.target != null ? fromConfig
+                    : explained(fromConfig, "from the stream the page opened with");
+        } catch (Throwable failure) {
+            return explained(fromRoom, "unreadable enter config");
+        }
+    }
+
+    private static Pick explained(Pick pick, String why) {
+        return new Pick(null, pick.problem + ", " + why, pick.offered);
+    }
+
+    /** The room the enter config's stream was given for: its own room id, else the entered room's. */
+    private static String streamRoomOf(Object stream, Object rooms) {
+        Object id = Reflect.readField(stream, "streamRoomId");
+        if (id instanceof Number && ((Number) id).longValue() != 0) {
+            return String.valueOf(((Number) id).longValue());
+        }
+        Object entered = Reflect.readField(rooms, "roomId");
+        return entered instanceof Number && ((Number) entered).longValue() != 0
+                ? String.valueOf(((Number) entered).longValue()) : null;
+    }
+
+    private static Object fieldOfType(Object holder, String typeName) throws IllegalAccessException {
+        for (Class<?> type = holder.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || !field.getType().getName().equals(typeName)) continue;
+                field.setAccessible(true);
+                return field.get(holder);
+            }
+        }
+        return null;
     }
 }

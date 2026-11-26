@@ -539,6 +539,7 @@ Bottom left double tap,左下角双击
 Bottom right double tap,右下角双击
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.",下载列出了该视频的质量，以及每个视频的大小 TikTok 给出的大小，并保存你选择的一个。上述质量在下次保存时保持不变.
 Download original photos,下载原始照片
+Download speed,下载速度
 Downloads,下载
 "Drag to move, release to place",拖动即可移动，松开即可放置
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,沿着视频的左边缘或右边缘向上或向下拖动以更改边缘条在下方的设置。默认情况下，左侧是屏幕亮度，右侧是音量。在其他地方滑动仍然会滚动信息流.
@@ -752,6 +753,7 @@ Hide new follower notifications,隐藏新关注者通知
 Hide new followers,隐藏新关注者
 Hide online status,隐藏在线状态
 Hide paid partnerships,隐藏付费合作伙伴关系
+Hide parts of the room line,隐藏直播间信息行的部分内容
 Hide people and options by name,按姓名隐藏人员和选项
 Hide photo posts,隐藏照片帖子
 Hide photo posts from the feed.,隐藏信息流中的照片帖子.
@@ -999,6 +1001,7 @@ Last change put back. The Feature Gate Lab rules were for another TikTok version
 Last original value,最后原始值
 Last recording: %1$d gates.,最后记录：%1$d 门.
 Last recording: 1 gate.,最后记录：1 个门.
+Latency,延迟
 Later,后来
 Layout,布局
 "Layout, search, profile and system",布局、搜索、配置文件和系统
@@ -1315,6 +1318,7 @@ Pick the buttons to take off the column. The rest stay where they are.,选择按
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.",选择弹出窗口以停止。该列表包含 TikTok 尝试在此手机上显示的内容，因此在首次显示后，此处会出现一个弹出窗口。验证码、验证、登录、年龄、禁令和法律同意屏幕永远不会列出或阻止.
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.",选择要从个人资料简介下的行中删除的快捷方式，例如 TikTok Studio 或你的订单。重新启动 TikTok 以应用此操作.
 Pick videos to save from profile grids,从个人资料网格中选择要保存的视频
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.,选择要从显示直播间 ID 和你的连接的那行小字里去掉的内容。其余的保留.
 "Picked %1$s. Save, then tap Pick all for more.",已选 %1$s 个，请先保存，再点“选择全部”继续.
 Picked videos,精选视频
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,当 TikTok 还提供较新的视频格式（HEVC 或 ByteVC2）时，选择较旧的 H.264 视频格式。它可以帮助那些卡顿或发热的手机。没有 H.264 版本的视频仍然可以播放.
@@ -1468,6 +1472,7 @@ Reviewed presets for TikTok %1$s,已审核 TikTok %1$s 的预设
 Right away,马上
 Right column,右栏
 Right edge strip,右边缘条
+Room ID,直播间 ID
 Rows,行数
 SIM country preset,SIM 卡国家/地区预设
 SOCKS5,袜子5
@@ -2772,6 +2777,7 @@ Taller,更高
 Friends in the top tabs,顶部标签显示“朋友”
 "Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",“朋友”会移到信息流顶部的标签，位于“关注”旁边，“发现”则占据它在底部栏的位置，和 TikTok 在部分国家的布局一样。你的地区和信息流保持不变.
 Pin more chats,置顶更多聊天
+Ping,Ping 值
 "Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.",取消应用对收件箱置顶聊天的数量限制，通常为 5 个，让你可以置顶更多.
 Hide voice comments,隐藏语音评论
 Hide comments made of a voice recording instead of words.,隐藏由语音录音而不是文字组成的评论.
@@ -2998,7 +3004,8 @@ SecUID,SecUID
 Unknown (TikTok didn't send it),未知 (TikTok 未发送)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、帖子、喜欢的视频、收藏和转发的数量、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.
 Show the room ID and your connection,显示直播间 ID 和你的连接
-"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.",在直播间加一行小字，显示直播间 ID 以及你自己到直播流的连接状况，数据来自 TikTok 播放器自己的测量：Ping 值、延迟和下载速度。点按这一行可复制直播间 ID.
+Show the room line,显示直播间信息行
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.",在直播间加一行小字，显示直播间 ID 以及你自己到直播流的连接状况，数据来自 TikTok 播放器自己的测量：Ping 值、延迟和下载速度。点按这一行可把它缩成一个小点，点按小点可恢复。长按这一行可复制直播间 ID.
 Room ID %1$s,直播间 ID %1$s
 Ping %1$s ms,Ping %1$s 毫秒
 Latency %1$s s,延迟 %1$s 秒
@@ -3029,7 +3036,7 @@ Smaller text sizes,更小的文字大小
 UI size,界面大小
 "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.",把 TikTok 的整个界面缩小，文字和按钮一起变小，屏幕上能放下更多内容。100 表示保持原样。重新启动 TikTok 以查看更改.
 Show how long a LIVE has been on,显示 LIVE 已开播多久
-"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.",在直播间加一行小字，显示主播已经直播了多久，从直播间开始时算起。如果也开着直播间 ID，这一行在它下面.
+"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.",在直播间加一行小字，显示主播已经直播了多久，从直播间开始时算起。如果也开着直播间 ID，这一行在它下面。点按这一行可把它缩成一个小点.
 LIVE for %1$s,已直播 %1$s
 Show exact LIVE battle scores,显示准确的 LIVE PK 分数
 "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.",在 LIVE PK 中，TikTok 会限制观众看到的高分，而主播能看到完整数字。开启后，PK 进度条和连麦窗口都会显示完整分数.

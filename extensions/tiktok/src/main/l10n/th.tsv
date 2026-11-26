@@ -471,6 +471,7 @@ Top right double tap	แตะสองครั้งที่ขวาบน
 Bottom left double tap	แตะสองครั้งที่ซ้ายล่าง
 Bottom right double tap	แตะสองครั้งที่ขวาล่าง
 Download original photos	ดาวน์โหลดรูปภาพต้นฉบับ
+Download speed	ความเร็วในการดาวน์โหลด
 Destination updated	อัปเดตปลายทางแล้ว
 Downloads	ดาวน์โหลด
 Drag to move, release to place	ลากเพื่อย้าย ปล่อยเพื่อวาง
@@ -616,6 +617,7 @@ Hide message streaks	ซ่อนสตรีคข้อความ
 Hide new follower notifications	ซ่อนการแจ้งเตือนผู้ติดตามใหม่
 Hide new followers	ซ่อนผู้ติดตามใหม่
 Hide paid partnerships	ซ่อนความร่วมมือแบบชำระเงิน
+Hide parts of the room line	ซ่อนบางส่วนของบรรทัดห้อง
 Hide people and options by name	ซ่อนบุคคลและตัวเลือกตามชื่อ
 Hide photo posts	ซ่อนโพสต์รูปภาพ
 Hide picture comments	ซ่อนความคิดเห็นที่เป็นรูปภาพ
@@ -747,6 +749,7 @@ Larger (1.25x)	ใหญ่ขึ้น (1.25x)
 Last original value	ค่าดั้งเดิมล่าสุด
 Last recording: %1$d gates.	การบันทึกล่าสุด: %1$d เกต
 Last recording: 1 gate.	การบันทึกล่าสุด: 1 เกต
+Latency	ความหน่วง
 Layout	เลย์เอาต์
 Layout, search, profile and system	เลย์เอาต์ การค้นหา โปรไฟล์ และระบบ
 Leave maximum empty to keep it unlimited.	เว้นว่างค่าสูงสุดไว้เพื่อให้ไม่จำกัด
@@ -1857,6 +1860,7 @@ Brightness	ความสว่าง
 Volume	ระดับเสียง
 Left edge strip	แถบขอบซ้าย
 Right edge strip	แถบขอบขวา
+Room ID	ID ห้อง
 Stop search results playing on their own	หยุดเล่นผลการค้นหาโดยอัตโนมัติ
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	วิดีโอในผลการค้นหาจะแสดงภาพหน้าปกและเริ่มเล่นเมื่อคุณเปิดดู ส่วนฟีดและวิดีโอที่คุณเปิดจะเล่นตามปกติ
 In a chat	ในการแชท
@@ -2269,6 +2273,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	วิดีโอแนวนอนที่ TikTok อนุญาตจะมีปุ่มเพิ่มความคิดเห็นบรรทัดเดียวใต้วิดีโอ และมีแถบสำหรับความคิดเห็นเหล่านั้นเมื่อดูแบบเต็มจอ วิดีโออื่นยังคงเหมือนเดิม
 
 Pick videos to save from profile grids	เลือกวิดีโอที่จะบันทึกจากตารางโปรไฟล์
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	เลือกส่วนที่จะเอาออกจากบรรทัดเล็กๆ ที่แสดง ID ห้องและการเชื่อมต่อของคุณ ส่วนอื่นยังอยู่
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	วางวงกลมบนแต่ละวิดีโอในตารางโปรไฟล์ วิดีโอที่ถูกใจ หรือรายการโปรด เลือกได้สูงสุด %1$s รายการ จากนั้นแตะ "บันทึก" เพื่อบันทึกทีละรายการอย่างต่อเนื่อง พร้อมตัวนับและปุ่มยกเลิก
 Pick for saving	เลือกเพื่อบันทึก
 You can pick up to %1$s at a time	คุณสามารถเลือกได้สูงสุด %1$s รายการในแต่ละครั้ง
@@ -2890,6 +2895,7 @@ Friends in the top tabs	เพื่อนในแท็บด้านบน
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	เพื่อนจะย้ายขึ้นไปอยู่ในแท็บที่ด้านบนของฟีด ถัดจากกำลังติดตาม และค้นพบจะเข้ามาแทนที่ในแถบด้านล่าง ตามรูปแบบที่ TikTok จัดวางไว้ในบางประเทศ ภูมิภาคและฟีดของคุณจะยังคงเหมือนเดิม
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	ปักหมุดแชทได้มากขึ้น
+Ping	ปิง
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	ยกเลิกขีดจำกัดของแอปสำหรับแชทที่ปักหมุดในกล่องขาเข้า ซึ่งปกติคือ 5 รายการ เพื่อให้คุณปักหมุดได้มากขึ้น
 # context: Row title of the Comments switch that hides voice comments
@@ -3166,7 +3172,8 @@ Unknown (TikTok didn't send it)	ไม่ทราบ (TikTok ไม่ได้
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	แผ่นเมนูแชร์ของโปรไฟล์จะมีปุ่ม "ข้อมูลบัญชี" เพิ่มเข้ามา ซึ่งจะแสดงสิ่งที่ TikTok ส่งมาเกี่ยวกับบัญชีอยู่แล้ว ได้แก่ วันที่เข้าร่วม ภูมิภาคและภาษา ระดับผู้ให้ของขวัญและ SecUID จำนวนโพสต์ วิดีโอที่ถูกใจ รายการโปรด และรีโพสต์ เวลาที่ชื่อผู้ใช้และชื่อที่แสดงเปลี่ยนแปลงล่าสุด บัญชีเป็นแบบส่วนตัวหรือไม่ และวิดีโอที่ถูกใจเป็นสาธารณะหรือไม่ ไม่มีการดึงข้อมูลเพิ่มเติมใดๆ
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	แสดง ID ห้องและการเชื่อมต่อของคุณ
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	เพิ่มบรรทัดเล็กๆ ในห้อง LIVE ที่แสดง ID ห้องและสถานะการเชื่อมต่อของคุณเองกับสตรีม ตามที่เครื่องเล่นของ TikTok วัดได้ ได้แก่ ปิง ความหน่วง และความเร็วในการดาวน์โหลด แตะที่บรรทัดเพื่อคัดลอก ID ห้อง
+Show the room line	แสดงบรรทัดห้อง
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	เพิ่มบรรทัดเล็กๆ ในห้อง LIVE ที่แสดง ID ห้องและสถานะการเชื่อมต่อของคุณเองกับสตรีม ตามที่เครื่องเล่นของ TikTok วัดได้ ได้แก่ ปิง ความหน่วง และความเร็วในการดาวน์โหลด แตะที่บรรทัดเพื่อย่อให้เหลือจุด และแตะที่จุดเพื่อให้กลับมา แตะค้างที่บรรทัดเพื่อคัดลอก ID ห้อง
 Room ID %1$s	ID ห้อง %1$s
 Ping %1$s ms	ปิง %1$s มิลลิวินาที
 Latency %1$s s	ความหน่วง %1$s วินาที
@@ -3200,7 +3207,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	ขนาดอินเทอร์เฟซ
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	ทำให้อินเทอร์เฟซทั้งหมดของ TikTok เล็กลง ทั้งข้อความและปุ่ม เพื่อให้หน้าจอแสดงได้มากขึ้น ค่า 100 จะคงไว้ตามเดิม รีสตาร์ท TikTok เพื่อดูการเปลี่ยนแปลง
 Show how long a LIVE has been on	แสดงว่า LIVE ออกอากาศมานานเท่าไร
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	เพิ่มบรรทัดเล็กๆ ในห้อง LIVE ที่แสดงว่าโฮสต์ไลฟ์มานานเท่าไรแล้ว นับตั้งแต่ห้องเริ่ม ถ้าเปิด ID ห้องไว้ด้วย บรรทัดนี้จะอยู่ใต้ ID ห้อง
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	เพิ่มบรรทัดเล็กๆ ในห้อง LIVE ที่แสดงว่าโฮสต์ไลฟ์มานานเท่าไรแล้ว นับตั้งแต่ห้องเริ่ม ถ้าเปิด ID ห้องไว้ด้วย บรรทัดนี้จะอยู่ใต้ ID ห้อง แตะที่บรรทัดเพื่อย่อให้เหลือจุด
 LIVE for %1$s	LIVE มาแล้ว %1$s
 Show exact LIVE battle scores	แสดงคะแนนแบทเทิล LIVE ที่แน่นอน
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	ในแบทเทิล LIVE นั้น TikTok จำกัดคะแนนสูงที่ผู้ชมเห็น ขณะที่โฮสต์เห็นตัวเลขเต็ม การตั้งค่านี้จะแสดงคะแนนเต็มในแถบแบทเทิลและหน้าต่างโฮสต์ร่วม

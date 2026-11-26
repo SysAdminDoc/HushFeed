@@ -8095,6 +8095,42 @@
           "values": null
         },
         {
+          "key": "hide_live_room_id",
+          "title": "Default: hide live room id",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_ping",
+          "title": "Default: hide live ping",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_latency",
+          "title": "Default: hide live latency",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_download_speed",
+          "title": "Default: hide live download speed",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "live_running_time",
           "title": "Default: live running time",
           "description": null,

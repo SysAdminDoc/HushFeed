@@ -887,6 +887,17 @@ public class Settings extends BaseSettings {
      * start time; the LIVE controls patch. Read every second, so no restart.
      */
     public static final BooleanSetting LIVE_RUNNING_TIME = new BooleanSetting("live_running_time", FALSE);
+    /** Each switch takes one part off the room line (#534). Read every second, so no restart. */
+    public static final BooleanSetting HIDE_LIVE_ROOM_ID = new BooleanSetting("hide_live_room_id", FALSE);
+    public static final BooleanSetting HIDE_LIVE_PING = new BooleanSetting("hide_live_ping", FALSE);
+    public static final BooleanSetting HIDE_LIVE_LATENCY = new BooleanSetting("hide_live_latency", FALSE);
+    public static final BooleanSetting HIDE_LIVE_DOWNLOAD_SPEED = new BooleanSetting("hide_live_download_speed", FALSE);
+    /**
+     * Whether the room line is shrunk to a dot (#534), flipped by a tap on the line or the dot and
+     * kept from room to room. How one phone's screen was left, so it stays out of backups.
+     */
+    public static final BooleanSetting LIVE_ROOM_INFO_COLLAPSED =
+            new BooleanSetting("live_room_info_collapsed", FALSE, false, false);
     /**
      * A LIVE opened from the row at the top of Following is followed, on a swipe, by the row's
      * other LIVEs in the row's order (#511); the LIVE controls patch. Read as the room opens.

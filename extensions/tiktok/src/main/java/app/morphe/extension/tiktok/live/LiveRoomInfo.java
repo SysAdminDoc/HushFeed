@@ -7,6 +7,7 @@ package app.morphe.extension.tiktok.live;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,11 +46,15 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * service's current player hands over its stats as JSON. Only what describes your side is shown,
  * the round trip to the stream's server, how far behind live the picture is and how fast it
  * downloads. The same JSON also carries the host's phone model and system; none of that is read.
- * A tap copies the room ID.
+ * A long press copies the room ID.
  *
  * <p>The same line can say how long the LIVE has been running (#494), from the room's own start
  * time, the one TikTok's LIVE code counts a room's duration from. Each switch shows its own part,
  * and the line shows while either has something to say.
+ *
+ * <p>Any of the room ID, ping, latency and download speed can be left off (#534), and a tap
+ * shrinks the line to a small dot over the video, kept from room to room, until a tap on the dot
+ * brings it back.
  */
 @SuppressWarnings("unused")
 public final class LiveRoomInfo {
@@ -67,6 +72,10 @@ public final class LiveRoomInfo {
     private static final int SIDE_DP = 12;
     private static final int GAP_DP = 8;
     private static final int TEXT_SP = 11;
+    /** The shrunk line: a round dot with an i on it, as wide as it is tall. */
+    static final String DOT = "i";
+    private static final int DOT_DP = 28;
+    private static final int DOT_TEXT_SP = 14;
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -75,8 +84,10 @@ public final class LiveRoomInfo {
     private static WeakReference<Activity> host = new WeakReference<>(null);
     private static WeakReference<TextView> labelReference = new WeakReference<>(null);
     private static WeakReference<Application> followed = new WeakReference<>(null);
-    /** The room the line on screen shows, which a tap copies. */
+    /** The room the line on screen shows, which a long press copies. */
     private static String shownRoom;
+    /** Whether the line on screen is drawn as the dot, or null before it's drawn either way. */
+    private static Boolean drawnCollapsed;
     private static boolean ticking;
     private static boolean statsFailed;
 
@@ -189,12 +200,14 @@ public final class LiveRoomInfo {
             label = showLabel(activity);
             if (label == null) return;
         }
-        if (!text.contentEquals(label.getText())) {
-            label.setText(text);
-            label.setContentDescription(text);
-        }
-        // Only the room ID is copied, so with its switch off a tap does nothing.
-        shownRoom = showRoom ? room : null;
+        boolean collapsed = Settings.LIVE_ROOM_INFO_COLLAPSED.get();
+        if (!Boolean.valueOf(collapsed).equals(drawnCollapsed)) shape(label, collapsed);
+        String shown = collapsed ? DOT : text;
+        if (!shown.contentEquals(label.getText())) label.setText(shown);
+        CharSequence description = collapsed ? L10n.t(activity, "Show the room line") : text;
+        if (!description.equals(label.getContentDescription())) label.setContentDescription(description);
+        // Only the room ID is copied, so with it off or left off the line a long press does nothing.
+        shownRoom = showRoom && !Settings.HIDE_LIVE_ROOM_ID.get() ? room : null;
         // Clear screen hides the room's controls, and a screen recording hides Hushfeed's own
         // buttons so they aren't filmed (#265); the line goes with them.
         boolean hidden = LiveRecordChip.clearScreenOn() || LiveRecordChip.filmingScreen();
@@ -211,15 +224,15 @@ public final class LiveRoomInfo {
         if (!(content instanceof FrameLayout)) return null;
         TextView label = new TextView(activity);
         label.setTextColor(SettingsUi.OVERLAY_TEXT);
-        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SP);
-        label.setGravity(Gravity.END);
         label.setMaxLines(3);
-        int padding = SettingsUi.dp(activity, 6);
-        label.setPadding(padding + padding / 2, padding / 2, padding + padding / 2, padding / 2);
-        label.setBackground(SettingsUi.overlayControl(activity, SettingsUi.RADIUS_OVERLAY));
         label.setFocusable(true);
         SettingsUi.markAsButton(label);
-        label.setOnClickListener(view -> copyRoom(view.getContext(), shownRoom));
+        label.setOnClickListener(LiveRoomInfo::toggleCollapsed);
+        // Taken even with no room ID to copy, so letting go after a hold isn't a tap too.
+        label.setOnLongClickListener(view -> {
+            copyRoom(view.getContext(), shownRoom);
+            return true;
+        });
         LiveRecordChip.markStacked(label, LiveRecordChip.STACK_ROOM_INFO,
                 SettingsUi.dp(activity, TOP_DP), SettingsUi.dp(activity, GAP_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -231,10 +244,41 @@ public final class LiveRoomInfo {
         return label;
     }
 
+    /** Draws the label as the full line, or as the dot it shrinks to. */
+    private static void shape(TextView label, boolean collapsed) {
+        Context context = label.getContext();
+        drawnCollapsed = collapsed;
+        if (collapsed) {
+            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, DOT_TEXT_SP);
+            label.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+            label.setGravity(Gravity.CENTER);
+            label.setPadding(0, 0, 0, 0);
+            label.setMinWidth(SettingsUi.dp(context, DOT_DP));
+            label.setMinHeight(SettingsUi.dp(context, DOT_DP));
+            label.setBackground(SettingsUi.overlayControl(context, SettingsUi.RADIUS_ROUND_ENDS));
+            return;
+        }
+        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SP);
+        label.setTypeface(Typeface.DEFAULT);
+        label.setGravity(Gravity.END);
+        int padding = SettingsUi.dp(context, 6);
+        label.setPadding(padding + padding / 2, padding / 2, padding + padding / 2, padding / 2);
+        label.setMinWidth(0);
+        label.setMinHeight(0);
+        label.setBackground(SettingsUi.overlayControl(context, SettingsUi.RADIUS_OVERLAY));
+    }
+
+    /** A tap on the line shrinks it to the dot, and a tap on the dot brings the line back (#534). */
+    private static void toggleCollapsed(View label) {
+        Settings.LIVE_ROOM_INFO_COLLAPSED.save(!Settings.LIVE_ROOM_INFO_COLLAPSED.get());
+        if (label.getContext() instanceof Activity) refresh((Activity) label.getContext());
+    }
+
     private static void removeLabel() {
         View label = labelReference.get();
         labelReference = new WeakReference<>(null);
         shownRoom = null;
+        drawnCollapsed = null;
         if (label != null && label.getParent() instanceof ViewGroup) {
             ((ViewGroup) label.getParent()).removeView(label);
         }
@@ -250,23 +294,32 @@ public final class LiveRoomInfo {
         }
     }
 
-    /** The line's text: the room ID, then whichever of your connection's numbers the player has. */
+    /**
+     * The line's text: the room ID, then whichever of your connection's numbers the player has,
+     * each left out when it's picked to be hidden (#534).
+     */
     static String text(String room, JSONObject stats) {
         String connection = connection(stats);
-        String first = L10n.f("Room ID %1$s", room);
-        return connection.isEmpty() ? first : first + "\n" + connection;
+        String first = Settings.HIDE_LIVE_ROOM_ID.get() ? "" : L10n.f("Room ID %1$s", room);
+        return first.isEmpty() || connection.isEmpty() ? first + connection : first + "\n" + connection;
     }
 
-    /** Ping, latency and download speed, each only when the player has a number for it. */
+    /** Ping, latency and download speed, each only when the player has a number for it and it isn't hidden. */
     static String connection(JSONObject stats) {
         if (stats == null) return "";
         List<String> parts = new ArrayList<>(3);
         long ping = stats.optLong(PING, -1);
-        if (ping > 0) parts.add(L10n.f("Ping %1$s ms", NumberFormat.getIntegerInstance().format(ping)));
+        if (ping > 0 && !Settings.HIDE_LIVE_PING.get()) {
+            parts.add(L10n.f("Ping %1$s ms", NumberFormat.getIntegerInstance().format(ping)));
+        }
         long latency = stats.optLong(LATENCY, -1);
-        if (latency > 0) parts.add(L10n.f("Latency %1$s s", tenths(latency / 1000.0)));
+        if (latency > 0 && !Settings.HIDE_LIVE_LATENCY.get()) {
+            parts.add(L10n.f("Latency %1$s s", tenths(latency / 1000.0)));
+        }
         long speed = stats.optLong(DOWNLOAD_SPEED, -1);
-        if (speed > 0) parts.add(L10n.f("%1$s Mb/s", tenths(speed / 1000.0)));
+        if (speed > 0 && !Settings.HIDE_LIVE_DOWNLOAD_SPEED.get()) {
+            parts.add(L10n.f("%1$s Mb/s", tenths(speed / 1000.0)));
+        }
         StringBuilder line = new StringBuilder();
         for (String part : parts) {
             if (line.length() > 0) line.append(" · ");

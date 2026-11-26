@@ -470,6 +470,7 @@ Top right double tap	Yuxarı sağ iki dəfə toxunma
 Bottom left double tap	Aşağı sol iki dəfə toxunma
 Bottom right double tap	Aşağı sağ iki dəfə toxunma
 Download original photos	Orijinal fotoları endirin
+Download speed	Yükləmə sürəti
 Downloads	Endirmələr
 Drag to move, release to place	Daşımaq üçün sürüşdürün, yerləşdirmək üçün buraxın
 Drama and Series	Dram və Seriallar
@@ -616,6 +617,7 @@ Hide message streaks	Mesaj seriyalarını gizlədin
 Hide new follower notifications	Yeni izləyici bildirişlərini gizlədin
 Hide new followers	Yeni izləyiciləri gizlədin
 Hide paid partnerships	Ödənişli tərəfdaşlıqları gizlədin
+Hide parts of the room line	Otaq sətrinin hissələrini gizlət
 Hide people and options by name	İnsanları və seçimləri adına görə gizlədin
 Hide photo posts	Foto paylaşımlarını gizlədin
 Hide photo posts from the feed.	Foto paylaşımlarını lentdən gizlədin.
@@ -764,6 +766,7 @@ Larger (1.25x)	Daha böyük (1.25x)
 Last original value	Son orijinal dəyər
 Last recording: %1$d gates.	Son qeyd: %1$d qapı.
 Last recording: 1 gate.	Son qeyd: 1 qapı.
+Latency	Gecikmə
 Layout	Düzülüş
 Layout, search, profile and system	Düzülüş, axtarış, profil və sistem
 Leave maximum empty to keep it unlimited.	Limitsiz saxlamaq üçün maksimumu boş buraxın.
@@ -1854,6 +1857,7 @@ Brightness	Parlaqlıq
 Volume	Səs
 Left edge strip	Sol kənar zolaq
 Right edge strip	Sağ kənar zolaq
+Room ID	Otaq ID-si
 Stop search results playing on their own	Axtarış nəticələri özbaşına oynamasın
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	Axtarış nəticələrindəki videolar örtüyünü göstərir və onları açanda oynayır. Lent və açdığınız videolar həmişəki kimi oynayır.
 In a chat	Çatda
@@ -2266,6 +2270,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	TikTok-un icazə verdiyi geniş videolarda videonun altında birsətirlik şərh əlavə etmə düyməsi, tam ekranda isə onlar üçün panel görünür. Digər videolar dəyişmir.
 
 Pick videos to save from profile grids	Profil şəbəkələrindən saxlamaq üçün videolar seçin
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	Otaq ID-si və bağlantınız olan kiçik sətirdən nəyin çıxarılacağını seçin. Qalanı orada qalır.
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Profil, Bəyənilənlər və ya Sevimlilər şəbəkəsindəki hər videonun üzərinə dairə qoyur. %1$s videoya qədər seçin, sonra Saxla düyməsinə toxunun: onlar sayğac və Ləğv edin ilə bir-bir saxlanılır.
 Pick for saving	Saxlamaq üçün seçin
 You can pick up to %1$s at a time	Bir dəfəyə ən çox %1$s seçə bilərsiniz
@@ -2887,6 +2892,7 @@ Friends in the top tabs	Yuxarı tablarda Dostlar
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Dostlar lentin yuxarısındakı tablara, İzlənilənlərin yanına keçir, Kəşf et isə alt paneldə onun yerini tutur, TikTok bəzi ölkələrdə belə düzür. Regionunuz və lentiniz olduğu kimi qalır.
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	Daha çox söhbət sancaqla
+Ping	Ping
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Tətbiqin Gələnlər qutusunda sancaqlanmış söhbətlərə qoyduğu limiti, adətən 5, qaldırır ki, daha çoxunu sancaqlaya biləsiniz.
 # context: Row title of the Comments switch that hides voice comments
@@ -3163,7 +3169,8 @@ Unknown (TikTok didn't send it)	Naməlum (TikTok göndərmədi)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Profilin paylaşma panelinə Hesab faktları düyməsi əlavə olunur. O, TikTok-un hesab haqqında artıq göndərdiklərini göstərir: nə vaxt qoşulduğunu, regionunu və dilini, hədiyyəçi səviyyəsini və SecUID-ni, neçə paylaşımı, bəyəndiyi video, sevimlisi və repostu olduğunu, istifadəçi adının və görünən adının sonuncu dəfə nə vaxt dəyişdiyini, hesabın gizli olub-olmadığını və bəyəndiyi videoların açıq olub-olmadığını. Əlavə heç nə yüklənmir.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Otaq ID-sini və bağlantınızı göstərin
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	LIVE otaqlarına otağın ID-si və yayımla öz bağlantınızın vəziyyəti olan kiçik bir sətir əlavə edir, TikTok-un pleyerinin ölçdüyü kimi: ping, gecikmə və yükləmə sürəti. Otaq ID-sini kopyalamaq üçün sətrə toxunun.
+Show the room line	Otaq sətrini göstər
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	LIVE otaqlarına otağın ID-si və yayımla öz bağlantınızın vəziyyəti olan kiçik bir sətir əlavə edir, TikTok-un pleyerinin ölçdüyü kimi: ping, gecikmə və yükləmə sürəti. Sətri nöqtəyə kiçiltmək üçün ona toxunun, geri qaytarmaq üçün nöqtəyə toxunun. Otaq ID-sini kopyalamaq üçün sətrə basıb saxlayın.
 Room ID %1$s	Otaq ID-si %1$s
 Ping %1$s ms	Ping %1$s ms
 Latency %1$s s	Gecikmə %1$s san
@@ -3197,7 +3204,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	İnterfeys ölçüsü
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	TikTok-un bütün interfeysini, mətni də, düymələri də kiçildir ki, ekrana daha çox şey sığsın. 100 onu olduğu kimi saxlayır. Dəyişikliyi görmək üçün TikTok-u yenidən başladın.
 Show how long a LIVE has been on	LIVE-ın nə qədər davam etdiyini göstər
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	LIVE otaqlarına aparıcının nə qədər vaxtdır canlı yayımda olduğunu göstərən kiçik bir sətir əlavə edir, otağın başladığı andan hesablanır. Otaq ID-si də açıqdırsa, onun altında görünür.
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	LIVE otaqlarına aparıcının nə qədər vaxtdır canlı yayımda olduğunu göstərən kiçik bir sətir əlavə edir, otağın başladığı andan hesablanır. Otaq ID-si də açıqdırsa, onun altında görünür. Sətri nöqtəyə kiçiltmək üçün ona toxunun.
 LIVE for %1$s	LIVE müddəti %1$s
 Show exact LIVE battle scores	Dəqiq LIVE döyüş xallarını göstər
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	LIVE döyüşündə TikTok izləyicilərin gördüyü böyük xalları məhdudlaşdırır, aparıcı isə tam rəqəmi görür. Bu, döyüş panelində və birgə aparıcı pəncərələrində tam xalı göstərir.

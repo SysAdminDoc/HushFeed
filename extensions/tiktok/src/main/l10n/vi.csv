@@ -556,6 +556,7 @@ Double tap,Chạm đúp
 Double tap by corner,Chạm đúp theo góc màn hình
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.","Tải xuống hiển thị danh sách các chất lượng video có sẵn kèm dung lượng do TikTok cung cấp cho mỗi loại, và lưu chất lượng bạn chọn. Chất lượng ở trên được giữ nguyên cho lần lưu tiếp theo."
 Download original photos,Tải xuống ảnh gốc
+Download speed,Tốc độ tải xuống
 Downloads,Tải xuống
 "Drag to move, release to place","Kéo để di chuyển, thả ra để đặt"
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,Kéo lên hoặc xuống dọc theo cạnh trái hoặc phải của video để thay đổi thiết lập của dải cạnh đó. Mặc định bên trái là độ sáng màn hình và bên phải là âm lượng. Vuốt ở bất kỳ vị trí nào khác vẫn thực hiện cuộn bảng tin.
@@ -798,6 +799,7 @@ Hide new follower notifications,Ẩn thông báo người theo dõi mới
 Hide new followers,Ẩn người theo dõi mới
 Hide online status,Ẩn trạng thái trực tuyến
 Hide paid partnerships,Ẩn nội dung hợp tác trả phí
+Hide parts of the room line,Ẩn các phần của dòng phòng
 Hide people and options by name,Ẩn người dùng và tùy chọn theo tên
 Hide photo posts,Ẩn bài đăng dạng ảnh
 Hide photo posts from the feed.,Ẩn bài đăng dạng ảnh khỏi bảng tin.
@@ -1113,6 +1115,7 @@ Last change put back. The Feature Gate Lab rules were for another TikTok version
 Last original value,Giá trị gốc cuối cùng
 Last recording: %1$d gates.,Lần ghi gần nhất: %1$d cổng.
 Last recording: 1 gate.,Lần ghi gần nhất: 1 cổng.
+Latency,Độ trễ
 Later,Để sau
 Latest first on Following,Mới nhất xếp trước trên thẻ Đang theo dõi
 Layout,Bố cục
@@ -1470,6 +1473,7 @@ Pick the buttons to take off the column. The rest stay where they are.,Chọn c�
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Chọn các cửa sổ bật lên (popup) muốn chặn. Danh sách lưu các popup mà TikTok đã thử hiển thị trên điện thoại này, do đó popup sẽ xuất hiện tại đây sau lần hiển thị đầu tiên. Màn hình xác thực CAPTCHA, xác minh, đăng nhập, độ tuổi, lệnh cấm và đồng ý pháp lý không bao giờ bị liệt kê hoặc bị chặn."
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Chọn các lối tắt cần loại bỏ khỏi hàng dưới tiểu sử trang cá nhân, chẳng hạn như TikTok Studio hoặc Đơn hàng của bạn. Khởi động lại TikTok để áp dụng."
 Pick videos to save from profile grids,Chọn video cần lưu từ lưới trang cá nhân
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.,Chọn những gì cần bỏ khỏi dòng nhỏ có ID phòng và kết nối của bạn. Phần còn lại vẫn giữ nguyên.
 "Picked %1$s. Save, then tap Pick all for more.","Đã chọn %1$s. Lưu, rồi chạm Chọn tất cả để tiếp tục."
 Picked videos,Các video đã chọn
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,Ưu tiên chọn định dạng video H.264 cũ hơn khi TikTok cung cấp định dạng mới hơn (HEVC hoặc ByteVC2). Tùy chọn này giúp giảm giật lag hoặc nóng máy trên một số điện thoại. Các video không có bản H.264 vẫn sẽ phát bình thường.
@@ -1637,6 +1641,7 @@ Reviewed presets for TikTok %1$s,Các cấu hình sẵn đã xét duyệt cho Ti
 Right away,Ngay lập tức
 Right column,Cột bên phải
 Right edge strip,Dải cạnh phải
+Room ID,ID phòng
 Rounder,Bo tròn hơn
 Rows,Các hàng
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Hiển thị thanh tiến trình kéo dài từ cạnh này sang cạnh kia của màn hình, loại bỏ khoảng trống mà TikTok để lại ở hai đầu."
@@ -2772,6 +2777,7 @@ Taller,Rất cao
 Friends in the top tabs,Bạn bè ở các thẻ trên cùng
 "Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.","Bạn bè chuyển lên các thẻ ở đầu bảng tin, cạnh Đang theo dõi, và Khám phá thay chỗ nó ở thanh dưới cùng, giống cách TikTok sắp xếp ở một số quốc gia. Khu vực và bảng tin của bạn vẫn giữ nguyên."
 Pin more chats,Ghim thêm cuộc trò chuyện
+Ping,Ping
 "Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.","Bỏ giới hạn của ứng dụng đối với các cuộc trò chuyện được ghim trong hộp thư, thường là 5, để bạn ghim được nhiều hơn."
 Hide voice comments,Ẩn bình luận bằng giọng nói
 Hide comments made of a voice recording instead of words.,Ẩn các bình luận chỉ chứa bản ghi âm giọng nói thay vì văn bản chữ.
@@ -2998,7 +3004,8 @@ SecUID,SecUID
 Unknown (TikTok didn't send it),Không rõ (TikTok không gửi)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, số bài đăng, video đã thích, mục yêu thích và bài đăng lại, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
 Show the room ID and your connection,Hiện ID phòng và kết nối của bạn
-"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Thêm một dòng nhỏ vào phòng LIVE với ID phòng và tình trạng kết nối của chính bạn tới luồng phát, theo đo đạc của trình phát TikTok: ping, độ trễ và tốc độ tải xuống. Nhấn vào dòng để sao chép ID phòng."
+Show the room line,Hiện dòng phòng
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.","Thêm một dòng nhỏ vào phòng LIVE với ID phòng và tình trạng kết nối của chính bạn tới luồng phát, theo đo đạc của trình phát TikTok: ping, độ trễ và tốc độ tải xuống. Nhấn vào dòng để thu nhỏ thành một chấm, và nhấn vào chấm để hiện lại. Nhấn giữ dòng để sao chép ID phòng."
 Room ID %1$s,ID phòng %1$s
 Ping %1$s ms,Ping %1$s ms
 Latency %1$s s,Độ trễ %1$s giây
@@ -3029,7 +3036,7 @@ Smaller text sizes,Cỡ chữ nhỏ hơn
 UI size,Kích thước giao diện
 "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.","Thu nhỏ toàn bộ giao diện TikTok, cả chữ lẫn nút, để màn hình chứa được nhiều hơn. Mức 100 giữ nguyên như cũ. Khởi động lại TikTok để xem thay đổi."
 Show how long a LIVE has been on,Hiện LIVE đã phát được bao lâu
-"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Thêm một dòng nhỏ vào phòng LIVE cho biết chủ phòng đã phát trực tiếp bao lâu, tính từ lúc phòng bắt đầu. Nếu ID phòng cũng đang bật, dòng này nằm bên dưới."
+"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.","Thêm một dòng nhỏ vào phòng LIVE cho biết chủ phòng đã phát trực tiếp bao lâu, tính từ lúc phòng bắt đầu. Nếu ID phòng cũng đang bật, dòng này nằm bên dưới. Nhấn vào dòng để thu nhỏ thành một chấm."
 LIVE for %1$s,Đã LIVE %1$s
 Show exact LIVE battle scores,Hiện điểm đấu LIVE chính xác
 "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.","Trong một trận đấu LIVE, TikTok giới hạn điểm số lớn mà người xem thấy, còn chủ phòng thấy con số đầy đủ. Tùy chọn này hiện điểm đầy đủ trên thanh trận đấu và trong cửa sổ đồng chủ phòng."

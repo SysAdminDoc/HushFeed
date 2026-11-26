@@ -141,11 +141,23 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new TogglePreference(context, "Show the room ID and your connection",
                     "Adds a small line to LIVE rooms with the room's ID and how your own connection "
                             + "to the stream is doing, as TikTok's player measures it: ping, latency and "
-                            + "download speed. Tap the line to copy the room ID.",
+                            + "download speed. Tap the line to shrink it to a dot, and tap the dot to bring it "
+                            + "back. Hold the line to copy the room ID.",
                     Settings.LIVE_ROOM_INFO));
+            List<SwitchListPreference.Item> roomLineParts = new ArrayList<>();
+            roomLineParts.add(new SwitchListPreference.Item(L10n.t(context, "Room ID"), Settings.HIDE_LIVE_ROOM_ID));
+            roomLineParts.add(new SwitchListPreference.Item(L10n.t(context, "Ping"), Settings.HIDE_LIVE_PING));
+            roomLineParts.add(new SwitchListPreference.Item(L10n.t(context, "Latency"), Settings.HIDE_LIVE_LATENCY));
+            roomLineParts.add(new SwitchListPreference.Item(L10n.t(context, "Download speed"),
+                    Settings.HIDE_LIVE_DOWNLOAD_SPEED));
+            addPreference(new SwitchListPreference(context, "live_room_info_hidden_parts",
+                    "Hide parts of the room line",
+                    "Pick what to leave off the small line with the room ID and your connection. The rest stays on it.",
+                    roomLineParts));
             addPreference(new TogglePreference(context, "Show how long a LIVE has been on",
                     "Adds a small line to LIVE rooms with how long the host has been live, counted from "
-                            + "when the room started. With the room ID on too, it goes under that.",
+                            + "when the room started. With the room ID on too, it goes under that. Tap the "
+                            + "line to shrink it to a dot.",
                     Settings.LIVE_RUNNING_TIME));
             addPreference(new TogglePreference(context, "Swipe LIVEs in your Following row's order",
                     "After a LIVE you open from the row at the top of Following, swiping takes you "

@@ -470,6 +470,7 @@ Top right double tap	Sağ üst çift dokunma
 Bottom left double tap	Sol alt çift dokunma
 Bottom right double tap	Sağ alt çift dokunma
 Download original photos	Orijinal fotoğrafları indir
+Download speed	İndirme hızı
 Downloads	İndirilenler
 Drag to move, release to place	Taşımak için sürükle, yerleştirmek için bırak
 Drama and Series	Drama ve Seri
@@ -616,6 +617,7 @@ Hide message streaks	Mesajlaşma serilerini gizle
 Hide new follower notifications	Yeni takipçi bildirimlerini gizle
 Hide new followers	Yeni takipçileri gizle
 Hide paid partnerships	Ücretli ortaklıkları gizle
+Hide parts of the room line	Oda satırının bölümlerini gizle
 Hide people and options by name	Kişileri ve seçenekleri ada göre gizle
 Hide photo posts	Fotoğraf gönderilerini gizle
 Hide photo posts from the feed.	Fotoğraf gönderilerini akıştan gizle.
@@ -764,6 +766,7 @@ Larger (1.25x)	Daha büyük (1.25x)
 Last original value	Son özgün değer
 Last recording: %1$d gates.	Son kayıt: %1$d kapı.
 Last recording: 1 gate.	Son kayıt: 1 kapı.
+Latency	Gecikme
 Layout	Düzen
 Layout, search, profile and system	Düzen, arama, profil ve sistem
 Leave maximum empty to keep it unlimited.	Sınırsız kalması için maksimumu boş bırak.
@@ -1854,6 +1857,7 @@ Brightness	Parlaklık
 Volume	Ses
 Left edge strip	Sol kenar şeridi
 Right edge strip	Sağ kenar şeridi
+Room ID	Oda kimliği
 Stop search results playing on their own	Arama sonuçları kendiliğinden oynatılmasın
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	Arama sonuçlarındaki videolar kapaklarını gösterir ve onları açtığında oynar. Akış ve açtığın videolar her zamanki gibi oynar.
 In a chat	Bir sohbette
@@ -2266,6 +2270,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	TikTok'un izin verdiği geniş videolarda videonun altında tek satırlık yorum ekleme düğmesi, tam ekranda da bunlar için bir çubuk görünür. Diğer videolar aynı kalır.
 
 Pick videos to save from profile grids	Profil ızgaralarından kaydedilecek videoları seç
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	Oda kimliğini ve bağlantını gösteren küçük satırdan neyin çıkacağını seç. Gerisi kalır.
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Profil, Beğenilenler veya Favoriler ızgarasındaki her videoya bir daire koyar. En fazla %1$s tane seç, sonra Kaydet'e dokun. Hepsi sayaç ve İptal ile sırayla kaydedilir.
 Pick for saving	Kaydetmek için seç
 You can pick up to %1$s at a time	Bir seferde en fazla %1$s seçebilirsin
@@ -2887,6 +2892,7 @@ Friends in the top tabs	Üst sekmelerde Arkadaşlar
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Arkadaşlar, akışın üstündeki sekmelere, Takip Edilenler'in yanına geçer ve Keşfet alt çubukta onun yerini alır, TikTok bazı ülkelerde böyle dizer. Bölgen ve akışın olduğu gibi kalır.
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	Daha fazla sohbet sabitle
+Ping	Ping
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Uygulamanın Gelen kutusundaki sabitlenmiş sohbetlere koyduğu sınırı, genellikle 5, kaldırır, böylece daha fazlasını sabitleyebilirsiniz.
 # context: Row title of the Comments switch that hides voice comments
@@ -3163,7 +3169,8 @@ Unknown (TikTok didn't send it)	Bilinmiyor (TikTok göndermedi)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Bir profilin paylaşma menüsüne Hesap bilgileri düğmesi eklenir. TikTok'un hesap hakkında zaten gönderdiklerini gösterir: ne zaman katıldığını, bölgesini ve dilini, hediye veren seviyesini ve SecUID'sini, kaç gönderisi, beğendiği video, favorisi ve yeniden göndereni olduğunu, kullanıcı adının ve görünen adının en son ne zaman değiştiğini, gizli olup olmadığını ve beğendiği videoların herkese açık olup olmadığını. Fazladan hiçbir şey indirilmez.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Oda kimliğini ve bağlantını göster
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	LIVE odalarına, oda kimliğini ve yayına olan kendi bağlantının durumunu TikTok oynatıcısının ölçtüğü şekliyle gösteren küçük bir satır ekler: ping, gecikme ve indirme hızı. Oda kimliğini kopyalamak için satıra dokun.
+Show the room line	Oda satırını göster
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	LIVE odalarına, oda kimliğini ve yayına olan kendi bağlantının durumunu TikTok oynatıcısının ölçtüğü şekliyle gösteren küçük bir satır ekler: ping, gecikme ve indirme hızı. Satırı bir noktaya küçültmek için ona dokun, geri getirmek için noktaya dokun. Oda kimliğini kopyalamak için satıra basılı tut.
 Room ID %1$s	Oda kimliği %1$s
 Ping %1$s ms	Ping %1$s ms
 Latency %1$s s	Gecikme %1$s sn
@@ -3197,7 +3204,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	Arayüz boyutu
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	TikTok'un tüm arayüzünü, metni de düğmeleri de küçültür, böylece ekrana daha çok şey sığar. 100 onu olduğu gibi bırakır. Değişikliği görmek için TikTok'u yeniden başlat.
 Show how long a LIVE has been on	Bir LIVE'ın ne kadardır yayında olduğunu göster
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	LIVE odalarına, sunucunun ne kadardır canlı yayında olduğunu odanın başladığı andan itibaren sayan küçük bir satır ekler. Oda kimliği de açıksa onun altında durur.
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	LIVE odalarına, sunucunun ne kadardır canlı yayında olduğunu odanın başladığı andan itibaren sayan küçük bir satır ekler. Oda kimliği de açıksa onun altında durur. Satırı bir noktaya küçültmek için ona dokun.
 LIVE for %1$s	%1$s süredir LIVE
 Show exact LIVE battle scores	Tam LIVE savaş puanlarını göster
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	Bir LIVE savaşında TikTok, izleyicilerin gördüğü yüksek puanları sınırlar, sunucu ise sayının tamamını görür. Bu, tam puanı savaş çubuğunda ve ortak sunucu pencerelerinde gösterir.

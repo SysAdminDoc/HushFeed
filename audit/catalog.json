@@ -11234,6 +11234,30 @@
     "row": "Show the room ID and your connection"
    },
    {
+    "key": "hide_live_room_id",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Room ID"
+   },
+   {
+    "key": "hide_live_ping",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Ping"
+   },
+   {
+    "key": "hide_live_latency",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Latency"
+   },
+   {
+    "key": "hide_live_download_speed",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Download speed"
+   },
+   {
     "key": "live_running_time",
     "default": false,
     "type": "bool",

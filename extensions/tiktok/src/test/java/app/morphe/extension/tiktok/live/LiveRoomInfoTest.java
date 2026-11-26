@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -51,7 +52,19 @@ public class LiveRoomInfoTest {
     private Page front;
     private Page next;
 
+    /** The switches a test may change, each back at its default before and after every test. */
+    private static void resetSettings() {
+        Settings.LIVE_ROOM_INFO.resetToDefault();
+        Settings.LIVE_RUNNING_TIME.resetToDefault();
+        Settings.HIDE_LIVE_ROOM_ID.resetToDefault();
+        Settings.HIDE_LIVE_PING.resetToDefault();
+        Settings.HIDE_LIVE_LATENCY.resetToDefault();
+        Settings.HIDE_LIVE_DOWNLOAD_SPEED.resetToDefault();
+        Settings.LIVE_ROOM_INFO_COLLAPSED.resetToDefault();
+    }
+
     @Before public void setUp() {
+        resetSettings();
         liveControls = SettingsStatus.liveControlsEnabled;
         SettingsStatus.liveControlsEnabled = true;
         Settings.LIVE_ROOM_INFO.save(true);
@@ -74,8 +87,7 @@ public class LiveRoomInfoTest {
 
     @After public void tearDown() {
         LiveRoomInfo.resetForTests();
-        Settings.LIVE_ROOM_INFO.resetToDefault();
-        Settings.LIVE_RUNNING_TIME.resetToDefault();
+        resetSettings();
         SettingsStatus.liveControlsEnabled = liveControls;
         Locale.setDefault(locale);
         room.close();
@@ -233,13 +245,117 @@ public class LiveRoomInfoTest {
         assertEquals("Room ID 7309876543210987654", line().getText().toString());
     }
 
-    @Test public void aTapCopiesTheRoomId() {
+    /** The line shrunk to its dot, found by what it says to a screen reader. */
+    private TextView dot() {
+        ViewGroup content = room.get().findViewById(android.R.id.content);
+        for (int i = 0; i < content.getChildCount(); i++) {
+            View child = content.getChildAt(i);
+            if (child instanceof TextView && "Show the room line".contentEquals(String.valueOf(child.getContentDescription()))) {
+                return (TextView) child;
+            }
+        }
+        return null;
+    }
+
+    /** A finger on the view for {@code heldMs}, then lifted. */
+    private static void press(View view, long heldMs) {
+        long down = android.os.SystemClock.uptimeMillis();
+        MotionEvent press = MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 5, 5, 0);
+        view.dispatchTouchEvent(press);
+        press.recycle();
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(heldMs));
+        MotionEvent lift = MotionEvent.obtain(down, android.os.SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 5, 5, 0);
+        view.dispatchTouchEvent(lift);
+        lift.recycle();
+        idle();
+    }
+
+    private ClipboardManager clipboard() {
+        return (ClipboardManager) room.get().getSystemService(Context.CLIPBOARD_SERVICE);
+    }
+
+    @Test public void holdingTheLineCopiesTheRoomIdAndLettingGoIsNoTap() {
+        openRoom();
+        TextView line = line();
+        press(line, 800);
+        assertEquals("7301234567890123456", clipboard().getPrimaryClip().getItemAt(0).getText().toString());
+        assertEquals("Room ID copied", ShadowToast.getTextOfLatestToast());
+        assertFalse("the hold didn't shrink the line", Settings.LIVE_ROOM_INFO_COLLAPSED.get());
+        assertEquals("Room ID 7301234567890123456", line().getText().toString());
+    }
+
+    // ---------------------------------------------------------------- what the line shows and the dot (#534)
+
+    @Test public void aTapShrinksTheLineToADotAndATapOnTheDotBringsItBack() {
+        openRoom();
+        press(line(), 50);
+        assertNull("the line is still out", line());
+        TextView dot = dot();
+        assertNotNull("no dot", dot);
+        assertEquals("i", dot.getText().toString());
+        assertEquals(View.VISIBLE, dot.getVisibility());
+        assertTrue(Settings.LIVE_ROOM_INFO_COLLAPSED.get());
+        assertNull("a tap copies nothing", clipboard().getPrimaryClip());
+
+        press(dot, 50);
+        assertNull(dot());
+        assertEquals("Room ID 7301234567890123456", line().getText().toString());
+        assertFalse(Settings.LIVE_ROOM_INFO_COLLAPSED.get());
+    }
+
+    @Test public void theDotStaysThroughTheNextRoomAndTheNextVisit() {
         openRoom();
         line().performClick();
+        int height = front.view.getHeight();
+        front.view.offsetTopAndBottom(-height);
+        next.view.offsetTopAndBottom(-height);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNotNull("the next room has the line out again", dot());
+        assertNull(line());
+
+        LiveRoomInfo.resetForTests();
+        openRoom();
+        assertNotNull("a room opened later has the line out again", dot());
+        dot().performClick();
+        assertEquals("Room ID 7309876543210987654", line().getText().toString());
+    }
+
+    @Test public void eachPartCanBeLeftOffTheLine() throws Exception {
+        JSONObject stats = new JSONObject().put("rtt:", 85).put("delay:", 2340L).put("download_Speed:", 2400L);
+        Settings.HIDE_LIVE_PING.save(true);
+        assertEquals("Room ID 1\nLatency 2.3 s · 2.4 Mb/s", LiveRoomInfo.text("1", stats));
+        Settings.HIDE_LIVE_PING.save(false);
+        Settings.HIDE_LIVE_LATENCY.save(true);
+        assertEquals("Room ID 1\nPing 85 ms · 2.4 Mb/s", LiveRoomInfo.text("1", stats));
+        Settings.HIDE_LIVE_LATENCY.save(false);
+        Settings.HIDE_LIVE_DOWNLOAD_SPEED.save(true);
+        assertEquals("Room ID 1\nPing 85 ms · Latency 2.3 s", LiveRoomInfo.text("1", stats));
+        Settings.HIDE_LIVE_ROOM_ID.save(true);
+        assertEquals("the connection moves up to the first line", "Ping 85 ms · Latency 2.3 s", LiveRoomInfo.text("1", stats));
+        Settings.HIDE_LIVE_PING.save(true);
+        Settings.HIDE_LIVE_LATENCY.save(true);
+        assertEquals("", LiveRoomInfo.text("1", stats));
+    }
+
+    @Test public void hidingTheRoomIdTakesItOffWithinASecondAndLeavesTheRunningTime() {
+        Settings.LIVE_RUNNING_TIME.save(true);
+        front.room.createTime = System.currentTimeMillis() / 1000 - 125;
+        openRoom();
+        assertNotNull(line());
+        Settings.HIDE_LIVE_ROOM_ID.save(true);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNull("the room ID is still on the line", line());
+        TextView running = lineStarting("LIVE for ");
+        assertNotNull("the running time went with it", running);
+
+        running.performLongClick();
         idle();
-        ClipboardManager clipboard = (ClipboardManager) room.get().getSystemService(Context.CLIPBOARD_SERVICE);
-        assertEquals("7301234567890123456", clipboard.getPrimaryClip().getItemAt(0).getText().toString());
-        assertEquals("Room ID copied", ShadowToast.getTextOfLatestToast());
+        assertNull("a hold copies a room ID the line doesn't show", clipboard().getPrimaryClip());
+
+        Settings.LIVE_RUNNING_TIME.save(false);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNull("with nothing left to say there's no line", lineStarting("LIVE for "));
+        assertNull(dot());
     }
 
     @Test public void theConnectionComesFromTikToksOwnKeysAndNothingAboutTheHost() throws Exception {

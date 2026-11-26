@@ -471,6 +471,7 @@ Top right double tap	Doppeltippen oben rechts
 Bottom left double tap	Doppeltippen unten links
 Bottom right double tap	Doppeltippen unten rechts
 Download original photos	Originalfotos herunterladen
+Download speed	Download-Geschwindigkeit
 Destination updated	Speicherziel aktualisiert
 Downloads	Downloads
 Drag to move, release to place	Zum Verschieben ziehen, zum Ablegen loslassen
@@ -616,6 +617,7 @@ Hide message streaks	Nachrichten-Serien ausblenden
 Hide new follower notifications	Follower-Hinweise ausblenden
 Hide new followers	Neue Follower ausblenden
 Hide paid partnerships	Bezahlte Partnerschaften ausblenden
+Hide parts of the room line	Teile der Raumzeile ausblenden
 Hide people and options by name	Personen und Optionen nach Name ausblenden
 Hide photo posts	Fotobeiträge ausblenden
 Hide picture comments	Bild-Kommentare ausblenden
@@ -747,6 +749,7 @@ Larger (1.25x)	Größer (1,25x)
 Last original value	Letzter Originalwert
 Last recording: %1$d gates.	Letzte Aufzeichnung: %1$d Gates.
 Last recording: 1 gate.	Letzte Aufzeichnung: 1 Gate.
+Latency	Latenz
 Layout	Layout
 Layout, search, profile and system	Layout, Suche, Profil und System
 Leave maximum empty to keep it unlimited.	Lass das Maximum leer, damit es unbegrenzt bleibt.
@@ -1857,6 +1860,7 @@ Brightness	Helligkeit
 Volume	Lautstärke
 Left edge strip	Linker Randstreifen
 Right edge strip	Rechter Randstreifen
+Room ID	Raum-ID
 Stop search results playing on their own	Suchergebnisse nicht von selbst abspielen
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	Videos in den Suchergebnissen zeigen ihr Vorschaubild und spielen erst, wenn du sie öffnest. Der Feed und Videos, die du öffnest, spielen wie gewohnt.
 In a chat	In einem Chat
@@ -2269,6 +2273,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	Breite Videos, bei denen TikTok es erlaubt, bekommen unter dem Video einen Knopf für Einzeiler-Kommentare und im Vollbild eine Leiste dafür. Andere Videos bleiben unverändert.
 
 Pick videos to save from profile grids	Videos in Profilrastern zum Speichern auswählen
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	Wähle, was in der kleinen Zeile mit der Raum-ID und deiner Verbindung fehlen soll. Der Rest bleibt drin.
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Setzt einen Kreis auf jedes Video in einem Profil-, Gefällt-mir- oder Favoritenraster. Wähle bis zu %1$s aus und tippe dann auf Speichern, um sie nacheinander zu speichern, mit Zähler und Abbrechen.
 Pick for saving	Zum Speichern auswählen
 You can pick up to %1$s at a time	Du kannst höchstens %1$s auf einmal auswählen
@@ -2890,6 +2895,7 @@ Friends in the top tabs	Freunde in den oberen Tabs
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Freunde wandert zu den Tabs oben im Feed, neben Folge ich, und Entdecken übernimmt seinen Platz in der unteren Leiste, so wie TikTok es in manchen Ländern anordnet. Deine Region und dein Feed bleiben, wie sie sind.
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	Mehr Chats anheften
+Ping	Ping
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Hebt die Grenze der App für angeheftete Chats im Posteingang auf, meist 5, damit du mehr anheften kannst.
 # context: Row title of the Comments switch that hides voice comments
@@ -3166,7 +3172,8 @@ Unknown (TikTok didn't send it)	Unbekannt (TikTok hat es nicht geschickt)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche Kontofakten. Sie zeigt, was TikTok über das Konto ohnehin geschickt hat: wann es beigetreten ist, Region und Sprache, Gifter-Level und SecUID, wie viele Beiträge, gelikte Videos, Favoriten und Reposts es hat, wann Nutzername und Anzeigename zuletzt geändert wurden, ob es privat ist und ob die gelikten Videos öffentlich sind. Es wird nichts zusätzlich abgerufen.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Raum-ID und deine Verbindung zeigen
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Zeigt in LIVE-Räumen eine kleine Zeile mit der Raum-ID und dem Zustand deiner eigenen Verbindung zum Stream, so wie der Player von TikTok sie misst: Ping, Latenz und Download-Geschwindigkeit. Tippe auf die Zeile, um die Raum-ID zu kopieren.
+Show the room line	Raumzeile zeigen
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	Zeigt in LIVE-Räumen eine kleine Zeile mit der Raum-ID und dem Zustand deiner eigenen Verbindung zum Stream, so wie der Player von TikTok sie misst: Ping, Latenz und Download-Geschwindigkeit. Tippe auf die Zeile, um sie zu einem Punkt zu verkleinern, und tippe auf den Punkt, um sie zurückzuholen. Halte die Zeile gedrückt, um die Raum-ID zu kopieren.
 Room ID %1$s	Raum-ID %1$s
 Ping %1$s ms	Ping %1$s ms
 Latency %1$s s	Latenz %1$s s
@@ -3200,7 +3207,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	Oberflächengröße
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	Macht die ganze Oberfläche von TikTok kleiner, Text und Schaltflächen gleichermaßen, damit mehr auf den Bildschirm passt. Bei 100 bleibt sie, wie sie ist. Starte TikTok neu, um die Änderung zu sehen.
 Show how long a LIVE has been on	Zeigen, wie lange ein LIVE schon läuft
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	Zeigt in LIVE-Räumen eine kleine Zeile, wie lange der Host schon live ist, gezählt ab dem Start des Raums. Ist die Raum-ID auch an, steht sie darunter.
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	Zeigt in LIVE-Räumen eine kleine Zeile, wie lange der Host schon live ist, gezählt ab dem Start des Raums. Ist die Raum-ID auch an, steht sie darunter. Tippe auf die Zeile, um sie zu einem Punkt zu verkleinern.
 LIVE for %1$s	LIVE seit %1$s
 Show exact LIVE battle scores	Genaue LIVE-Battle-Punkte anzeigen
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	In einem LIVE-Battle deckelt TikTok große Punktzahlen für Zuschauer, während der Host die ganze Zahl sieht. Damit siehst du die ganze Punktzahl in der Battle-Leiste und in den Co-Host-Fenstern.

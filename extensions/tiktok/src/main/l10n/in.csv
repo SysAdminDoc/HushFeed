@@ -453,6 +453,7 @@ Top right double tap,Ketuk dua kali kanan atas
 Bottom left double tap,Ketuk dua kali kiri bawah
 Bottom right double tap,Ketuk dua kali kanan bawah
 Download original photos,Unduh foto asli
+Download speed,Kecepatan unduh
 Destination updated,Tujuan diperbarui
 Downloads,Unduhan
 "Drag to move, release to place","Seret untuk memindahkan, lepaskan untuk menempatkan"
@@ -598,6 +599,7 @@ Hide message streaks,Sembunyikan rentetan pesan
 Hide new follower notifications,Sembunyikan notifikasi pengikut baru
 Hide new followers,Sembunyikan pengikut baru
 Hide paid partnerships,Sembunyikan kemitraan berbayar
+Hide parts of the room line,Sembunyikan bagian baris ruang
 Hide people and options by name,Sembunyikan orang dan opsi berdasarkan nama
 Hide photo posts,Sembunyikan publikasi foto
 Hide picture comments,Sembunyikan komentar bergambar
@@ -730,6 +732,7 @@ Larger (1.25x),"Lebih besar (1,25x)"
 Last original value,Nilai asli terakhir
 Last recording: %1$d gates.,Rekaman terakhir: %1$d gate.
 Last recording: 1 gate.,Rekaman terakhir: 1 gate.
+Latency,Latensi
 Layout,Tata letak
 "Layout, search, profile and system","Tata letak, pencarian, profil, dan sistem"
 Leave when TikTok says time is up,Keluar saat TikTok bilang waktunya habis
@@ -1825,6 +1828,7 @@ Brightness,Kecerahan
 Volume,Volume
 Left edge strip,Strip tepi kiri
 Right edge strip,Strip tepi kanan
+Room ID,ID ruang
 Stop search results playing on their own,Hentikan hasil pencarian diputar sendiri
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Video di hasil pencarian menampilkan sampulnya dan diputar saat kamu membukanya. Feed dan video yang kamu buka diputar seperti biasa.
 In a chat,Di obrolan
@@ -2216,6 +2220,7 @@ No app on this phone opens web links,Tidak ada aplikasi di ponsel ini yang membu
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.,Video lebar yang diizinkan TikTok mendapat tombol untuk menambah komentar satu baris di bawah video dan bilah untuk komentar itu dalam layar penuh. Video lain tetap sama.
 
 Pick videos to save from profile grids,Pilih video untuk disimpan dari grid profil
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.,Pilih apa yang mau dihapus dari baris kecil berisi ID ruang dan koneksimu. Sisanya tetap ada.
 "Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.","Menaruh lingkaran di setiap video pada grid profil, Disukai, atau Favorit. Pilih hingga %1$s, lalu ketuk Simpan untuk menyimpannya satu per satu, dengan hitungan dan Batal."
 Pick for saving,Pilih untuk disimpan
 You can pick up to %1$s at a time,Kamu bisa memilih hingga %1$s sekaligus
@@ -2774,6 +2779,7 @@ Taller,Sangat tinggi
 Friends in the top tabs,Teman di tab atas
 "Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.","Teman pindah ke tab di bagian atas feed, di samping Mengikuti, dan Temukan mengambil tempatnya di bilah bawah, seperti tata letak TikTok di beberapa negara. Wilayah dan feed Anda tetap sama."
 Pin more chats,Sematkan lebih banyak obrolan
+Ping,Ping
 "Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.","Menghapus batas aplikasi untuk obrolan yang disematkan di kotak masuk, biasanya 5, agar kamu bisa menyematkan lebih banyak."
 Hide voice comments,Sembunyikan komentar suara
 Hide comments made of a voice recording instead of words.,"Sembunyikan komentar yang berupa rekaman suara, bukan kata-kata."
@@ -3000,7 +3006,8 @@ SecUID,SecUID
 Unknown (TikTok didn't send it),Tidak diketahui (TikTok tidak mengirimnya)
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Lembar bagikan profil mendapat tombol Fakta akun. Tombol ini menampilkan apa yang sudah dikirim TikTok tentang akun itu: kapan bergabung, wilayah dan bahasanya, level pemberi hadiah dan SecUID-nya, berapa banyak postingan, video yang disukai, favorit, dan postingan ulangnya, kapan nama pengguna dan nama tampilannya terakhir diubah, apakah akunnya privat, dan apakah video yang disukainya publik. Tidak ada data tambahan yang diambil."
 Show the room ID and your connection,Tampilkan ID ruang dan koneksimu
-"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.","Menambahkan baris kecil di ruang LIVE berisi ID ruang dan kondisi koneksimu sendiri ke siaran, sesuai ukuran pemutar TikTok: ping, latensi, dan kecepatan unduh. Ketuk baris itu untuk menyalin ID ruang."
+Show the room line,Tampilkan baris ruang
+"Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.","Menambahkan baris kecil di ruang LIVE berisi ID ruang dan kondisi koneksimu sendiri ke siaran, sesuai ukuran pemutar TikTok: ping, latensi, dan kecepatan unduh. Ketuk baris itu untuk mengecilkannya jadi titik, lalu ketuk titiknya untuk menampilkannya lagi. Tekan lama baris itu untuk menyalin ID ruang."
 Room ID %1$s,ID ruang %1$s
 Ping %1$s ms,Ping %1$s md
 Latency %1$s s,Latensi %1$s d
@@ -3031,7 +3038,7 @@ Smaller text sizes,Ukuran teks lebih kecil
 UI size,Ukuran antarmuka
 "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.","Membuat seluruh antarmuka TikTok lebih kecil, teks maupun tombolnya, agar lebih banyak yang muat di layar. Nilai 100 membiarkannya seperti semula. Mulai ulang TikTok untuk melihat perubahannya."
 Show how long a LIVE has been on,Tampilkan sudah berapa lama LIVE berlangsung
-"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Menambahkan baris kecil di ruang LIVE berisi sudah berapa lama host siaran langsung, dihitung sejak ruang dimulai. Jika ID ruang juga aktif, baris ini ada di bawahnya."
+"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.","Menambahkan baris kecil di ruang LIVE berisi sudah berapa lama host siaran langsung, dihitung sejak ruang dimulai. Jika ID ruang juga aktif, baris ini ada di bawahnya. Ketuk baris itu untuk mengecilkannya jadi titik."
 LIVE for %1$s,LIVE selama %1$s
 Show exact LIVE battle scores,Tampilkan skor pertarungan LIVE yang tepat
 "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.","Dalam pertarungan LIVE, TikTok membatasi skor besar yang dilihat penonton, sementara host melihat angka lengkapnya. Ini menampilkan skor lengkap di bilah pertarungan dan jendela co-host."

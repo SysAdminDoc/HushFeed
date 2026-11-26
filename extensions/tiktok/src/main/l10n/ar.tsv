@@ -531,6 +531,7 @@ Top right double tap	نقر مزدوج أعلى اليمين
 Bottom left double tap	النقر المزدوج أسفل اليسار
 Bottom right double tap	النقر المزدوج أسفل اليمين
 Download original photos	تنزيل الصور الأصلية
+Download speed	سرعة التنزيل
 Destination updated	تم تحديث الوجهة
 Downloads	التنزيلات
 Drag to move, release to place	اسحب للتحريك، وأفلت للتثبيت
@@ -692,6 +693,7 @@ Hide message streaks	إخفاء سلاسل الرسائل
 Hide new follower notifications	إخفاء إشعارات المتابعين الجدد
 Hide new followers	إخفاء المتابعين الجدد
 Hide paid partnerships	إخفاء الشراكات المدفوعة
+Hide parts of the room line	إخفاء أجزاء من سطر الغرفة
 Hide people and options by name	إخفاء الأشخاص والخيارات بالاسم
 Hide photo posts	إخفاء منشورات الصور
 Hide picture comments	إخفاء تعليقات الصور
@@ -827,6 +829,7 @@ Last recording: %1$d gates.|two	آخر تسجيل: %1$d بوابتين.
 Last recording: %1$d gates.|few	آخر تسجيل: %1$d بوابات.
 Last recording: %1$d gates.|many	آخر تسجيل: %1$d بوابة.
 Last recording: 1 gate.	آخر تسجيل: 1 بوابة.
+Latency	التأخير
 Layout	التخطيط
 Layout, search, profile and system	التخطيط والبحث والملف الشخصي والنظام
 Leave maximum empty to keep it unlimited.	اترك الحد الأقصى فارغًا ليبقى غير محدود.
@@ -2045,6 +2048,7 @@ Brightness	السطوع
 Volume	مستوى الصوت
 Left edge strip	الشريط الجانبي الأيسر
 Right edge strip	شريط الحافة الأيمن
+Room ID	معرّف الغرفة
 Stop search results playing on their own	أوقف التشغيل التلقائي لنتائج البحث
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	تعرض الفيديوهات في نتائج البحث غلافها وتعمل عند فتحها. تعمل الخلاصة والفيديوهات التي تفتحها كالمعتاد.
 In a chat	في محادثة
@@ -2497,6 +2501,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	تحصل الفيديوهات العريضة التي يسمح بها TikTok على زر لإضافة تعليق من سطر واحد أسفل الفيديو، وعلى شريط لهذه التعليقات في وضع ملء الشاشة. تبقى الفيديوهات الأخرى كما هي.
 
 Pick videos to save from profile grids	اختر الفيديوهات لحفظها من شبكات الملف الشخصي
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	اختر ما تريد إزالته من السطر الصغير الذي فيه معرّف الغرفة واتصالك. يبقى الباقي فيه.
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	يضع دائرة على كل فيديو في شبكة ملف شخصي أو أعجبني أو المفضلات. اختر حتى %1$s، ثم انقر على حفظ لحفظها واحدا تلو الآخر، مع عداد وزر إلغاء.
 Pick for saving	اختر للحفظ
 You can pick up to %1$s at a time	يمكنك اختيار حتى %1$s في المرة الواحدة
@@ -3138,6 +3143,7 @@ Friends in the top tabs	الأصدقاء في التبويبات العلوية
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	تنتقل «الأصدقاء» إلى التبويبات أعلى الخلاصة، بجوار «أتابعه»، ويحل «اكتشف» مكانها في الشريط السفلي، كما يرتبها TikTok في بعض البلدان. تبقى منطقتك وخلاصتك كما هما.
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	تثبيت المزيد من المحادثات
+Ping	البينغ
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	يزيل حد التطبيق على الدردشات المثبتة في صندوق الوارد، عادة 5، لتتمكن من تثبيت المزيد.
 # context: Row title of the Comments switch that hides voice comments
@@ -3434,7 +3440,8 @@ Unknown (TikTok didn't send it)	غير معروف (لم يرسله TikTok)
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	تحصل ورقة مشاركة الملف الشخصي على زر حقائق الحساب. يعرض ما أرسله TikTok بالفعل عن الحساب: تاريخ انضمامه، ومنطقته ولغته، ومستوى الإهداء ومعرّف SecUID، وعدد منشوراته والفيديوهات التي أعجبته والمفضلة وإعادات النشر، وآخر تغيير لاسم المستخدم واسم العرض، وما إذا كان خاصًا وما إذا كانت مقاطع الفيديو التي أعجبته عامة. لا يتم جلب أي شيء إضافي.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	إظهار معرّف الغرفة واتصالك
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	يضيف سطرًا صغيرًا إلى غرف LIVE فيه معرّف الغرفة وحالة اتصالك أنت بالبث، كما يقيسها مشغّل TikTok: البينغ والتأخير وسرعة التنزيل. اضغط على السطر لنسخ معرّف الغرفة.
+Show the room line	إظهار سطر الغرفة
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	يضيف سطرًا صغيرًا إلى غرف LIVE فيه معرّف الغرفة وحالة اتصالك أنت بالبث، كما يقيسها مشغّل TikTok: البينغ والتأخير وسرعة التنزيل. اضغط على السطر لتصغيره إلى نقطة، واضغط على النقطة لإعادته. اضغط مطولًا على السطر لنسخ معرّف الغرفة.
 Room ID %1$s	معرّف الغرفة %1$s
 Ping %1$s ms	البينغ %1$s مللي ث
 Latency %1$s s	التأخير %1$s ث
@@ -3468,7 +3475,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	حجم الواجهة
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	يصغّر واجهة TikTok بالكامل، النصوص والأزرار معًا، ليتسع المزيد على الشاشة. القيمة 100 تتركها كما هي. أعد تشغيل TikTok لرؤية التغيير.
 Show how long a LIVE has been on	إظهار مدة بث LIVE
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	يضيف سطرًا صغيرًا إلى غرف LIVE يبيّن منذ متى والمضيف في بث مباشر، محسوبًا من بدء الغرفة. وإذا كان معرّف الغرفة مفعّلًا أيضًا، يظهر تحته.
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	يضيف سطرًا صغيرًا إلى غرف LIVE يبيّن منذ متى والمضيف في بث مباشر، محسوبًا من بدء الغرفة. وإذا كان معرّف الغرفة مفعّلًا أيضًا، يظهر تحته. اضغط على السطر لتصغيره إلى نقطة.
 LIVE for %1$s	مدة LIVE %1$s
 Show exact LIVE battle scores	إظهار نتائج معارك LIVE الدقيقة
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	في معركة LIVE، يقيّد TikTok النتائج الكبيرة التي يراها المشاهدون بينما يرى المضيف الرقم كاملًا. يعرض هذا النتيجة كاملة في شريط المعركة ونوافذ المضيفين المشاركين.

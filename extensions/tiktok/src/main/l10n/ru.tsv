@@ -516,6 +516,7 @@ Top right double tap	Двойное нажатие вверху справа
 Bottom left double tap	Двойное нажатие внизу слева
 Bottom right double tap	Двойное нажатие внизу справа
 Download original photos	Загружать оригиналы фото
+Download speed	Скорость загрузки
 Destination updated	Место назначения обновлено
 Downloads	Загрузки
 Drag to move, release to place	Перетащите, чтобы сдвинуть, отпустите, чтобы поставить
@@ -673,6 +674,7 @@ Hide message streaks	Скрывать серии сообщений
 Hide new follower notifications	Скрывать уведомления о новых подписчиках
 Hide new followers	Скрывать новых подписчиков
 Hide paid partnerships	Скрывать платные партнёрства
+Hide parts of the room line	Скрывать части строки комнаты
 Hide people and options by name	Скрывать людей и варианты по названию
 Hide photo posts	Скрывать фотопубликации
 Hide picture comments	Скрывать комментарии-картинки
@@ -807,6 +809,7 @@ Last recording: %1$d gates.|one	Последняя запись: %1$d перек
 Last recording: %1$d gates.|few	Последняя запись: %1$d переключателя.
 Last recording: %1$d gates.|many	Последняя запись: %1$d переключателей.
 Last recording: 1 gate.	Последняя запись: 1 переключатель.
+Latency	Задержка
 Layout	Раскладка
 Layout, search, profile and system	Раскладка, поиск, профиль и система
 Leave maximum empty to keep it unlimited.	Оставьте максимум пустым, чтобы снять ограничение.
@@ -1995,6 +1998,7 @@ Brightness	Яркость
 Volume	Громкость
 Left edge strip	Левая боковая полоса
 Right edge strip	Правая боковая полоса
+Room ID	ID комнаты
 Stop search results playing on their own	Не воспроизводить результаты поиска сами по себе
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.	Видео в результатах поиска показывают обложку и запускаются, когда вы их открываете. Лента и открытые вами видео воспроизводятся как обычно.
 In a chat	В чате
@@ -2437,6 +2441,7 @@ The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on 
 Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	На широких видео, где TikTok это разрешает, под видео появляется кнопка для однострочных комментариев, а в полноэкранном режиме панель для них. Остальные видео не меняются.
 
 Pick videos to save from profile grids	Выбирать видео для сохранения в сетках профилей
+Pick what to leave off the small line with the room ID and your connection. The rest stays on it.	Выберите, что убрать из небольшой строки с ID комнаты и вашим соединением. Остальное остаётся.
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Ставит кружок на каждое видео в сетке профиля, «Понравилось» или «Избранное». Выберите до %1$s, затем нажмите «Сохранить», чтобы сохранить их по очереди, со счётчиком и кнопкой «Отмена».
 Pick for saving	Выбрать для сохранения
 You can pick up to %1$s at a time	За раз можно выбрать не больше %1$s
@@ -3073,6 +3078,7 @@ Friends in the top tabs	«Друзья» во вкладках сверху
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» переходит к вкладкам вверху ленты, рядом с «Подписки», а «Интересное» занимает её место в нижней панели, как TikTok делает в некоторых странах. Регион и лента остаются прежними.
 # context: Row title of the Inbox switch that lifts the app's cap on pinned chats
 Pin more chats	Закреплять больше чатов
+Ping	Пинг
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Снимает ограничение приложения на закреплённые чаты во «Входящих», обычно 5, чтобы можно было закрепить больше.
 # context: Row title of the Comments switch that hides voice comments
@@ -3364,7 +3370,8 @@ Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал
 A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, сколько у него публикаций, понравившихся видео, избранного и репостов, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Показывать ID комнаты и ваше соединение
-Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Добавляет в комнаты LIVE небольшую строку с ID комнаты и состоянием вашего собственного соединения с трансляцией, как его измеряет плеер TikTok: пинг, задержка и скорость загрузки. Нажмите на строку, чтобы скопировать ID комнаты.
+Show the room line	Показать строку комнаты
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.	Добавляет в комнаты LIVE небольшую строку с ID комнаты и состоянием вашего собственного соединения с трансляцией, как его измеряет плеер TikTok: пинг, задержка и скорость загрузки. Нажмите на строку, чтобы свернуть её в точку, и нажмите на точку, чтобы вернуть её. Удерживайте строку, чтобы скопировать ID комнаты.
 Room ID %1$s	ID комнаты %1$s
 Ping %1$s ms	Пинг %1$s мс
 Latency %1$s s	Задержка %1$s с
@@ -3398,7 +3405,7 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 UI size	Размер интерфейса
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	Уменьшает весь интерфейс TikTok, и текст, и кнопки, чтобы на экране помещалось больше. При 100 всё остаётся как есть. Перезапустите TikTok, чтобы увидеть изменения.
 Show how long a LIVE has been on	Показывать, сколько длится LIVE
-Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	Добавляет в комнаты LIVE небольшую строку с тем, сколько ведущий уже в эфире, с момента начала комнаты. Если ID комнаты тоже включён, строка идёт под ним.
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that. Tap the line to shrink it to a dot.	Добавляет в комнаты LIVE небольшую строку с тем, сколько ведущий уже в эфире, с момента начала комнаты. Если ID комнаты тоже включён, строка идёт под ним. Нажмите на строку, чтобы свернуть её в точку.
 LIVE for %1$s	В эфире %1$s
 Show exact LIVE battle scores	Показывать точные очки в битвах LIVE
 In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	В битве LIVE TikTok ограничивает большие очки, которые видят зрители, а ведущий видит полное число. Этот переключатель показывает полный счёт на полосе битвы и в окнах соведущих.

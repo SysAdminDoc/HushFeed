@@ -609,6 +609,10 @@
       "show_exact_live_viewers",
       "show_exact_battle_scores",
       "live_room_info",
+      "hide_live_room_id",
+      "hide_live_ping",
+      "hide_live_latency",
+      "hide_live_download_speed",
       "live_running_time",
       "live_following_row_order",
       "offer_live_quality",
@@ -2837,9 +2841,27 @@
       "type": "boolean",
       "default": false
     },
+    "hide_live_download_speed": {
+      "field": "HIDE_LIVE_DOWNLOAD_SPEED",
+      "key": "hide_live_download_speed",
+      "type": "boolean",
+      "default": false
+    },
     "hide_live_entrance": {
       "field": "HIDE_LIVE_ENTRANCE",
       "key": "hide_live_entrance",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_latency": {
+      "field": "HIDE_LIVE_LATENCY",
+      "key": "hide_live_latency",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_ping": {
+      "field": "HIDE_LIVE_PING",
+      "key": "hide_live_ping",
       "type": "boolean",
       "default": false
     },
@@ -2852,6 +2874,12 @@
     "hide_live_ring": {
       "field": "HIDE_LIVE_RING",
       "key": "hide_live_ring",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_room_id": {
+      "field": "HIDE_LIVE_ROOM_ID",
+      "key": "hide_live_room_id",
       "type": "boolean",
       "default": false
     },

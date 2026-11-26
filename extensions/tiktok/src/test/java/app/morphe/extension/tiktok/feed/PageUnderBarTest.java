@@ -104,16 +104,33 @@ public class PageUnderBarTest {
             return page;
         }
 
+        /** What the window draws: the host, or the root holding it and the paint over it. */
+        View drawn;
+
         void show(Activity activity) {
+            drawn = host;
             activity.setContentView(host);
             layOut(host);
+        }
+
+        /**
+         * With TikTok's paint under the gesture bar (h0r on 48.0.2) over the host, in the root the
+         * host hangs in.
+         */
+        void show(Activity activity, View paint) {
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(host, new FrameLayout.LayoutParams(MATCH, MATCH));
+            root.addView(paint, new FrameLayout.LayoutParams(MATCH, GESTURE_BAR, Gravity.BOTTOM));
+            drawn = root;
+            activity.setContentView(root);
+            layOut(root);
         }
 
         /** A few passes with a layout after each, as TikTok's layouts would bring them. */
         void settle(Activity activity) {
             for (int i = 0; i < 4; i++) {
                 VideoOverlayHider.applyTo(activity);
-                layOut(host);
+                layOut(drawn);
             }
         }
 
@@ -324,7 +341,8 @@ public class PageUnderBarTest {
      * refresh layout, and the grid hangs under the refresh header's room, scrolled up over it.
      * The switch changed nothing there: the backdrop read as something over the grid that would
      * go down with it, the band stayed white under the bar, and the pill's strip was painted over
-     * the grid's last row.
+     * the grid's last row. With those fixed, the window's own paint under the gesture bar, white
+     * on this page, still covered the grid's bottom 48 px.
      */
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -359,7 +377,9 @@ public class PageUnderBarTest {
             ScrollView grid = list(activity, last);
             grid.getChildAt(0).setBackgroundColor(Color.RED);
             refresh.addView(grid);
-            window.show(activity);
+            View paint = new View(activity);
+            paint.setBackgroundColor(Color.WHITE);
+            window.show(activity, paint);
 
             // The switch off: TikTok's page, the band white under the bar and the strip painted.
             window.settle(activity);
@@ -372,6 +392,7 @@ public class PageUnderBarTest {
             Settings.PAGES_UNDER_BOTTOM_BAR.save(true);
             window.settle(activity);
             assertEquals("the grid's page didn't go down under the bar", 2181, body.getBottom());
+            assertEquals("the gesture bar's paint still covers the grid", View.INVISIBLE, paint.getVisibility());
             assertEquals("the band under the page still covers the grid", Color.RED,
                     pixel(window, 20, 2181 - 10));
             assertEquals("the strip still covers the grid", 0, window.strip());
@@ -384,6 +405,7 @@ public class PageUnderBarTest {
             assertEquals(2181 - BAR, body.getBottom());
             assertEquals(0, ((ViewGroup.MarginLayoutParams) body.getLayoutParams()).bottomMargin);
             assertEquals(View.VISIBLE, band.getVisibility());
+            assertEquals(View.VISIBLE, paint.getVisibility());
             assertEquals(0, grid.getPaddingBottom());
             assertTrue(grid.getClipToPadding());
             assertEquals(Color.WHITE, pixel(window, 20, 2181 - 10));
@@ -512,7 +534,7 @@ public class PageUnderBarTest {
     /** The color the window draws at {@code x}, {@code y}. */
     private static int pixel(Window window, int x, int y) {
         Bitmap bitmap = Bitmap.createBitmap(1080, 2181, Bitmap.Config.ARGB_8888);
-        window.host.draw(new Canvas(bitmap));
+        window.drawn.draw(new Canvas(bitmap));
         int color = bitmap.getPixel(x, y);
         bitmap.recycle();
         return color;

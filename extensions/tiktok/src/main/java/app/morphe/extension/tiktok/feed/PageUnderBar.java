@@ -36,7 +36,8 @@ import java.util.WeakHashMap;
  * with one) goes while the anchor is down: it would draw over the page, and a column shared by
  * weight gives the anchor its room only once it's gone. Every list in it, the pages beside the one in front included, takes the part
  * of it now under the bar and the pill's rise as bottom padding and stops clipping to it, so its
- * rows draw on under the bar and its last row still scrolls up clear of the tabs.
+ * rows draw on under the bar and its last row still scrolls up clear of the tabs. While such a page
+ * is in front, TikTok's paint under the gesture bar is hidden too, so it shows down to the bottom.
  *
  * <p>A layout that ignores the margin is put back on the next pass and left alone from then on. A
  * value TikTok sets again is taken as its own and the room is added to it; past a few of those
@@ -98,10 +99,13 @@ final class PageUnderBar {
     private static final Map<ViewGroup, Padded> PADDED = new WeakHashMap<>();
     /** Anchors whose layout wouldn't take the room, left as TikTok has them. */
     private static final Map<View, Boolean> REFUSED = new WeakHashMap<>();
+    /** TikTok's paint under the gesture bar, hidden while a page in front runs under the bar. */
+    private static WeakReference<View> shade = new WeakReference<>(null);
+    private static int shadeRetakes;
 
     /** Whether a page runs under the bar and a pass has to come by to put it back. */
     static boolean holds() {
-        return !GROWN.isEmpty() || !PADDED.isEmpty();
+        return !GROWN.isEmpty() || !PADDED.isEmpty() || shade.get() != null;
     }
 
     /**
@@ -125,7 +129,10 @@ final class PageUnderBar {
         for (Map.Entry<View, Grown> entry : new ArrayList<>(GROWN.entrySet())) {
             if (!wanted(entry.getKey(), frame, decor)) ungrow(entry.getKey(), entry.getValue());
         }
-        if (frame == null) return false;
+        if (frame == null) {
+            keepShade(decor, null, 0, false);
+            return false;
+        }
 
         int[] at = new int[2];
         bar.getLocationInWindow(at);
@@ -160,7 +167,72 @@ final class PageUnderBar {
             }
             if (onScreen(list, mask)) inFront = true;
         }
+        keepShade(decor, mask, barBottom, inFront);
         return inFront;
+    }
+
+    /**
+     * Hides TikTok's paint under the gesture bar while {@code hide}, and puts it back otherwise.
+     * On 48.0.2 it's a plain view ({@code h0r}) at the bottom of the main window's root, drawn over
+     * the pages, clear on the feed and white on a light page like Community's, so a page that ran
+     * on under the bar still ended in a white strip (Login2, 2026-11-26). Another window's is left
+     * as it is.
+     */
+    private static void keepShade(View decor, @Nullable ViewGroup mask, int barBottom, boolean hide) {
+        View held = shade.get();
+        if (held != null && held.isAttachedToWindow() && held.getRootView() != decor) return;
+        if (held != null && (!hide || !held.isAttachedToWindow())) {
+            if (held.getVisibility() == View.INVISIBLE) held.setVisibility(View.VISIBLE);
+            shade = new WeakReference<>(null);
+            held = null;
+        }
+        if (!hide || mask == null) return;
+        if (held == null) {
+            held = shadeUnder(mask, barBottom);
+            if (held == null) return;
+            shade = new WeakReference<>(held);
+            shadeRetakes = 0;
+            held.setVisibility(View.INVISIBLE);
+            Logger.printDebug(() -> "Pages under the bar: hid the paint under the gesture bar");
+            return;
+        }
+        if (held.getVisibility() != View.VISIBLE) return;
+        if (++shadeRetakes > MAX_RETAKES) {
+            REFUSED.put(held, true);
+            shade = new WeakReference<>(null);
+            Logger.printDebug(() -> "Pages under the bar: left the paint under the gesture bar, TikTok keeps showing it");
+            return;
+        }
+        held.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * A plain view drawn after the branch holding {@code mask}, up to the activity's content, that
+     * spans its parent's width, ends at its parent's bottom and starts at or below the bar's bottom:
+     * the paint under the gesture bar, and nothing a page holds.
+     */
+    @Nullable
+    private static View shadeUnder(ViewGroup mask, int barBottom) {
+        View branch = mask;
+        int[] at = new int[2];
+        for (ViewParent parent = mask.getParent(); parent instanceof ViewGroup; parent = parent.getParent()) {
+            ViewGroup group = (ViewGroup) parent;
+            for (int i = group.indexOfChild(branch) + 1; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child.getClass() != View.class || child.getVisibility() != View.VISIBLE
+                        || child.getHeight() == 0 || REFUSED.containsKey(child)) {
+                    continue;
+                }
+                child.getLocationInWindow(at);
+                if (child.getLeft() <= 0 && child.getRight() >= group.getWidth()
+                        && child.getBottom() >= group.getHeight() - 1 && at[1] >= barBottom - 1) {
+                    return child;
+                }
+            }
+            if (group.getId() == android.R.id.content) return null;
+            branch = group;
+        }
+        return null;
     }
 
     /** Whether a view this class changed stays changed: it's another window's, or in {@code frame}. */

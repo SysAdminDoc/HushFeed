@@ -336,8 +336,7 @@ public final class CaptionLine {
      */
     private static void style(Line line, TextView source, TextView colorOf) {
         int opacity = Math.max(10, Math.min(100, Settings.COUNTRY_DATE_OPACITY.get()));
-        int base = colorOf.getCurrentTextColor();
-        int color = (Math.round(Color.alpha(base) * opacity / 100f) << 24) | (base & 0x00FFFFFF);
+        int color = faded(colorOf.getCurrentTextColor(), opacity);
         if (line.getCurrentTextColor() != color) {
             line.setTextColor(color);
         }
@@ -356,10 +355,21 @@ public final class CaptionLine {
         }
         if (Settings.COUNTRY_DATE_SHADOW.get()) {
             shadow(line, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHADOW_RADIUS_DP, metrics), 0f,
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHADOW_DY_DP, metrics), SHADOW_COLOR);
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHADOW_DY_DP, metrics),
+                    faded(SHADOW_COLOR, opacity));
         } else if (source != null) {
-            shadow(line, source.getShadowRadius(), source.getShadowDx(), source.getShadowDy(), source.getShadowColor());
+            shadow(line, source.getShadowRadius(), source.getShadowDx(), source.getShadowDy(),
+                    faded(source.getShadowColor(), opacity));
         }
+    }
+
+    /**
+     * The color with its alpha taken down to the line's opacity. The shadow needs it as much as
+     * the letters: Android fades a shadow with its text only when the shadow's color is opaque,
+     * and both shadows here are see-through, so a faint line kept a full dark smudge (#519).
+     */
+    static int faded(int color, int opacity) {
+        return (Math.round(Color.alpha(color) * opacity / 100f) << 24) | (color & 0x00FFFFFF);
     }
 
     private static void shadow(TextView line, float radius, float dx, float dy, int color) {

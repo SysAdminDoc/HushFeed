@@ -21,6 +21,7 @@ Every Hushfeed release, newest first.
 * New `Hide sound page buttons` patch. Turn on its switch in Hushfeed settings > Feed screen and a sound's page no longer shows `Jam Sound` and `Use sound` at the bottom (#535).
 * A diagnostic report now remembers suggested video notifications after TikTok restarts. Its push section says how many `Block suggested video notifications` stopped and how many got through, and when the last one came, so a report exported the next day still shows them.
 * With `Dark LIVE panels` on, a LIVE you open from search results shows the line under the sender's name in its gift banner again. It was there but drawn in no color at all (#362).
+* Turning `Country and date opacity` down now fades the shadow under that line too. The letters went faint but the shadow stayed as dark as before, so a low setting looked like a smudge (#519).
 
 ## 0.85.0 (2026-11-24)
 

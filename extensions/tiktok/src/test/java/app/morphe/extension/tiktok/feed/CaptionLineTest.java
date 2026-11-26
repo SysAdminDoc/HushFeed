@@ -218,7 +218,7 @@ public class CaptionLineTest {
         float density = context.getResources().getDisplayMetrics().scaledDensity;
         assertEquals("11 points, whatever the post time's size", 11 * density, line.getTextSize(), 0.01f);
         assertEquals("the name's white at 85%", 0xD9FFFFFF, line.getCurrentTextColor());
-        assertEquals("a dark shadow at 70%", 0xB3000000, line.getShadowColor());
+        assertEquals("a dark shadow at 70%, faded to 85% with the letters", 0x98000000, line.getShadowColor());
         assertTrue("the shadow is the line's own", line.getShadowRadius() > 1f);
 
         Settings.COUNTRY_DATE_TEXT_SIZE.save(0);
@@ -228,6 +228,29 @@ public class CaptionLineTest {
         assertEquals("back to the post time's size", 13f, line.getTextSize(), 0f);
         assertEquals(NAME_COLOR, line.getCurrentTextColor());
         assertEquals("and the post time's shadow", 0x22000000, line.getShadowColor());
+        assertEquals(1f, line.getShadowRadius(), 0f);
+    }
+
+    /**
+     * #519: at a low opacity the letters faded but their shadow didn't, since Android only fades a
+     * shadow with its text when the shadow's color is opaque, so the line read as a dark smudge.
+     * Both shadows now fade with the letters.
+     */
+    @Test
+    public void aFadedLinesShadowFadesWithIt() {
+        Cell cell = new Cell(context, "jasonthegreat", true);
+        cell.postTime.setShadowLayer(1f, 0f, 0f, 0x22000000);
+        Settings.COUNTRY_DATE_OPACITY.save(30);
+        Settings.COUNTRY_DATE_SHADOW.save(true);
+
+        CaptionLine.show(cell.name, cell.root, "United States");
+        TextView line = cell.line();
+        assertEquals("the name's white at 30%", 0x4DFFFFFF, line.getCurrentTextColor());
+        assertEquals("the line's own shadow at 30% of its 70%", 0x36000000, line.getShadowColor());
+
+        Settings.COUNTRY_DATE_SHADOW.save(false);
+        CaptionLine.show(cell.name, cell.root, "United States");
+        assertEquals("the post time's shadow at 30% of its own", 0x0A000000, line.getShadowColor());
         assertEquals(1f, line.getShadowRadius(), 0f);
     }
 

@@ -71,6 +71,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.notInterestedEnabled
                 || SettingsStatus.feedMuteEnabled
                 || SettingsStatus.advancedDownloadsEnabled
+                || SettingsStatus.hideSoundPageButtonsEnabled
                 || SettingsStatus.automaticClearDisplayEnabled
                 || SettingsStatus.doubleTapEnabled
                 || SettingsStatus.swipeLeftEnabled

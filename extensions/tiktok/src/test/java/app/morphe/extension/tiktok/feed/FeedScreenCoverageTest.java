@@ -200,6 +200,8 @@ public class FeedScreenCoverageTest {
         put("grid_search", NONE, YES, NONE);
         // Block sound under Save on the sound page the spinning record opens, a screen of its own.
         put("sound_page_block_button", NONE, NONE, NONE);
+        // Jam Sound and Use sound at the foot of that same sound page (#535).
+        put("hide_sound_page_buttons", NONE, NONE, NONE);
         // Where the Liked grid's list starts, which neither window draws (#350).
         put("liked_jump_to_date", NONE, NONE, NONE);
         // The same for the Favorites grid (#508).

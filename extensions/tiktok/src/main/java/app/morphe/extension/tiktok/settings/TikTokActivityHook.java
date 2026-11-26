@@ -122,6 +122,8 @@ public class TikTokActivityHook {
         ChangedSettingsReport.install();
         // Whether TikTok runs on an identity made here, and how often it was wiped for one.
         app.morphe.extension.tiktok.privacy.DeviceIdentity.installReport();
+        // What the Video bitrate limit did to the videos played since TikTok started.
+        app.morphe.extension.tiktok.playback.PlaybackQuality.installReport();
         // Build details and the full log export list the switches the patcher registered, read
         // here for the same reason. Both open from this screen.
         BuildDetails.setRegisteredSwitches(SettingsStatus.registered());

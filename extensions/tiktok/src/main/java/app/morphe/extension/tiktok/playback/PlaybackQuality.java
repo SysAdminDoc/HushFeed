@@ -13,8 +13,11 @@ import android.os.SystemClock;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.download.QualitySelector;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -135,23 +138,51 @@ public final class PlaybackQuality {
     /**
      * The gears a video may play under the limit, judged per video, so a clip with an ordinary
      * bitrate keeps every gear it came with (#454). A gear that doesn't say its bitrate stays.
-     * With every gear over the limit, the lightest one that can play is what's left.
+     * With no gear under the limit that can play, the lightest one that can is added, so the
+     * player always has one.
+     *
+     * <p>Two lists used to come back whole, heavy gears and all (#533). One had every gear over
+     * the limit and no address this reads as playable, so there was no "lightest that can play"
+     * to keep. The other had its only gears under the limit without a playable address, which
+     * {@link PreferredGears} answers by handing back the whole list. Like Prefer H.264 video, a
+     * list where no gear has a playable address tells nothing about which plays, so the limit
+     * stands there and the lightest by rate is kept.
      */
     static List<?> underCap(List<?> gears, long cap) {
-        if (cap <= 0 || gears == null || gears.size() < 2) return gears;
-        List<Object> kept = new ArrayList<>(gears.size());
-        Object lightest = null;
-        long lightestRate = Long.MAX_VALUE;
-        for (Object gear : gears) {
-            long rate = QualitySelector.bitRateOf(gear);
-            if (rate <= cap) kept.add(gear);
-            if (rate > 0 && rate < lightestRate && QualitySelector.hasUsableAddress(gear)) {
-                lightest = gear;
-                lightestRate = rate;
-            }
+        if (cap <= 0 || gears == null || gears.isEmpty()) return gears;
+        if (gears.size() == 1) {
+            // Nothing lighter to play, so it goes as it came. The report counts it, since a
+            // heavy single-gear video looks the same on the phone as a limit that did nothing.
+            Report.single(gears.get(0), cap);
+            return gears;
         }
-        if (kept.isEmpty() && lightest != null) kept.add(lightest);
-        return PreferredGears.narrow(gears, kept, "Video bitrate limit");
+        int size = gears.size();
+        long[] rates = new long[size];
+        boolean anyUnder = false, keptPlays = false, anyPlays = false;
+        int lightest = -1, lightestPlaying = -1;
+        for (int i = 0; i < size; i++) {
+            Object gear = gears.get(i);
+            long rate = rates[i] = QualitySelector.bitRateOf(gear);
+            boolean plays = QualitySelector.hasUsableAddress(gear);
+            anyPlays |= plays;
+            if (rate <= cap) {
+                anyUnder = true;
+                keptPlays |= plays;
+            }
+            if (rate <= 0) continue;
+            if (lightest < 0 || rate < rates[lightest]) lightest = i;
+            if (plays && (lightestPlaying < 0 || rate < rates[lightestPlaying])) lightestPlaying = i;
+        }
+        // The lightest that can play over the limit, when nothing under it can. With no
+        // playable address anywhere, only when nothing at all is under the limit.
+        int fallback = keptPlays ? -1 : anyPlays ? lightestPlaying : anyUnder ? -1 : lightest;
+        List<Object> kept = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            if (i == fallback || rates[i] <= cap) kept.add(gears.get(i));
+        }
+        List<?> offered = PreferredGears.narrow(gears, kept, "Video bitrate limit");
+        Report.offered(gears, rates, offered, fallback < 0 ? 0 : rates[fallback], cap);
+        return offered;
     }
 
     private static boolean isMetered() {
@@ -294,7 +325,12 @@ public final class PlaybackQuality {
         if (!(raw instanceof Map<?, ?>)) return original;
         Map<?, ?> dynamic = (Map<?, ?>) raw;
         Object list = dynamic.get("dynamic_video_list");
-        if (!(list instanceof List<?>) || ((List<?>) list).size() < 2) return original;
+        if (!(list instanceof List<?>) || ((List<?>) list).size() < 2) {
+            if (list instanceof List<?> && ((List<?>) list).size() == 1 && cap > 0) {
+                Report.single(new Variant(((List<?>) list).get(0), 0), cap);
+            }
+            return original;
+        }
         List<?> variants = (List<?>) list;
         List<Object> kept = keptVariants(variants, mode, cap);
         if (kept == null) return original;
@@ -375,6 +411,8 @@ public final class PlaybackQuality {
                         dynamic.put("dynamic_video_list", list);
                         result = root.toString();
                     }
+                } else if (values != null && values.length() == 1 && cap > 0) {
+                    Report.single(new Variant(values.get(0), 0), cap);
                 }
                 // A readable object with one gear, or none, is an ordinary video rather than a
                 // miss: the getter gave what it promised and there was nothing to choose from.
@@ -401,8 +439,132 @@ public final class PlaybackQuality {
                 + ", so playback quality leaves it to the app");
     }
 
+    /** Puts the PLAYBACK section in every export from the settings screen on, when the patch is in. */
+    public static void installReport() {
+        if (SettingsStatus.playbackQualityEnabled) Report.register();
+    }
+
+    /**
+     * The PLAYBACK section of the diagnostic report (#533). Someone who watches a heavy video play
+     * with the Video bitrate limit on can't tell on the phone whether the limit cut it, had
+     * nothing lighter to give, or never saw it, and a download meter reads the same for all
+     * three. TikTok asks for one video's gears many times, so each video counts once, known by
+     * its rates and addresses.
+     */
+    static final class Report implements LogBufferManager.ReportSection {
+        static final Report INSTANCE = new Report();
+        private static final int SEEN_MAX = 512;
+        /** The videos already counted, newest last, guarding every count below. */
+        private static final Map<String, Boolean> SEEN = new LinkedHashMap<String, Boolean>(64, 0.75f, true) {
+            @Override protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                return size() > SEEN_MAX;
+            }
+        };
+        private static long cut, noneUnder, single, unrated;
+        private static long lightestMin = Long.MAX_VALUE, lightestMax, singleMax;
+        private static volatile boolean registered;
+
+        static void register() {
+            if (registered) return;
+            registered = true;
+            LogBufferManager.registerReportSection(INSTANCE);
+        }
+
+        /** A video with one gear, which plays whatever its rate. */
+        static void single(Object gear, long cap) {
+            long rate = QualitySelector.bitRateOf(gear);
+            if (rate > 0 && rate <= cap) return;
+            String key = key(cap, Collections.singletonList(gear), new long[]{rate});
+            synchronized (SEEN) {
+                if (SEEN.put(key, Boolean.TRUE) != null) return;
+                if (rate <= 0) {
+                    unrated++;
+                } else {
+                    single++;
+                    singleMax = Math.max(singleMax, rate);
+                }
+            }
+            register();
+        }
+
+        /** What the limit left of a video's gears, and the rate of the one it added back, or 0. */
+        static void offered(List<?> gears, long[] rates, List<?> offered, long fallbackRate, long cap) {
+            boolean hasUnrated = false;
+            for (long rate : rates) hasUnrated |= rate <= 0;
+            boolean wasCut = fallbackRate == 0 && offered.size() < gears.size();
+            if (!hasUnrated && !wasCut && fallbackRate == 0) return;
+            String key = key(cap, gears, rates);
+            synchronized (SEEN) {
+                if (SEEN.put(key, Boolean.TRUE) != null) return;
+                if (hasUnrated) unrated++;
+                if (wasCut) cut++;
+                if (fallbackRate > 0) {
+                    noneUnder++;
+                    lightestMin = Math.min(lightestMin, fallbackRate);
+                    lightestMax = Math.max(lightestMax, fallbackRate);
+                }
+            }
+            register();
+        }
+
+        private static String key(long cap, List<?> gears, long[] rates) {
+            String[] parts = new String[rates.length];
+            for (int i = 0; i < rates.length; i++) parts[i] = rates[i] + ":" + firstAddress(gears.get(i));
+            java.util.Arrays.sort(parts);
+            StringBuilder key = new StringBuilder().append(cap);
+            for (String part : parts) key.append('|').append(part);
+            return key.toString();
+        }
+
+        private static int firstAddress(Object gear) {
+            Object urls = Reflect.property(Reflect.property(gear, "getPlayAddr", "playAddr"), "getUrlList", "urlList");
+            if (!(urls instanceof List<?>) || ((List<?>) urls).isEmpty()) return 0;
+            Object url = ((List<?>) urls).get(0);
+            return url == null ? 0 : url.hashCode();
+        }
+
+        /** Bits a second as Mb/s with one decimal, "2.4 Mb/s", "20 Mb/s". */
+        static String megabits(long bits) {
+            long tenths = (bits + 50_000) / 100_000;
+            return (tenths % 10 == 0 ? String.valueOf(tenths / 10) : (tenths / 10) + "." + (tenths % 10)) + " Mb/s";
+        }
+
+        @Override public String title() {
+            return "PLAYBACK";
+        }
+
+        @Override public List<String> lines() {
+            List<String> lines = new ArrayList<>();
+            if (!SettingsStatus.playbackQualityEnabled) return lines;
+            long cap = bitrateCap();
+            synchronized (SEEN) {
+                if (cap == 0 && cut + noneUnder + single + unrated == 0) return lines;
+                lines.add("Video bitrate limit: " + (cap == 0 ? "off" : megabits(cap)));
+                lines.add("Videos since TikTok started that the limit moved to lighter gears: " + cut);
+                String lightest = noneUnder == 0 ? ""
+                        : ", the lightest that played was " + (lightestMin == lightestMax ? megabits(lightestMin)
+                        : megabits(lightestMin).replace(" Mb/s", "") + " to " + megabits(lightestMax));
+                lines.add("Videos since TikTok started with no gear under the limit: " + noneUnder + lightest);
+                lines.add("Single-gear videos since TikTok started over the limit, played as they came: " + single
+                        + (single == 0 ? "" : ", the heaviest " + megabits(singleMax)));
+                lines.add("Videos since TikTok started with a gear that lists no bitrate, kept: " + unrated);
+            }
+            return lines;
+        }
+
+        static void resetForTests() {
+            synchronized (SEEN) {
+                SEEN.clear();
+                cut = noneUnder = single = unrated = 0;
+                lightestMin = Long.MAX_VALUE;
+                lightestMax = singleMax = 0;
+            }
+        }
+    }
+
     /** Forgets which getters have been described, so a test can watch the first one again. */
     static void resetForTests() {
+        Report.resetForTests();
         DESCRIBED.clear();
         CHOICES.clear();
         synchronized (CACHE) {

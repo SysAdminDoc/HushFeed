@@ -31,6 +31,7 @@ public class PlaybackQualityTest {
         SettingsStatus.playbackQualityEnabled = false;
         Settings.PLAYBACK_BITRATE_LIMIT.resetToDefault();
         Settings.PLAYBACK_QUALITY.resetToDefault();
+        PlaybackQuality.resetForTests();
     }
     private static Map<String, Object> stream(String name, int width, int height, int rate) {
         return Map.of("gear_name", name, "vwidth", width, "vheight", height, "bitrate", rate,
@@ -86,6 +87,76 @@ public class PlaybackQualityTest {
 
         Settings.PLAYBACK_BITRATE_LIMIT.save("nonsense");
         assertEquals("a value it can't read is no limit", 0L, PlaybackQuality.bitrateCap());
+    }
+
+    /**
+     * #533: a list with every gear over the limit and no address this reads as playable came
+     * back whole, so TikTok's own choice could be the heaviest. The limit stands there too.
+     */
+    @Test public void gearsWithNoAddressThisCanReadStillDropToTheLightest() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        var heavy = new AdvancedDownloadsTest.Gear("1080p", 50_000_000, "http://example.com/heavy");
+        var lighter = new AdvancedDownloadsTest.Gear("720p", 9_000_000, "http://example.com/lighter");
+        Settings.PLAYBACK_QUALITY.save("auto");
+        Settings.PLAYBACK_BITRATE_LIMIT.save("2");
+        assertEquals(List.of(lighter), PlaybackQuality.filterPlayerUrlModelGears(List.of(heavy, lighter)));
+    }
+
+    /**
+     * #533: when the only gears under the limit have no playable address, the list used to come
+     * back whole, the heaviest gear included. The lightest one that can play is added instead.
+     */
+    @Test public void aLightGearThatCantPlayNeverLetsTheHeavyOnesBack() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        var heavy = new AdvancedDownloadsTest.Gear("1080p", 50_000_000, "https://example.com/heavy");
+        var middle = new AdvancedDownloadsTest.Gear("720p", 9_000_000, "https://example.com/middle");
+        var light = new AdvancedDownloadsTest.Gear("360p", 900_000, "http://example.com/light");
+        Settings.PLAYBACK_QUALITY.save("auto");
+        Settings.PLAYBACK_BITRATE_LIMIT.save("2");
+        assertEquals(List.of(middle, light), PlaybackQuality.filterPlayerUrlModelGears(List.of(heavy, middle, light)));
+    }
+
+    /** #533: the export says what the limit did since TikTok started, counting each video once. */
+    @Test public void theExportCountsWhatTheLimitDidOncePerVideo() throws Exception {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        SettingsStatus.playbackQualityEnabled = true;
+        Settings.PLAYBACK_QUALITY.save("auto");
+        assertEquals("no limit and nothing counted says nothing", List.of(), PlaybackQuality.Report.INSTANCE.lines());
+        Settings.PLAYBACK_BITRATE_LIMIT.save("2");
+
+        var cut = List.of(new AdvancedDownloadsTest.Gear("1080p", 50_000_000, "https://example.com/heavy"),
+                new AdvancedDownloadsTest.Gear("360p", 900_000, "https://example.com/light"));
+        PlaybackQuality.filterVideoGears(cut);
+        PlaybackQuality.filterPlayerUrlModelGears(cut);
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("1080p", 40_000_000, "https://example.com/b1"),
+                new AdvancedDownloadsTest.Gear("360p", 800_000, "https://example.com/b2")));
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("1080p", 30_000_000, "https://example.com/c1"),
+                new AdvancedDownloadsTest.Gear("720p", 2_400_000, "https://example.com/c2")));
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("1080p", 30_000_000, "https://example.com/d1"),
+                new AdvancedDownloadsTest.Gear("720p", 9_050_000, "https://example.com/d2")));
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("2160p", 25_000_000, "https://example.com/e")));
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("1080p", 1_000_000, "https://example.com/fits")));
+        PlaybackQuality.filterVideoGears(List.of(new AdvancedDownloadsTest.Gear("1080p", 0, "https://example.com/f1"),
+                new AdvancedDownloadsTest.Gear("540p", 1_200_000, "https://example.com/f2")));
+        String single = new JSONObject(Map.of("dynamic_video", Map.of("dynamic_video_list",
+                List.of(stream("1080p", 1080, 1920, 30_000_000))))).toString();
+        PlaybackQuality.filterVideoModelJson(single);
+
+        assertEquals(List.of(
+                "Video bitrate limit: 2 Mb/s",
+                "Videos since TikTok started that the limit moved to lighter gears: 2",
+                "Videos since TikTok started with no gear under the limit: 2, the lightest that played was 2.4 to 9.1 Mb/s",
+                "Single-gear videos since TikTok started over the limit, played as they came: 2, the heaviest 30 Mb/s",
+                "Videos since TikTok started with a gear that lists no bitrate, kept: 1"),
+                PlaybackQuality.Report.INSTANCE.lines());
+        assertEquals("PLAYBACK", PlaybackQuality.Report.INSTANCE.title());
+
+        PlaybackQuality.resetForTests();
+        Settings.PLAYBACK_BITRATE_LIMIT.save("off");
+        assertEquals("a reset forgets the counts", List.of(), PlaybackQuality.Report.INSTANCE.lines());
     }
 
     @Test public void theBitrateLimitReachesTheAdaptiveModels() throws Exception {

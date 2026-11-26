@@ -39,6 +39,7 @@ Every Hushfeed release, newest first.
 * `Show the room ID and your connection` can leave parts off the line now. Pick the room ID, ping, latency or download speed in the new `Hide parts of the room line` row right under it. In a LIVE, a tap on the line shrinks it to a small dot that stays out of the way from room to room, and a tap on the dot brings it back. Copying the room ID moved to a long press on the line (#534).
 * The block button and Hushfeed's other feed buttons no longer float over Home's Community grid. They stayed there for the last video you watched, since the Home tab stays selected on that page. Swipe back to For You and they're right back.
 * The Record button in a LIVE's small window records the room the window shows. After a few taps on the window's arrows it said "No stream found to record. Reopen the LIVE." in every room. With `Watch LIVEs unseen` on, Record also found no stream in the first room you opened, even though it was playing. It records the stream that's playing now (#413).
+* `Video bitrate limit` no longer lets a heavy video through when Hushfeed can't read the addresses of its lighter versions. Those videos kept every version, the heaviest too. Now the lightest one is kept. The exported report has a new PLAYBACK part that counts the videos the limit made lighter, the ones with nothing under the limit (and the lightest rate that played), and the ones that came in a single heavy version, so a report sent right after a heavy video shows which it was (#533).
 
 ## 0.85.0 (2026-11-24)
 

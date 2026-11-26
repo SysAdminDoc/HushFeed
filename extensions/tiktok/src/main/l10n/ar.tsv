@@ -2792,6 +2792,8 @@ Leave after no touch	المغادرة عند عدم اللمس
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	الصفر يوقف هذه الميزة. بعد هذا العدد من الدقائق دون لمس الشاشة، يتوقف الفيديو وينتقل TikTok إلى الخلفية، عندما تغفو أثناء المشاهدة. أي لمسة تعيد بدء الانتظار.
 Left TikTok after no touch	تم الخروج من TikTok بعد عدم اللمس
 Show when an account was made	إظهار تاريخ إنشاء الحساب
+Show how many videos a profile has	إظهار عدد مقاطع الفيديو في الملف الشخصي
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	تحت @username في الملف الشخصي، بما في ذلك ملفك، اعرض عدد مقاطع الفيديو فيه كما يحسبها TikTok.
 Show what changed since your last visit	إظهار ما تغيّر منذ زيارتك الأخيرة
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	أسفل @اسم المستخدم في الملف الشخصي، يعرض كيف تغيّر عدد المتابِعين والمتابَعين والإعجابات والفيديوهات منذ آخر مرة فتحته فيها. تُحفظ الأعداد على هذا الهاتف فقط.
 Since %1$s: %2$s	منذ %1$s: %2$s

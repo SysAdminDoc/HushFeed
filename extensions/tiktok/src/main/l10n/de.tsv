@@ -2552,6 +2552,8 @@ Leave after no touch	Die App verlassen, wenn nichts berührt wird
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Null schaltet das aus. Nach so vielen Minuten ohne Berührung des Bildschirms stoppt das Video und TikTok geht in den Hintergrund, falls du beim Schauen einschläfst. Jede Berührung startet die Wartezeit neu.
 Left TikTok after no touch	TikTok verlassen, da nichts berührt wurde
 Show when an account was made	Anzeigen, wann ein Konto erstellt wurde
+Show how many videos a profile has	Anzeigen, wie viele Videos ein Profil hat
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	Unter dem @Nutzernamen eines Profils, auch deines eigenen, anzeigen, wie viele Videos es laut TikTok hat.
 Show what changed since your last visit	Zeigen, was sich seit deinem letzten Besuch geändert hat
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Unter dem @Nutzernamen auf einem Profil zeigen, wie sich Follower, gefolgte Konten, Likes und Videos seit deinem letzten Besuch geändert haben. Die Zahlen bleiben nur auf diesem Handy.
 Since %1$s: %2$s	Seit %1$s: %2$s

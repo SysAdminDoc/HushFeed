@@ -834,6 +834,7 @@
     "Show follow status": [
       "SHOW_FOLLOW_STATUS",
       "SHOW_JOIN_DATE",
+      "SHOW_PROFILE_VIDEO_COUNT",
       "SHOW_PROFILE_CHANGES",
       "LOCAL_PROFILE_COUNTS",
       "LOCAL_PROFILE_VERIFIED_BADGE",

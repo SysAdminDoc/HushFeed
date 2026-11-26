@@ -2491,6 +2491,8 @@ Leave after no touch,无触摸时离开
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.
 Left TikTok after no touch,因无触摸已离开 TikTok
 Show when an account was made,显示账号的创建时间
+Show how many videos a profile has,显示个人资料的视频数量
+"Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.",在个人资料的@用户名下，显示 TikTok 统计的视频数量，你自己的个人资料也会显示.
 Show what changed since your last visit,显示自上次访问以来的变化
 "Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.",在个人资料的 @用户名下方，显示其粉丝、关注、获赞和视频自你上次打开以来的变化。这些数字只保存在这台手机上.
 Since %1$s: %2$s,自 %1$s 以来：%2$s

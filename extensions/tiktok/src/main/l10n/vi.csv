@@ -1898,6 +1898,8 @@ Show video length on profile grids,Hiển thị thời lượng video trên lư�
 Show what is left of the budget,Hiển thị phần ngân sách còn lại
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.","Hiển thị thời điểm video được đăng chính xác đến từng giây kèm múi giờ của bạn, thay cho mốc ngày định dạng ngắn của TikTok bên cạnh tên nhà sáng tạo."
 Show when an account was made,Hiển thị thời điểm tạo tài khoản
+Show how many videos a profile has,Hiển thị số video trên trang cá nhân
+"Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.","Hiển thị số video theo cách TikTok đếm bên dưới @username trên trang cá nhân, kể cả trang của chính bạn."
 Show what changed since your last visit,Hiện những gì đã thay đổi kể từ lần ghé thăm trước
 "Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Bên dưới @tên người dùng trên hồ sơ, hiện số người theo dõi, đang theo dõi, lượt thích và video đã thay đổi thế nào kể từ lần cuối bạn mở. Các con số chỉ được lưu trên điện thoại này."
 Since %1$s: %2$s,Từ %1$s: %2$s

@@ -39,7 +39,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 public class FollowStatusTest {
     private ActivityController<Activity> owner;
     private Activity activity;
-    private boolean previousSetting, previousJoinDate, previousStatus;
+    private boolean previousSetting, previousJoinDate, previousVideoCount, previousStatus;
     private TimeZone previousZone;
 
     /** 2020-01-31T23:59:59 UTC, so the month turns over an hour east of Greenwich. */
@@ -57,9 +57,14 @@ public class FollowStatusTest {
         public Integer followerStatus;
     }
 
+    public static final class Statics {
+        public Integer awemeCount;
+    }
+
     public static final class CommonInfo {
         public Profile userProfileInfo = new Profile();
         public Relation userRelationInfo = new Relation();
+        public Statics userStaticsInfo = new Statics();
     }
 
     /** A follow list item: TikTok's holds its account in one field of the User type. */
@@ -72,10 +77,12 @@ public class FollowStatusTest {
         Utils.setContext(RuntimeEnvironment.getApplication());
         previousSetting = Settings.SHOW_FOLLOW_STATUS.get();
         previousJoinDate = Settings.SHOW_JOIN_DATE.get();
+        previousVideoCount = Settings.SHOW_PROFILE_VIDEO_COUNT.get();
         previousStatus = SettingsStatus.followStatusEnabled;
         previousZone = TimeZone.getDefault();
         Settings.SHOW_FOLLOW_STATUS.save(true);
         Settings.SHOW_JOIN_DATE.save(false);
+        Settings.SHOW_PROFILE_VIDEO_COUNT.save(false);
         SettingsStatus.followStatusEnabled = true;
         SignedInUser.idForTests = "me";
         owner = Robolectric.buildActivity(Activity.class).setup();
@@ -85,6 +92,7 @@ public class FollowStatusTest {
     @After public void tearDown() {
         Settings.SHOW_FOLLOW_STATUS.save(previousSetting);
         Settings.SHOW_JOIN_DATE.save(previousJoinDate);
+        Settings.SHOW_PROFILE_VIDEO_COUNT.save(previousVideoCount);
         SettingsStatus.followStatusEnabled = previousStatus;
         TimeZone.setDefault(previousZone);
         SignedInUser.idForTests = null;
@@ -171,6 +179,60 @@ public class FollowStatusTest {
         assertNull("a time after now isn't one", FollowStatus.joinMonth(JANUARY_2020, 1_500_000_000_000L, Locale.US, utc));
         assertNull(FollowStatus.joinMonth("nasa", now, Locale.US, utc));
         assertNull(FollowStatus.joinMonth(null, now, Locale.US, utc));
+    }
+
+    /** #519: TikTok's count of a profile's videos ends the label, on your own profile too. */
+    @Test public void theVideoCountEndsTheLabelOnAnyProfileYoursIncluded() {
+        Locale locale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+        try {
+            assertFalse(Settings.SHOW_PROFILE_VIDEO_COUNT.defaultValue);
+            Settings.SHOW_FOLLOW_STATUS.save(false);
+            Settings.SHOW_PROFILE_VIDEO_COUNT.save(true);
+            LinearLayout header = column();
+            TextView handle = text(header, "@nasa");
+            CommonInfo info = info(JANUARY_2020, "nasa", 0, 1);
+            info.userStaticsInfo.awemeCount = 1234;
+
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals(2, header.getChildCount());
+            TextView label = (TextView) header.getChildAt(1);
+            assertEquals("1,234 videos", label.getText().toString());
+
+            Settings.SHOW_FOLLOW_STATUS.save(true);
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals("Follows you · 1,234 videos", label.getText().toString());
+
+            info.userStaticsInfo.awemeCount = 1;
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals("Follows you · 1 video", label.getText().toString());
+
+            // Your own profile has no follow label, but its count shows.
+            SignedInUser.idForTests = JANUARY_2020;
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals("1 video", label.getText().toString());
+            assertEquals(View.VISIBLE, label.getVisibility());
+
+            // A profile TikTok sent no count for shows the rest only.
+            SignedInUser.idForTests = "me";
+            info.userStaticsInfo.awemeCount = null;
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals("Follows you", label.getText().toString());
+
+            // Off again, the count goes.
+            info.userStaticsInfo.awemeCount = 22;
+            Settings.SHOW_PROFILE_VIDEO_COUNT.save(false);
+            FollowStatus.onHeaderText(handle, info);
+            idle();
+            assertEquals("Follows you", label.getText().toString());
+        } finally {
+            Locale.setDefault(locale);
+        }
     }
 
     @Test public void theJoinDateSharesTheLabelAndShowsWithFollowStatusOff() {

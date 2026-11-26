@@ -303,6 +303,10 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "account was made. It's read from the account's ID, so very old "
                             + "accounts show nothing.",
                     Settings.SHOW_JOIN_DATE));
+            addPreference(new TogglePreference(context, "Show how many videos a profile has",
+                    "Under the @username on a profile, yours included, show how many videos it "
+                            + "has, as TikTok counts them.",
+                    Settings.SHOW_PROFILE_VIDEO_COUNT));
             addPreference(new TogglePreference(context, "Show what changed since your last visit",
                     "Under the @username on a profile, show how its followers, following, likes "
                             + "and videos changed since you last opened it. The counts are kept on "

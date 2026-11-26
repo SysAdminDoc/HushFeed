@@ -2552,6 +2552,8 @@ Leave after no touch	Излизане след време без докосва�
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Нула изключва това. След толкова минути без докосване на екрана видеото спира и TikTok минава на заден план, за случаите, когато заспиш, докато гледаш. Всяко докосване започва изчакването отначало.
 Left TikTok after no touch	Излизане от TikTok поради липса на докосване
 Show when an account was made	Показване на датата на създаване на акаунта
+Show how many videos a profile has	Показване на броя видеоклипове в профила
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	Под @потребителското име в профила, включително в твоя, показва колко видеоклипа има според TikTok.
 Show what changed since your last visit	Показване на промените от последното ти посещение
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Под @потребителското име в профил показва как са се променили последователите, следваните, харесванията и видеата му, откакто го отвори последно. Числата се пазят само на този телефон.
 Since %1$s: %2$s	От %1$s: %2$s

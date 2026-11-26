@@ -15872,6 +15872,12 @@
     "row": "Show when an account was made"
    },
    {
+    "key": "show_profile_video_count",
+    "default": false,
+    "type": "bool",
+    "row": "Show how many videos a profile has"
+   },
+   {
     "key": "local_profile_counts",
     "default": false,
     "type": "bool",

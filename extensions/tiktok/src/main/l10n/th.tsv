@@ -2552,6 +2552,8 @@ Leave after no touch	ออกจากแอปเมื่อไม่มี�
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	เลขศูนย์คือปิดใช้งาน หลังจากไม่มีการสัมผัสหน้าจอตามจำนวนนาทีดังกล่าว วิดีโอจะหยุดและ TikTok จะสลับไปทำงานอยู่เบื้องหลัง เผื่อกรณีที่คุณเผลอหลับขณะรับชม การสัมผัสใดๆ จะเริ่มนับเวลารอใหม่
 Left TikTok after no touch	ออกจาก TikTok เนื่องจากไม่มีการสัมผัส
 Show when an account was made	แสดงเวลาที่สร้างบัญชี
+Show how many videos a profile has	แสดงจำนวนวิดีโอของโปรไฟล์
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	แสดงจำนวนวิดีโอตามที่ TikTok นับไว้ใต้ @ชื่อผู้ใช้ บนโปรไฟล์ รวมถึงโปรไฟล์ของคุณเอง
 Show what changed since your last visit	แสดงสิ่งที่เปลี่ยนไปตั้งแต่คุณเข้าชมครั้งล่าสุด
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	ใต้ @ชื่อผู้ใช้ในโปรไฟล์ แสดงว่าผู้ติดตาม การติดตาม ยอดถูกใจ และวิดีโอเปลี่ยนไปอย่างไรตั้งแต่คุณเปิดครั้งล่าสุด ตัวเลขจะเก็บไว้ในโทรศัพท์เครื่องนี้เท่านั้น
 Since %1$s: %2$s	ตั้งแต่ %1$s: %2$s

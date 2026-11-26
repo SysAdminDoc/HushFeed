@@ -2549,6 +2549,8 @@ Leave after no touch	Dokunulmazsa uygulamadan çık
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Sıfır bunu kapatır. Ekrana o kadar dakika dokunulmazsa video durur ve TikTok arka plana geçer, izlerken uyuyakaldığın durumlar için. Herhangi bir dokunuş beklemeyi baştan başlatır.
 Left TikTok after no touch	Dokunulmadığı için TikTok'tan çıkıldı
 Show when an account was made	Hesabın ne zaman açıldığını göster
+Show how many videos a profile has	Bir profilde kaç video olduğunu göster
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	Bir profilde, kendi profiliniz dahil, @kullanıcı adının altında TikTok'un saydığı video sayısını gösterin.
 Show what changed since your last visit	Son ziyaretinizden beri değişenleri göster
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Bir profilde @kullanıcı adının altında, onu son açışınızdan bu yana takipçilerin, takip edilenlerin, beğenilerin ve videoların nasıl değiştiğini gösterir. Sayılar yalnızca bu telefonda tutulur.
 Since %1$s: %2$s	Son ziyaret %1$s: %2$s

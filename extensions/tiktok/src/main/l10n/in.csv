@@ -2493,6 +2493,8 @@ Leave after no touch,Keluar jika layar tidak disentuh
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.","Nol mematikan ini. Setelah sekian menit layar tidak disentuh, video berhenti dan TikTok pindah ke latar belakang, untuk saat kamu tertidur sambil menonton. Sentuhan apa pun memulai ulang waktu tunggu."
 Left TikTok after no touch,Keluar dari TikTok karena tidak disentuh
 Show when an account was made,Tampilkan kapan akun dibuat
+Show how many videos a profile has,Tampilkan jumlah video di profil
+"Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.","Di bawah @nama pengguna pada profil, termasuk profil sendiri, tampilkan jumlah videonya menurut hitungan TikTok."
 Show what changed since your last visit,Tampilkan yang berubah sejak kunjungan terakhir
 "Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Di bawah @nama pengguna di profil, tampilkan perubahan pengikut, yang diikuti, suka, dan video sejak terakhir kali kamu membukanya. Angkanya hanya disimpan di ponsel ini."
 Since %1$s: %2$s,Sejak %1$s: %2$s

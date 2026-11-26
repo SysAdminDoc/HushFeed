@@ -2035,6 +2035,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_FOLLOW_STATUS = new BooleanSetting("show_follow_status", TRUE);
     // "Joined Jan 2020" in the same spot on someone else's profile, read from the account's ID.
     public static final BooleanSetting SHOW_JOIN_DATE = new BooleanSetting("show_join_date", FALSE);
+    // "1,234 videos" at the end of that label on any profile, yours included, as TikTok counts them (#519).
+    public static final BooleanSetting SHOW_PROFILE_VIDEO_COUNT = new BooleanSetting("show_profile_video_count", FALSE);
     // "Since Nov 18: +12 followers" under it, from the counts each profile showed on this phone last time.
     public static final BooleanSetting SHOW_PROFILE_CHANGES = new BooleanSetting("show_profile_changes", FALSE);
     public static final BooleanSetting LOCAL_PROFILE_COUNTS = new BooleanSetting("local_profile_counts", FALSE, true);

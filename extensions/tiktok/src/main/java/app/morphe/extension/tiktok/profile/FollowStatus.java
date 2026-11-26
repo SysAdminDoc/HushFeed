@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -78,10 +79,11 @@ public final class FollowStatus {
         return SettingsStatus.followStatusEnabled && Settings.SHOW_FOLLOW_STATUS.get();
     }
 
-    /** A profile header gets a label while any of its three switches is on. */
+    /** A profile header gets a label while any of its four switches is on. */
     static boolean headerEnabled() {
         return SettingsStatus.followStatusEnabled && (Settings.SHOW_FOLLOW_STATUS.get()
-                || Settings.SHOW_JOIN_DATE.get() || Settings.SHOW_PROFILE_CHANGES.get());
+                || Settings.SHOW_JOIN_DATE.get() || Settings.SHOW_PROFILE_CHANGES.get()
+                || Settings.SHOW_PROFILE_VIDEO_COUNT.get());
     }
 
     /**
@@ -103,10 +105,26 @@ public final class FollowStatus {
      */
     @Nullable
     static String headerText(Context context, @Nullable String label, @Nullable String month) {
-        String follow = label == null ? null : L10n.t(context, label);
-        String joined = month == null ? null : L10n.f(context, JOINED, month);
-        if (follow == null) return joined;
-        return joined == null ? follow : follow + " · " + joined;
+        return headerText(context, label, month, null);
+    }
+
+    /** As above, with how many videos the profile has last ("22 videos"), or none for null (#519). */
+    @Nullable
+    static String headerText(Context context, @Nullable String label, @Nullable String month,
+                             @Nullable Integer videos) {
+        StringBuilder text = new StringBuilder();
+        if (label != null) text.append(L10n.t(context, label));
+        if (month != null) append(text, L10n.f(context, JOINED, month));
+        if (videos != null && videos >= 0) {
+            String count = NumberFormat.getIntegerInstance(Locale.getDefault()).format(videos);
+            append(text, L10n.quantity(context, videos, "%1$s video", "%1$s videos", count));
+        }
+        return text.length() == 0 ? null : text.toString();
+    }
+
+    private static void append(StringBuilder text, String part) {
+        if (text.length() > 0) text.append(" · ");
+        text.append(part);
     }
 
     /** The header label for a relation, or null when there is nothing to say. */
@@ -150,17 +168,19 @@ public final class FollowStatus {
                     asInteger(Reflect.property(relation, "getFollowerStatus", "followerStatus")));
             String month = own || !Settings.SHOW_JOIN_DATE.get() ? null
                     : joinMonth(uid, System.currentTimeMillis(), Locale.getDefault(), TimeZone.getDefault());
-            if (ProfileChanges.enabled()) {
-                Object statics = Reflect.property(commonInfo, "getUserStaticsInfo", "userStaticsInfo");
-                Integer videos = asInteger(Reflect.property(statics, "getAwemeCount", "awemeCount"));
-                if (videos != null) ProfileChanges.observe(uid, ProfileChanges.Metric.VIDEOS, videos);
+            Object statics = Reflect.property(commonInfo, "getUserStaticsInfo", "userStaticsInfo");
+            Integer videos = asInteger(Reflect.property(statics, "getAwemeCount", "awemeCount"));
+            if (videos != null && ProfileChanges.enabled()) {
+                ProfileChanges.observe(uid, ProfileChanges.Metric.VIDEOS, videos);
             }
+            // TikTok's own count of the account's videos, on any profile, yours included (#519).
+            Integer videoCount = Settings.SHOW_PROFILE_VIDEO_COUNT.get() ? videos : null;
             TextView text = (TextView) view;
             // The item sets its text after this call returns, so read it once the bind is done.
             text.post(() -> {
                 try {
                     if (isHandle(text.getText(), username)) {
-                        place(text, headerText(text.getContext(), label, month), null);
+                        place(text, headerText(text.getContext(), label, month, videoCount), null);
                         lastHandle = new WeakReference<>(text);
                         lastHandleUid = uid;
                         place(text, ProfileChanges.line(text.getContext(), uid), null, CHANGES_TAG);

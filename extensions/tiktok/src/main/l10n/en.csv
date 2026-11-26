@@ -2263,6 +2263,7 @@ Show follow status,Show follow status
 Show gates,Show gates
 Show how long a LIVE has been on,Show how long a LIVE has been on
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.
+Show how many videos a profile has,Show how many videos a profile has
 Show how many were filtered,Show how many were filtered
 Show inbox filters,Show inbox filters
 Show last report,Show last report
@@ -2877,6 +2878,7 @@ Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s
 "Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back.","Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back."
 "Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only."
+"Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.","Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them."
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing."
 Undid an interrupted change. Restart TikTok to apply.,Undid an interrupted change. Restart TikTok to apply.
 Undo,Undo

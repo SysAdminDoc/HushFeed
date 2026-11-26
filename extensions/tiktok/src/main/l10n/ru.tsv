@@ -2729,6 +2729,8 @@ Leave after no touch	Выходить, если нет касаний
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Ноль отключает это. Если столько минут не касаться экрана, видео останавливается и TikTok уходит в фон, на случай если вы уснули за просмотром. Любое касание начинает ожидание заново.
 Left TikTok after no touch	TikTok свёрнут: не было касаний
 Show when an account was made	Показывать дату создания аккаунта
+Show how many videos a profile has	Показывать, сколько видео в профиле
+Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.	Под @именем пользователя в профиле, включая свой, показывать, сколько в нём видео по подсчёту TikTok.
 Show what changed since your last visit	Показывать, что изменилось с прошлого визита
 Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.	Под @именем пользователя в профиле показывает, как изменились подписчики, подписки, лайки и видео с тех пор, как вы открывали его в последний раз. Числа хранятся только на этом телефоне.
 Since %1$s: %2$s	С %1$s: %2$s

@@ -850,6 +850,7 @@
     "Show follow status": [
       "show_follow_status",
       "show_join_date",
+      "show_profile_video_count",
       "show_profile_changes",
       "local_profile_counts",
       "local_profile_verified_badge",
@@ -4757,6 +4758,12 @@
     "show_profile_changes": {
       "field": "SHOW_PROFILE_CHANGES",
       "key": "show_profile_changes",
+      "type": "boolean",
+      "default": false
+    },
+    "show_profile_video_count": {
+      "field": "SHOW_PROFILE_VIDEO_COUNT",
+      "key": "show_profile_video_count",
       "type": "boolean",
       "default": false
     },

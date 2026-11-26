@@ -196,12 +196,15 @@ public class ShareLiveButtonsTest {
         ColorDrawable flag = new ColorDrawable(Color.RED);
         ImageView icon = new ImageView(activity);
         icon.setImageDrawable(flag);
+        // What TikTok's icon view said for these rows on 48.0.2 (Login2, 2026-11-26).
+        icon.setContentDescription("Error");
         TextView text = new TextView(activity);
         text.setText("Report");
         text.setTextColor(Color.WHITE);
         OwnedShareActions.bindMenuRow(recordRow, icon, text);
         assertEquals("Record", text.getText().toString());
         assertTrue(icon.getDrawable() instanceof LiveButtonGlyphDrawable);
+        assertEquals("a screen reader read the row's icon as \"Error\"", "Record", icon.getContentDescription());
 
         TextView tapText = new TextView(activity);
         OwnedShareActions.bindMenuRow(tapRow, new ImageView(activity), tapText);
@@ -217,11 +220,13 @@ public class ShareLiveButtonsTest {
             ColorDrawable flag = new ColorDrawable(Color.RED);
             ImageView icon = new ImageView(activity);
             icon.setImageDrawable(flag);
+            icon.setContentDescription("Report");
             TextView text = new TextView(activity);
             text.setText("Report");
             OwnedShareActions.bindMenuRow(model, icon, text);
             assertEquals("Report", text.getText().toString());
             assertSame(flag, icon.getDrawable());
+            assertEquals("Report", icon.getContentDescription());
         }
     }
 

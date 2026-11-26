@@ -133,6 +133,9 @@ public final class OwnedShareActions {
             if (text != null && label != null) text.setText(label);
             if (icon == null) return;
             bindIcon(action, icon);
+            // TikTok names each row's icon after its row ("Report"), and the carrier's said "Error"
+            // on 48.0.2, which is what a screen reader read out for every Hushfeed row.
+            if (label != null) icon.setContentDescription(label);
             // A bare glyph takes the theme's text color, which needn't be this menu's. The row's
             // own label color is, so the glyph matches the words beside it.
             Drawable drawn = icon.getDrawable();

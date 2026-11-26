@@ -5593,8 +5593,8 @@ final class L10nTranslationsAr {
                 "أوقف الإشعارات التي يرسلها TikTok عن الفيديوهات الشائعة التي اختارها لك. الرسائل والتعليقات والإعجابات والمتابعات والفيديوهات من الحسابات التي تتابعها لا تزال تصل.");
         table.put("Stop the short vibrations TikTok plays on its own taps and gestures. Your keyboard and your phone's own haptics stay as they are.",
                 "أوقف الاهتزازات القصيرة التي يشغلها TikTok عند نقراته وإيماءاته. تبقى لوحة المفاتيح والاهتزازات الخاصة بهاتفك كما هي.");
-        table.put("Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.",
-                "أوقف تنبيهات السلاسل التي تنزلق فوق TikTok ورسائل السلاسل والنصائح التي يضيفها إلى محادثاتك.");
+        table.put("Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.",
+                "أوقف تنبيهات السلاسل التي تنزلق فوق TikTok، ودعوة Streak Pet في صندوق الوارد، ورسائل السلاسل والنصائح التي يضيفها إلى محادثاتك.");
         table.put("Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.",
                 "أوقف مهمتي الخلفية اللتين يستخدمهما TikTok للتحقق من التحديثات، إحداهما عند بدء تشغيل هاتفك. قد تتوقف بعض مطالبات التحديث داخل التطبيق. ما زالت تحديثات Play Store تعمل.");
         table.put("Stop video looping",

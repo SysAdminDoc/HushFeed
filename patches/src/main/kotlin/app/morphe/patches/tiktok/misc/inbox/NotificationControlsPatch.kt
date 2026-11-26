@@ -180,6 +180,7 @@ val notificationControlsPatch = bytecodePatch(
             "invoke-static {}, $EXTENSION->hideStreakPopups()Z",
             "return-void",
         )
+        DmCommonBannerUpdateFingerprint.method.dismissStreakBanners("Notification controls")
 
         // Turn off push notifications. TikTok's push setup is one startup task, so a guard at its
         // entry keeps the push service from starting for a launch with the switch on, and the

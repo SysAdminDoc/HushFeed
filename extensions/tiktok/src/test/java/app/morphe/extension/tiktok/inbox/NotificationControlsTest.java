@@ -2,6 +2,8 @@ package app.morphe.extension.tiktok.inbox;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.preference.PreferenceActivity;
@@ -89,6 +91,33 @@ public class NotificationControlsTest {
             Settings.HIDE_STREAK_POPUPS.save(true);
             assertTrue(NotificationControls.hideStreakPopups());
             assertFalse("the button switch is its own", NotificationControls.hideMessageStreaks());
+        } finally {
+            Settings.HIDE_STREAK_POPUPS.save(false);
+        }
+    }
+
+    /** The Inbox DM banner's notice, by the field the server's model keeps. */
+    public static final class Notice {
+        public String noticeCode;
+        Notice(String code) { noticeCode = code; }
+    }
+
+    @Test public void theStreakPetBannerIsDismissedOnlyWhileStreakPopupsAreHidden() {
+        try {
+            Notice pet = new Notice("streak_pet_invite_banner");
+            Notice sticker = new Notice("photo_sticker_create");
+            Settings.HIDE_STREAK_POPUPS.save(false);
+            assertSame(pet, NotificationControls.dmBannerNotice(pet));
+
+            Settings.HIDE_STREAK_POPUPS.save(true);
+            assertNull("#539 the Streak Pet invite", NotificationControls.dmBannerNotice(pet));
+            // Every other banner, and a notice we can't read, still reaches the banner.
+            assertSame(sticker, NotificationControls.dmBannerNotice(sticker));
+            Notice blank = new Notice(null);
+            assertSame(blank, NotificationControls.dmBannerNotice(blank));
+            Object other = new Object();
+            assertSame(other, NotificationControls.dmBannerNotice(other));
+            assertNull(NotificationControls.dmBannerNotice(null));
         } finally {
             Settings.HIDE_STREAK_POPUPS.save(false);
         }

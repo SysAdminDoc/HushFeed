@@ -24,6 +24,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 public final class NotificationControls {
     /** The channel a new follower notification goes out on, from PushService's own list. */
     private static final String FOLLOWER_CHANNEL = "follow_push";
+    /** How the server's notice codes for the Inbox's streak banners begin. */
+    private static final String STREAK_BANNER = "streak";
 
     private NotificationControls() {}
 
@@ -61,5 +63,16 @@ public final class NotificationControls {
     /** True when streak pop-ups and the streak messages TikTok inserts into a chat should not appear. */
     public static boolean hideStreakPopups() {
         return Settings.HIDE_STREAK_POPUPS.get();
+    }
+
+    /**
+     * The notice the Inbox's DM banner is handed. While Hide streak pop-ups is on, a streak one
+     * (the Streak Pet invite, {@code streak_pet_invite_banner}, #539) comes back null, which the
+     * banner takes as nothing to show and dismisses. Every other banner passes through.
+     */
+    public static Object dmBannerNotice(Object notice) {
+        if (notice == null || !Settings.HIDE_STREAK_POPUPS.get()) return notice;
+        Object code = Reflect.readField(notice, "noticeCode");
+        return code instanceof String && ((String) code).startsWith(STREAK_BANNER) ? null : notice;
     }
 }

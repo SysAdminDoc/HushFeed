@@ -5104,8 +5104,8 @@ final class L10nTranslationsBg {
                 "Спира известията, които TikTok изпраща за популярни видеа, избрани за теб. Съобщенията, коментарите, харесванията, новите последователи и видеата от следваните акаунти продължават да идват.");
         table.put("Stop the short vibrations TikTok plays on its own taps and gestures. Your keyboard and your phone's own haptics stay as they are.",
                 "Спира кратките вибрации, които TikTok пуска при своите докосвания и жестове. Вибрациите на клавиатурата и на самия телефон остават както са.");
-        table.put("Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.",
-                "Спира известията за поредици, които се плъзгат върху TikTok, както и съобщенията и съветите за поредици, които той добавя в чатовете ти.");
+        table.put("Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.",
+                "Спира известията за поредици, които се плъзгат върху TikTok, поканата за Streak Pet във входящите, както и съобщенията и съветите за поредици, които той добавя в чатовете ти.");
         table.put("Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.",
                 "Спира двете фонови задачи, с които TikTok проверява за актуализации, едната от тях при стартиране на телефона. Някои подкани за актуализация в приложението може да спрат. Актуализациите от Play Store пак работят.");
         table.put("Stop video looping",

@@ -1079,6 +1079,8 @@ Show the block button on videos	แสดงปุ่มบล็อกบนว
 Show the block sound button	แสดงปุ่มบล็อกเสียง
 Show Block sound on sound pages	แสดงปุ่มบล็อกเสียงในหน้าเสียง
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	เพิ่มปุ่มบล็อกเสียงใต้ปุ่มบันทึกในหน้าเสียง ซึ่งเปิดจากแผ่นเสียงที่หมุนอยู่บนวิดีโอ และข้ามทุกวิดีโอที่ใช้เสียงนั้น
+Hide sound page buttons	ซ่อนปุ่มในหน้าเสียง
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	ซ่อน Jam Sound และ ใช้เสียง ที่ด้านล่างของหน้าเสียง ซึ่งเป็นหน้าที่แผ่นเสียงหมุนในวิดีโอเปิดขึ้นมา
 Show failures on screen	แสดงข้อผิดพลาดบนหน้าจอ
 Show gates	แสดงเกต
 Show last report	แสดงรายงานล่าสุด

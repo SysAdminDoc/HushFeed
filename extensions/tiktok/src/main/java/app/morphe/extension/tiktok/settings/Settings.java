@@ -1556,6 +1556,9 @@ public class Settings extends BaseSettings {
     /** Block sound under Save on a sound's own page. On, since the patch itself is the opt-in. */
     public static final BooleanSetting SOUND_PAGE_BLOCK_BUTTON =
             new BooleanSetting("sound_page_block_button", TRUE);
+    /** Jam Sound and Use sound at the bottom of a sound's page (#535). */
+    public static final BooleanSetting HIDE_SOUND_PAGE_BUTTONS =
+            new BooleanSetting("hide_sound_page_buttons", FALSE);
     public static final StringSetting BLOCK_AUTHOR_BUTTON_POSITION =
             new StringSetting("block_author_button_position", "");
     public static final StringSetting LOCAL_HIDE_BUTTON_POSITION =

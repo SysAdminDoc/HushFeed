@@ -472,6 +472,9 @@
       "HIDE_SEARCH_SUGGESTIONS",
       "DISCOVER_SEARCH_BAR_ONLY"
     ],
+    "Hide sound page buttons": [
+      "HIDE_SOUND_PAGE_BUTTONS"
+    ],
     "Hide suggested accounts": [
       "HIDE_INBOX_SUGGESTED_ACCOUNTS",
       "KEEP_PROFILE_SUGGESTED_ACCOUNTS"

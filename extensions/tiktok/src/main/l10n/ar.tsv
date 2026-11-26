@@ -1179,6 +1179,8 @@ Show the block button on videos	إظهار زر الحظر على الفيديو
 Show the block sound button	إظهار زر حظر الصوت
 Show Block sound on sound pages	إظهار حظر الصوت في صفحات الأصوات
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	يضيف زر حظر الصوت أسفل حفظ في صفحة الصوت، وهي الصفحة التي تفتحها الأسطوانة الدوّارة في الفيديو. يتخطى كل فيديو يستخدم هذا الصوت.
+Hide sound page buttons	إخفاء أزرار صفحة الصوت
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	إخفاء Jam Sound و«استخدام الصوت» أسفل صفحة الصوت، وهي الصفحة التي تفتحها الأسطوانة الدوّارة في الفيديو.
 Show failures on screen	إظهار الأخطاء على الشاشة
 Show gates	إظهار البوابات
 Show last report	عرض آخر تقرير

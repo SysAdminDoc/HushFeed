@@ -1865,6 +1865,8 @@ Show the block button on videos,Hiển thị nút chặn trên video
 Show the block sound button,Hiển thị nút chặn âm thanh
 Show Block sound on sound pages,Hiển thị Chặn âm thanh trên trang âm thanh
 "Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.","Thêm nút Chặn âm thanh bên dưới Lưu trên trang của một âm thanh, trang mở ra khi chạm vào đĩa nhạc đang quay trên video. Bỏ qua mọi video dùng âm thanh đó."
+Hide sound page buttons,Ẩn các nút trên trang âm thanh
+"Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.","Ẩn Jam Sound và Dùng âm thanh ở cuối trang của một âm thanh, trang mở ra khi bạn chạm vào đĩa nhạc đang quay trên video."
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,Hiển thị quốc gia được cài đặt trên tài khoản của người bình luận phía sau mốc thời gian. Các bình luận từ tài khoản mà TikTok không gửi dữ liệu quốc gia sẽ giữ nguyên.
 Show the country a video was posted from next to the creator's name.,Hiển thị quốc gia đăng tải video bên cạnh tên nhà sáng tạo.
 Show the country as a flag,Hiển thị quốc gia dưới dạng cờ

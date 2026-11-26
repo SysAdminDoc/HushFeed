@@ -1108,6 +1108,8 @@ Show the block button on videos	Videolarda engelle düğmesini göster
 Show the block sound button	Sesi engelle düğmesini göster
 Show Block sound on sound pages	Ses sayfalarında Sesi engelle düğmesini göster
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Bir sesin sayfasında, videodaki dönen plağın açtığı sayfada, Kaydet'in altına Sesi engelle düğmesi ekler. O sesi kullanan her videoyu atlar.
+Hide sound page buttons	Ses sayfası düğmelerini gizle
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Bir sesin sayfasının altındaki Jam Sound ve Sesi kullan düğmelerini gizler. Bu, videodaki dönen plağın açtığı sayfadır.
 Show the country a video was posted from next to the creator's name.	Videonun paylaşıldığı ülkeyi içerik üreticisinin adının yanında göster.
 Show the current spoken caption while the other controls are hidden.	Diğer kontroller gizliyken o an konuşulan altyazıyı göster.
 Show the handle instead of the name	Ad yerine kullanıcı adını göster

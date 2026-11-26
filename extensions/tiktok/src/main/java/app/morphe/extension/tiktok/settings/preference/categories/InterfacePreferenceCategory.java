@@ -231,7 +231,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     private void addButtonsOnVideos(Context context) {
         boolean any = SettingsStatus.blockAuthorEnabled || SettingsStatus.notInterestedEnabled
                 || SettingsStatus.feedMuteEnabled || SettingsStatus.advancedDownloadsEnabled
-                || (SettingsStatus.soundPageBlockEnabled && SettingsStatus.feedFilterEnabled);
+                || (SettingsStatus.soundPageBlockEnabled && SettingsStatus.feedFilterEnabled)
+                || SettingsStatus.hideSoundPageButtonsEnabled;
         if (!any) return;
         addPreference(new SectionHeadingPreference(context, "Buttons on videos"));
         if (SettingsStatus.blockAuthorEnabled) {
@@ -266,6 +267,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show Block sound on sound pages",
                     "Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.",
                     Settings.SOUND_PAGE_BLOCK_BUTTON
+            ));
+        }
+        if (SettingsStatus.hideSoundPageButtonsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide sound page buttons",
+                    "Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.",
+                    Settings.HIDE_SOUND_PAGE_BUTTONS
             ));
         }
         if (SettingsStatus.notInterestedEnabled) {

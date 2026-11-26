@@ -1079,6 +1079,8 @@ Show the block button on videos	Blockieren-Schaltfläche auf Videos anzeigen
 Show the block sound button	Die Schaltfläche zum Blockieren des Sounds anzeigen
 Show Block sound on sound pages	„Sound blockieren“ auf Sound-Seiten anzeigen
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Fügt auf der Seite eines Sounds, die die drehende Platte an einem Video öffnet, unter „Speichern“ eine Schaltfläche „Sound blockieren“ hinzu. Sie überspringt jedes Video mit diesem Sound.
+Hide sound page buttons	Schaltflächen auf der Sound-Seite ausblenden
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Blendet Jam Sound und Sound verwenden unten auf der Seite eines Sounds aus, also der Seite, die die sich drehende Platte in einem Video öffnet.
 Show failures on screen	Fehler auf dem Bildschirm anzeigen
 Show gates	Schalter anzeigen
 Show last report	Letzten Bericht anzeigen

@@ -1079,6 +1079,8 @@ Show the block button on videos	Показване на бутона за бло
 Show the block sound button	Показване на бутона за блокиране на звука
 Show Block sound on sound pages	Показване на „Блокирай звука“ на страниците на звуците
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Добавя бутон „Блокирай звука“ под „Запази“ на страницата на звука, която отваря въртящата се плоча на видеото. Пропуска всяко видео с този звук.
+Hide sound page buttons	Скриване на бутоните на страницата на звука
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Скрива Jam Sound и Използване на звука в долната част на страницата на звука, която се отваря от въртящата се плоча във видеоклипа.
 Show failures on screen	Показване на грешките на екрана
 Show gates	Покажи гейтовете
 Show last report	Покажи последния отчет

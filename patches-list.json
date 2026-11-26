@@ -6474,6 +6474,55 @@
       ]
     },
     {
+      "name": "Hide sound page buttons",
+      "description": "Adds a switch that hides Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens. Off until you turn it on in Hushfeed settings > Feed screen.",
+      "category": "Feed",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709030,
+                "ARMEABI_V7A": 2024709030,
+                "X86": 2024709030,
+                "X86_64": 2024709030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "hide_sound_page_buttons",
+          "title": "Default: hide sound page buttons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Hide suggested accounts",
       "description": "Hides TikTok's People you may like suggestions in the Inbox, on profiles, on the Friends tab and in the feed. It uses the same switch as Hide inbox items. Starts off. Turn it on in Hushfeed settings > Inbox.",
       "category": "Inbox",

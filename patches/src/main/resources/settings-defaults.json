@@ -478,6 +478,9 @@
       "hide_search_suggestions",
       "discover_search_bar_only"
     ],
+    "Hide sound page buttons": [
+      "hide_sound_page_buttons"
+    ],
     "Hide suggested accounts": [
       "hide_inbox_suggested_accounts",
       "keep_profile_suggested_accounts"
@@ -3123,6 +3126,12 @@
     "hide_shop": {
       "field": "HIDE_SHOP",
       "key": "hide_shop",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_sound_page_buttons": {
+      "field": "HIDE_SOUND_PAGE_BUTTONS",
+      "key": "hide_sound_page_buttons",
       "type": "boolean",
       "default": false
     },

@@ -1678,6 +1678,8 @@ Show the block button on videos,在视频上显示阻止按钮
 Show the block sound button,显示阻止声音按钮
 Show Block sound on sound pages,在声音页面显示阻止声音
 "Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.",在声音页面（点视频上旋转的唱片打开的页面）的保存下方添加阻止声音按钮。会跳过所有使用该声音的视频.
+Hide sound page buttons,隐藏声音页面的按钮
+"Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.",隐藏声音页面底部的 Jam Sound 和“使用声音”按钮，也就是点视频上旋转的唱片打开的页面.
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,显示评论者的账号在评论时间后设置的国家/地区。来自账号 TikTok 的评论不会按原样发送居住国家/地区.
 Show the country a video was posted from next to the creator's name.,在创作者姓名旁边显示视频发布的国家/地区.
 Show the country as a flag,将国家显示为国旗

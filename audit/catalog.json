@@ -8889,6 +8889,79 @@
   "notes": "The call results include the patch-applied flag (SettingsStatus.hideSearchSuggestionsEnabled), so 'true' proves both the patch and the setting. Suggestions come from a server request and a cached list; the patch withholds the request parameters (show_suggest_search_words, is_lynx_request_suggest), the cache and the re-entry panel. The trending word in the box arrives with the page's enter params from the feed, not from the suggestion request, so the patch swaps whatever word reaches the box (BaseDiscoverAndSearchFragmentNew's one-argument hint applier) for TikTok's own default placeholder. The search icon is found by its English description 'Search' (the probe clicks it; a uiautomator tap cannot run on a playing feed), which also needs Hide feed search button to be off. Rewards (the banner under the box) are served only to accounts in the rewards programme."
  },
  {
+  "name": "Hide sound page buttons",
+  "category": "Feed",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/soundpage/HideSoundPageButtonsPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/SoundPageButtons.java"
+  ],
+  "settings": [
+   {
+    "key": "hide_sound_page_buttons",
+    "default": false,
+    "type": "bool",
+    "row": "Hide sound page buttons"
+   }
+  ],
+  "surface": "other",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.hideSoundPageButtonsEnabled is true, so the sound page hook is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "hideSoundPageButtonsEnabled"
+      },
+      "expect": "\\bhideSoundPageButtonsEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "switch-drives-hook",
+    "what": "With the switch on, the page's bottom buttons are hidden (and not when the switch is off).",
+    "steps": [
+     {
+      "set": {
+       "hide_sound_page_buttons": "true"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.feed.SoundPageButtons",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> true",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "hide_sound_page_buttons": "false"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.feed.SoundPageButtons",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> false",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "MusicDetailActivity.onResume calls SoundPageButtons.onResume, which hides each Button-role view in the lower part of the page that isn't inside a scrolling list (Jam Sound, Use sound), by its own tappable box, and hides them again from a layout listener when TikTok shows them. Turning the switch off shows them as they were on the next resume. Check on a phone: tap the spinning record on a video and see the page with no Jam Sound or Use sound at the bottom, Save and the video grid still there."
+ },
+ {
   "name": "Hide suggested accounts",
   "category": "Inbox",
   "default": true,

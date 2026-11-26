@@ -1063,6 +1063,8 @@ Show the block button on videos,Tampilkan tombol blokir di video
 Show the block sound button,Tampilkan tombol blokir suara
 Show Block sound on sound pages,Tampilkan Blokir suara di halaman suara
 "Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.","Menambahkan tombol Blokir suara di bawah Simpan pada halaman suara, yang dibuka oleh piringan berputar di video. Melewati setiap video yang memakai suara itu."
+Hide sound page buttons,Sembunyikan tombol di halaman suara
+"Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.","Sembunyikan Jam Sound dan Gunakan suara di bagian bawah halaman suara, yaitu halaman yang dibuka oleh piringan berputar di video."
 Show failures on screen,Tampilkan kegagalan di layar
 Show gates,Tampilkan gate
 Show last report,Tampilkan laporan terakhir

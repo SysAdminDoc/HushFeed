@@ -1076,6 +1076,8 @@ Show the block button on videos	Mostrar o botão de bloquear nos vídeos
 Show the block sound button	Mostrar o botão de bloquear som
 Show Block sound on sound pages	Mostrar Bloquear som nas páginas de sons
 Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Adiciona um botão Bloquear som abaixo de Salvar na página de um som, a que o disco girando no vídeo abre. Pula todo vídeo que usa esse som.
+Hide sound page buttons	Ocultar os botões da página do som
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Oculta Jam Sound e Usar som na parte de baixo da página de um som, a que o disco girando no vídeo abre.
 Show failures on screen	Mostrar falhas na tela
 Show gates	Mostrar gates
 Show last report	Mostrar último relatório

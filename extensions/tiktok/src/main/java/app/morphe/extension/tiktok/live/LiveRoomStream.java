@@ -313,7 +313,17 @@ public final class LiveRoomStream {
         if (room == null) return new Pick(null, "No room");
         try {
             Object streamUrl = Reflect.readField(room, "streamUrl");
-            if (streamUrl == null) return new Pick(null, "No stream");
+            if (streamUrl == null) {
+                // A room whose enter Ghost mode held back can still carry its own pull stream
+                // data (#413). It's this room's, so it's recorded as is.
+                Object own = Reflect.readField(room, "pullStreamData");
+                if (!(own instanceof String) || ((String) own).isEmpty()) return new Pick(null, "No stream");
+                Object owner = Reflect.readField(room, "owner");
+                String creator = owner == null ? null : Reflect.string(owner, "getUsername", "username");
+                Object id = Reflect.readField(room, "idStr");
+                return choose((String) own, null, null, null, preferred, creator,
+                        id instanceof String ? (String) id : null);
+            }
             String json = streamData(room, streamUrl);
             Object flv = Reflect.readField(streamUrl, "flvPullUrl");
             Object hls = Reflect.readField(streamUrl, "hlsPullUrlMap");
@@ -359,7 +369,9 @@ public final class LiveRoomStream {
                 return explained(fromRoom, "the page opened with no stream");
             }
             if (!roomId.equals(streamRoomOf(stream, rooms))) {
-                return explained(fromRoom, "the page opened with another room's stream");
+                return explained(fromRoom, "the page opened with another room's stream (stream room "
+                        + idOf(stream, "streamRoomId") + ", entered " + idOf(rooms, "roomId")
+                        + ", this room " + roomId + ")");
             }
             Object owner = Reflect.readField(room, "owner");
             String creator = owner == null ? null : Reflect.string(owner, "getUsername", "username");
@@ -384,6 +396,12 @@ public final class LiveRoomStream {
         Object entered = Reflect.readField(rooms, "roomId");
         return entered instanceof Number && ((Number) entered).longValue() != 0
                 ? String.valueOf(((Number) entered).longValue()) : null;
+    }
+
+    /** A room id field as the log shows it, "?" when it isn't a number. */
+    private static String idOf(Object holder, String field) {
+        Object id = Reflect.readField(holder, field);
+        return id instanceof Number ? String.valueOf(((Number) id).longValue()) : "?";
     }
 
     private static Object fieldOfType(Object holder, String typeName) throws IllegalAccessException {

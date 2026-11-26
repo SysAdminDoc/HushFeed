@@ -273,6 +273,37 @@ public class LiveRoomStreamTest {
         assertNotNull(LiveRoomStream.fromPage(new RoomPage(room, opened(JSON, 7, 7)), null, null).problem);
     }
 
+    /** A room that carries its own pull stream data and no stream URL, as a held room can on 48.0.2. */
+    private static final class DataRoom extends Room {
+        public String pullStreamData;
+    }
+
+    /**
+     * #413 on the S22: in a room Ghost mode held back, Record logged "No stream, the page opened
+     * with another room's stream". The room had no stream URL, so its own pull stream data was
+     * never read, though that data is the room's by definition.
+     */
+    @Test public void aHeldRoomRecordsItsOwnStreamDataWhenItHasNoStreamUrl() {
+        DataRoom room = new DataRoom();
+        room.idStr = "7";
+        room.pullStreamData = JSON;
+        LiveRoomStream.Pick own = LiveRoomStream.fromRoom(room, "hd");
+        assertNull(own.problem);
+        assertEquals("https://p.example.com/hd.flv", own.target.url);
+        assertEquals("7", own.target.room);
+        LiveRoomStream.Pick page = LiveRoomStream.fromPage(new RoomPage(room, opened(JSON, 8, 8)), room, null);
+        assertEquals("another room's opening stream doesn't get in the way",
+                "https://p.example.com/o.flv", page.target.url);
+        room.pullStreamData = "";
+        assertEquals("No stream", LiveRoomStream.fromRoom(room, null).problem);
+    }
+
+    @Test public void aStreamRefusedForAnotherRoomSaysWhichRooms() {
+        Room room = heldRoom("7");
+        String problem = LiveRoomStream.fromPage(new RoomPage(room, opened(JSON, 0, 0)), room, null).problem;
+        assertTrue(problem, problem.endsWith("(stream room 0, entered 0, this room 7)"));
+    }
+
     @Test public void aRoomsOwnStreamStillComesFirst() {
         StreamRoom room = new StreamRoom();
         room.idStr = "7";

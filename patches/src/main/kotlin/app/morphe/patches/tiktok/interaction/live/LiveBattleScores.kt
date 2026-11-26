@@ -31,7 +31,7 @@ internal const val HIGH_SCORE_CONTROL_CFG =
     "Lcom/bytedance/android/livesdkapi/depend/model/live/match/HighScoreControlCfg;"
 
 /**
- * Where a battle's score bar takes the server's high score rule (X.19Qq.LJIILL on 47.9.3). It
+ * Where a battle's score bar takes the server's high score rule (X.18G8.LJIILL on 48.0.2). It
  * builds the small (capped, threshold) class every battle score view reads from it, the one that
  * turns a score past the threshold into "1M+" style text, and hands it to the co-host windows.
  */
@@ -42,7 +42,7 @@ internal object BattleHighScoreRuleFingerprint : Fingerprint(
 )
 
 /**
- * The notice a battle posts when a score gets very high (X.19Pz.LJIIIIZZ on 47.9.3). With the rule
+ * The notice a battle posts when a score gets very high (X.18Kk.LJIIIIZZ on 48.0.2). With the rule
  * applied it picks the notice text written for viewers, which leaves the number out, over the one
  * with it.
  */
@@ -53,7 +53,7 @@ internal object BattleHighScoreNoticeFingerprint : Fingerprint(
 )
 
 /**
- * The battle bar's score writer (X.19Pz.LIZ on 47.9.3): a score of a million or more is written
+ * The battle bar's score writer (X.18Kk.LIZ on 48.0.2): a score of a million or more is written
  * as "1M+" unless its last parameter says to show it whole, which TikTok sets for the host.
  */
 internal object BattleScoreTextFingerprint : Fingerprint(
@@ -63,7 +63,7 @@ internal object BattleScoreTextFingerprint : Fingerprint(
 )
 
 /**
- * A co-host window's score writer (X.18yp.z0 on 47.9.3): the same "1M+" from a million on,
+ * A co-host window's score writer (X.1869.z0 on 48.0.2): the same "1M+" from a million on,
  * unless the window's own flag, read first thing, says to show it whole.
  */
 internal object CoHostScoreTextFingerprint : Fingerprint(

@@ -23,7 +23,7 @@ internal object TextSizeConfirmFingerprint : Fingerprint(
 /**
  * TikTok's text size manager's loader, which reads [TEXT_SIZE_MODE_KEY] into the mode field at
  * startup. Its class also holds the factor methods and the two density rewrites that call them
- * (X.03aF on 47.9.3: loader LJ(Context), factors LIZ()F and LIZJ()F, rewrites LIZLLL(Context)
+ * (X.03Wq on 48.0.2: loader LJ(Context), factors LIZ()F and LIZJ()F, rewrites LIZLLL(Context)
  * and LJFF(Activity)).
  */
 internal object TextSizeModeLoadFingerprint : Fingerprint(

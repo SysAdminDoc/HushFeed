@@ -204,24 +204,26 @@ internal object LiveAiSummaryShowFingerprint : Fingerprint(
 internal const val LIVE_AI_SUMMARY_NEW_WIDGET =
     "Lcom/ss/android/ugc/aweme/feed/adapter/widget/aisummary/LivePreviewAiSummaryNewWidget;"
 
-/** The room's newer-card settings, a real-named server config read through LX/1KO2 on 47.9.3. */
-internal const val LIVE_NEW_AI_SUMMARY_CONFIG = "Lcom/ss/android/ugc/aweme/ab/LiveNewAiSummaryConfig;"
-
 /**
- * The newer card's countdown (startCountDownToShow, e2 on 47.9.3). Its bind, its slot observer
- * and its holder-selected path all run it, and it's the only place that arms the runnable that
- * claims the bottom-card slot and makes the card visible, after the room's delayShowInterval.
+ * The newer card's countdown (startCountDownToShow, X1 on 47.9.3, p0 on 48.0.2). Its bind, its
+ * slot observer and its holder-selected path all run it, and it's the only place that arms the
+ * runnable that claims the bottom-card slot and makes the card visible, after the room's
+ * delayShowInterval. It posts that runnable through TikTok's postDelayed wrapper (time, handler,
+ * runnable), the one call of that shape in the card. 47.9.3 read the delay off
+ * LiveNewAiSummaryConfig here; 48.0.2 reads it through a lazy (LX/0g5f), so the field read left.
  */
 internal object LiveAiSummaryNewCountdownFingerprint : Fingerprint(
     definingClass = LIVE_AI_SUMMARY_NEW_WIDGET,
     returnType = "V",
     parameters = listOf(),
-    filters = listOf(fieldAccess(definingClass = LIVE_NEW_AI_SUMMARY_CONFIG, name = "delayShowInterval")),
+    filters = listOf(
+        methodCall(parameters = listOf("J", "Landroid/os/Handler;", "Ljava/lang/Runnable;"), returnType = "Z"),
+    ),
 )
 
 /**
- * The newer card's hide (f2 on 47.9.3). Handed false it sets the card's view GONE and frees the
- * bottom-card slot, and it returns at once when the card isn't up.
+ * The newer card's hide (Y1 on 47.9.3, q0 on 48.0.2). Handed false it sets the card's view GONE
+ * and frees the bottom-card slot, and it returns at once when the card isn't up.
  */
 internal object LiveAiSummaryNewHideFingerprint : Fingerprint(
     definingClass = LIVE_AI_SUMMARY_NEW_WIDGET,
@@ -385,7 +387,7 @@ internal fun hookFullScreenAttach(method: MutableMethod) = method.apply {
 }
 
 /**
- * LIVE's per-room controller (X.0L60 on 47.9.3, whose obfuscated name moves every build), found by
+ * LIVE's per-room controller (X.0MCy on 48.0.2, whose obfuscated name moves every build), found by
  * its constructor. It owns the actual clear state, including swipe gestures, and that constructor
  * may restore Clear screen before the room page has resumed.
  */
@@ -539,7 +541,7 @@ internal const val LIVE_STREAM_URL = "Lcom/bytedance/android/livesdkapi/depend/m
 internal const val AUDIO_SWITCH_REFUSED = "not support switch to audio, streamFormat: "
 
 /**
- * The LIVE player's resolution switch (X.0IWF.LJJJJZ on 47.9.3, called from its message loop). A switch to "ao", a room's sound on its own,
+ * The LIVE player's resolution switch (X.0Jg4.LJJJJZ on 48.0.2, called from its message loop). A switch to "ao", a room's sound on its own,
  * goes through there only while the server's EnableOnlyAudioInAoRes flag is on, and logs
  * [AUDIO_SWITCH_REFUSED] otherwise (#265).
  */
@@ -1319,7 +1321,7 @@ private const val DATA_CHANNEL = "Lcom/bytedance/ies/sdk/datachannel/DataChannel
 /**
  * Adds Audio only to the older picker's rows (#265), the one Share > Video quality opens on some
  * accounts (Login2, 2026-11-05). [viewCreated] gets its rows from a static builder that takes the
- * room's data channel (X.1IVF.LIZ on 47.9.3). TikTok also reads that builder to find the next lower
+ * room's data channel (X.18xD.LIZ on 48.0.2). TikTok also reads that builder to find the next lower
  * quality on a weak connection, so the row goes only into the dialog's copy: right after the
  * builder answers, the extension answers the rows. A jump to the instruction after the answer
  * skips the hook, as it should, since the rows didn't just come from the builder there. Returns
@@ -1862,7 +1864,7 @@ internal fun guideBubbleView(builder: Method, classOf: (String) -> ClassDef?): S
 
 /**
  * The container LIVE anchors its toolbar tips in, the creator's direct message tip among them
- * (X.0UU9 on 47.9.3, #362): the one FrameLayout answering getWindowRect, beside getAnchorRect.
+ * (X.0Wpz on 48.0.2, #362): the one FrameLayout answering getWindowRect, beside getAnchorRect.
  * TikTok draws the tip white, and its text took the darkened room's white, so it read white on
  * white. Its (Context) constructor builds the tip's own view from that context too.
  */
@@ -2164,7 +2166,7 @@ private const val ANDROID_THEME = "Landroid/content/res/Resources\$Theme;"
 
 /**
  * LIVE's themed fragment base being created (#362). It hands its context, in a room the room
- * activity, to TikTok's LIVE color theme (X.0JZV.LIZ on 47.9.3), which applies one of LIVE's color
+ * activity, to TikTok's LIVE color theme (X.0Kip.LIZ on 48.0.2), which applies one of LIVE's color
  * theme styles to that context's theme without force. Those styles define attributes the room's
  * views look up, the gift guide bubble's text among them, and they reach the room after the room
  * hook took its light copy.
@@ -2693,7 +2695,7 @@ internal data class ViewerCountSite(
 
 /**
  * Every call in [widget] to a static (J)Ljava/lang/String; helper that isn't the JDK's, or only
- * those to [formatter] when given. That helper is the "K+", "M+" and "B+" abbreviator (X.0M8O.LIZJ
+ * those to [formatter] when given. That helper is the "K+", "M+" and "B+" abbreviator (X.0NE7.LIZJ
  * on 47.0.3, X.0LDD on 47.1.3, X.0LDH on 47.1.4), renamed per build, so the shape is matched, not
  * the name. Throws if any such call has a shape the hook can't take: a site the patch skipped would
  * keep showing the rounded count with nothing to say so.

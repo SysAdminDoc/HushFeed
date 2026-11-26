@@ -35,7 +35,7 @@ private fun Method.code(): List<Instruction> = implementation?.instructions?.toL
  * (LIZLLL(Context) and LJFF(Activity) on 47.9.3). Each reads the factor once,
  * `invoke-static LIZ()F; move-result v0`, and divides by it, and that read names the factor.
  * Activities don't take their density from those: each activity's context is rebuilt from the
- * same factor somewhere else (X.03Ji.invoke on 47.9.3, which reads it twice and hands the result
+ * same factor somewhere else (X.04yZ.invoke on 48.0.2, which reads it twice and hands the result
  * to Context.createConfigurationContext). So every method in [manager] or [classes] that reads
  * the factor and hands Android a configuration counts. With only the manager's reads scaled,
  * nothing on screen changed (#477).

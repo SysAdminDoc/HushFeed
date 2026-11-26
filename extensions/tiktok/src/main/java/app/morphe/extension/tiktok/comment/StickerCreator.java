@@ -53,10 +53,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * saved stickers, the way TikTok's own Create sticker does. Make sticker in a video's share sheet
  * (#88) does the same with the video's cover when TikTok's animated sticker editor can't open.
  *
- * <p>The app ships everything this needs except the button. The DM canvas saves a drawing as a
- * sticker through {@code im/sticker/save} and then adds it to Saved, and the comment sticker
- * uploader asks {@code im/upload_config} for an ImageX token (upload scene 2). The patch copies
- * those calls into the bridges at the bottom of this class. This class adds the button, reads the
+ * <p>The app ships everything this needs except the button. Its sticker API still declares
+ * {@code im/sticker/save} (the DM canvas called it up to 47.9.3), Photo to sticker adds a saved
+ * sticker to Saved, and the comment sticker uploader asks {@code im/upload_config} for an ImageX
+ * token (upload scene 2). The patch copies those calls into the bridges at the bottom of this class. This class adds the button, reads the
  * photo, shrinks it to sticker size and runs the upload, the save and the add on a worker thread.
  */
 @SuppressWarnings("unused")
@@ -600,7 +600,7 @@ public final class StickerCreator {
         return null;
     }
 
-    /** StickerApiV2's im/sticker/save, through the API object the app's canvas saver uses. */
+    /** StickerApiV2's im/sticker/save, through the API object the app's own getter answers. */
     static Object saveSticker(int type, String uri, int width, int height, List<?> tags, String source,
                               Integer createSource, Object continuation) {
         return null;

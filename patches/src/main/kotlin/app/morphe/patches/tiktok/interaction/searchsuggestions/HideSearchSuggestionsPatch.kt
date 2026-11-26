@@ -134,16 +134,18 @@ private object LynxFirstScreenCacheFingerprint : Fingerprint(
 )
 
 /**
- * The Lynx parameter helper, `LX/0Bav;` on 46.2.3 and `LX/09iY;` and `LX/09eO;` since.
+ * The Lynx parameter helper, `LX/0Bav;` on 46.2.3 and `LX/09iY;` and `LX/09eO;` since, `LX/0H9r;`
+ * on 47.9.3 and `LX/0Fpx;` on 48.0.2.
  *
  * <p>Four statics together name it: the reader this hooks, the two that answer with a name and a
  * map, and one that writes a value into a gson object. That last signature is what makes the set
- * specific, and exactly one class in the app carries all four on each of the three builds.
+ * specific, and exactly one class in the app carries all four. 48.0.2 swapped the writer's last
+ * two parameters: it takes (gson object, key, value), where 47.9.3 took (gson object, value, key).
  */
 private val LYNX_PARAMETER_SHAPES = setOf(
     "Ljava/lang/String;[]",
     "Ljava/util/Map;[]",
-    "V[Lcom/google/gson/n;, Ljava/lang/Object;, Ljava/lang/String;]",
+    "V[Lcom/google/gson/n;, Ljava/lang/String;, Ljava/lang/Object;]",
 )
 
 private object LynxParameterFingerprint : Fingerprint(

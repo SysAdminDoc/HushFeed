@@ -20,7 +20,9 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.SwitchPayload
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -32,6 +34,8 @@ private const val MESSAGE_CELLS = "Lcom/ss/android/ugc/aweme/im/sdk/chat/message
 /**
  * The two slots that bind a chat message row. They keep their names on 47.9.3, and each binds a row
  * through one method that takes the row's item and sets the row's padding from TikTok's spacing.
+ * On 48.0.2 the IM slot's bind (`Nr`) also takes the update's flags after the item, and sets the
+ * padding only when they ask for it: its full bind passes every flag, a payload bind some.
  */
 internal val MESSAGE_ROW_SLOTS = listOf(
     "${MESSAGE_CELLS}IMSkeletonLayoutReusedUISlotAssem;",
@@ -44,9 +48,13 @@ private fun MethodReference.isSetPadding() =
 
 private fun MethodReference.isPaddingDp() = name == "getPaddingDp" && returnType == "I" && parameterTypes.isEmpty()
 
-/** A slot's bind: one item in, nothing out, a single setPadding with TikTok's spacing before it. */
+/**
+ * A slot's bind: the item in (with the update's flags after it in the IM slot), nothing out, a
+ * single setPadding with TikTok's spacing before it.
+ */
 internal fun Method.isMessageRowPadding(): Boolean {
-    if (AccessFlags.STATIC.isSet(accessFlags) || returnType != "V" || parameterTypes.size != 1) return false
+    if (AccessFlags.STATIC.isSet(accessFlags) || returnType != "V" || parameterTypes.size !in 1..2) return false
+    if (parameterTypes.any { !it.startsWith("L") }) return false
     val instructions = implementation?.instructions?.toList() ?: return false
     val paddings = instructions.indices.filter { instructions[it].getReference<MethodReference>()?.isSetPadding() == true }
     if (paddings.size != 1) return false
@@ -89,7 +97,7 @@ internal data class MessageRowBind(
  * Reads [MessageRowBind] off a slot's bind, or null when its shape is not the one the hook
  * fits. [isMessage] answers whether a class is TikTok's IM message (it has `getCreatedAt()J`).
  *
- * The item is the bind's only parameter. Up to the setPadding it is only ever cast to its own type,
+ * The item is the bind's first parameter. Up to the setPadding it is only ever cast to its own type,
  * so it still holds the item right after. The row is the setPadding's receiver, the view TikTok just
  * padded. The message is read once in the bind the way TikTok's own code reads it: the item's holder
  * getter, the holder's field, and that field's message field.
@@ -101,16 +109,40 @@ internal fun Method.messageRowBind(isMessage: (String) -> Boolean): MessageRowBi
     val padding = instructions.indexOfFirst { it.getReference<MethodReference>()?.isSetPadding() == true }
     val call = instructions[padding] as? FiveRegisterInstruction ?: return null
     if (call.registerCount != 5) return null
-    val item = implementation.registerCount - 1
+    // Every parameter is an object, one register each.
+    val item = implementation.registerCount - parameterTypes.size
     val row = call.registerC
     if (row == item || row > 15 || item > 15) return null
     if (instructions.take(padding + 1).any { it.writesRegister(item) }) return null
-    // A path landing right after the padding skipped this setPadding, so it gets no time either.
-    if (isBranchTarget(padding + 1)) return null
+    // A path landing right after the padding skipped this setPadding, so it gets no time either:
+    // the hook goes in ahead of TikTok's next instruction, where those branches still land. The
+    // only such path allowed is a jump from before the padding, the IM slot's skip when its
+    // update leaves the padding alone; the row keeps what its last full bind gave it.
+    if (isBranchTarget(padding + 1) && !onlySkippedTo(instructions, padding)) return null
 
     val paths = instructions.indices.mapNotNull { pathAt(instructions, it, item, isMessage) }.distinct()
     val path = paths.singleOrNull() ?: return null
     return MessageRowBind(padding, row, item, path)
+}
+
+/**
+ * Whether everything that lands right after the setPadding at [padding] is a plain branch from
+ * before it: no switch case, no catch handler and no jump back from later code.
+ */
+private fun Method.onlySkippedTo(instructions: List<Instruction>, padding: Int): Boolean {
+    val addresses = instructions.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    val target = addresses[padding + 1]
+    if (implementation!!.tryBlocks.any { block -> block.exceptionHandlers.any { it.handlerCodeAddress == target } }) return false
+    return instructions.indices.all { index ->
+        val branch = instructions[index] as? OffsetInstruction ?: return@all true
+        if (branch.opcode == Opcode.PACKED_SWITCH || branch.opcode == Opcode.SPARSE_SWITCH) {
+            val payload = instructions.getOrNull(addresses.indexOf(addresses[index] + branch.codeOffset)) as? SwitchPayload
+                ?: return@all false
+            payload.switchElements.none { addresses[index] + it.offset == target }
+        } else {
+            addresses[index] + branch.codeOffset != target || index < padding
+        }
+    }
 }
 
 /** Whether [instruction] writes [register], other than a check-cast that keeps the value. */

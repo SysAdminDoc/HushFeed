@@ -18,7 +18,6 @@ import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.cloneMutable
-import app.morphe.util.getMutableMethod
 import app.morphe.util.getReference
 import app.morphe.util.singleOrPatchException
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -61,20 +60,39 @@ internal object BackgroundPlayRememberedReadFingerprint : Fingerprint(
 )
 
 internal const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+internal const val AWEME_EXT = "Lcom/ss/android/ugc/aweme/feed/model/AwemeExtKt;"
 internal const val IS_PHOTO_MODE = "isPhotoMode"
+internal const val ECOMMERCE_ANCHOR_SERVICE = "Lcom/ss/android/ugc/aweme/ecommerce/service/IECommerceAnchorService;"
 
 /**
  * TikTok's check of whether a video may play on in the background. The page it was opened from
  * (its event type, the second parameter) must be on TikTok's list, which has the For You and
  * Following feeds, search and other people's profiles but not your own, and the post must not
- * be an ad, a LIVE, paid content or a photo post. 47.0.3 makes the post checks here; 47.1.3 and
- * 47.1.4 call a helper for them.
+ * be an ad, a LIVE, paid content or a photo post. 47.0.3 makes the post checks here; 47.1.3 to
+ * 47.9.3 call a static helper for them. 48.0.2 asks TikTok's background play service for all of
+ * it through `LX/07fF`, the static check's handle on `BackgroundPlayServiceImpl`: the list, the
+ * search tab's "video" compare (once a string here) and the post checks.
  */
 internal object BackgroundPlaySceneCheckFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(AWEME, "Ljava/lang/String;", "Ljava/lang/String;"),
-    strings = listOf("search_result", "video"),
+    strings = listOf("search_result"),
     filters = listOf(methodCall(definingClass = "Ljava/util/Set;", name = "contains")),
+)
+
+/**
+ * The post checks the scene check leans on: not an ad, not paid content, not a LIVE, not a photo
+ * post, and no shop anchor that rules it out. On 47.9.3 it is the static `LX/0qiL;->LIZ`, on 48.0.2
+ * `BackgroundPlayServiceImpl->LIZLLL`. The patch takes it only when the scene check reaches it.
+ */
+internal object BackgroundPlayPostCheckFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(AWEME),
+    filters = listOf(
+        methodCall(definingClass = AWEME, name = "isAd"),
+        methodCall(definingClass = AWEME_EXT, name = IS_PHOTO_MODE),
+        methodCall(definingClass = ECOMMERCE_ANCHOR_SERVICE, parameters = listOf(AWEME), returnType = "Z"),
+    ),
 )
 
 internal const val AUDIO_MANAGER = "Landroid/media/AudioManager;"
@@ -189,11 +207,32 @@ internal fun List<Instruction>.photoModeCall(): Int = indexOfFirst { instruction
     } == true
 }
 
-/** Whether this is a static call taking just a post and answering yes or no. */
-internal fun Instruction.isStaticAwemeCheck(): Boolean =
-    opcode == Opcode.INVOKE_STATIC && getReference<MethodReference>()?.let {
-        it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == listOf(AWEME)
-    } == true
+private val AWEME_CHECK_CALLS = setOf(Opcode.INVOKE_STATIC, Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_INTERFACE)
+
+/** The calls in [method] that take just a post and answer yes or no. */
+private fun awemeChecks(method: Method): List<MethodReference> =
+    method.implementation?.instructions?.mapNotNull { instruction ->
+        instruction.getReference<MethodReference>()?.takeIf {
+            instruction.opcode in AWEME_CHECK_CALLS && it.returnType == "Z" &&
+                it.parameterTypes.map(CharSequence::toString) == listOf(AWEME)
+        }
+    }.orEmpty()
+
+/**
+ * Whether the scene [check] hands its post to [post]: straight (47.1.x to 47.9.3 call the static
+ * helper), or through one method that passes it on to the class or an interface [post] answers
+ * for (48.0.2 calls `LX/07fF;->LIZLLL`, which asks its `IBackgroundPlayService`).
+ */
+internal fun reachesPostCheck(check: Method, post: Method, classOf: (String) -> ClassDef?): Boolean {
+    val owner = classOf(post.definingClass) ?: return false
+    val answers = setOf(owner.type) + owner.interfaces
+    fun MethodReference.isPost() = definingClass in answers && name == post.name
+    return awemeChecks(check).any { call ->
+        call.isPost() || classOf(call.definingClass)?.methods?.firstOrNull {
+            it.name == call.name && it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == listOf(AWEME)
+        }?.let { hop -> awemeChecks(hop).any { it.isPost() } } == true
+    }
+}
 
 /**
  * Whether [index] is `Keva.getBoolean(key, default)` with [key] loaded into its key register by a
@@ -254,14 +293,13 @@ val backgroundPlayPatch = bytecodePatch(
             )
         }
 
-        // Photo posts first: on 47.0.3 their check comes after the list lookup in the same method.
+        // Photo posts first: on 47.0.3 their check comes after the list lookup in the same method,
+        // later builds hand the post to TikTok's post checks.
         val check = BackgroundPlaySceneCheckFingerprint.method
-        val checkInstructions = check.implementation!!.instructions.toList()
-        val photoCheck = if (checkInstructions.photoModeCall() >= 0) check else {
-            checkInstructions.filter { it.isStaticAwemeCheck() }
-                .map { it.getReference<MethodReference>()!!.getMutableMethod() }
-                .firstOrNull { it.implementation!!.instructions.toList().photoModeCall() >= 0 }
-                ?: throw PatchException("Keep playing in the background: the scene check no longer rules out photo posts where it's expected to.")
+        val photoCheck = if (check.implementation!!.instructions.toList().photoModeCall() >= 0) check else {
+            BackgroundPlayPostCheckFingerprint.method.takeIf { post ->
+                reachesPostCheck(check, post) { classDefByOrNull(it) }
+            } ?: throw PatchException("Keep playing in the background: the scene check no longer rules out photo posts where it's expected to.")
         }
         photoCheck.apply {
             val instructions = implementation!!.instructions.toList()

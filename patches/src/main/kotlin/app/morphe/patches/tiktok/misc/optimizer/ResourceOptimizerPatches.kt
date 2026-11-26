@@ -304,8 +304,9 @@ private val microblinkFiles = listOf(
 // LIVE game core and kept the rest (read 2026-11-17). 47.9.1 rebuilt the avmdl relay and the LIVE
 // game core again and kept the rest (read 2026-11-18). 47.9.2 rebuilt the avmdl relay and kept the
 // rest (read 2026-11-19). 47.9.3's universal APK carries every one of 47.9.2's files byte for byte
-// (read 2026-11-21).
-private const val REVIEWED_BUILD = "47.9.3"
+// (read 2026-11-21). 48.0.2 rebuilt the avmdl relay and the LIVE game core and kept the rest
+// (read 2026-11-26).
+private const val REVIEWED_BUILD = "48.0.2"
 
 private val c2paArm64Files = listOf(
     file("lib/arm64-v8a/libtt_c2pa_sdk.so", "4b4b8e8435f9d1786b5e54c13690ca7b728bd976abd10c3ccf67a257fcd9b763"),
@@ -317,21 +318,21 @@ private val c2paArmeabiFiles = listOf(
     file("lib/armeabi-v7a/libtt_c2pa_sdk_d.so", "a96af4a99de68503234e3ab658d9702ac436ae1e0650dc5551e4e29a89700b0c"),
 )
 
-// 47.9.2 and 47.9.3 (APKMirror's universal APKs, read on 2026-11-19 and 2026-11-21). The split
+// 47.9.2 to 48.0.2 (APKMirror's universal APKs, read 2026-11-19 to 2026-11-26). The split
 // bundle holds the universal APK's bytes for every file it carries.
 private val monitorFiles = listOf(
     file("lib/arm64-v8a/libartlog_monitor.so", "f32e19f982cfc498608d77970d66763a7d08116628fa629cea4416ebb7cec569"),
     file("lib/armeabi-v7a/libartlog_monitor.so", "1e4041dac369bc587dbc44962f1c2b8705d5d92c68aa1f25b0b486902490b1e1"),
 )
 
-// APKMirror also sells TikTok as a split bundle (tiktok-47-9-3, "arm64-v8a + armeabi-v7a",
-// 120-640dpi, read on 2026-11-21, 123 splits). Morphe Manager and the desktop CLI merge every
+// APKMirror also sells TikTok as a split bundle (tiktok-48-0-2, "arm64-v8a + armeabi-v7a",
+// 120-640dpi, read on 2026-11-26, 84 splits). Morphe Manager and the desktop CLI merge every
 // split in one, and every file the merged APK shares with the universal APK is byte-identical.
-// 47.9.3's bundle carries the arm64 effect and editor libraries, C2PA debug library and avmdl
-// relay again, as 47.7.3's and 47.8.3's did (47.7.2's, 47.9.1's and 47.9.2's lacked them). It
-// lacks the armeabi-v7a copies of the C2PA debug, editor, effect, speech epg and spg and P2P relay
-// libraries. Each bundle profile is the universal APK's profile less those files. It keeps 27
-// languages.
+// 48.0.2's bundle lacks the arm64 effect and editor libraries, C2PA debug library and avmdl
+// relay, as 47.7.2's, 47.9.1's and 47.9.2's did (47.7.3's, 47.8.3's and 47.9.3's carried them).
+// It also lacks the armeabi-v7a copies of the C2PA debug, editor, effect, speech epg and spg and
+// P2P relay libraries. Each bundle profile is the universal APK's profile less those files. It
+// keeps 25 languages.
 
 /**
  * [profile] without [absent], every one of which it must list: its build's split bundle. A bundle
@@ -352,7 +353,7 @@ private val coreAssets = ResourceProfile(
 
 internal val coreAssetProfiles = listOf(
     coreAssets,
-    bundleOf(coreAssets, "lib/armeabi-v7a/libtt_c2pa_sdk_d.so"),
+    bundleOf(coreAssets, "lib/arm64-v8a/libtt_c2pa_sdk_d.so", "lib/armeabi-v7a/libtt_c2pa_sdk_d.so"),
 )
 
 private val studioArm64Files = listOf(
@@ -373,6 +374,8 @@ internal val studioAssetProfiles = listOf(
     studioAssets,
     bundleOf(
         studioAssets,
+        "lib/arm64-v8a/libeffect_plugin.so",
+        "lib/arm64-v8a/libttvesdk_plugin.so",
         "lib/armeabi-v7a/libeffect_plugin.so",
         "lib/armeabi-v7a/libttvesdk_plugin.so",
     ),
@@ -383,7 +386,7 @@ internal val liveAssetProfiles = listOf(
     ResourceProfile(
         "TikTok $REVIEWED_BUILD",
         listOf(
-            file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "379ce28bfb8f859b007a289b65b6a4831f9f5e72a951282fc9460041bdc33a8e"),
+            file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "d0a261fd733fe4d4f2de126d3b2a1eda8814da86b37638393a3484e845ad9560"),
         ),
     ),
 )
@@ -391,9 +394,9 @@ internal val liveAssetProfiles = listOf(
 private val p2pRelay = ResourceProfile(
     "TikTok $REVIEWED_BUILD",
     listOf(
-        file("lib/arm64-v8a/libavmdlp2pv2.so", "6113a37d4784511dd619f562756b915e96039aac7136dbcff97371af16f3fd50"),
+        file("lib/arm64-v8a/libavmdlp2pv2.so", "f9f673b65e023cbac1c0a5abc64f12e2fc84c7a85842b7dd4179c81fe0088fed"),
         file("lib/arm64-v8a/libp2plivevdp.so", "ed35b032fac7c169860d3f37bc3be1933df9bddc8ac6785413f9608945946337"),
-        file("lib/armeabi-v7a/libavmdlp2pv2.so", "8cae9ba01d604b1b15942d58cdf8e22eaa5018ff665190a5d43954b2a5b5701b"),
+        file("lib/armeabi-v7a/libavmdlp2pv2.so", "833bcbec192f6006fcd2097fff6a7d2d7c1ebbb1d97c85361946df6a4ca7edec"),
         file("lib/armeabi-v7a/libp2plivevdp.so", "dd8a626f8b0efe36a883096923bed56ecb457e9408b26262c844442901dc1d09"),
         // The LIVE relay's own base and NAT punch libraries (#70). Only libp2plivevdp needs
         // libbase_live, and nothing links libpunch. libbase_live is also df_live_p2p's load probe,
@@ -410,6 +413,7 @@ internal val p2pRelayProfiles = listOf(
     p2pRelay,
     bundleOf(
         p2pRelay,
+        "lib/arm64-v8a/libavmdlp2pv2.so",
         "lib/armeabi-v7a/libavmdlp2pv2.so",
         "lib/armeabi-v7a/libp2plivevdp.so",
         "lib/armeabi-v7a/libbase_live.so",
@@ -450,17 +454,16 @@ internal val languageInventories = listOf(
             "ru", "sk", "sl", "sq", "sv", "sw", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "zh", "zu",
         ),
         pathManifestSha256 = "38f412319f00a31a025e03095ea9bf4266b412c2322d2a6b0b4a031a073b0c08",
-        contentManifestSha256 = setOf("f93b3cc44dfb7e98eac044435312f71c379c816817fcd14c7d2a9dd749e0fadb"),
+        contentManifestSha256 = setOf("995ded8d753e68622a9bdf5d1960a25d039816eb65198bf048c30551a3944c57"),
     ),
-    // The split bundle: 27 language directories and 106 files. 47.9.3 brings back the Hebrew
-    // split as he and iw, which 47.8.3 had and 47.9.1 and 47.9.2 lacked, and drops the Burmese
-    // split, my, that only 47.9.2 shipped.
+    // The split bundle: 25 language directories and 102 files. 48.0.2 drops the Hebrew split
+    // (he and iw) again, which 47.8.3 and 47.9.3 had and 47.9.1 and 47.9.2 lacked.
     LanguageInventoryContract(
         directories = setOf(
-            "ar", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hu", "id", "in", "it", "iw",
+            "ar", "de", "en", "es", "et", "fi", "fr", "hi", "hu", "id", "in", "it",
             "ja", "ko", "ms", "nl", "pl", "pt", "ru", "sv", "th", "tr", "uk", "vi", "zh",
         ),
-        pathManifestSha256 = "1b372a3b46779664920ebc1031ca38eb787dce81da9089a5867723290041dcac",
-        contentManifestSha256 = setOf("9fe181c1f72f98141340d4a0ed024b5f809209f80dddbe9e3741a37cf7cf0fd3"),
+        pathManifestSha256 = "33aad0753feebf540e226b415eecfc59323d40f7b52dfc70a06bd278e7acc9a6",
+        contentManifestSha256 = setOf("773a5abc29fe24feb606c1500504073c5ac7472f67116b9c806d61f1cf75c45e"),
     ),
 )

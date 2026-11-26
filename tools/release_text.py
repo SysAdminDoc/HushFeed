@@ -4,7 +4,7 @@
   py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --out FILE
   py -3.13 tools/release_text.py guide [--date 2026-10-09]
   py -3.13 tools/release_text.py index --version 0.70.0 --created 2026-10-09T17:03:42
-        --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 47.9.3=PATH] [--fixture-dirs DIR;DIR]
+        --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 48.0.2=PATH] [--fixture-dirs DIR;DIR]
 
 scripts/release/release.ps1 runs them in order; they can also run alone. Text that doesn't line up
 gets fixed where it can be and a warning where it can't, since wording never holds a release back.

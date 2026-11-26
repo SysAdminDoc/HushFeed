@@ -51,7 +51,7 @@ public class PageUnderBarTest {
         Context context = RuntimeEnvironment.getApplication();
         Utils.setContext(context);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.9.3:oxr", BAR_ID);
+        VideoOverlayHider.resolveForTests("48.0.2:oxr", BAR_ID);
         SeeThroughBottomBar.reset();
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
         Settings.FLOATING_BOTTOM_BAR.save(true);
@@ -64,7 +64,7 @@ public class PageUnderBarTest {
         Settings.FLOATING_BOTTOM_BAR.save(false);
         SeeThroughBottomBar.reset();
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.9.3:oxr", 0);
+        VideoOverlayHider.resolveForTests("48.0.2:oxr", 0);
     }
 
     /** The main window: host, mask, the frame the pages hang in, and the tab bar over it. */

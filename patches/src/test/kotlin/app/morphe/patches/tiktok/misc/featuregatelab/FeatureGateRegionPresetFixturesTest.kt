@@ -21,12 +21,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The native readers behind the scrolling comments and several-photos presets on TikTok 47.9.3
+ * The native readers behind the scrolling comments and several-photos presets on TikTok 48.0.2
  * (#98): which key each reads, through which AB read, and which values turn the feature on.
  */
 class FeatureGateRegionPresetFixturesTest {
     private val app by lazy {
-        val container = Fixtures.dexContainer(Fixtures.apkOf("47.9.3"), Opcodes.getDefault())
+        val container = Fixtures.dexContainer(Fixtures.apkOf("48.0.2"), Opcodes.getDefault())
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
             PHOTOS_READ, PHOTOS_GATE, PHOTO_COUNT, PUBLISH, KEYBOARD, TAB_READ, AB_READS, AB_CALLBACK,
@@ -45,7 +45,7 @@ class FeatureGateRegionPresetFixturesTest {
 
         val holder = method(DANMAKU_HOLDER, "<clinit>")
         assertTrue("the holder's lazy group and master", holder.created().containsAll(listOf(DANMAKU_READ, DANMAKU_MASTER)))
-        assertEquals("the master is read back as a boolean", listOf("$DANMAKU_HOLDER->LIZLLL:LX/02ok;"),
+        assertEquals("the master is read back as a boolean", listOf("$DANMAKU_HOLDER->LIZLLL:LX/02pq;"),
             method(DANMAKU_HOLDER, "LIZIZ").fields())
         assertEquals("the service asks the master", "$DANMAKU_HOLDER->LIZIZ()Z",
             method(DANMAKU_SERVICE, "LJIIIIZZ").calls().single().toString())
@@ -78,7 +78,7 @@ class FeatureGateRegionPresetFixturesTest {
         for (master in listOf(false, true)) for (value in -1..3) {
             assertEquals("master=$master value=$value", master && value == 1, run(read) { call, _ ->
                 when (call.toString()) {
-                    "LX/08CV;->LJIIIIZZ()Z" -> if (master) 1 else 0
+                    "LX/082P;->LJFF()Z" -> if (master) 1 else 0
                     "Lvq4/m;->LJIIIZ()Lvq4/m;" -> Any()
                     AB_INT_READ -> value
                     "Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;" -> null
@@ -107,7 +107,7 @@ class FeatureGateRegionPresetFixturesTest {
         for (group in -1..4) {
             assertEquals("group $group", group == 2, run(gate) { call, _ ->
                 when (call.toString()) {
-                    "LX/02ok;->getValue()Ljava/lang/Object;" -> group
+                    "LX/02pq;->getValue()Ljava/lang/Object;" -> group
                     "Ljava/lang/Number;->intValue()I" -> group
                     else -> error("Unexpected call: $call")
                 }
@@ -155,7 +155,7 @@ class FeatureGateRegionPresetFixturesTest {
         for (value in -1..3) {
             assertEquals("enable_vision_search=$value", value == 1, run(vision) { call, args ->
                 when (call.toString()) {
-                    "LX/02ok;->getValue()Ljava/lang/Object;" -> value
+                    "LX/02pq;->getValue()Ljava/lang/Object;" -> value
                     "Ljava/lang/Number;->intValue()I" -> args.single()
                     else -> error("Unexpected call: $call")
                 }
@@ -176,9 +176,9 @@ class FeatureGateRegionPresetFixturesTest {
             }
             assertEquals("feedTag=$feedTag blocked=$blocked after=$after crowd=$crowd", expected, run(gate, field) { call, args ->
                 when (call.toString()) {
-                    "LX/02ok;->getValue()Ljava/lang/Object;" -> when (args.single()) {
-                        "$FEED_TAG_GATE->LIZIZ:LX/02ok;" -> feedTag
-                        "$AFTER_BLOCK_HOLDER->LIZ:LX/02ok;" -> after
+                    "LX/02pq;->getValue()Ljava/lang/Object;" -> when (args.single()) {
+                        "$FEED_TAG_GATE->LIZIZ:LX/02pq;" -> feedTag
+                        "$AFTER_BLOCK_HOLDER->LIZ:LX/02pq;" -> after
                         else -> error("Unexpected lazy: ${args.single()}")
                     }
                     "Ljava/lang/Number;->intValue()I" -> args.single()
@@ -187,7 +187,7 @@ class FeatureGateRegionPresetFixturesTest {
                     "$SERVICES->getService(Ljava/lang/Class;)Ljava/lang/Object;" -> Any()
                     "Lcom/ss/android/ugc/aweme/spi/IHomePageService;->LJ()Z" -> blocked.toInt()
                     "Ljava/lang/Object;->getClass()Ljava/lang/Class;" -> Any()
-                    "LX/08k4;->LIZ()$CROWD" -> if (crowd == null) null else Any()
+                    "LX/08bM;->LIZ()$CROWD" -> if (crowd == null) null else Any()
                     else -> error("Unexpected call: $call")
                 }
             })
@@ -318,30 +318,30 @@ class FeatureGateRegionPresetFixturesTest {
 
     private companion object {
         const val AB_INT_READ = "Lvq4/m;->LJIIJJI(IILjava/lang/String;Z)I"
-        const val DANMAKU_READ = "LX/0H1l;"
-        const val DANMAKU_HOLDER = "LX/0H1i;"
-        const val DANMAKU_MASTER = "LX/0H1u;"
-        const val LANDSCAPE_READ = "LX/18ag;"
+        const val DANMAKU_READ = "LX/0FTG;"
+        const val DANMAKU_HOLDER = "LX/0FOB;"
+        const val DANMAKU_MASTER = "LX/0FTN;"
+        const val LANDSCAPE_READ = "LX/1AKp;"
         const val LANDSCAPE_METHOD = "invoke"
         const val DANMAKU_SERVICE = "Lcom/ss/android/ugc/aweme/service/DanmakuServiceImpl;"
         const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-        const val PHOTOS_READ = "LX/0HWD;"
-        const val PHOTOS_GATE = "LX/0HWC;"
-        const val PHOTO_COUNT = "LX/17kT;"
+        const val PHOTOS_READ = "LX/0Iiy;"
+        const val PHOTOS_GATE = "LX/0Iix;"
+        const val PHOTO_COUNT = "LX/1ADT;"
         const val PUBLISH = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/viewmodel/CommentPublishViewModel;"
         const val KEYBOARD = "Lcom/ss/android/ugc/aweme/comment/keyboard/keyboardv2/refactor/PortraitInputKeyboard;"
-        const val TAB_READ = "LX/03lS;"
+        const val TAB_READ = "LX/03ey;"
         const val TAB_CONFIG = "Lcom/ss/android/ugc/aweme/experiment/TabConfig;"
         const val AB_READS = "Lvq4/m;"
         const val AB_CALLBACK = "LX/04Fv;"
         const val TAG_TRIGGER = "Lcom/ss/android/ugc/aweme/search/entry/visualsearch/ui/SearchVisualTagComponentTrigger;"
-        const val VISUAL_SEARCH_LOADED = "LX/08wj;"
-        const val FEED_TAG_GATE = "LX/08lz;"
-        const val FEED_TAG_READ = "LX/08mx;"
-        const val AFTER_BLOCK_HOLDER = "LX/0EmR;"
-        const val AFTER_BLOCK_READ = "LX/0EmS;"
-        const val VISION_GATE = "LX/08N8;"
-        const val VISION_READ = "LX/08O2;"
+        const val VISUAL_SEARCH_LOADED = "LX/08mj;"
+        const val FEED_TAG_GATE = "LX/08Zv;"
+        const val FEED_TAG_READ = "LX/08bB;"
+        const val AFTER_BLOCK_HOLDER = "LX/0ERG;"
+        const val AFTER_BLOCK_READ = "LX/0Eak;"
+        const val VISION_GATE = "LX/08Lf;"
+        const val VISION_READ = "LX/08Ly;"
         const val CROWD = "Lcom/ss/android/ugc/aweme/config/Crowd;"
         const val SERVICES = "Lcom/ss/android/ugc/aweme/framework/services/ServiceManager;"
     }

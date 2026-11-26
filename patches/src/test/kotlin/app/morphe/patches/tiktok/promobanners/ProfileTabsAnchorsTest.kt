@@ -114,7 +114,7 @@ class ProfileTabsAnchorsTest {
         // Music's branch loads 14 into another register for a service lookup before its own 3,
         // and the showcase adds its 12 on the spot with no jump after it.
         val reader = ImmutableMethod(
-            "LX/0OAo;", "LIZIZ", emptyList(), "Ljava/util/List;",
+            "LX/0PEq;", "LIZIZ", emptyList(), "Ljava/util/List;",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
             ImmutableMethodImplementation(
                 3,
@@ -174,13 +174,13 @@ class ProfileTabsAnchorsTest {
         )
 
         /**
-         * 47.9.3's numbers, read off the tab type reader's disassembly (LX/0OAo;->LIZIZ) by hand:
+         * 48.0.2's numbers, read off the tab type reader's disassembly (LX/0PEq;->LIZIZ) by hand:
          * the constant each name's branch loads before it joins the list. Your own profile's strip
          * logged 0, 16, 21, 10, 15, 6, 2 for Videos, Stickers, AI theater, Private, Reposts,
          * Favorites and Liked.
          */
         val EXPECTED_TYPES = mapOf(
-            "47.9.3" to sortedMapOf(
+            "48.0.2" to sortedMapOf(
                 0 to "profile_tab_public_post", 2 to "profile_tab_like", 3 to "profile_tab_music",
                 4 to "profile_tab_effect", 6 to "profile_tab_favorite", 10 to "profile_tab_private",
                 12 to "profile_tab_ecommerce_showcase", 14 to "profile_tab_ecommerce_store",

@@ -193,7 +193,6 @@ A video you paused stays paused when you come back to the app instead of startin
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
 "A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.","A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone."
 AI Self,AI Self
-AI Tako,AI Tako
 AI chat,AI chat
 AI theater,AI theater
 AI-generated posts,AI-generated posts
@@ -1031,7 +1030,6 @@ Hide story views,Hide story views
 Hide streak pop-ups,Hide streak pop-ups
 Hide subscriber-only videos,Hide subscriber-only videos
 Hide suggested accounts,Hide suggested accounts
-Hide suggested replies,Hide suggested replies
 Hide suggestions on the search page,Hide suggestions on the search page
 Hide surveys,Hide surveys
 Hide tabs TikTok adds later unless you allow them.,Hide tabs TikTok adds later unless you allow them.
@@ -2797,7 +2795,6 @@ TikTok's own value,TikTok's own value
 "TikTok's server picks the qualities a game LIVE can stream in, and some phones get fewer than they can handle. While you set up a LIVE, this tells the LIVE server you have a Galaxy S25 Ultra. Sign-in and everything else still see your real phone. A quality your phone can't keep up with may stutter.","TikTok's server picks the qualities a game LIVE can stream in, and some phones get fewer than they can handle. While you set up a LIVE, this tells the LIVE server you have a Galaxy S25 Ultra. Sign-in and everything else still see your real phone. A quality your phone can't keep up with may stutter."
 "TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.","TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes."
 TikTok's size,TikTok's size
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.
 TikTok's total: %1$s. Filtered accounts: %2$s.,TikTok's total: %1$s. Filtered accounts: %2$s.
 Time and well-being,Time and well-being
 Time zone,Time zone

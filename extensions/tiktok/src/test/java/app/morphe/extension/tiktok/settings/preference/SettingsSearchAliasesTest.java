@@ -76,7 +76,6 @@ public class SettingsSearchAliasesTest {
         assertFinds(search, "search suggestions", "Hide suggestions on the search page");
         assertFinds(search, "search suggestions", "Hide search suggestions above comments");
         assertFinds(search, "ai", "Hide the Tako chat");
-        assertFinds(search, "ai", "Hide suggested replies");
         assertFinds(search, "save photos", "Download original photos");
     }
 

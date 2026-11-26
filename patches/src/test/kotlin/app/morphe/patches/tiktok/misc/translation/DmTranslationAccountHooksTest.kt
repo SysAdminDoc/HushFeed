@@ -53,9 +53,9 @@ class DmTranslationAccountHooksTest {
         assertEquals(listOf(0, 1), constants(targets.login))
         assertEquals(listOf(0, 0, 4, 1), constants(targets.logout))
         assertEquals(listOf(71776, 2, 0), constants(targets.switch))
-        val adapter = classes.getValue("LX/1688;").methods.single { it.name == "onAccountResult" }
+        val adapter = classes.getValue("LX/1GQG;").methods.single { it.name == "onAccountResult" }
         assertTrue(adapter.implementation!!.instructions.any {
-            it.getReference<MethodReference>()?.let { call -> call.definingClass == "LX/03Ob;" && call.name == "onAccountResult" } == true
+            it.getReference<MethodReference>()?.let { call -> call.definingClass == "LX/039b;" && call.name == "onAccountResult" } == true
         })
     }
 
@@ -117,15 +117,16 @@ class DmTranslationAccountHooksTest {
 
     @Test fun `successful account switch broadcasts before its UI continuation while failure preserves false`() = withClasses { classes ->
         val callers = listOf(
-            classes.getValue("LX/1Bwx;").methods.single { it.name == "then" } to true,
-            classes.getValue("LX/1Bx0;").methods.single { it.name == "run" } to false,
-            classes.getValue("LY/ARunnableS98S0100000_33_I1;").methods.single { it.name == "run\$34" } to true,
-            classes.getValue("LY/ARunnableS79S0200000_33_I1;").methods.single { it.name == "LIZ\$19" } to true,
+            classes.getValue("LX/1JM9;").methods.single { it.name == "then" } to true,
+            classes.getValue("LX/0oZb;").methods.single { it.name == "run" } to false,
+            // 47.9.3's LY/ARunnableS98S0100000_33_I1 run$34 (AccountAfterSwitchAccountHook), now a class of its own.
+            classes.getValue("LX/0oZa;").methods.single { it.name == "run" } to true,
+            classes.getValue("LY/ARunnableS71S0200000_36_I1;").methods.single { it.name == "LIZ\$9" } to true,
         )
         for ((method, success) in callers) {
             val code = method.implementation!!.instructions.toList()
             val index = code.indexOfFirst { it.getReference<MethodReference>()?.let { call ->
-                call.definingClass == DM_ACCOUNT_BROADCASTER && call.name == "LJIIIZ"
+                call.definingClass == DM_ACCOUNT_BROADCASTER && call.name == "LJIIJ"
             } == true }
             assertTrue(index >= 3)
             val call = code[index] as FiveRegisterInstruction
@@ -143,8 +144,8 @@ class DmTranslationAccountHooksTest {
                 }
                 assertEquals(mapOf(call.registerC to 0, call.registerD to 0), loads)
             }
-            if (method.definingClass == "LX/1Bwx;") assertTrue(index < code.indexOfFirst {
-                it.getReference<MethodReference>()?.let { continuation -> continuation.definingClass == "LX/1Byp;" && continuation.name == "LIZIZ" } == true
+            if (method.definingClass == "LX/1JM9;") assertTrue(index < code.indexOfFirst {
+                it.getReference<MethodReference>()?.let { continuation -> continuation.definingClass == "LX/1JNL;" && continuation.name == "LIZIZ" } == true
             })
         }
     }

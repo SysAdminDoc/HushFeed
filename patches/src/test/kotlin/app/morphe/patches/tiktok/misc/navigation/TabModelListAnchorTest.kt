@@ -47,12 +47,12 @@ class TabModelListAnchorTest {
             addInstructionsWithLabels(
                 0,
                 """
-                    invoke-static {}, LX/03F4;->LIZJ()Z
+                    invoke-static {}, LX/04mf;->LIZJ()Z
                     move-result v0
                     if-eqz v0, :fill
-                    iget-object v0, p0, $assem->LLLFFI:LX/1Mlq;
+                    iget-object v0, p0, $assem->LLLFFI:LX/1QVJ;
                     if-eqz v0, :fill
-                    iget-object v0, v0, LX/1Mlq;->LJIIZILJ:Ljava/lang/ThreadLocal;
+                    iget-object v0, v0, LX/1QVJ;->LJIIZILJ:Ljava/lang/ThreadLocal;
                     invoke-virtual { v0 }, Ljava/lang/ThreadLocal;->get()Ljava/lang/Object;
                     move-result-object v0
                     check-cast v0, Ljava/util/List;
@@ -100,7 +100,7 @@ class TabModelListAnchorTest {
                     if-eqz v0, :done
                     iget-object v2, p0, $assem->LLJJJJ:$list
                     iget-object v1, p0, $assem->LLJJJJJIL:$list
-                    invoke-static { v2, v1 }, LX/1Gdj;->LIZ(Ljava/util/List;Ljava/util/List;)V
+                    invoke-static { v2, v1 }, LX/1DqL;->LIZ(Ljava/util/List;Ljava/util/List;)V
                     :done
                     iget-object v0, p0, $assem->LLJJJJ:$list
                     return-object v0
@@ -110,6 +110,86 @@ class TabModelListAnchorTest {
         val classDef = assem(rebuild, filler("Bp", "scene_get_top_tab"))
 
         assertFalse(matchesTop(rebuild, classDef))
+    }
+
+    @Test
+    fun `a getter that seeds its lists on a cold launch is still one, beside a rebuild with its filler`() {
+        // 48.0.2: the bottom getter (Ao1) asks its lists whether they're empty and how big they
+        // are while it seeds them, and ends on a throw from its lock. The rebuild getter beside it
+        // (gB) calls the same filler and hands two lists to a rebuild task.
+        val bottom = MutableMethod(
+            ImmutableMethod(
+                assem, "Ao1", emptyList(), "Ljava/util/List;",
+                AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
+                ImmutableMethodImplementation(2, emptyList(), null, null),
+            ),
+        ).apply {
+            addInstructionsWithLabels(
+                0,
+                """
+                    invoke-virtual { p0 }, $assem->nr()V
+                    invoke-static {}, LX/04mf;->LIZJ()Z
+                    move-result v0
+                    if-eqz v0, :seed
+                    iget-object v0, p0, $assem->LLLIL:LX/1QVJ;
+                    if-eqz v0, :seed
+                    invoke-virtual { v0 }, LX/1QVJ;->LJFF()Ljava/util/List;
+                    move-result-object v0
+                    if-eqz v0, :seed
+                    return-object v0
+                    :seed
+                    iget-object v0, p0, $assem->LLJJIJIIJIL:$list
+                    invoke-virtual { v0 }, $list->isEmpty()Z
+                    move-result v0
+                    if-eqz v0, :done
+                    iget-object v0, p0, $assem->LLJJIJI:$list
+                    invoke-virtual { v0 }, $list->size()I
+                    move-result v0
+                    if-ltz v0, :fail
+                    :done
+                    iget-object v0, p0, $assem->LLJJIJIIJIL:$list
+                    return-object v0
+                    :fail
+                    const/4 v0, 0x0
+                    throw v0
+                """,
+            )
+        }
+        val rebuild = MutableMethod(
+            ImmutableMethod(
+                assem, "gB", emptyList(), "Ljava/util/List;",
+                AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
+                ImmutableMethodImplementation(4, emptyList(), null, null),
+            ),
+        ).apply {
+            addInstructionsWithLabels(
+                0,
+                """
+                    invoke-virtual { p0 }, $assem->nr()V
+                    iget-object v0, p0, $assem->LLJJJ:$list
+                    invoke-virtual { v0 }, $list->isEmpty()Z
+                    move-result v0
+                    if-eqz v0, :done
+                    iget-object v2, p0, $assem->LLJJIJIL:$list
+                    iget-object v1, p0, $assem->LLJJJ:$list
+                    new-instance v0, LX/11bk;
+                    invoke-direct { v0, v2, v1 }, LX/11bk;-><init>(Ljava/util/List;Ljava/util/List;)V
+                    :done
+                    iget-object v0, p0, $assem->LLJJJ:$list
+                    return-object v0
+                """,
+            )
+        }
+        val top = getter("kJ2", "rr", "LLJJIJI")
+        val classDef = assem(
+            bottom, rebuild, top,
+            filler("nr", "scene_get_bottom_tab"), filler("rr", "scene_get_top_tab"),
+        )
+
+        assertTrue(matchesBottom(bottom, classDef))
+        assertFalse(matchesTop(bottom, classDef))
+        assertFalse(matchesBottom(rebuild, classDef))
+        assertTrue(matchesTop(top, classDef))
     }
 
     @Test

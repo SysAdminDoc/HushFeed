@@ -449,7 +449,6 @@
       "hide_inbox_group_chat_banner",
       "hide_chat_call_buttons",
       "hide_chat_sticker_banner",
-      "hide_chat_ai_replies",
       "turn_off_chat_double_tap",
       "turn_off_chat_swipe_reply",
       "hide_inbox_custom_titles",
@@ -2408,12 +2407,6 @@
     "hide_browsing_captcha_popups": {
       "field": "HIDE_CAPTCHA_POPUPS",
       "key": "hide_browsing_captcha_popups",
-      "type": "boolean",
-      "default": false
-    },
-    "hide_chat_ai_replies": {
-      "field": "HIDE_CHAT_AI_REPLIES",
-      "key": "hide_chat_ai_replies",
       "type": "boolean",
       "default": false
     },

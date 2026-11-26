@@ -91,7 +91,7 @@ class ForYouShowRepairTest {
             assertEquals(calls.activityOf.returnType, calls.hoxOf.parameterTypes.single().toString())
             assertTrue("$version: For You is a kind of ${calls.fragmentBase}", ancestors(app, FOR_YOU_FRAGMENT).contains(calls.fragmentBase))
             assertTrue("$version: the panel is a kind of ${calls.hintOwner}", ancestors(app, calls.panel.type).contains(calls.hintOwner))
-            if (version == "47.9.3") {
+            if (version == "48.0.2") {
                 val read = mapOf(
                     "nodeOf" to calls.nodeOf.name, "container" to calls.container.name, "current" to calls.current.name,
                     "shown" to calls.shown.name, "dispatch" to calls.dispatch.name,

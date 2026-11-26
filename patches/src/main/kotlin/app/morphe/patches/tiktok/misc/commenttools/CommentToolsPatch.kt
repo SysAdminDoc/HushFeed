@@ -157,7 +157,7 @@ internal fun MutableMethod.resolveCommentSuggestionGate(): CommentToolsWrite {
 }
 
 /**
- * The comment like-and-hate view's bind. The view keeps no name from build to build (`LX/0mLq;`
+ * The comment like-and-hate view's bind. The view keeps no name from build to build (`LX/1I6R;`
  * on 46.2.3, `LX/0lNa;` on 46.8.3), but the line its bind logs is the same on every build and in
  * no other method of the app.
  */
@@ -316,15 +316,16 @@ val commentToolsPatch = bytecodePatch(
                 write
             },
             {
-                // A comment survey comes from one config getter, and null is its own answer for
-                // no survey. Hide comment surveys asks first and, on yes, answers null.
+                // A comment survey comes from one resolver, and an empty holder is its own answer
+                // for no survey. Hide comment surveys asks first and, on yes, answers that holder.
                 val method = CommentSurveyConfigFingerprint.method
                 method.requireLocals("Comment tools", 1)
+                val none = method.noCommentSurveyAnswer()
                 val write: CommentToolsWrite = {
                     method.guardAtEntry(
                         "Comment tools",
                         "invoke-static {}, $COMMENT_SURVEY_CLASS_DESCRIPTOR->hide()Z",
-                        "const/4 v0, 0x0\nreturn-object v0",
+                        "sget-object v0, ${none.definingClass}->${none.name}:${none.type}\nreturn-object v0",
                     )
                 }
                 write

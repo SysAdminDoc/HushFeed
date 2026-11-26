@@ -13,7 +13,7 @@ import app.morphe.patcher.Fingerprint
  *
  * <p>Read out of the 46.2.3 fixture on 2026-09-09. `run` is gated on the `enable_sim_utils` AB
  * key, reads `TelephonyManager.getSimState`, builds the current SIM identity through
- * `LX/0NF5;->LIZ`, compares it with the one stored in Keva under `last_sim_info`, stores the new
+ * `LX/0OJV;->LIZ`, compares it with the one stored in Keva under `last_sim_info`, stores the new
  * one, and if the two differ reads `SubscriptionManager.getActiveSubscriptionInfoCount` (index 82)
  * and sends the event `ttac_sim_change_detect` carrying `sim_change_type`, `duration`, `n_sim`,
  * `prev_sim_country_code`, `prev_carrier`, `curr_sim_country_code` and `curr_carrier`. That event
@@ -30,9 +30,9 @@ import app.morphe.patcher.Fingerprint
  * carries is the phone's real SIM count and the fact that its hardware changed.
  */
 /**
- * Fresco's network fetch producer, `produceResults(Consumer, ProducerContext)` (`LX/09VI;->LIZ`
- * on 47.9.3). It builds the fetch state through the fetcher (`LX/03S8;->LJ`, returning
- * `LX/0AXq;`), turns an expired signed URL down on the phone by calling its own failure method
+ * Fresco's network fetch producer, `produceResults(Consumer, ProducerContext)` (`LX/0ACg;->LIZ`
+ * on 48.0.2). It builds the fetch state through the fetcher (`LX/03oW;->LIZ`, returning
+ * `LX/0BBo;`), turns an expired signed URL down on the phone by calling its own failure method
  * (`LJFF(FetchState, Throwable)`) with the second string, and otherwise hands the state to the
  * fetcher, whose callbacks reach the same failure method. Every image fetch and every failed one
  * pass through it, which is what the IMAGE LOADS report counts (#415).

@@ -1836,8 +1836,6 @@ Hide call buttons,Sembunyikan tombol panggilan
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.","Tombol panggilan suara dan video hilang dari bagian atas obrolan. Panggilan tetap berdering, dan tombol detail obrolan tetap ada."
 Hide sticker suggestions,Sembunyikan saran stiker
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,Banner saran stiker tidak lagi muncul di obrolan. Stiker Anda sendiri tetap ada di pemilih stiker.
-Hide suggested replies,Sembunyikan balasan yang disarankan
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,Balasan yang disarankan TikTok dan banner pengantarnya tidak lagi muncul di obrolan. Pesan yang Anda ketik atau terima tidak diubah.
 Hide online status,Sembunyikan status online
 "Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.","Teman tidak akan melihat titik hijau atau Active now saat kamu ada di TikTok. Mode Ghost harus menyala. Status teman mungkin berhenti diperbarui untukmu, dan status terakhirmu bisa tetap terlihat beberapa saat."
 Stop LIVE previews opening by themselves,Hentikan pratinjau LIVE terbuka sendiri
@@ -2470,7 +2468,6 @@ autoplay auto play,putar otomatis autoplay
 picture in picture PiP,gambar dalam gambar PiP
 search suggestions,saran pencarian
 AI chat,chat AI
-AI Tako,AI Tako
 save photos,simpan foto
 download button,tombol unduh download
 "It's in %1$s, under %2$s. Tap to go there.","Ada di %1$s, di bawah %2$s. Ketuk untuk ke sana."

@@ -44,7 +44,6 @@ public class ChatDeclutterTest {
         PausedProcess.set(false);
         Settings.HIDE_CHAT_CALL_BUTTONS.save(false);
         Settings.HIDE_CHAT_STICKER_BANNER.save(false);
-        Settings.HIDE_CHAT_AI_REPLIES.save(false);
         Settings.TURN_OFF_CHAT_DOUBLE_TAP.resetToDefault();
         Settings.TURN_OFF_CHAT_SWIPE_REPLY.resetToDefault();
         SettingsStatus.chatDeclutterEnabled = false;
@@ -53,35 +52,21 @@ public class ChatDeclutterTest {
     @Test public void everySwitchIsOffByDefault() {
         assertFalse(Settings.HIDE_CHAT_CALL_BUTTONS.defaultValue);
         assertFalse(Settings.HIDE_CHAT_STICKER_BANNER.defaultValue);
-        assertFalse(Settings.HIDE_CHAT_AI_REPLIES.defaultValue);
         assertTrue(InboxControls.shouldShowChatStickerBanner());
-        assertTrue(InboxControls.shouldShowChatAiReplies());
     }
 
     @Test public void theStickerBannerAnswerFollowsItsSwitchOnly() {
         Settings.HIDE_CHAT_STICKER_BANNER.save(true);
         assertFalse(InboxControls.shouldShowChatStickerBanner());
-        // The other switches are not this one.
-        assertTrue(InboxControls.shouldShowChatAiReplies());
         Settings.HIDE_CHAT_STICKER_BANNER.save(false);
         assertTrue(InboxControls.shouldShowChatStickerBanner());
     }
 
-    @Test public void theSuggestedReplyAnswerFollowsItsSwitchOnly() {
-        Settings.HIDE_CHAT_AI_REPLIES.save(true);
-        assertFalse(InboxControls.shouldShowChatAiReplies());
-        assertTrue(InboxControls.shouldShowChatStickerBanner());
-        Settings.HIDE_CHAT_AI_REPLIES.save(false);
-        assertTrue(InboxControls.shouldShowChatAiReplies());
-    }
-
     @Test public void pausedEveryChatAnswerIsTikToks() {
         Settings.HIDE_CHAT_STICKER_BANNER.save(true);
-        Settings.HIDE_CHAT_AI_REPLIES.save(true);
         Settings.HIDE_CHAT_CALL_BUTTONS.save(true);
         PausedProcess.set(true);
         assertTrue(InboxControls.shouldShowChatStickerBanner());
-        assertTrue(InboxControls.shouldShowChatAiReplies());
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
             View button = new View(owner.get());
             ChatTitleBar.hideCallButton(button);
@@ -178,7 +163,6 @@ public class ChatDeclutterTest {
             new InboxPreferenceCategory(activity, absent);
             assertNull(absent.findPreference("hide_chat_call_buttons"));
             assertNull(absent.findPreference("hide_chat_sticker_banner"));
-            assertNull(absent.findPreference("hide_chat_ai_replies"));
             assertNull(absent.findPreference("turn_off_chat_double_tap"));
             assertNull(absent.findPreference("turn_off_chat_swipe_reply"));
 
@@ -187,7 +171,6 @@ public class ChatDeclutterTest {
             new InboxPreferenceCategory(activity, present);
             assertNotNull(present.findPreference("hide_chat_call_buttons"));
             assertNotNull(present.findPreference("hide_chat_sticker_banner"));
-            assertNotNull(present.findPreference("hide_chat_ai_replies"));
             assertNotNull(present.findPreference("turn_off_chat_double_tap"));
             assertNotNull(present.findPreference("turn_off_chat_swipe_reply"));
             assertTrue(InboxPreferenceCategory.isAvailable());

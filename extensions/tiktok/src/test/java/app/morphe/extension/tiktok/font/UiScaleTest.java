@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class UiScaleTest {
-    /** TikTok's text size factors on 47.9.3 (X.03aF's LIZ and LIZJ), and one of Smaller text sizes' stops. */
+    /** TikTok's text size factors on 48.0.2 (X.03Wq's LIZ and LIZJ), and one of Smaller text sizes' stops. */
     private static final float[] FACTORS = {1f, 1.05f, 1.1f, 1.18f, 0.8f};
 
     @Before public void setUp() {

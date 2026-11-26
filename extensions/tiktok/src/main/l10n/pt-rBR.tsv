@@ -1865,8 +1865,6 @@ Hide call buttons	Esconder os botões de chamada
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Os botões de chamada de voz e de vídeo saem do topo de um chat. As chamadas continuam tocando e o botão de detalhes do chat fica.
 Hide sticker suggestions	Esconder as sugestões de figurinhas
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	O banner de sugestões de figurinhas deixa de aparecer em um chat. Suas próprias figurinhas continuam no seletor de figurinhas.
-Hide suggested replies	Esconder as respostas sugeridas
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	As respostas sugeridas do TikTok e o banner que as apresenta deixam de aparecer em um chat. As mensagens que você escreve ou recebe não são alteradas.
 Hide online status	Ocultar o status online
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Seus amigos não verão um ponto verde nem Active now enquanto você estiver no TikTok. Precisa do modo Ghost ligado. O status deles pode parar de atualizar para você, e o seu último status pode continuar visível por um tempo.
 Stop LIVE previews opening by themselves	Impedir que prévias de LIVE abram sozinhas
@@ -2526,7 +2524,6 @@ autoplay auto play	reprodução automática autoplay
 picture in picture PiP	picture-in-picture PiP
 search suggestions	sugestões de pesquisa
 AI chat	chat de IA
-AI Tako	IA Tako
 save photos	salvar fotos
 download button	botão de download baixar
 It's in %1$s, under %2$s. Tap to go there.	Fica em %1$s, em %2$s. Toque para ir até lá.

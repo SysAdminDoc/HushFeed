@@ -29,7 +29,7 @@ private const val VIEW = "Landroid/view/View;"
 
 /**
  * The card modules Hide rows on LIVE profile cards offers (#487), by TikTok's names for them:
- * constants of the card's module enum (X.1A3T on 47.9.3), whose names TikTok keeps since its
+ * constants of the card's module enum (X.10Zf on 48.0.2), whose names TikTok keeps since its
  * containers log them ("is_" + name + "_show"). Each one has to be a constant of that enum on a
  * declared build, or the patch fails and says which.
  */

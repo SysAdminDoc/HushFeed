@@ -28,11 +28,6 @@ public final class InboxControls {
         return !Settings.HIDE_CHAT_STICKER_BANNER.get();
     }
 
-    /** Answers the enable check of TikTok's suggested reply cells and their intro banner. */
-    public static boolean shouldShowChatAiReplies() {
-        return !Settings.HIDE_CHAT_AI_REPLIES.get();
-    }
-
     /**
      * Whether the Inbox's invitation to start a group chat is withheld. Asked at the top of the
      * banner's update, whose early return is the state it starts in, with nothing to show.

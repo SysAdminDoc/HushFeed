@@ -1043,7 +1043,7 @@ public final class GestureActions {
     /**
      * How far a horizontal movement goes toward the profile page: to the left in a left-to-right
      * layout, to the right in a right-to-left one, where TikTok's pager runs the other way. Decided
-     * the way TikTok decides it (X.05Xd.LIZJ): the layout direction of the configuration.
+     * the way TikTok decides it (X.05jG.LIZJ): the layout direction of the configuration.
      */
     static float towardProfile(Object pager, float dx) {
         boolean rtl = pager instanceof View
@@ -1104,9 +1104,9 @@ public final class GestureActions {
     static final String FAVORITE_SERVICE = "com.ss.android.ugc.aweme.favorites.service.IFavoriteService";
     static final String ACCOUNT_SERVICE = "com.ss.android.ugc.aweme.IAccountUserService";
     /** The view TikTok's own long press on Favorites places its popup beside (i_0 on 47.9.3). */
-    static final String[] FAVORITE_POPUP_ANCHOR_IDS = {"47.9.3:idf"};
+    static final String[] FAVORITE_POPUP_ANCHOR_IDS = {"48.0.2:idf"};
     /** The Favorites button itself, for a cell where that view isn't laid out. */
-    static final String[] FAVORITE_BUTTON_IDS = {"47.9.3:iej"};
+    static final String[] FAVORITE_BUTTON_IDS = {"48.0.2:iej"};
     static final ResourceIdCache ANCHOR_IDS = new ResourceIdCache();
     /** What TikTok's feed calls itself when it opens the popup with no cell to ask. */
     static final String FEED_ENTER_FROM = "homepage_hot";

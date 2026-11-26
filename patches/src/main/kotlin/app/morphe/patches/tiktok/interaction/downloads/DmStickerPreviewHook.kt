@@ -503,13 +503,14 @@ internal const val DM_STICKER_TYPE_EXTRA = "a:sticker_type"
  * The method that picks a sticker message's rows by the sticker's kind: it reads the message as
  * a StickerTemplate, then switches on [DM_STICKER_TYPE_EXTRA]. A static sticker and an animated
  * one get the rows lambda hooked above; a sticker made from a video, a photo sticker, a Tenor GIF
- * and an AI self sticker get a lambda of their own.
+ * and an AI self sticker get a lambda of their own. It takes the message and the menu, and from
+ * 48.0.2 a String it hands the rows lambda too (0Yoc.LIZ took two on 47.9.3, 0b7a.LIZ takes three).
  */
 internal object DmStickerMenuPickerFingerprint : Fingerprint(
     returnType = DM_MENU_LIST,
     strings = listOf(DM_STICKER_TYPE_EXTRA),
     custom = { method, _ ->
-        AccessFlags.STATIC.isSet(method.accessFlags) && method.parameterTypes.size == 2
+        AccessFlags.STATIC.isSet(method.accessFlags) && method.parameterTypes.size in 2..3
             && method.implementation?.instructions?.any {
                 it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == DM_STICKER_TEMPLATE
             } == true

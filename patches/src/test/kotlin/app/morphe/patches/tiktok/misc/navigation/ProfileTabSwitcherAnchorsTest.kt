@@ -9,6 +9,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
@@ -39,8 +40,10 @@ class ProfileTabSwitcherAnchorsTest {
             }
             assertEquals("${apk.name}: ${taken.map { "${it.first.type}->${it.second.name}" }}", 1, taken.size)
             val handler = taken.single().second
-            assertTrue("${apk.name}: the handler is static with the observer first, so p1 is the tag",
-                AccessFlags.STATIC.isSet(handler.accessFlags) && handler.parameterTypes.size == 2)
+            // p1 is the tag both ways: after the observer in a static, or after this in its own onChanged.
+            val static = AccessFlags.STATIC.isSet(handler.accessFlags)
+            assertTrue("${apk.name}: p1 is no longer the tag: ${handler.parameterTypes}",
+                handler.parameterTypes.size == (if (static) 2 else 1))
             val implementation = handler.implementation!!
             assertTrue("${apk.name}: the handler has no local register for the answer",
                 implementation.registerCount - 2 >= 1)
@@ -50,11 +53,16 @@ class ProfileTabSwitcherAnchorsTest {
             val profileTag = instructions.indexOfFirst {
                 it.opcode == Opcode.CONST_STRING && ((it as ReferenceInstruction).reference as StringReference).string == "USER"
             }
+            // 48.0.2 copies p1 to a low register before the compare.
+            val tagCopies = setOf(tagRegister) + instructions.drop(profileTag + 1)
+                .takeWhile { it.opcode == Opcode.MOVE_OBJECT || it.opcode == Opcode.MOVE_OBJECT_FROM16 }
+                .filter { (it as TwoRegisterInstruction).registerB == tagRegister }
+                .map { (it as TwoRegisterInstruction).registerA }
             val compared = instructions.drop(profileTag + 1).firstOrNull {
                 ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name != null
             }
             assertTrue("${apk.name}: the handler no longer compares p1 with Profile's tag first: $compared",
-                profileTag in 0..1 && compared is FiveRegisterInstruction && compared.registerC == tagRegister)
+                profileTag in 0..1 && compared is FiveRegisterInstruction && compared.registerC in tagCopies)
             assertTrue("${apk.name}: the handler no longer shows the account sheet",
                 instructions.any {
                     ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "showInChooseAccountBottomSheet"

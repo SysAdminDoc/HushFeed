@@ -104,7 +104,7 @@ internal const val STORY_READS_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmo
 /**
  * TikTok working out a person's story ring (#427). It takes the person's story status, or on
  * another branch each story's viewed flag, and its answer goes into the status store the inbox,
- * the profile and the feed all draw their rings from. R8 names it (47.9.3 LX/0ADR;->LJI); its
+ * the profile and the feed all draw their rings from. R8 names it (48.0.2 LX/0AMB;->LJIILLIIL); its
  * log line and its three model parameters find it.
  */
 internal object StoryStatusComputeFingerprint : Fingerprint(

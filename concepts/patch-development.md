@@ -20,8 +20,8 @@ Keep every Unreleased bullet under a `###` group. The release cutter preserves t
 | --- | --- |
 | App | Global TikTok |
 | Package | com.zhiliaoapp.musically |
-| Supported version | 47.9.3 |
-| Version code | 2024709030 |
+| Supported version | 48.0.2 |
+| Version code | 2024800020 |
 | APK signer SHA-256 | 9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba |
 | Extension minimum Android API | 23 |
 

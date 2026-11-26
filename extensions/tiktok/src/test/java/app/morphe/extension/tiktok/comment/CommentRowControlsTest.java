@@ -53,9 +53,9 @@ public class CommentRowControlsTest {
         Object cache = ReflectionHelpers.getStaticField(CommentTools.class, "RESOURCE_IDS");
         Map<String, Integer> ids = ReflectionHelpers.getField(cache, "ids");
         ids.put(activity.getPackageName() + ":tv_like_count", 0x7f000103);
-        ids.put(activity.getPackageName() + ":47.9.3:k7x", 0x7f000101);
-        ids.put(activity.getPackageName() + ":47.9.3:mty", 0x7f000102);
-        ids.put(activity.getPackageName() + ":47.9.3:irc", AVATAR_ID);
+        ids.put(activity.getPackageName() + ":48.0.2:k7x", 0x7f000101);
+        ids.put(activity.getPackageName() + ":48.0.2:mty", 0x7f000102);
+        ids.put(activity.getPackageName() + ":48.0.2:irc", AVATAR_ID);
         ReflectionHelpers.<Map<View, ?>>getStaticField(CommentTools.class, "CELL_COMMENTS").clear();
         ReflectionHelpers.<Set<String>>getStaticField(CommentTools.class, "IN_FLIGHT").clear();
         ReflectionHelpers.<Set<String>>getStaticField(CommentTools.class, "BLOCKED_UIDS").clear();

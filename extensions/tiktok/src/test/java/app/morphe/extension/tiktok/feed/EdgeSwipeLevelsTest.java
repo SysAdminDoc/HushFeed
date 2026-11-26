@@ -670,8 +670,8 @@ public class EdgeSwipeLevelsTest {
         title.setId(0x7f0a1002);
         sheet.addView(title, new FrameLayout.LayoutParams(200, 80));
         content.addView(sheet, new FrameLayout.LayoutParams(500, 700));
-        FeedVisibility.resolveForTests(shown.getPackageName(), "47.9.3:q6y", sheet.getId());
-        FeedVisibility.resolveForTests(shown.getPackageName(), "47.9.3:wz_", title.getId());
+        FeedVisibility.resolveForTests(shown.getPackageName(), "48.0.2:q6y", sheet.getId());
+        FeedVisibility.resolveForTests(shown.getPackageName(), "48.0.2:wz_", title.getId());
         sheetOut[0] = sheet;
         return shown;
     }

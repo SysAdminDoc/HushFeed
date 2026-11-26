@@ -307,7 +307,7 @@ group = "app.morphe"
 patches {
     about {
         name = "Hushfeed"
-        description = "Hushfeed patches for TikTok 47.9.3 and a first few for TikTok Lite 47.8.2, built for Morphe. Fewer accidental taps, less noise, more control over the feed, inbox, comments and downloads."
+        description = "Hushfeed patches for TikTok 48.0.2 and a first few for TikTok Lite 47.8.2, built for Morphe. Fewer accidental taps, less noise, more control over the feed, inbox, comments and downloads."
         source = "https://github.com/SysAdminDoc/hushfeed"
         author = "SysAdminDoc"
         contact = "https://github.com/SysAdminDoc/hushfeed/issues"

@@ -45,7 +45,7 @@ class StoryOverLiveBindingFixturesTest {
             val pictures = found.getValue(AVATAR).interfaces.toSet()
             // Where the bind's UID argument sits: 47.9.2 calls the picture's LIZIZ itself (picture,
             // owner, model, UID), 47.9.3 goes through its Kotlin default-arguments helper, a static
-            // X.0YsR.LIZ(picture, UID, model, owner, ...) that calls LIZIZ on the picture.
+            // com.ss.android.ugc.aweme.avatar.AvatarComponentView.LIZ(picture, UID, model, owner, ...) that calls LIZIZ on the picture.
             fun uidSlot(call: MethodReference): Int? = when {
                 call.definingClass == AVATAR && call.name == BIND -> 3
                 call.parameterTypes.size > 2 && call.parameterTypes[0].toString() in pictures &&

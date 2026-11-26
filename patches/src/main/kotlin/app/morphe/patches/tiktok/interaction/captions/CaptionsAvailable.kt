@@ -38,7 +38,7 @@ private fun MethodReference.isExperimentRead() =
 /**
  * The lazy that answers where the Captions row goes (#217): a static lambda body that reads
  * [CAPTIONS_ROW_KEY] from TikTok's experiments and boxes the answer. On 47.4.3 it is
- * `AFwS158S0000000_20_I1.invoke$17`, the value behind `X.1Hkc.LIZ()`. The experiment registry
+ * `AFwS158S0000000_20_I1.invoke$17`, the value behind `X.1EaS.LIZ()`. The experiment registry
  * that lists the key returns nothing, so the return type leaves it out.
  */
 internal object CaptionsRowFingerprint : Fingerprint(
@@ -142,7 +142,7 @@ internal const val CAPTION_ITEM = "Lcom/ss/android/ugc/aweme/feed/model/CaptionI
 private const val CAPTION_MODEL = "Lcom/ss/android/ugc/aweme/feed/model/CaptionModel;"
 
 /**
- * TikTok's lookup of a video's own caption track (#217), `X.07o6.LJIIIZ` on 47.9.3: static, takes
+ * TikTok's lookup of a video's own caption track (#217), `X.07jY.LJIIIZ` on 48.0.2: static, takes
  * the Aweme, and answers the captionList item whose languageId matches the CaptionModel's
  * originalCaptionLanguage. The Captions panel, the player's caption layer and translation all ask
  * it, and a null answer is what makes TikTok toast that the video has no captions.

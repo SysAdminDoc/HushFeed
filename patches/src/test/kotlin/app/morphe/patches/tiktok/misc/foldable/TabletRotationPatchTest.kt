@@ -84,8 +84,8 @@ class TabletRotationPatchTest {
             val version = Fixtures.versionOf(apk)
             val photo = classesOf(apk)[COMMENT_PHOTO_ACTIVITY] ?: return@forEachDeclared fail("$version has no comment picture")
             val requests = commentPhotoRequests(MutableClass(photo).methods)
-            val superCall = requests.override.implementation!!.instructions.toList()[superOrientationRequests(requests.override).single()]
-                as FiveRegisterInstruction
+            val stockOverride = requests.override.implementation!!.instructions.toList()
+            val superCalls = superOrientationRequests(requests.override).map { stockOverride[it] as FiveRegisterInstruction }
             val stockDirect = requests.direct.mapValues { (method, _) -> method.implementation!!.instructions.map { it.opcode } }
 
             requests.override.askThroughTabletRotation()
@@ -94,14 +94,18 @@ class TabletRotationPatchTest {
             }
 
             val override = requests.override.implementation!!.instructions.toList()
-            val asks = superOrientationRequests(requests.override).single()
-            val ask = override[asks - 2]
-            assertTrue("$version: the override doesn't ask the extension first", ask.calls("orientation"))
-            ask as FiveRegisterInstruction
-            assertEquals(listOf(superCall.registerC, superCall.registerD), listOf(ask.registerC, ask.registerD))
-            assertEquals(Opcode.MOVE_RESULT, override[asks - 1].opcode)
-            assertEquals("$version: the answer isn't what the override hands its superclass",
-                superCall.registerD, (override[asks - 1] as OneRegisterInstruction).registerA)
+            assertEquals("$version: two lines per request", stockOverride.size + 2 * superCalls.size, override.size)
+            val asks = superOrientationRequests(requests.override)
+            assertEquals("$version: the override's requests", superCalls.size, asks.size)
+            asks.zip(superCalls).forEach { (at, superCall) ->
+                val ask = override[at - 2]
+                assertTrue("$version: the override doesn't ask the extension first", ask.calls("orientation"))
+                ask as FiveRegisterInstruction
+                assertEquals(listOf(superCall.registerC, superCall.registerD), listOf(ask.registerC, ask.registerD))
+                assertEquals(Opcode.MOVE_RESULT, override[at - 1].opcode)
+                assertEquals("$version: the answer isn't what the override hands its superclass",
+                    superCall.registerD, (override[at - 1] as OneRegisterInstruction).registerA)
+            }
 
             requests.direct.forEach { (method, indexes) ->
                 val code = method.implementation!!.instructions.toList()
@@ -125,8 +129,17 @@ class TabletRotationPatchTest {
         val direct = request("onResume", "const/4 v0, 0x1\ninvoke-super {p0, v0}, LX/Base;->setRequestedOrientation(I)V\nreturn-void", params = emptyList())
         val plain = request("onResume", "return-void", params = emptyList())
         val noSuper = request("setRequestedOrientation", "return-void")
+        // 48.0.2's shape: hand on what it's asked when TikTok lets the screen turn, portrait otherwise.
+        val gated = request("setRequestedOrientation", "if-eqz p1, :portrait\ninvoke-super {p0, p1}, LX/Base;->setRequestedOrientation(I)V\nreturn-void\n" +
+            ":portrait\nconst/4 v0, 0x1\ninvoke-super {p0, v0}, LX/Base;->setRequestedOrientation(I)V\nreturn-void")
+        val thrice = request("setRequestedOrientation", List(3) { "invoke-super {p0, p1}, LX/Base;->setRequestedOrientation(I)V" }.joinToString("\n") + "\nreturn-void")
         assertEquals(listOf(direct), commentPhotoRequests(listOf(ok, direct)).direct.keys.toList())
-        for (methods in listOf(listOf(direct), listOf(noSuper, direct), listOf(ok, plain))) {
+        assertEquals(listOf(1, 4), superOrientationRequests(commentPhotoRequests(listOf(gated, direct)).override))
+        gated.askThroughTabletRotation()
+        val asked = gated.implementation!!.instructions.toList()
+        assertEquals("both requests ask the extension", listOf(3, 8), superOrientationRequests(gated))
+        assertTrue(asked[1].calls("orientation") && asked[6].calls("orientation"))
+        for (methods in listOf(listOf(direct), listOf(noSuper, direct), listOf(ok, plain), listOf(thrice, direct))) {
             try {
                 commentPhotoRequests(methods)
                 fail("took ${methods.map { it.name }}")
@@ -142,13 +155,13 @@ class TabletRotationPatchTest {
     @Test
     fun `the bridge built on the bundled stub answers with TikTok's own check`() {
         val stub = extensionStub()
-        val check = ImmutableMethod("LX/07A4;", "LIZ", stub.parameters, "Z",
+        val check = ImmutableMethod("LX/078q;", "LIZ", stub.parameters, "Z",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null, null)
         val bridge = landscapeBridge(stub, check)
         val code = bridge.implementation!!.instructions.toList()
         val registers = bridge.implementation!!.registerCount
         assertEquals(Opcode.INVOKE_STATIC_RANGE, code[0].opcode)
-        assertEquals("LX/07A4;->LIZ", code[0].getReference<MethodReference>()!!.let { "${it.definingClass}->${it.name}" })
+        assertEquals("LX/078q;->LIZ", code[0].getReference<MethodReference>()!!.let { "${it.definingClass}->${it.name}" })
         val call = code[0] as RegisterRangeInstruction
         assertEquals("the check doesn't get the activity", (registers - 1) to 1, call.startRegister to call.registerCount)
         assertEquals(listOf(Opcode.MOVE_RESULT, Opcode.RETURN), code.subList(1, 3).map { it.opcode })
@@ -156,7 +169,7 @@ class TabletRotationPatchTest {
         assertTrue("the answer lands on the activity", answer < registers - 1)
         assertEquals(answer, (code[2] as OneRegisterInstruction).registerA)
 
-        val instance = ImmutableMethod("LX/07A4;", "LIZ", check.parameters, "Z", AccessFlags.PUBLIC.value, null, null, null)
+        val instance = ImmutableMethod("LX/078q;", "LIZ", check.parameters, "Z", AccessFlags.PUBLIC.value, null, null, null)
         try {
             landscapeBridge(stub, instance)
             fail("wrote the bridge onto an instance method")

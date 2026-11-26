@@ -230,7 +230,7 @@ public final class FeatureGateCatalog {
         return fields.length > 1 && !isR8Named(fields[1]);
     }
 
-    /** A class name R8 gave, X.0RLA, or an array of one; TikTok's renamed classes all sit in X. */
+    /** A class name R8 gave, X.0Tdt, or an array of one; TikTok's renamed classes all sit in X. */
     static boolean isR8Named(String className) {
         int start = 0;
         while (start < className.length() && className.charAt(start) == '[') start++;

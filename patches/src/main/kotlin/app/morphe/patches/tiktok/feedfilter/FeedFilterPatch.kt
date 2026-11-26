@@ -1092,17 +1092,20 @@ val feedFilterPatch = bytecodePatch(
 
         // An empty list is the app's own "no card to ask for", so the Lemon8 promo is never
         // requested and never arrives. Remove feed ads also drops it from the list if it came
-        // another way.
-        Lemon8CardRequestFingerprint.method.requireLocals("Feed filter", 1)
-        Lemon8CardRequestFingerprint.method.guardAtEntry(
-            "Feed filter",
-            "invoke-static {}, $CARD_FILTERS_CLASS_DESCRIPTOR->shouldSkipLemon8PromoRequest()Z",
-            """
-                new-instance v0, Ljava/util/ArrayList;
-                invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
-                return-object v0
-            """,
-        )
+        // another way. TikTok 48.0.2 has no Lemon8 card handler left (LemonServiceImpl answers
+        // null for it), so the card is never asked for there and there's nothing to guard.
+        Lemon8CardRequestFingerprint.methodOrNull?.let { method ->
+            method.requireLocals("Feed filter", 1)
+            method.guardAtEntry(
+                "Feed filter",
+                "invoke-static {}, $CARD_FILTERS_CLASS_DESCRIPTOR->shouldSkipLemon8PromoRequest()Z",
+                """
+                    new-instance v0, Ljava/util/ArrayList;
+                    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+                    return-object v0
+                """,
+            )
+        }
 
         // The full-screen people you may know card (#478) is asked for the same way, in a round
         // of its own. An empty list is what its builder answers with TikTok's experiment off, so
@@ -1599,7 +1602,7 @@ private fun MutableMethod.filterChainedCacheDelivery(
     // The block used to do its work in the payload's own register, so both labels it re-enters
     // at were reached with a boolean sitting in a register the native path holds a reference in.
     // On 46.2.3 the instruction at each label writes that register before anything reads it
-    // (index 6 and index 8 of LX/0oGR;->LIZ), so nothing was actually wrong; the block no longer
+    // (index 6 and index 8 of LX/0h7I;->LIZ), so nothing was actually wrong; the block no longer
     // depends on the host doing that. A register of its own also leaves the payload read the
     // patcher branched on exactly as the host wrote it.
     val scratchRegister = getFreeRegisterProvider(

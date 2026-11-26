@@ -47,15 +47,13 @@ private const val CHAT_GESTURES = "Lapp/morphe/extension/tiktok/inbox/ChatGestur
 private const val SKELETON = "Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/base/assems/base/SkeletonLayoutAssembler;"
 
 /**
- * The chat switches in Hide inbox items: the title bar's two call buttons, the sticker banner,
- * the suggested reply cells and their intro, and a message's double tap and swipe. Each anchor
- * is held to every declared build, and each hook is applied to the real method it would patch.
+ * The chat switches in Hide inbox items: the title bar's two call buttons, the sticker banner
+ * and a message's double tap and swipe. Each anchor is held to every declared build, and each
+ * hook is applied to the real method it would patch.
  */
 class ChatDeclutterAnchorsTest {
     private val gates = listOf(
         Triple(ChatStickerBannerEnabledFingerprint, "PRESHOWN_STICKER_BANNER_PROTOCOL", "shouldShowChatStickerBanner"),
-        Triple(ChatSuggestedReplyEnabledFingerprint, "UNIFIED_SUGGESTED_REPLY_MSG", "shouldShowChatAiReplies"),
-        Triple(ChatSmartReplyIntroEnabledFingerprint, "SMART_REPLY_ENTRANCE_CARD", "shouldShowChatAiReplies"),
     )
 
     @Test
@@ -247,22 +245,22 @@ class ChatDeclutterAnchorsTest {
     fun `a dispatcher whose gesture can't be read beside a free local stops the patch`() {
         fun dispatcher(
             registers: Int,
-            parameters: List<String> = listOf("LX/a;", "LX/b;", "LX/c;"),
+            parameters: List<String> = listOf("Landroid/view/View;", "LX/b;", "I", "LX/c;"),
             flags: Int = AccessFlags.PUBLIC.value,
         ) = ImmutableMethod(
-            SKELETON, "ol0", parameters.map { ImmutableMethodParameter(it, null, null) }, "V", flags, null, null,
+            SKELETON, "XJ", parameters.map { ImmutableMethodParameter(it, null, null) }, "V", flags, null, null,
             ImmutableMethodImplementation(registers, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),
         )
         assertEquals(12, chatGestureRegister(dispatcher(13)))
         assertEquals(15, chatGestureRegister(dispatcher(16)))
-        assertEquals(5, chatGestureRegister(dispatcher(6, listOf("J", "LX/b;", "LX/c;"))))
+        assertEquals(6, chatGestureRegister(dispatcher(7, listOf("J", "LX/b;", "I", "LX/c;"))))
         val broken = listOf(
             dispatcher(17), // the gesture sits past v15
-            dispatcher(4), // no local is left for the answer
-            dispatcher(5, listOf("J", "LX/b;", "LX/c;")), // nor here, with a wide argument
+            dispatcher(5), // no local is left for the answer
+            dispatcher(6, listOf("J", "LX/b;", "I", "LX/c;")), // nor here, with a wide argument
             dispatcher(13, flags = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value),
-            dispatcher(13, listOf("LX/a;", "LX/b;")),
-            dispatcher(13, listOf("LX/a;", "LX/b;", "I")),
+            dispatcher(13, listOf("LX/a;", "LX/b;", "LX/c;")), // 47.9.3's three arguments
+            dispatcher(13, listOf("Landroid/view/View;", "LX/b;", "LX/c;", "I")),
         )
         broken.forEach { assertThrows(PatchException::class.java) { chatGestureRegister(it) } }
     }
@@ -307,7 +305,7 @@ class ChatDeclutterAnchorsTest {
     /**
      * The types the dispatcher gets hold of where its chain of value tests sends [value], up to that
      * branch's return or throw: what it casts to and what the calls it makes hand back. 47.9.3's
-     * double tap reaches the reaction view model through a typed getter (Xp()), with no cast.
+     * double tap reaches the reaction view model through a typed getter (kr()), with no cast.
      */
     private fun branchCasts(code: List<Instruction>, value: Int): List<String> {
         val addresses = code.runningFold(0) { address, instruction -> address + instruction.codeUnits }

@@ -2056,8 +2056,6 @@ Hide call buttons	إخفاء أزرار الاتصال
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	يغادر زرا المكالمة الصوتية ومكالمة الفيديو أعلى الدردشة. ما زالت المكالمات ترن، ويبقى زر تفاصيل الدردشة.
 Hide sticker suggestions	أخف اقتراحات الملصقات
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	يتوقف شريط اقتراحات الملصقات عن الظهور في المحادثة. ملصقاتك الخاصة تبقى في منتقي الملصقات.
-Hide suggested replies	إخفاء الردود المقترحة
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	تتوقف خلايا الردود المقترحة من TikTok وبانر التعريف بها عن الظهور في الدردشة. الرسائل التي تكتبها أو تستقبلها لا تتأثر.
 Hide online status	إخفاء حالة الاتصال
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	لن يرى أصدقاؤك نقطة خضراء أو «نشط الآن» أثناء وجودك في TikTok. يتطلب تفعيل «وضع الشبح». قد يتوقف تحديث حالة أصدقائك لديك، وقد تبقى آخر حالة لك ظاهرة لفترة.
 Stop LIVE previews opening by themselves	أوقف فتح معاينات LIVE تلقائيًا
@@ -2769,7 +2767,6 @@ autoplay auto play	تشغيل تلقائي تلقائي التشغيل
 picture in picture PiP	صورة داخل صورة PiP
 search suggestions	اقتراحات البحث
 AI chat	دردشة AI
-AI Tako	AI Tako
 save photos	حفظ الصور
 download button	زر التنزيل تنزيل
 It's in %1$s, under %2$s. Tap to go there.	تجده في %1$s ضمن %2$s. اضغط للانتقال إليه.

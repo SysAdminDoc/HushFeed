@@ -101,7 +101,7 @@ class SuggestionCellCollapseTest {
         ImmutableMethod(
             "Lcom/ss/android/ugc/aweme/relation/usercard/impl/cell/AbsRecUserCell;",
             "onBindItemView",
-            listOf(ImmutableMethodParameter("LX/0aHZ;", null, null)),
+            listOf(ImmutableMethodParameter("LX/0cKu;", null, null)),
             "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value or AccessFlags.SYNTHETIC.value,
             null,
@@ -109,7 +109,7 @@ class SuggestionCellCollapseTest {
             ImmutableMethodImplementation(
                 2,
                 listOf(
-                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0nfX;")),
+                    ImmutableInstruction21c(Opcode.CHECK_CAST, 1, ImmutableTypeReference("LX/0sCc;")),
                     ImmutableInstruction10x(Opcode.RETURN_VOID),
                 ),
                 null,
@@ -123,7 +123,7 @@ class SuggestionCellCollapseTest {
         ImmutableMethod(
             "Lcom/ss/android/ugc/aweme/relation/usercard/impl/cell/TitleAreaCell;",
             "onBindItemView",
-            listOf(ImmutableMethodParameter("LX/05Ip;", null, null)),
+            listOf(ImmutableMethodParameter("LX/05HP;", null, null)),
             "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
             null,

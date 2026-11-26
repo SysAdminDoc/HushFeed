@@ -1345,7 +1345,7 @@ public final class Probe extends Instrumentation {
                         // interceptors (47.9.3: X.0J3q -> MessageService.notifyOnMessage), so one
                         // interceptor there sees them all. -e mode start adds it and clears the
                         // counts, -e mode report logs them (-e stop true also removes it). The
-                        // service comes from TikTok's service lookup, -e lookup (47.9.3: X.04nk)
+                        // service comes from TikTok's service lookup, -e lookup (48.0.2: X.04v9)
                         // and -e method (LIZJ). Names only, no message content.
                         Class<?> serviceType = loader.loadClass("com.bytedance.android.message.IMessageService");
                         Class<?> interceptorType = loader.loadClass("com.ss.ugc.live.sdk.message.interfaces.IInterceptor");
@@ -1353,7 +1353,7 @@ public final class Probe extends Instrumentation {
                                 .getMethod("getMethodName");
                         String lookup = intent.getStringExtra("lookup");
                         String lookupMethod = intent.getStringExtra("method");
-                        Object service = loader.loadClass(lookup == null ? "X.04nk" : lookup)
+                        Object service = loader.loadClass(lookup == null ? "X.04v9" : lookup)
                                 .getMethod(lookupMethod == null ? "LIZJ" : lookupMethod, Class.class)
                                 .invoke(null, serviceType);
                         if (service == null) throw new IllegalStateException("no message service");
@@ -1405,7 +1405,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "roompost": {
                         // Posts the room page in front's own room to the page's RoomChannel, the
-                        // way a room enter's success does (47.9.3: X.0K9Z.LJ, DataChannel.D10), to
+                        // way a room enter's success does (48.0.2: X.0LHV.LJ, DataChannel.D10), to
                         // see what binds from it in a room whose enter Ghost mode held (#513).
                         // -e field names the page's DataChannel field (47.9.3: S), -e post its
                         // posting method (D10).
@@ -1435,7 +1435,7 @@ public final class Probe extends Instrumentation {
                         // The message channel in the room page in front (#513): its fields one
                         // level down (need-message flag, state machine, kind) and whether it is the
                         // SDK's current channel. It sits in the page's DataChannel (47.9.3: field
-                        // S) under the channel key (X.0KDL), read with -e get (Cm0). -e call
+                        // S) under the channel key (X.0LLF), read with -e get (Cm0). -e call
                         // needMessage or startMessage calls that on it first.
                         // -e source current reads the SDK's current channel instead, with no room
                         // page needed (a feed LIVE preview's, say).
@@ -1444,7 +1444,7 @@ public final class Probe extends Instrumentation {
                         Object fragment = null;
                         Object manager;
                         if (fromCurrent) {
-                            Field slot = loader.loadClass("X.0Ix3").getDeclaredField("LIZIZ");
+                            Field slot = loader.loadClass("X.0K6c").getDeclaredField("LIZIZ");
                             slot.setAccessible(true);
                             manager = slot.get(null);
                         } else {
@@ -1457,7 +1457,7 @@ public final class Probe extends Instrumentation {
                             String key = intent.getStringExtra("key");
                             String getter = intent.getStringExtra("get");
                             manager = channel.getClass().getMethod(getter == null ? "Cm0" : getter, Class.class)
-                                    .invoke(channel, loader.loadClass(key == null ? "X.0KDL" : key));
+                                    .invoke(channel, loader.loadClass(key == null ? "X.0LLF" : key));
                         }
                         if (manager == null) {
                             Log.i(TAG, "ok msgstate no channel on the page");
@@ -1509,9 +1509,9 @@ public final class Probe extends Instrumentation {
                         }
                         String call = intent.getStringExtra("call");
                         if (call != null) manager.getClass().getMethod(call).invoke(manager);
-                        // The SDK's current channel and its room (47.9.3: X.0Ix3.LIZIZ and LIZ), what
+                        // The SDK's current channel and its room (48.0.2: X.0K6c.LIZIZ and LIZ), what
                         // the chat's own start asks for by room id (MessageService.get(J)).
-                        Class<?> builder = loader.loadClass("X.0Ix3");
+                        Class<?> builder = loader.loadClass("X.0K6c");
                         Field current = builder.getDeclaredField("LIZIZ");
                         current.setAccessible(true);
                         Field currentRoom = builder.getDeclaredField("LIZ");
@@ -1528,8 +1528,8 @@ public final class Probe extends Instrumentation {
                                 + " currentRoomIsThis=" + (roomId != null && roomId.equals(currentRoom.get(null)))
                                 + " kind=" + (scene == null ? null : fieldValue(scene, "LJIILIIL"))
                                 + describe(manager, 2));
-                        // The channel's core (47.9.3: X.0J46 in field LIZ) and its state machine
-                        // (LJIIJ, X.0J4l), one line each.
+                        // The channel's core (48.0.2: X.0KDe in field LIZ) and its state machine
+                        // (LJIIJ, X.0KEJ), one line each.
                         Object core = fieldValue(manager, "LIZ");
                         if (core != null) {
                             Log.i(TAG, "ok msgstate core " + core.getClass().getName() + describe(core, 0));
@@ -1617,13 +1617,13 @@ public final class Probe extends Instrumentation {
                     case "profileviewgates": {
                         // What TikTok 47.0.3 checks before it reports a profile view
                         // (ProfilePlatformViewModel.a73 before ProfileViewerApiService.reportView),
-                        // read in this process: the feature gate X.0kaP.LIZ(), the under-16 flag,
+                        // read in this process: the feature gate X.11Go.LIZ(), the under-16 flag,
                         // the viewer's "profile_view_history" privacy value (1 reports), the
-                        // cooldown flag X.0fJr and the follower cap it replaces. Names are this
+                        // cooldown flag X.0lgm and the follower cap it replaces. Names are this
                         // build's; each read says what it found or why it could not.
                         StringBuilder out = new StringBuilder();
                         String[][] reads = {
-                                {"featureGate", "X.0kaP", "LIZ"},
+                                {"featureGate", "X.11Go", "LIZ"},
                         };
                         for (String[] read : reads) {
                             try {
@@ -1656,16 +1656,16 @@ public final class Probe extends Instrumentation {
                             out.append(" privacy=?(").append(failure.getClass().getSimpleName()).append(": ").append(failure.getMessage()).append(')');
                         }
                         try {
-                            Object lazy = loader.loadClass("X.0oVk").getField("LIZ").get(null);
+                            Object lazy = loader.loadClass("X.0h9R").getField("LIZ").get(null);
                             out.append(" cooldownFlag=").append(lazy.getClass().getMethod("getValue").invoke(lazy));
                         } catch (Throwable failure) {
                             out.append(" cooldownFlag=?(").append(failure.getClass().getSimpleName()).append(')');
                         }
                         try {
-                            Object lazy = loader.loadClass("X.0nwn").getField("LIZIZ").get(null);
+                            Object lazy = loader.loadClass("X.0sNg").getField("LIZIZ").get(null);
                             Object config = lazy.getClass().getMethod("getValue").invoke(lazy);
                             Object cap = config == null ? null : config.getClass().getField("enabledMaxFollowers").get(config);
-                            Object me = loader.loadClass("X.1MKa").getMethod("LIZ").invoke(null);
+                            Object me = loader.loadClass("X.0Dq4").getMethod("LIZ").invoke(null);
                             Object followers = me == null ? null : me.getClass().getField("historyMaxFollowerCount").get(me);
                             out.append(" followerCap=").append(cap == null ? "5000 (default)" : cap).append(" myHistoryMaxFollowers=").append(followers);
                         } catch (Throwable failure) {
@@ -1676,15 +1676,15 @@ public final class Probe extends Instrumentation {
                     }
                     case "thoughtgates": {
                         // What TikTok 47.9.3 answers for the redesigned Thoughts (#186), read in
-                        // this process: whether the SocialThought plugin is in (X.0Cja.LIZ), the
-                        // redesign gate (X.0IC4.LIZ), its raw enable_thought_redesign_consumption
-                        // value (the lazy X.0IC4.LIZIZ), and need_story_notes (X.0IC9.LIZIZ). That
+                        // this process: whether the SocialThought plugin is in (X.0E6P.LIZ), the
+                        // redesign gate (X.0JMq.LIZ), its raw enable_thought_redesign_consumption
+                        // value (the lazy X.0JMq.LIZIZ), and need_story_notes (X.0JMv.LIZIZ). That
                         // value comes from an AB store the Feature Gate recorder does not hook.
                         StringBuilder out = new StringBuilder();
                         String[][] reads = {
-                                {"plugin", "X.0Cja", "LIZ"},
-                                {"redesignGate", "X.0IC4", "LIZ"},
-                                {"needStoryNotes", "X.0IC9", "LIZIZ"},
+                                {"plugin", "X.0E6P", "LIZ"},
+                                {"redesignGate", "X.0JMq", "LIZ"},
+                                {"needStoryNotes", "X.0JMv", "LIZIZ"},
                         };
                         for (String[] read : reads) {
                             try {
@@ -1695,7 +1695,7 @@ public final class Probe extends Instrumentation {
                             }
                         }
                         try {
-                            Field field = loader.loadClass("X.0IC4").getDeclaredField("LIZIZ");
+                            Field field = loader.loadClass("X.0JMq").getDeclaredField("LIZIZ");
                             field.setAccessible(true);
                             Object lazy = field.get(null);
                             out.append(" redesignValue=").append(lazy.getClass().getMethod("getValue").invoke(lazy));
@@ -1707,16 +1707,16 @@ public final class Probe extends Instrumentation {
                     }
                     case "commenttranslategates": {
                         // Which comment translation manager TikTok 47.9.3 gives a comment row (#383).
-                        // BaseCommentCell swaps the observer-based X.0H5b for X.1FzB when
-                        // X.0HPK.LIZ() holds: X.06x0.LIZ() (its lazy flag, unless X.077Y.LIZ()), or
-                        // comment_auto_translation_consumer_style (the lazy X.0HPK.LIZ) equal to 3
-                        // with X.07Q5.LIZIZ().
+                        // BaseCommentCell swaps the observer-based X.0F01 for X.1I0A when
+                        // X.0IcE.LIZ() holds: X.06yd.LIZ() (its lazy flag, unless X.07EQ.LIZ()), or
+                        // comment_auto_translation_consumer_style (the lazy X.0IcE.LIZ) equal to 3
+                        // with X.07nj.LIZIZ().
                         StringBuilder out = new StringBuilder();
                         String[][] reads = {
-                                {"swapsManager", "X.0HPK", "LIZ"},
-                                {"autoTranslateGate", "X.06x0", "LIZ"},
-                                {"autoTranslateVeto", "X.077Y", "LIZ"},
-                                {"consumerStyleGate", "X.07Q5", "LIZIZ"},
+                                {"swapsManager", "X.0IcE", "LIZ"},
+                                {"autoTranslateGate", "X.06yd", "LIZ"},
+                                {"autoTranslateVeto", "X.07EQ", "LIZ"},
+                                {"consumerStyleGate", "X.07nj", "LIZIZ"},
                         };
                         for (String[] read : reads) {
                             try {
@@ -1726,7 +1726,7 @@ public final class Probe extends Instrumentation {
                                 out.append(' ').append(read[0]).append("=?(").append(failure.getClass().getSimpleName()).append(')');
                             }
                         }
-                        String[][] lazies = {{"consumerStyle", "X.0HPK"}, {"autoTranslateFlag", "X.06x0"}};
+                        String[][] lazies = {{"consumerStyle", "X.0IcE"}, {"autoTranslateFlag", "X.06yd"}};
                         for (String[] lazy : lazies) {
                             try {
                                 Field field = loader.loadClass(lazy[1]).getDeclaredField("LIZ");
@@ -1742,9 +1742,9 @@ public final class Probe extends Instrumentation {
                     }
                     case "commentrows": {
                         // Every comment row laid out in TikTok 47.9.3's comment lists (#383): the
-                        // class of the row's translation manager (BaseCommentCell.LLLFZ, an X.0HOz,
-                        // then its X.0HPM LJI), whether the row's comment is a picture with no text,
-                        // and for the observer manager X.0H5b whether the comment it listens for
+                        // class of the row's translation manager (BaseCommentCell.LLLFZ, an X.0Ibt,
+                        // then its X.0IcG LJI), whether the row's comment is a picture with no text,
+                        // and for the observer manager X.0F01 whether the comment it listens for
                         // (LLJJIJIL) is the one the row shows (O6). Ids are shown as short hashes.
                         // The probe answers on the main thread, so the rows are read as laid out.
                         StringBuilder out = new StringBuilder();
@@ -1786,8 +1786,8 @@ public final class Probe extends Instrumentation {
                                             out.append(" state=null");
                                             continue;
                                         }
-                                        // onItemViewCreated only builds the X.0H5b when X.0HOz.LJII() is false;
-                                        // otherwise it wires X.0HVZ (LJIIIIZZ) and the X.17pt translator.
+                                        // onItemViewCreated only builds the X.0F01 when X.0Ibt.LJII() is false;
+                                        // otherwise it wires X.0IiK (LJIIIIZZ) and the X.1NfT translator.
                                         for (String gate : new String[] {"LJII", "LJI"}) {
                                             Method read = state.getClass().getDeclaredMethod(gate);
                                             read.setAccessible(true);
@@ -1803,7 +1803,7 @@ public final class Probe extends Instrumentation {
                                         managerField.setAccessible(true);
                                         Object manager = managerField.get(state);
                                         out.append(" manager=").append(manager == null ? "null" : manager.getClass().getName());
-                                        if (manager != null && manager.getClass().getName().equals("X.0H5b")) {
+                                        if (manager != null && manager.getClass().getName().equals("X.0F01")) {
                                             Field heard = manager.getClass().getDeclaredField("LLJJIJIL");
                                             heard.setAccessible(true);
                                             Object comment = heard.get(manager);
@@ -1811,9 +1811,9 @@ public final class Probe extends Instrumentation {
                                             out.append(" hears=").append(heardCid == null ? "none" : "<id " + (heardCid.hashCode() & 0xffff) + ">");
                                             if (heardCid != null) {
                                                 // Whether the manager is still among the observers of that
-                                                // comment's updates (X.0HPO.LIZIZ(cid), a NextLiveData that
+                                                // comment's updates (X.0IcI.LIZIZ(cid), a NextLiveData that
                                                 // keys nextObserverMap by the observer it was given).
-                                                Object updates = loader.loadClass("X.0HPO").getMethod("LIZIZ", String.class).invoke(null, heardCid);
+                                                Object updates = loader.loadClass("X.0IcI").getMethod("LIZIZ", String.class).invoke(null, heardCid);
                                                 Field observers = null;
                                                 for (Class<?> type = updates.getClass(); type != null && observers == null; type = type.getSuperclass()) {
                                                     try {
@@ -3311,7 +3311,7 @@ public final class Probe extends Instrumentation {
                     case "antirecord": {
                         // TikTok's own LIVE anti-recording controller on the foreground window, for
                         // Allow screenshots without a LIVE room whose server asks for a secure screen.
-                        // -e class names it (47.9.3: X.0IeO, the class logging "AntiScreenRecordController"),
+                        // -e class names it (48.0.2: X.0Jo1, the class logging "AntiScreenRecordController"),
                         // -e method its one-boolean switch (LIZ), -e on true or false. On, TikTok's own
                         // Window.setFlags(FLAG_SECURE) runs, the call the patch rewrites; off clears it.
                         android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
@@ -3718,7 +3718,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "countformat": {
                         // One of TikTok's static count formatters run with a count the check
-                        // picks, and the text it wrote: -e class X.0GQU -e method LIZIZ -e count
+                        // picks, and the text it wrote: -e class X.0EMY -e method LIZIZ -e count
                         // 123456. One that takes (long) gets just the count, one that takes
                         // (Aweme, long) the video on screen as well. A check can read what Show
                         // exact counts makes of a big count whatever the feed serves. The class
@@ -3766,12 +3766,12 @@ public final class Probe extends Instrumentation {
                         // Without it set to dark, TikTok stays light whatever the phone's night
                         // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
                         // factory, the static (int, Context, String) -> SharedPreferences method
-                        // TikTok reads it with (-e store X.0AuT -e method LIZJ on 47.9.3), since
+                        // TikTok reads it with (-e store X.0BGa -e method LIZJ on 48.0.2), since
                         // that one may route the store to Keva rather than a plain file; its
                         // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
                         // -e set unset removes it.
                         String storeClass = intent.getStringExtra("store");
-                        if (storeClass == null) storeClass = "X.0AuT";
+                        if (storeClass == null) storeClass = "X.0BGa";
                         String storeMethod = intent.getStringExtra("method");
                         if (storeMethod == null) storeMethod = "LIZJ";
                         Method factory = loader.loadClass(storeClass)
@@ -4745,7 +4745,7 @@ public final class Probe extends Instrumentation {
                                 .getConstructor(android.content.Context.class).newInstance(activity);
                         // -e layout 0x7f0d2eb8 then inflates that layout from the view's own
                         // context into it, the way TikTok fills the view later (#362's DM-creator
-                        // tip: the tip's text layout goes into X.0UU9 from X.0UU9's context).
+                        // tip: the tip's text layout goes into X.0Wpz from X.0Wpz's context).
                         String layout = intent.getStringExtra("layout");
                         if (layout != null && view instanceof android.view.ViewGroup) {
                             android.view.LayoutInflater.from(view.getContext())
@@ -6084,7 +6084,7 @@ public final class Probe extends Instrumentation {
                     lines.add(answers.toString());
                 }
                 try {
-                    lines.add(" class gate 06Rv.LIZ=" + loader.loadClass("X.03t3").getMethod("LIZ").invoke(null));
+                    lines.add(" class gate 06Rv.LIZ=" + loader.loadClass("X.03Cb").getMethod("LIZ").invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
                     lines.add(" class gate unreadable " + unreadable);
                 }
@@ -6152,7 +6152,7 @@ public final class Probe extends Instrumentation {
                 long started = android.os.SystemClock.uptimeMillis();
                 // The page panel builds its visibility component only while this experiment is on.
                 try {
-                    Method sequenceOn = loader.loadClass("X.06Os").getDeclaredMethod("LIZ");
+                    Method sequenceOn = loader.loadClass("X.06Mg").getDeclaredMethod("LIZ");
                     sequenceOn.setAccessible(true);
                     lines.add("generic feed sequence " + sequenceOn.invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
@@ -6160,7 +6160,7 @@ public final class Probe extends Instrumentation {
                 }
                 java.util.List<Object> panels = new java.util.ArrayList<>();
                 try {
-                    Method panelOf = loader.loadClass("X.06Ih").getDeclaredMethod("LIZJ", fragmentType);
+                    Method panelOf = loader.loadClass("X.06BT").getDeclaredMethod("LIZJ", fragmentType);
                     panelOf.setAccessible(true);
                     for (Object root : roots) {
                         if (!fragmentType.isInstance(root)) continue;
@@ -6656,7 +6656,7 @@ public final class Probe extends Instrumentation {
         private static String hoxNode(Object node) throws ReflectiveOperationException {
             if (node == null) return " none";
             Class<?> nodeType = node.getClass();
-            while (nodeType != null && !nodeType.getName().equals("X.046v")) nodeType = nodeType.getSuperclass();
+            while (nodeType != null && !nodeType.getName().equals("X.03As")) nodeType = nodeType.getSuperclass();
             if (nodeType == null) return " " + ref(node) + " not a node";
             Field listenersField = nodeType.getDeclaredField("LLJJIJIIJIL");
             Field containerField = nodeType.getDeclaredField("LL");
@@ -6667,7 +6667,7 @@ public final class Probe extends Instrumentation {
             Object container = containerField.get(node);
             out.append(" container ").append(ref(container));
             Class<?> containerType = container == null ? null : container.getClass();
-            while (containerType != null && !containerType.getName().equals("X.047u")) containerType = containerType.getSuperclass();
+            while (containerType != null && !containerType.getName().equals("X.03Ay")) containerType = containerType.getSuperclass();
             if (containerType == null) return out.toString();
             Field shown = containerType.getDeclaredField("LLJJJJJIL");
             Field index = containerType.getDeclaredField("LLJJJ");
@@ -6702,14 +6702,14 @@ public final class Probe extends Instrumentation {
         }
 
         /**
-         * Each of a feed fragment's fields holding TikTok's older list panel (X.04nr), with that
+         * Each of a feed fragment's fields holding TikTok's older list panel (X.04la), with that
          * panel's visible hint. The page's node show sets it and its node hide clears it, and the
          * list's players follow it, so a page left hidden shows here as false.
          */
         private String listPanelHints(Object fragment) {
             StringBuilder out = new StringBuilder();
             try {
-                Class<?> panelType = loader.loadClass("X.04nr");
+                Class<?> panelType = loader.loadClass("X.04la");
                 Field hint = panelType.getDeclaredField("mUserVisibleHint");
                 hint.setAccessible(true);
                 for (Class<?> c = fragment.getClass(); c != null && !c.getName().startsWith("androidx."); c = c.getSuperclass()) {
@@ -7818,7 +7818,7 @@ public final class Probe extends Instrumentation {
                 if (readOnly) return;
                 // 47.9.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
                 // when new install info arrives.
-                Class<?> callbackType = loader.loadClass("X.1XLq");
+                Class<?> callbackType = loader.loadClass("X.1XTz");
                 final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
                 final String[] outcome = {"no answer"};
                 Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},

@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* Hushfeed moves to TikTok 48.0.2, and only that one. 47.9.3 isn't supported anymore. Get the 48.0.2 bundle or APK from APKMirror and patch it with your usual signing key so your login and settings come along.
+* `Hide suggested replies` is gone from Inbox settings. TikTok 48.0.2 doesn't show suggested replies in chats anymore, so the switch had nothing left to hide.
 * New `Show how many videos a profile has` switch under `Show when an account was made`. It adds TikTok's own count, like "1,234 videos", to the line under the @username on any profile, yours too (#519).
 * New `Use this date format everywhere` switch under the publish date rows in Feed screen. Turn it on and `Day before month`, `Write the month as a word` and `Date instead of age` also change the dates on comments, the date headers in chats and the dates on search result cards. It's off until you turn it on, and comment dates need `Show commenter handle and region`, which is on by default (#536).
 * `Random time each day` can now run past midnight. Set `Latest time` earlier than `When to send`, like 11 PM to 2 AM, and each day's message goes out late that evening or early that morning (rimixyz's idea, from their pull request, #507).

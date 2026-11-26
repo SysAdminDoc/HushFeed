@@ -27,7 +27,7 @@ final class NativeAccountOwner implements AccountListSession.Accounts {
         Class<?> api = NativeAccountRows.type(loader, "com.ss.android.ugc.aweme.IAccountUserService");
         Object services = manager.getMethod("get").invoke(null);
         Object service = manager.getMethod("getService", Class.class).invoke(services, api);
-        return register(service, api, NativeAccountRows.type(loader, "X.044c"),
+        return register(service, api, NativeAccountRows.type(loader, "X.03ie"),
                 NativeAccountRows.type(loader, NativeAccountRows.USER), changed);
     }
 

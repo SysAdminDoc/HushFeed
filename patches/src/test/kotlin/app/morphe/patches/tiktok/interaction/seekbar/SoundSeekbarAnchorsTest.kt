@@ -62,7 +62,7 @@ class SoundSeekbarAnchorsTest {
             if (Fixtures.versionOf(apk) == "47.4.3") {
                 assertEquals("ir", members.coverViewModel)
                 assertEquals("i33", members.playerGetter)
-                assertEquals("LX/0Bx9;", members.player)
+                assertEquals("LX/0Bjh;", members.player)
                 assertEquals("LJ", members.position)
                 assertEquals("S2", members.duration)
                 assertEquals("Ig", members.seek)

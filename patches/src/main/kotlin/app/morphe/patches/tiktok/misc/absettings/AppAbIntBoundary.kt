@@ -75,7 +75,7 @@ internal val APP_AB_TYPED_SHAPES = APP_AB_SHAPES - APP_AB_RAW
  * parameters (so the same key registers) but no raw one, reads through a store of its own, and is
  * where nearly every gate read lands: on 47.9.1 `Lwq4/m;` took about 6,300 int reads and 7,200 boolean
  * reads to `LX/03JE;`'s four and four. 47.1.4 has `LX/032I;` beside `LX/02yF;`, 47.7.3 `LX/03OH;`
- * beside `LX/05c0;`. A hook on the main class alone never saw `basic_vv_batch_size`, the Favorites
+ * beside `LX/07I3;`. A hook on the main class alone never saw `basic_vv_batch_size`, the Favorites
  * gates or the surface view gate.
  */
 internal enum class AppAbRole { MAIN, TWIN }

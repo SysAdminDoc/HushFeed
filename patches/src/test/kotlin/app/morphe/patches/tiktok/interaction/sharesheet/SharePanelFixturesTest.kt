@@ -17,7 +17,7 @@ class SharePanelFixturesTest {
     @Test
     fun `every declared native panel safely reports its action row in both layouts`() {
         val expected = mapOf(
-            "47.9.3" to ("LX/0Hrh;" to 0x7f0a0138),
+            "48.0.2" to ("LX/0J3c;" to 0x7f0a0138),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->

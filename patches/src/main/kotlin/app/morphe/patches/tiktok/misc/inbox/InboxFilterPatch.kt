@@ -6,7 +6,7 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
-import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
@@ -66,7 +66,7 @@ internal fun MutableMethod.installInboxLayoutFilter() {
 val inboxFilterPatch = bytecodePatch(
     name = "Hide inbox items",
     description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop, " +
-        "the stories row and the On this day memory in it, plus call buttons and suggested replies in chats. Each has its own " +
+        "the stories row and the On this day memory in it, plus call buttons and sticker suggestions in chats. Each has its own " +
         "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
         "Unread and Starred tabs on any account, a way to rebuild message search, room to pin " +
         "more than 5 chats, the time under each chat message and a way to keep your place in a " +
@@ -160,11 +160,12 @@ val inboxFilterPatch = bytecodePatch(
         }
         // Keep your place in chats, held the same way by KeepChatPlaceAnchorsTest.
         val chatPlace = try {
-            chatScrollHook(
+            val hook = chatScrollHook(
                 PATCH_NAME,
                 ChatScrollDecisionFingerprint.method,
                 ChatScrollDecisionFingerprint.classDef,
-            ) { classDefByOrNull(it) }
+            )
+            hook to chatEventNames(PATCH_NAME, hook.eventType, ChatEventFingerprints.mapValues { it.value.classDef })
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Keep your place in chats on ${packageMetadata.versionName}: ${problem.message}")
@@ -203,8 +204,6 @@ val inboxFilterPatch = bytecodePatch(
         )
         ChatTitleBarRightBindFingerprint.method.hideCallButtonsAtBind()
         ChatStickerBannerEnabledFingerprint.method.hideInboxWidget("shouldShowChatStickerBanner")
-        ChatSuggestedReplyEnabledFingerprint.method.hideInboxWidget("shouldShowChatAiReplies")
-        ChatSmartReplyIntroEnabledFingerprint.method.hideInboxWidget("shouldShowChatAiReplies")
         gestures.skipChatGestures(gestureRegister)
 
         // The group chat prompt at the top of the Inbox. Returning before the update leaves the
@@ -291,7 +290,10 @@ val inboxFilterPatch = bytecodePatch(
 
         // TikTok's move to the newest message, which a chat scrolled up in can keep from (#503).
         if (chatPlace != null) {
-            ChatScrollDecisionFingerprint.method.keepChatPlace(chatPlace)
+            val (hook, events) = chatPlace
+            ChatScrollDecisionFingerprint.method.keepChatPlace(hook)
+            // The extension tells the events apart by getName(), which 48.0.2 no longer has.
+            events.filter { it.add }.forEach { mutableClassDefBy(it.type).methods.add(chatEventNameMethod(it)) }
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableKeepChatPlace()V",

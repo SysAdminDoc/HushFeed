@@ -30,15 +30,17 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Create stickers (#156, #88): the upload config, the server parameter, the canvas saver and the
- * Saved page (182P, 182R, 14hO on 47.5.3). TikTok's fixtures hold what the patch relies on.
+ * Create stickers (#156, #88): the upload config, the server parameter, the sticker API getter, the
+ * save it declares, Photo to sticker's add to Saved and the Saved page (0q96, 0q97, 0F4G, 12QJ on
+ * 48.0.2). TikTok's fixtures hold what the patch relies on.
  */
 class StickerCreatorPatchTest {
     private val fingerprints = listOf(
         FavouriteStickerPageFingerprint,
         StickerUploadConfigFingerprint,
         StickerServerParameterFingerprint,
-        CanvasStickerSaverFingerprint,
+        StickerApiGetterFingerprint,
+        StickerSavedStoreFingerprint,
     )
 
     @Test
@@ -51,14 +53,10 @@ class StickerCreatorPatchTest {
     }
 
     @Test
-    fun `the bridges call what the canvas saver calls and pass the verifier's typing`() {
+    fun `the bridges call what TikTok calls and pass the verifier's typing`() {
         val lines = mapOf("uploadConfig" to 4, "uploadServerParameter" to 3, "saveSticker" to 15, "addToSaved" to 8, "continuationType" to 2)
         fixtures { apk, classes ->
-            val calls = stickerCreatorCalls(
-                taken(StickerUploadConfigFingerprint, classes).single(),
-                taken(StickerServerParameterFingerprint, classes).single(),
-                taken(CanvasStickerSaverFingerprint, classes).single(),
-            )
+            val calls = calls(classes)
             val methods = classes.flatMap { classDef -> classDef.methods.map { it.signature() } }.toSet()
             val fields = classes.flatMap { classDef -> classDef.fields.map { "${it.definingClass}->${it.name}:${it.type}" } }.toSet()
             val bridges = stickerCreatorBridges(calls)
@@ -82,11 +80,7 @@ class StickerCreatorPatchTest {
     fun `the bridges replace public static stubs with their flags kept and refuse an instance stub`() {
         val publicStatic = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value
         fixtures { apk, classes ->
-            val calls = stickerCreatorCalls(
-                taken(StickerUploadConfigFingerprint, classes).single(),
-                taken(StickerServerParameterFingerprint, classes).single(),
-                taken(CanvasStickerSaverFingerprint, classes).single(),
-            )
+            val calls = calls(classes)
             val stubs = stickerCreatorBridges(calls) { publicStatic }
             val extension = MutableClass(stickerCreator(stubs))
             extension.swapStickerStubs(calls)
@@ -300,6 +294,14 @@ class StickerCreatorPatchTest {
         assertEquals(what, "$STICKER_CREATOR->onFavouritesPage", "${target.definingClass}->${target.name}")
         assertEquals(what, register to 1, range.startRegister to range.registerCount)
     }
+
+    private fun calls(classes: List<ClassDef>) = stickerCreatorCalls(
+        taken(StickerUploadConfigFingerprint, classes).single(),
+        taken(StickerServerParameterFingerprint, classes).single(),
+        taken(StickerApiGetterFingerprint, classes).single(),
+        classes.first { it.type == STICKER_API },
+        taken(StickerSavedStoreFingerprint, classes).single(),
+    )
 
     private fun taken(fingerprint: Fingerprint, classes: List<ClassDef>) =
         classes.flatMap { classDef -> classDef.methods.filter { fingerprint.takes(it, classDef) } }

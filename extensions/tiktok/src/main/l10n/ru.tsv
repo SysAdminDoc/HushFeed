@@ -2006,8 +2006,6 @@ Hide call buttons	Скрывать кнопки звонка
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Кнопки голосового и видеозвонка пропадают из верхней части чата. Звонки по-прежнему звонят, а кнопка сведений о чате остаётся.
 Hide sticker suggestions	Скрывать подсказки стикеров
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Баннер с подсказками стикеров больше не показывается в чате. Ваши стикеры остаются в выборе стикеров.
-Hide suggested replies	Скрывать предложенные ответы
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	Предложенные ответы TikTok и баннер, который их представляет, больше не показываются в чате. Сообщения, которые вы пишете или получаете, не затрагиваются.
 Hide online status	Скрыть статус «в сети»
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Друзья не увидят зелёную точку или Active now, пока вы в TikTok. Нужен включённый режим Ghost. Статус друзей у вас может перестать обновляться, а ваш последний статус ещё какое-то время может быть виден.
 Stop LIVE previews opening by themselves	Не открывать превью LIVE самостоятельно
@@ -2706,7 +2704,6 @@ autoplay auto play	автовоспроизведение автозапуск
 picture in picture PiP	картинка в картинке PiP
 search suggestions	подсказки поиска
 AI chat	чат ИИ
-AI Tako	ИИ Tako
 save photos	сохранить фото
 download button	кнопка скачивания скачать
 It's in %1$s, under %2$s. Tap to go there.	Находится в разделе %1$s, в группе %2$s. Нажмите, чтобы перейти туда.

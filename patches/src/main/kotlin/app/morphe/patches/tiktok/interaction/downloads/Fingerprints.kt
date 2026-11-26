@@ -155,7 +155,7 @@ internal object PhotoMediaStoreInsertFingerprint : Fingerprint(
 /**
  * The copy that puts a saved image or video into the gallery.
  *
- * <p>It was `LX/0MqS;` and it delegated to `LX/12r8;`, both written here. They are `LX/0M8Y;` and
+ * <p>It was `LX/0Nv0;` and it delegated to `LX/1QFx;`, both written here. They are `LX/0NEH;` and
  * `LX/0LEM;` on 46.8.3. The six-parameter signature and the three media types together name one
  * method on all three builds without either, and what is left of the delegation check is that the
  * two MediaStore inserts it calls are on one class, whatever that class is called.
@@ -236,7 +236,7 @@ internal object StickerPreviewSourceFingerprint : Fingerprint(
     parameters = listOf("Ljava/lang/Object;"),
     // TikTok 47.8.3 inlined the sticker preview (`LX/0MG8;->LJI(String, StickerItem, View, ...)`
     // on 47.7.3) into the comment sticker tap's coroutine, CommentImageComponent's
-    // bindListStickerOnClick (`LX/1AlM;` there). The StickerItem is no longer a parameter: the
+    // bindListStickerOnClick (`LX/0sjB;` there). The StickerItem is no longer a parameter: the
     // coroutine builds it from its CommentStickerStruct (see [stickerPreviewSource]). What holds
     // is that it calls the preview bind, by that bind's shape rather than by its name.
     //

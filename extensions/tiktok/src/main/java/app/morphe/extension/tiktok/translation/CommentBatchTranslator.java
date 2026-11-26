@@ -273,7 +273,7 @@ public final class CommentBatchTranslator {
     /**
      * The manager's field holding the row's text writer, then the writer's fade field: the one
      * object the manager keeps, other than a view or a context, whose class declares a single
-     * AnimatorSet and a TextView (47.9.3: {@code X.0HVZ}). Empty unless exactly one fits. Read
+     * AnimatorSet and a TextView (48.0.2: {@code X.0IiK}). Empty unless exactly one fits. Read
      * from the values, since the manager declares its writer under an interface, and an unset
      * field leaves the answer open until a later bind fills it.
      */

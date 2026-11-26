@@ -44,15 +44,15 @@ public final class CommentHeaderButtons {
      * and the expand chevron, which DefaultCommentPageContainerFragment shows only to accounts in
      * the {@code comment_panel_full_page} experiment.
      */
-    static final String CLOSE_BUTTON_ID = "47.9.3:byi";
-    static final String EXPAND_BUTTON_ID = "47.9.3:i56";
+    static final String CLOSE_BUTTON_ID = "48.0.2:byi";
+    static final String EXPAND_BUTTON_ID = "48.0.2:i56";
     /**
      * The newer top bar's two banner holders in the comment column, both of the 47.9.3 comment
      * panel layout and kept as ViewGroups by CommentPageActionBarAssem: the top bar's own and the
      * one the suggested search lands in.
      */
-    static final String TOP_BAR_HOLDER_ID = "47.9.3:et_";
-    static final String SUGGESTION_HOLDER_ID = "47.9.3:evc";
+    static final String TOP_BAR_HOLDER_ID = "48.0.2:et_";
+    static final String SUGGESTION_HOLDER_ID = "48.0.2:evc";
     /** How many of the bar's ancestors are searched for a button: bar slot, column, container. */
     private static final int DEPTH = 4;
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();

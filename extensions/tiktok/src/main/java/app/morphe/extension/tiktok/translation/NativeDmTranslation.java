@@ -56,16 +56,16 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
         void start() {
             try {
                 if (!allowed()) { finish(null); return; }
-                Class<?> service = type(loader, "X.0Dub");
+                Class<?> service = type(loader, "X.0GaB");
                 Object nativeService = service.getField("LIZIZ").get(null);
                 if (!Boolean.TRUE.equals(service.getMethod("LJIIZILJ").invoke(nativeService))) {
                     finish(null);
                     return;
                 }
-                Class<?> language = type(loader, "X.03Bf");
+                Class<?> language = type(loader, "X.03f6");
                 Object languages = language.getField("LIZIZ").get(null);
-                String target = (String) language.getMethod("LLILL").invoke(languages);
-                String[] excluded = (String[]) language.getMethod("LL").invoke(languages);
+                String target = (String) language.getMethod("LJJLIIIJJIZ").invoke(languages);
+                String[] excluded = (String[]) language.getMethod("LJJJJZ").invoke(languages);
                 if (target == null || target.isEmpty() || !allowed()) { finish(null); return; }
                 String original;
                 synchronized (this) { original = source; }
@@ -73,12 +73,12 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
                 // Gson's native content object omits a null source_lang and empty rich-text data.
                 String payload = new JSONArray().put(new JSONObject().put("original_text", original)).toString();
                 String dnt = new JSONArray(excluded == null ? new String[0] : excluded).toString();
-                Class<?> api = type(loader, "X.17vv");
-                Object nativeApi = type(loader, "X.17vw").getMethod("LIZ").invoke(null);
-                Object observable = api.getMethod("LJ", String.class, String.class, String.class)
+                Class<?> api = type(loader, "X.0FfR");
+                Object nativeApi = type(loader, "X.0FfI").getMethod("LIZ").invoke(null);
+                Object observable = api.getMethod("LIZLLL", String.class, String.class, String.class)
                         .invoke(nativeApi, payload, target, dnt);
                 if (observable == null || !allowed()) { finish(null); return; }
-                Class<?> observerType = type(loader, "X.03Or");
+                Class<?> observerType = type(loader, "X.03UG");
                 Object observer = Proxy.newProxyInstance(loader, new Class<?>[]{observerType}, (proxy, method, args) -> {
                     switch (method.getName()) {
                         case "onSubscribe": subscribed(args[0]); return null;
@@ -92,7 +92,7 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
                     }
                 });
                 if (!allowed()) { finish(null); return; }
-                type(loader, "X.03My").getMethod("LIZJ", observerType).invoke(observable, observer);
+                type(loader, "X.03B9").getMethod("LIZJ", observerType).invoke(observable, observer);
             } catch (InterruptedException interrupted) {
                 Thread.currentThread().interrupt();
                 finish(null);
@@ -188,7 +188,7 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
 
         void dispose(Object value) {
             if (value == null) return;
-            try { type(loader, "X.03Kp").getMethod("dispose").invoke(value); }
+            try { type(loader, "X.03Ur").getMethod("dispose").invoke(value); }
             catch (ReflectiveOperationException | RuntimeException ignored) {
                 // Ownership is already retired. A late native event cannot present or replace a draft.
             }

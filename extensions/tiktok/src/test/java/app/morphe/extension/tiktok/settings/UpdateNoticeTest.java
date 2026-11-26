@@ -74,14 +74,14 @@ public class UpdateNoticeTest {
     }
 
     /** Laid out the way the release script writes notes: a paragraph, then plain section names. */
-    private static final String NOTES = "Hushfeed v0.82.0 has 148 patches for global TikTok 47.9.3. "
+    private static final String NOTES = "Hushfeed v0.82.0 has 148 patches for global TikTok 48.0.2. "
             + "Patch it with the same signing key.\r\n\r\n"
             + "New in this release\n\n"
             + "- `Check for Hushfeed updates` tells you in TikTok when a newer Hushfeed is out. "
             + "Once a day at most.\n"
             + "- [Startup message](https://github.com/SysAdminDoc/HushFeed/issues/347) shows a "
             + "message you write. It starts off.\n"
-            + "- **Bold** move, v0.82.0 works on 47.9.3 (the `.apkm` too).\n"
+            + "- **Bold** move, v0.82.0 works on 48.0.2 (the `.apkm` too).\n"
             + "\nBug Fixes\n\n"
             + "- Fixed A. Detail.\n"
             + "- Fixed B!\n"
@@ -181,7 +181,7 @@ public class UpdateNoticeTest {
                 "New in this release",
                 "• Check for Hushfeed updates tells you in TikTok when a newer Hushfeed is out.",
                 "• Startup message shows a message you write.",
-                "• Bold move, v0.82.0 works on 47.9.3 (the .apkm too).",
+                "• Bold move, v0.82.0 works on 48.0.2 (the .apkm too).",
                 "",
                 "Bug Fixes",
                 "• Fixed A.",
@@ -223,7 +223,7 @@ public class UpdateNoticeTest {
                             + "New in this release\n"
                             + "• Check for Hushfeed updates tells you in TikTok when a newer Hushfeed is out.\n"
                             + "• Startup message shows a message you write.\n"
-                            + "• Bold move, v0.82.0 works on 47.9.3 (the .apkm too).\n\n"
+                            + "• Bold move, v0.82.0 works on 48.0.2 (the .apkm too).\n\n"
                             + "Bug Fixes\n"
                             + "• Fixed A.\n"
                             + "• Fixed B!\n\n"

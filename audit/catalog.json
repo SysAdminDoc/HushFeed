@@ -839,7 +839,7 @@
     "auto": true
    }
   ],
-  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.014x, X.01pU, X.014v, X.01u7 on 47.9.3), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
+  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.013P, X.01pA, X.013N, X.01t1 on 48.0.2), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
  },
  {
   "name": "Always show publish date",
@@ -5032,7 +5032,7 @@
   "checks": [
    {
     "id": "record-and-report",
-    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.9.3 target with at least one gate.",
+    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 48.0.2 target with at least one gate.",
     "steps": [
      {
       "open": "feed"
@@ -8125,12 +8125,6 @@
     "row": "Hide call buttons"
    },
    {
-    "key": "hide_chat_ai_replies",
-    "default": false,
-    "type": "bool",
-    "row": "Hide suggested replies"
-   },
-   {
     "key": "hide_chat_sticker_banner",
     "default": false,
     "type": "bool",
@@ -8463,7 +8457,7 @@
     "auto": true
    }
   ],
-  "notes": "Row-level hiding is checked against the English labels 'Activity' and 'New followers' (the model-level category is FOLLOWER/ACTIVITY/SHOP, the label is only how the probe finds the row). Chat rows, Message requests, TikTok Shop, Bulletin board, Tako and the archive entrance depend on what the test account has, so conversations are a review check and the chat row ids (w22, tv_request_unread_count, uz0, on0) are named in InboxFilter.java for a person to look up with the views action. The header probe lines print shown=true/false for ids kpb, fhp and l7m; the hide path sets those views GONE. Chat-screen switches (Hide call buttons, Hide suggested replies, Hide sticker suggestions) need an open chat; opening a chat to look is allowed but writing is not, and a test account with no chats cannot show them. Search loaded activity (inbox_loaded_search) adds a search box to Activity and is a visual check only. The hide runs on layout passes, which is why every phase leaves and re-enters the Inbox before reading. 'group-banner' binds only when TikTok draws its group chat prompt in the Inbox, which the S22 account wasn't shown on 47.5.3 (2026-10-23), so the check read inconclusive."
+  "notes": "Row-level hiding is checked against the English labels 'Activity' and 'New followers' (the model-level category is FOLLOWER/ACTIVITY/SHOP, the label is only how the probe finds the row). Chat rows, Message requests, TikTok Shop, Bulletin board, Tako and the archive entrance depend on what the test account has, so conversations are a review check and the chat row ids (w22, tv_request_unread_count, uz0, on0) are named in InboxFilter.java for a person to look up with the views action. The header probe lines print shown=true/false for ids kpb, fhp and l7m; the hide path sets those views GONE. Chat-screen switches (Hide call buttons, Hide sticker suggestions) need an open chat; opening a chat to look is allowed but writing is not, and a test account with no chats cannot show them. Search loaded activity (inbox_loaded_search) adds a search box to Activity and is a visual check only. The hide runs on layout passes, which is why every phase leaves and re-enters the Inbox before reading. 'group-banner' binds only when TikTok draws its group chat prompt in the Inbox, which the S22 account wasn't shown on 47.5.3 (2026-10-23), so the check read inconclusive."
  },
  {
   "name": "Hide inbox stories",
@@ -10064,7 +10058,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1200"
       },
@@ -10127,7 +10121,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1200"
       },
@@ -10449,7 +10443,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1500"
       },
@@ -11658,7 +11652,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1500"
       },
@@ -12664,7 +12658,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1500"
       },
@@ -13023,7 +13017,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1000"
       },
@@ -13052,7 +13046,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "1000"
       },
@@ -13996,7 +13990,7 @@
     "auto": true
    }
   ],
-  "notes": "The strip empties the effect and VE SDK plugin libraries for both ABIs; 47.9.3's split bundle carries both libraries for arm64-v8a only, so there the strip empties those two. The face model (#285: face effects and Retouch lost the face), libEffectCreatorJni (#285: All effects closed TikTok) and the camera feature dex (libdex_*.so) stay on purpose. On the S22 2026-11-08 with the plugins empty, the camera, Retouch, a face effect, All effects, effect search, the Create tab and the editor all worked and TikTok never tried to load either plugin. The camera walk is not scripted: it uses the camera, and a crash dialog on the audit phone costs a restart."
+  "notes": "The strip empties the effect and VE SDK plugin libraries for both ABIs; 48.0.2's split bundle carries both libraries for arm64-v8a only, so there the strip empties those two. The face model (#285: face effects and Retouch lost the face), libEffectCreatorJni (#285: All effects closed TikTok) and the camera feature dex (libdex_*.so) stay on purpose. On the S22 2026-11-08 with the plugins empty, the camera, Retouch, a face effect, All effects, effect search, the Create tab and the editor all worked and TikTok never tried to load either plugin. The camera walk is not scripted: it uses the camera, and a crash dialog on the audit phone costs a restart."
  },
  {
   "name": "Remove unused language packs",
@@ -14376,7 +14370,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.04B5",
+       "holder": "X.05Ej",
        "getter": "LJIJI",
        "gap": "300"
       },
@@ -15747,7 +15741,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0FMX",
+       "class": "X.0FIk",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -15756,7 +15750,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HSp",
+       "class": "X.0Iff",
        "method": "LIZ",
        "count": "123456"
       },
@@ -15770,7 +15764,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0FMX",
+       "class": "X.0FIk",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -15779,7 +15773,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HSp",
+       "class": "X.0Iff",
        "method": "LIZ",
        "count": "123456"
       },
@@ -18448,7 +18442,7 @@
     "auto": true
    }
   ],
-  "notes": "Issue #476, inxomnyaa's pull request. TikTok's Text size page (Settings and privacy > Accessibility, DynamicFontSizeFragment) keeps a mode from 0 to 3 under dynamic_font_mode, and X.03aF's LIZ()F and LIZJ()F turn it into the factor its density rewrites scale the whole interface by, 1.0 for mode 0. With the switch on the slider (X.1PkU) gets three positions below mode 0, smaller_text_size_level keeps the one confirmed (factors 0.93, 0.87 and 0.8) and TikTok still stores mode 0. The switch has a row; the level has none, the slider writes it. Check on a phone: switch on, restart, open Text size, confirm the leftmost stop, restart, and everything is smaller than at TikTok's smallest; switch off and restart, and TikTok's smallest is back."
+  "notes": "Issue #476, inxomnyaa's pull request. TikTok's Text size page (Settings and privacy > Accessibility, DynamicFontSizeFragment) keeps a mode from 0 to 3 under dynamic_font_mode, and X.03Wq's LIZ()F and LIZJ()F turn it into the factor its density rewrites scale the whole interface by, 1.0 for mode 0. With the switch on the slider (X.1PIn) gets three positions below mode 0, smaller_text_size_level keeps the one confirmed (factors 0.93, 0.87 and 0.8) and TikTok still stores mode 0. The switch has a row; the level has none, the slider writes it. Check on a phone: switch on, restart, open Text size, confirm the leftmost stop, restart, and everything is smaller than at TikTok's smallest; switch off and restart, and TikTok's smallest is back."
  },
  {
   "name": "UI scale",
@@ -18487,6 +18481,6 @@
     "auto": true
    }
   ],
-  "notes": "Issue #477, inxomnyaa's pull request. TikTok's two density rewrites in X.03aF, LIZLLL(Context) at startup (from TuxInitTask) and LJFF(Activity) for each activity, read the text size factor from LIZ()F and divide the screen width by it. UiScale multiplies that factor by ui_scale_percent / 100 right after the read, so 80 makes the whole interface a fifth smaller; 100 changes nothing. It composes with Smaller text sizes, which answers the factor itself. Check on a phone: set UI size to 80, restart, and the feed's buttons and text are smaller; set 100 and restart, and they're back."
+  "notes": "Issue #477, inxomnyaa's pull request. TikTok's two density rewrites in X.03Wq, LIZLLL(Context) at startup (from TuxInitTask) and LJFF(Activity) for each activity, read the text size factor from LIZ()F and divide the screen width by it. UiScale multiplies that factor by ui_scale_percent / 100 right after the read, so 80 makes the whole interface a fifth smaller; 100 changes nothing. It composes with Smaller text sizes, which answers the factor itself. Check on a phone: set UI size to 80, restart, and the feed's buttons and text are smaller; set 100 and restart, and they're back."
  }
 ]

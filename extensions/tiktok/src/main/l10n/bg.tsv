@@ -1868,8 +1868,6 @@ Hide call buttons	Скриване на бутоните за обаждане
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Бутоните за гласово и видеообаждане изчезват от горната част на чата. Обажданията пак звънят, а бутонът за подробности за чата остава.
 Hide sticker suggestions	Скриване на предложенията за стикери
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Банерът с предложени стикери спира да се показва в чата. Твоите стикери остават в избора на стикери.
-Hide suggested replies	Скриване на предложените отговори
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	Предложените от TikTok отговори и въвеждащият им банер спират да се показват в чата. Съобщенията, които пишеш или получаваш, не се засягат.
 Hide online status	Скриване на онлайн статуса
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Приятелите няма да виждат зелена точка или „Активен сега“, докато си в TikTok. Изисква включен „Режим призрак“. Техният статус може да спре да се обновява при теб, а последният ти статус може да остане видим известно време.
 Stop LIVE previews opening by themselves	Спиране на самостоятелното отваряне на LIVE прегледите
@@ -2529,7 +2527,6 @@ autoplay auto play	автоматично възпроизвеждане авт�
 picture in picture PiP	картина в картината PiP
 search suggestions	предложения за търсене
 AI chat	AI чат
-AI Tako	AI Tako чат
 save photos	запазване на снимки
 download button	бутон за изтегляне
 It's in %1$s, under %2$s. Tap to go there.	Намира се в %1$s, под %2$s. Докосни, за да отидеш там.

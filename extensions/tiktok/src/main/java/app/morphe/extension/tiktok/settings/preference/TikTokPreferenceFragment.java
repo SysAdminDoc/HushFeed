@@ -1582,7 +1582,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             Settings.PICTURE_IN_PICTURE.key, "picture in picture PiP",
             Settings.HIDE_SEARCH_SUGGESTIONS.key, "search suggestions",
             Settings.HIDE_INBOX_TAKO.key, "AI chat",
-            Settings.HIDE_CHAT_AI_REPLIES.key, "AI Tako",
             Settings.DOWNLOAD_ORIGINAL_PHOTOS.key, "save photos",
             // The save button's switch sits with the other buttons on videos, on Feed screen, and
             // people who call it the download button looked for it there in vain (#299).

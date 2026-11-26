@@ -12,7 +12,7 @@ import org.junit.Test
  * <p>The ROADMAP's first gate for this was a grep for `LX/xxxx;` class names, and it missed
  * nearly everything of the same kind: method and field names passed as strings (`"LIZ"`,
  * `"LJFF"`), short member names compared by `name ==`, prefixes (`startsWith("LX/")`), merged
- * lambda groups (`LY/...;`), Java binary names (`X.0Gcl`) and shortened resource entry names
+ * lambda groups (`LY/...;`), Java binary names (`X.0FRU`) and shortened resource entry names
  * (`o1k`, `a3y`, `kzj`). Each of them is right on 46.2.3 and means something else, or nothing,
  * on the next build, and a patch that applies with one of them in it can do nothing or do the
  * wrong thing without a word.
@@ -158,10 +158,10 @@ class ObfuscatedIdentityTest {
         /** A whole name of the shape [MEMBER_LITERAL] finds: `LIZ`, `LJFF`, `LL`. */
         val MEMBER_NAME = Regex("""L[IJLZF]{1,19}""")
 
-        /** A class R8 named for one build: `LX/0vZ1;`, or a merged lambda group `LY/...;`. */
+        /** A class R8 named for one build: `LX/1HYs;`, or a merged lambda group `LY/...;`. */
         val OBFUSCATED_TYPE = Regex("""L[XY]/[0-9A-Za-z_$]+;""")
 
-        /** The Java binary spelling of an R8 class name: `X.0Gcl`. */
+        /** The Java binary spelling of an R8 class name: `X.0FRU`. */
         val JAVA_BINARY_TYPE = Regex("""(?<![0-9A-Za-z_$])X\.[0-9A-Za-z]{4}(?![0-9A-Za-z_$])""")
 
         /** A member name of the shape R8 gives TikTok's: `"LIZ"`, `"LJFF"`, `"LLJJIJIIJIL"`. */

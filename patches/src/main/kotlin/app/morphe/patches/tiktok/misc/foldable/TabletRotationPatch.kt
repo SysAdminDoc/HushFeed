@@ -35,7 +35,7 @@ internal const val PROFILE_HOST_ACTIVITY =
 internal const val COMMENT_PHOTO_ACTIVITY = "Lcom/ss/android/ugc/aweme/comment/photocomment/PhotoDetailActivityV2;"
 
 /**
- * TikTok's check whether this device's screens may turn (X.07A4.LIZ on 47.9.3): a tablet wide
+ * TikTok's check whether this device's screens may turn (X.078q.LIZ on 48.0.2): a tablet wide
  * enough, in the right test group. Its main screen asks to follow the device when this says yes.
  */
 internal object SupportLandscapeFingerprint : Fingerprint(
@@ -66,16 +66,25 @@ internal fun superOrientationRequests(method: Method): List<Int> =
 /** The comment picture's own setRequestedOrientation and the other methods' direct requests. */
 internal class CommentPhotoRequests<M : Method>(val override: M, val direct: Map<M, List<Int>>)
 
+/** How many times the comment picture's override asks its superclass: once up to 47.9.3, twice on 48.0.2. */
+internal val COMMENT_PHOTO_OVERRIDE_REQUESTS = 1..2
+
 /**
- * The comment picture's orientation requests among its [methods]: its override, which asks its
- * superclass for portrait whatever it's handed, and the methods that skip it and ask the
- * superclass themselves (create, resume and a configuration change on 47.9.3).
+ * The comment picture's orientation requests among its [methods]: its override, and the methods
+ * that skip it and ask the superclass themselves. Up to 47.9.3 the override asks for portrait
+ * whatever it's handed, and create, resume and a configuration change ask the superclass
+ * directly. On 48.0.2 the override hands on what it's asked when TikTok's own tablet service
+ * (`LX/03op;->qi()`) lets the screen turn and asks for portrait otherwise, and those three go
+ * through one helper (`LLLLZLLIL`) that asks for portrait under the same test.
  */
 internal fun <M : Method> commentPhotoRequests(methods: Iterable<M>): CommentPhotoRequests<M> {
     val override = methods.singleOrNull { isOrientationRequest(it.name, it.returnType, it.parameterTypes) }
         ?: throw PatchException("Tablet rotation: the comment picture no longer has its own setRequestedOrientation")
-    if (superOrientationRequests(override).size != 1) {
-        throw PatchException("Tablet rotation: the comment picture's setRequestedOrientation no longer asks its superclass once")
+    if (superOrientationRequests(override).size !in COMMENT_PHOTO_OVERRIDE_REQUESTS) {
+        throw PatchException(
+            "Tablet rotation: the comment picture's setRequestedOrientation asks its superclass " +
+                "${superOrientationRequests(override).size} times, expected $COMMENT_PHOTO_OVERRIDE_REQUESTS",
+        )
     }
     val direct = methods.filter { it !== override }
         .associateWith { superOrientationRequests(it) }
@@ -87,26 +96,28 @@ internal fun <M : Method> commentPhotoRequests(methods: Iterable<M>): CommentPho
 }
 
 /**
- * Hands the orientation the override asks its superclass for to the extension first, which
- * gives back the one TikTok's main screen asks for on a tablet that turns. The call is the
- * 4-bit form, so both registers fit the extension call as they are.
+ * Hands each orientation the override asks its superclass for to the extension first, which
+ * gives back the one TikTok's main screen asks for on a tablet that turns, and the asked one
+ * otherwise. The calls are the 4-bit form, so both registers fit the extension call as they are.
+ * Later requests first, so an insertion never moves one still to come.
  */
 internal fun MutableMethod.askThroughTabletRotation() {
-    val index = superOrientationRequests(this).single()
-    val call = getInstruction(index) as FiveRegisterInstruction
-    addInstructionsAtControlFlowLabel(
-        index,
-        """
-            invoke-static {v${call.registerC}, v${call.registerD}}, $TABLET_ROTATION_EXTENSION->orientation(Landroid/app/Activity;I)I
-            move-result v${call.registerD}
-        """,
-    )
+    superOrientationRequests(this).sortedDescending().forEach { index ->
+        val call = getInstruction(index) as FiveRegisterInstruction
+        addInstructionsAtControlFlowLabel(
+            index,
+            """
+                invoke-static {v${call.registerC}, v${call.registerD}}, $TABLET_ROTATION_EXTENSION->orientation(Landroid/app/Activity;I)I
+                move-result v${call.registerD}
+            """,
+        )
+    }
 }
 
 /**
  * Sends a direct request at [index] through the screen's own override, same registers, so it
- * gets the same answer. The override ignores the value it's handed, as these always ask for
- * portrait.
+ * gets the same answer. These always ask for portrait, and on 48.0.2 only when TikTok's tablet
+ * service keeps the screen upright, which is when the override asks for portrait too.
  */
 internal fun MutableMethod.requestThroughOverride(index: Int, photo: String) {
     val call = getInstruction(index) as FiveRegisterInstruction

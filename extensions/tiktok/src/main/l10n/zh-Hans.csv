@@ -791,7 +791,6 @@ Hide stories,隐藏故事
 Hide stories from the feed.,隐藏信息流中的故事.
 Hide stories tray,隐藏故事托盘
 Hide suggested accounts,隐藏建议账号
-Hide suggested replies,隐藏建议的回复
 Hide suggestions on the search page,隐藏搜索页面上的建议
 Hide surveys,隐藏调查
 Hide tabs TikTok adds later unless you allow them.,隐藏选项卡 TikTok 稍后添加，除非你允许.
@@ -2133,7 +2132,6 @@ TikTok's messages didn't start in time. It tries again at %1$s.,TikTok 的消息
 TikTok's own name,TikTok 自己的名字
 TikTok's own value,TikTok 自身的值
 TikTok's size,TikTok 的大小
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,TikTok 的建议回复单元格及其介绍横幅停止在聊天中显示。你输入或接收的消息不会受到影响.
 TikTok's total: %1$s. Filtered accounts: %2$s.,TikTok 总计：%1$s。过滤的账号：%2$s.
 Timed logging stopped,定时记录已停止
 Times you can open the feed anyway,你无论如何都可以打开信息流的次数
@@ -2468,7 +2466,6 @@ autoplay auto play,自动播放
 picture in picture PiP,画中画 PiP
 search suggestions,搜索建议
 AI chat,AI 聊天
-AI Tako,AI Tako
 save photos,保存照片
 download button,下载按钮 下载
 "It's in %1$s, under %2$s. Tap to go there.",在%1$s的%2$s中。点击前往.

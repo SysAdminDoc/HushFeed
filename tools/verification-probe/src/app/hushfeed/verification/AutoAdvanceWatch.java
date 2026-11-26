@@ -38,8 +38,8 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     static void bootstrap(Application app,ClassLoader loader){
         if(instance!=null)return;
         boolean supported=false;
-        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.9.3".equals(info.versionName)
-                && (info.versionCode==2024709030 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
+        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "48.0.2".equals(info.versionName)
+                && (info.versionCode==2024800020 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
         instance=new AutoAdvanceWatch(loader,supported);
         // Registered before TikTok replaces the Instrumentation. No extension Activity helper is needed.
         app.registerActivityLifecycleCallbacks(instance);
@@ -178,7 +178,7 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     }
     private static final class Bindings{
         final Class<?> cell,adapter,ability,panel,controller,fragment;
-        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.06w5");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
+        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.06em");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
     }
     private static final class Missing extends Exception{final String reason;Missing(String reason){this.reason=reason;}}
     private static boolean bool(Object value){return Boolean.TRUE.equals(value);}

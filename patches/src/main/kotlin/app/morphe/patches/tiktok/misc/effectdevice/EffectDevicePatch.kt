@@ -35,7 +35,7 @@ private const val MODEL_CONFIGURATION_BUILDER = "Lcom/ss/android/ugc/effectmanag
  * `Build.MODEL` and hands it straight to the builder's setter. Two methods do that on 47.9.3.
  * 47.6.3 had a third, DefaultResourceProvider's effect manager creator (`LX/0mdO;->LJIJJLI()`,
  * which read the model for both configs); 47.7.3 dropped that class, and the comment image
- * effect manager that took its place (`LX/0upU;->LIZ()`) gets its config from
+ * effect manager that took its place (`LX/0xWj;->LIZ()`) gets its config from
  * createEffectConfigurationBuilder through IEffectPlatformFactory.create, which is already swapped.
  * EffectDeviceAnchorsTest holds every method that calls either setter to these two.
  */

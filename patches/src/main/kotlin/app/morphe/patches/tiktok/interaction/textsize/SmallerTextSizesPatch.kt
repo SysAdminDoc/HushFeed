@@ -20,7 +20,7 @@ import app.morphe.util.addInstruction
  * Smaller text sizes (#476, ported from inxomnyaa's pull request).
  *
  * TikTok's Text size page (Settings and privacy > Accessibility) has a slider of four modes, 0 for
- * its smallest and default size to 3. The mode becomes a factor (1.0, 1.05, 1.1, 1.1 from X.03aF's
+ * its smallest and default size to 3. The mode becomes a factor (1.0, 1.05, 1.1, 1.1 from X.03Wq's
  * LIZ()F on 47.9.3) that the startup density rewrite (LIZLLL(Context), from TuxInitTask) and the
  * per-activity one (LJFF(Activity)) scale the whole interface by. This adds three positions at
  * the slider's left end: the page and its confirm callback go through SmallerTextSizes, which

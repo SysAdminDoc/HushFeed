@@ -254,13 +254,6 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
             ));
             addPreference(new TogglePreference(
                     context,
-                    "Hide suggested replies",
-                    "TikTok's suggested reply cells and their intro banner stop showing in a "
-                            + "chat. Messages you type or receive are untouched.",
-                    Settings.HIDE_CHAT_AI_REPLIES
-            ));
-            addPreference(new TogglePreference(
-                    context,
                     "Turn off double tap to react",
                     "A double tap on a message no longer adds a heart to it. A single tap and "
                             + "a long press work as before.",

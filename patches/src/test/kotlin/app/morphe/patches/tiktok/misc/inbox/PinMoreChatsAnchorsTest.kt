@@ -123,7 +123,7 @@ class PinMoreChatsAnchorsTest {
         val key = if (loadsKey) {
             ImmutableInstruction21c(Opcode.CONST_STRING, 1, ImmutableStringReference(PIN_CHAT_LIMIT_KEY))
         } else {
-            ImmutableInstruction21c(Opcode.CONST_CLASS, 1, ImmutableTypeReference("LX/0Kjx;"))
+            ImmutableInstruction21c(Opcode.CONST_CLASS, 1, ImmutableTypeReference("LX/0Lri;"))
         }
         val instructions = listOf(
             ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,

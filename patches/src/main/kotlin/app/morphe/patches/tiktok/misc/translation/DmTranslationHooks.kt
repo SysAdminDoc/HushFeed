@@ -84,24 +84,24 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
     val input = owner(DM_INPUT)
     if (DM_ABILITY !in input.interfaces) throw PatchException("$DM: changed native input ability owner")
     input.field("LLJJIJIIJIL", EDITOR)
-    input.abi("d51", EDITOR, emptyList())
+    input.abi("I72", EDITOR, emptyList())
     val assem = owner(DM_ASSEM)
-    assem.field("LLJJIJIL", "LX/0AHO;")
+    assem.field("LLJJIJIL", "LX/0DpC;")
     val created = assem.abi("onViewCreated", "V", listOf(VIEW))
     val store = created.dmEditorStore()
     if (created.implementation!!.instructions.withIndex().any { (index, instruction) ->
         instruction.opcode == Opcode.RETURN_VOID && index <= store.index
     }) throw PatchException("$DM: editor assignment no longer precedes every ready return")
     val composer = owner(DM_COMPOSER)
-    composer.field("LLJJJJ", DM_ABILITY)
-    composer.field("LLJJLIIIJLLLLLLLZ", DM_SESSION)
-    val parameters = listOf(DM_ABILITY, "LX/0NFj;", "LX/0NFY;", "LX/0MkY;", DM_SESSION,
-        "LX/0NLl;", "LX/0NEh;", "LX/0NNi;", "Lcom/ss/android/ugc/aweme/im/customize/api/ui/wallpaper/IChatWallpaperAbility;")
+    composer.field("LL", DM_ABILITY)
+    composer.field("LLJJJ", DM_SESSION)
+    val parameters = listOf(DM_ABILITY, "LX/0OK9;", "LX/0OJy;", "LX/0Np8;", DM_SESSION,
+        "LX/0OQA;", "LX/0OJ8;", "LX/0ORy;", "Lcom/ss/android/ugc/aweme/im/customize/api/ui/wallpaper/IChatWallpaperAbility;")
     val constructor = composer.abi("<init>", "V", parameters)
     val code = constructor.implementation ?: throw PatchException("$DM: no composer constructor body")
     if (code.registerCount > 16) throw PatchException("$DM: composer parameters no longer fit the reviewed invoke")
     val receiver = code.registerCount - parameters.size - 1
-    for ((name, fieldType, parameter) in listOf(Triple("LLJJJJ", DM_ABILITY, 1), Triple("LLJJLIIIJLLLLLLLZ", DM_SESSION, 5))) {
+    for ((name, fieldType, parameter) in listOf(Triple("LL", DM_ABILITY, 1), Triple("LLJJJ", DM_SESSION, 5))) {
         val assignments = code.instructions.filter { it.opcode == Opcode.IPUT_OBJECT &&
             it.getReference<FieldReference>()?.let { field -> field.definingClass == DM_COMPOSER && field.name == name && field.type == fieldType } == true }
         val assignment = assignments.singleOrNull() as? TwoRegisterInstruction
@@ -112,7 +112,7 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
     val session = owner(DM_SESSION)
     listOf("isSingleChat", "isPreviewMode", "isReportPage").forEach { session.abi(it, "Z", emptyList()) }
     session.abi("getConversationId", STRING, emptyList())
-    val single = owner("LX/0Mqu;")
+    val single = owner("LX/0NvQ;")
     if (single.superclass != DM_SESSION) throw PatchException("$DM: changed single-peer session")
     single.abi("getSingleChatFromUserId", STRING, emptyList())
     validateNativeDmTranslation(classOf)
@@ -124,25 +124,27 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
 /** Both previews use this adapter, even when the other preview's UI owners are unavailable. */
 internal fun validateNativeDmTranslation(classOf: (String) -> ClassDef?) {
     fun owner(type: String) = classOf(type) ?: throw PatchException("Translate comments (DM transport): missing $type")
-    val service = owner("LX/0Dub;")
+    val service = owner("LX/0GaB;")
     service.field("LIZIZ", service.type, true)
     service.abi("LJIIZILJ", "Z", emptyList())
-    val language = owner("LX/03Bf;")
+    val language = owner("LX/03f6;")
     language.field("LIZIZ", language.type, true)
-    language.abi("LLILL", STRING, emptyList())
-    language.abi("LL", "[Ljava/lang/String;", emptyList())
-    owner("LX/17vw;").abi("LIZ", "LX/17vv;", emptyList(), true)
-    val api = owner("LX/17vv;")
+    // The target language and the do-not-translate list (47.9.3's LLILL and LL).
+    language.abi("LJJLIIIJJIZ", STRING, emptyList())
+    language.abi("LJJJJZ", "[Ljava/lang/String;", emptyList())
+    owner("LX/0FfI;").abi("LIZ", "LX/0FfR;", emptyList(), true)
+    val api = owner("LX/0FfR;")
     if (!AccessFlags.INTERFACE.isSet(api.accessFlags)) throw PatchException("$DM: changed native request interface")
-    api.abi("LJ", "LX/03My;", listOf(STRING, STRING, STRING))
-    owner("LX/03My;").abi("LIZJ", "V", listOf("LX/03Or;"))
-    val observer = owner("LX/03Or;")
+    // The DM translation request (47.9.3's LJ; 48.0.2's LJ is another request with a fourth int).
+    api.abi("LIZLLL", "LX/03B9;", listOf(STRING, STRING, STRING))
+    owner("LX/03B9;").abi("LIZJ", "V", listOf("LX/03UG;"))
+    val observer = owner("LX/03UG;")
     if (!AccessFlags.INTERFACE.isSet(observer.accessFlags)) throw PatchException("$DM: changed native observer")
-    observer.abi("onSubscribe", "V", listOf("LX/03Kp;"))
+    observer.abi("onSubscribe", "V", listOf("LX/03Ur;"))
     observer.abi("onNext", "V", listOf(OBJECT))
     observer.abi("onError", "V", listOf("Ljava/lang/Throwable;"))
     observer.abi("onComplete", "V", emptyList())
-    val disposable = owner("LX/03Kp;")
+    val disposable = owner("LX/03Ur;")
     if (!AccessFlags.INTERFACE.isSet(disposable.accessFlags)) throw PatchException("$DM: changed native cancellation")
     disposable.abi("dispose", "V", emptyList())
     disposable.abi("isDisposed", "Z", emptyList())

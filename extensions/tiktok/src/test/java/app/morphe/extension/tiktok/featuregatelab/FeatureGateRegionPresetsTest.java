@@ -42,14 +42,14 @@ public class FeatureGateRegionPresetsTest {
         Utils.awaitBackgroundTasksForTests();
         FeatureGateCatalog.awaitForTests();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        BuildNames.setRunningBuildForTests("47.9.3");
+        BuildNames.setRunningBuildForTests("48.0.2");
         FeatureGateLabStore.resetAllLabData();
         FeatureGateLabUndo.resetForTests();
         FeatureGateCatalog.resetForTests();
         FeatureGateLabSession.resetForTests();
         catalog = new LinkedHashMap<>();
         Map<String, String> types = new LinkedHashMap<>();
-        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.9.3")) {
+        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("48.0.2")) {
             if (entry.manager.equals("abmock") && (entry.key.equals(DANMAKU)
                     || entry.key.equals(LANDSCAPE) || entry.key.equals(PHOTOS) || entry.key.equals(VISION)
                     || entry.key.equals(FEED_TAG) || entry.key.equals(AFTER_BLOCK))) {
@@ -82,7 +82,7 @@ public class FeatureGateRegionPresetsTest {
         FeatureGateLabStore.setMasterEnabled(true);
         JSONObject before = FeatureGateLabStore.exportSettings();
 
-        FeatureGateLabUndo.applyPreset("47.9.3", "scrolling_comments", catalog);
+        FeatureGateLabUndo.applyPreset("48.0.2", "scrolling_comments", catalog);
         assertEquals(3, FeatureGateLabStore.rules().size());
         for (int stock : new int[]{0, 1, 2}) {
             assertEquals(1, FeatureGateLabRuntime.overrideInt(DANMAKU, stock));
@@ -99,7 +99,7 @@ public class FeatureGateRegionPresetsTest {
     }
 
     @Test public void severalPhotosSelectGroupTwoOnlyWhileOverridesAreOn() throws Exception {
-        FeatureGateLabUndo.applyPreset("47.9.3", "comment_photos", catalog);
+        FeatureGateLabUndo.applyPreset("48.0.2", "comment_photos", catalog);
         assertEquals(1, FeatureGateLabStore.rules().size());
         assertFalse("a preset never turns the overrides switch on", FeatureGateLabStore.masterEnabled());
         assertEquals("off leaves TikTok's value", 0, FeatureGateLabRuntime.overrideInt(PHOTOS, 0));
@@ -115,7 +115,7 @@ public class FeatureGateRegionPresetsTest {
     }
 
     @Test public void pausedVisualSearchSetsItsThreeKeysToOneOnlyWhileOverridesAreOn() throws Exception {
-        FeatureGateLabUndo.applyPreset("47.9.3", "visual_search_pause", catalog);
+        FeatureGateLabUndo.applyPreset("48.0.2", "visual_search_pause", catalog);
         assertEquals(3, FeatureGateLabStore.rules().size());
         assertFalse("a preset never turns the overrides switch on", FeatureGateLabStore.masterEnabled());
         for (String key : PAUSE_TAG) {
@@ -138,7 +138,7 @@ public class FeatureGateRegionPresetsTest {
     }
 
     @Test public void liveTranslateWritesTheLiveSettingAndNotAnAbKey() throws Exception {
-        FeatureGateLabUndo.applyPreset("47.9.3", "live_translate", catalog);
+        FeatureGateLabUndo.applyPreset("48.0.2", "live_translate", catalog);
         assertEquals(1, FeatureGateLabStore.rules().size());
         FeatureGateLabStore.Rule rule = FeatureGateLabStore.rule("live", LIVE_TRANSLATE, "INT");
         assertNotNull("the rule is a LIVE one", rule);
@@ -163,10 +163,10 @@ public class FeatureGateRegionPresetsTest {
         Map<String, FeatureGateCatalog.Entry> missing = new LinkedHashMap<>(catalog);
         missing.remove("live\n" + LIVE_TRANSLATE);
         assertThrows(JSONException.class,
-                () -> FeatureGateLabUndo.applyPreset("47.9.3", "live_translate", missing));
+                () -> FeatureGateLabUndo.applyPreset("48.0.2", "live_translate", missing));
         BuildNames.setRunningBuildForTests("47.2.1");
         assertThrows(JSONException.class,
-                () -> FeatureGateLabUndo.applyPreset("47.9.3", "live_translate", catalog));
+                () -> FeatureGateLabUndo.applyPreset("48.0.2", "live_translate", catalog));
         assertTrue(FeatureGateLabStore.rules().isEmpty());
     }
 
@@ -178,17 +178,17 @@ public class FeatureGateRegionPresetsTest {
             Map<String, FeatureGateCatalog.Entry> missing = new LinkedHashMap<>(catalog);
             missing.remove("abmock\n" + preset[1]);
             assertThrows(JSONException.class,
-                    () -> FeatureGateLabUndo.applyPreset("47.9.3", preset[0], missing));
+                    () -> FeatureGateLabUndo.applyPreset("48.0.2", preset[0], missing));
             Map<String, FeatureGateCatalog.Entry> mistyped = new LinkedHashMap<>(catalog);
             mistyped.put("abmock\n" + preset[1], new FeatureGateCatalog.Entry(
                     preset[1], preset[1], "abmock", preset[2], true, true,
                     List.of(), List.of(), List.of(), "", "", false, null, null));
             assertThrows(JSONException.class,
-                    () -> FeatureGateLabUndo.applyPreset("47.9.3", preset[0], mistyped));
+                    () -> FeatureGateLabUndo.applyPreset("48.0.2", preset[0], mistyped));
             BuildNames.setRunningBuildForTests("47.2.1");
             assertThrows(JSONException.class,
-                    () -> FeatureGateLabUndo.applyPreset("47.9.3", preset[0], catalog));
-            BuildNames.setRunningBuildForTests("47.9.3");
+                    () -> FeatureGateLabUndo.applyPreset("48.0.2", preset[0], catalog));
+            BuildNames.setRunningBuildForTests("48.0.2");
         }
         assertTrue(FeatureGateLabStore.rules().isEmpty());
         assertFalse(FeatureGateLabUndo.canUndo());

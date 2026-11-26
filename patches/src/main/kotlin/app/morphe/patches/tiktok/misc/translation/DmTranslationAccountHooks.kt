@@ -22,8 +22,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 internal const val DM_ACCOUNT_EVENTS = "Lapp/morphe/extension/tiktok/translation/DmTranslationAccountEvents;"
-internal const val DM_ACCOUNT_BROADCASTER = "LX/03Hr;"
-internal const val DM_ACCOUNT_LISTENER = "LX/03Ob;"
+internal const val DM_ACCOUNT_BROADCASTER = "LX/04Tg;"
+internal const val DM_ACCOUNT_LISTENER = "LX/039b;"
 private const val USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
 private const val ACCOUNT = "Translate comments (DM account transitions)"
 private const val CALLBACK = "$DM_ACCOUNT_LISTENER->onAccountResult(IZI$USER)V"
@@ -46,7 +46,7 @@ internal fun findDmAccountTargets(classOf: (String) -> ClassDef?): DmAccountTarg
     if (broadcaster.fields.count { it.name == "LIZ" && it.type == "Ljava/util/List;" && AccessFlags.STATIC.isSet(it.accessFlags) } != 1)
         throw PatchException("$ACCOUNT: changed native listener list")
     fun broadcast(name: String, parameters: List<String>, registers: Int, arguments: List<Int>,
-        constants: List<Pair<Int, Int>>): Method {
+        constants: List<Pair<Int, Int>>, switch: Boolean = false): Method {
         val method = broadcaster.methods.singleOrNull { it.name == name && it.returnType == "V" &&
             it.parameterTypes.map(CharSequence::toString) == parameters &&
             AccessFlags.PUBLIC.isSet(it.accessFlags) && AccessFlags.STATIC.isSet(it.accessFlags) }
@@ -56,11 +56,11 @@ internal fun findDmAccountTargets(classOf: (String) -> ClassDef?): DmAccountTarg
         val calls = instructions.mapNotNull { it.getReference<MethodReference>()?.toString() }
         val expectedCalls = listOf("$LIST->iterator()$ITERATOR", "$ITERATOR->hasNext()Z",
             "$ITERATOR->next()Ljava/lang/Object;", CALLBACK)
-        val switch = name == "LJIIIZ"
         val expected = if (switch) listOf("$METHOD_IDS->push(I)Z") + expectedCalls + "$METHOD_IDS->pop()V" else expectedCalls
         val loop = listOf(Opcode.SGET_OBJECT, Opcode.CHECK_CAST, Opcode.INVOKE_VIRTUAL, Opcode.MOVE_RESULT_OBJECT,
             Opcode.INVOKE_INTERFACE, Opcode.MOVE_RESULT, Opcode.IF_EQZ, Opcode.INVOKE_INTERFACE,
-            Opcode.MOVE_RESULT_OBJECT, Opcode.CHECK_CAST) + List(if (name == "LJII") 4 else 2) { Opcode.CONST_4 } +
+            // One const/4 per account argument; the switch's method id is the one wide const.
+            Opcode.MOVE_RESULT_OBJECT, Opcode.CHECK_CAST) + List(constants.size - if (switch) 1 else 0) { Opcode.CONST_4 } +
             listOf(Opcode.INVOKE_INTERFACE, Opcode.GOTO)
         val shape = if (switch) listOf(Opcode.CONST, Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT) + loop +
             listOf(Opcode.IF_EQZ, Opcode.INVOKE_STATIC, Opcode.RETURN_VOID) else loop + Opcode.RETURN_VOID
@@ -81,9 +81,10 @@ internal fun findDmAccountTargets(classOf: (String) -> ClassDef?): DmAccountTarg
             throw PatchException("$ACCOUNT: changed synchronous $name dispatch or account arguments")
         return method
     }
-    val login = broadcast("LJI", listOf(USER), 5, listOf(2, 0, 0, 1, 4), listOf(1 to 0, 0 to 1))
-    val logout = broadcast("LJII", emptyList(), 6, listOf(4, 1, 0, 3, 2), listOf(3 to 0, 2 to 0, 1 to 4, 0 to 1))
-    val switch = broadcast("LJIIIZ", listOf(USER, "Z"), 7, listOf(2, 1, 6, 0, 5), listOf(0 to 71776, 1 to 2, 0 to 0))
+    // 48.0.2's names; 47.9.3's were LJI, LJII and LJIIIZ.
+    val login = broadcast("LJII", listOf(USER), 5, listOf(2, 0, 0, 1, 4), listOf(1 to 0, 0 to 1))
+    val logout = broadcast("LJIIIIZZ", emptyList(), 6, listOf(4, 1, 0, 3, 2), listOf(3 to 0, 2 to 0, 1 to 4, 0 to 1))
+    val switch = broadcast("LJIIJ", listOf(USER, "Z"), 7, listOf(2, 1, 6, 0, 5), listOf(0 to 71776, 1 to 2, 0 to 0), switch = true)
     return DmAccountTargets(login, logout, switch)
 }
 

@@ -82,7 +82,7 @@ internal object PickedLocaleFingerprint : Fingerprint(
 )
 
 /**
- * TikTok's apply of that language to the app's resources (`X.03Vh.LIZIZ`), which its start-up
+ * TikTok's apply of that language to the app's resources (`X.05F8.LIZIZ`), which its start-up
  * runs as well, after the point the reword table can already have loaded.
  */
 internal object ApplyPickedLocaleFingerprint : Fingerprint(

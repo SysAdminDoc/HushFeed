@@ -146,7 +146,7 @@ class ProfileMenuCellsAnchorsTest {
     private fun question(static: Boolean, asks: String, returns: String = "Z"): Method {
         val parameters = listOf("LX/0Gson;", "Ljava/lang/String;")
         return ImmutableMethod(
-            "LX/0jM2;", "LIZ", parameters.map { ImmutableMethodParameter(it, null, null) }, "Z",
+            "LX/0UMJ;", "LIZ", parameters.map { ImmutableMethodParameter(it, null, null) }, "Z",
             AccessFlags.PUBLIC.value or (if (static) AccessFlags.STATIC.value else 0), null, null,
             ImmutableMethodImplementation(
                 1 + parameters.size + (if (static) 0 else 1),

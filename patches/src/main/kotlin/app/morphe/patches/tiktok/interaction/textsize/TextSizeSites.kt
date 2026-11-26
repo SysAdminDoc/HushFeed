@@ -78,7 +78,7 @@ internal fun textSizeSites(
     confirm: Method,
     classBy: (String) -> ClassDef,
 ): TextSizeSites {
-    // X.03aF on 47.9.3: LIZ()F and LIZJ()F both open with `sget v1, LIZ:I` and answer 1.0 for
+    // X.03Wq on 48.0.2: LIZ()F and LIZJ()F both open with `sget v1, LIZ:I` and answer 1.0 for
     // mode 0. Nothing else in the class is a static ()F that reads an int of its own.
     val factors = manager.methods.filter { it.isModeFactor(manager.type) }
     if (factors.size != 2) missing("${manager.type} has ${factors.size} text size factor methods, not 2")
@@ -94,7 +94,7 @@ internal fun textSizeSites(
     }
 
     // The slider works in positions, 0 to its top. Its top is TikTok's last mode, written once in
-    // the constructor (LX/1PkU;.LLJZ:I on 47.9.3, read back by getValueTo).
+    // the constructor (LX/1PIn;.LLJZ:I on 48.0.2, read back by getValueTo).
     val wired = viewCreated.code().mapNotNull { it.getReference<MethodReference>() }
         .filter { it.name == "setOnSliderListener" }.map { it.definingClass }.distinct()
     val sliderType = wired.singleOrNull() ?: missing("the Text size page wires ${wired.size} sliders")

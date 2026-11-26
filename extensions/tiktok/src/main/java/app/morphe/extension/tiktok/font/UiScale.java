@@ -10,7 +10,7 @@ import app.morphe.extension.tiktok.settings.Settings;
  * UI scale (#477, ported from inxomnyaa's pull request).
  *
  * <p>TikTok's text size manager rewrites the app's display density from its text size factor
- * (X.03aF's LIZLLL at startup and LJFF for each activity, on 47.9.3). This scales that factor
+ * (X.03Wq's LIZLLL at startup and LJFF for each activity, on 48.0.2). This scales that factor
  * by the UI size picked in Hushfeed settings, so layouts, icons and text all shrink together and
  * TikTok's own sizes keep their proportions. Smaller text sizes answers the factor itself, so
  * the two multiply.

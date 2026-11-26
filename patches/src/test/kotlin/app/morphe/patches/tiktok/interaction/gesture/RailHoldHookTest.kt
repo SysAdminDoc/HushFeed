@@ -162,9 +162,9 @@ class RailHoldHookTest {
     }
 
     /** 0BJ9's shape: the log, the login check, the offer, and Unit loaded and returned mid-method. */
-    private fun favoritesMenu(unitRegister: Int = 0) = method("LX/0ASP;", "invoke", listOf(), "Ljava/lang/Object;", 8, """
+    private fun favoritesMenu(unitRegister: Int = 0) = method("LX/0AMX;", "invoke", listOf(), "Ljava/lang/Object;", 8, """
         const-string v0, "$FAVORITES_MENU_EVENT"
-        invoke-static {}, LX/0UxG;->LJFF()Ljava/lang/Object;
+        invoke-static {}, LX/0Y17;->LJFF()Ljava/lang/Object;
         move-result-object v1
         if-eqz v1, :unit
         const-string/jumbo v0, "$FAVORITES_MENU_KEY"
@@ -204,7 +204,7 @@ class RailHoldHookTest {
 
     @Test
     fun `a Favorites offer with no register of its own to spare is refused`() {
-        val bare = method("LX/0ASP;", "invoke", listOf(), "Ljava/lang/Object;", 1, """
+        val bare = method("LX/0AMX;", "invoke", listOf(), "Ljava/lang/Object;", 1, """
             sget-object p0, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
             return-object p0
         """)
@@ -212,9 +212,9 @@ class RailHoldHookTest {
     }
 
     /** 47.0.3's hold listener, cut down: the check on a press, and the post dropped in two places. */
-    private fun holdTouch(drops: Boolean = true) = method("LX/0ATb;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 11, """
+    private fun holdTouch(drops: Boolean = true) = method("LX/0ARw;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 11, """
         const/4 v5, 0x0
-        iget-object v4, p0, LX/0ATb;->LLJL:$EDGE_SPEEDUP_ABILITY
+        iget-object v4, p0, LX/0ARw;->LLJL:$EDGE_SPEEDUP_ABILITY
         invoke-virtual {p2}, Landroid/view/MotionEvent;->getActionMasked()I
         move-result v2
         if-nez v2, :later
@@ -223,10 +223,10 @@ class RailHoldHookTest {
         move-result v0
         return v0
         :later
-        iget-object v1, p0, LX/0ATb;->LL:Landroid/os/Handler;
-        iget-object v0, p0, LX/0ATb;->LLJLL:Ljava/lang/Runnable;
+        iget-object v1, p0, LX/0ARw;->LL:Landroid/os/Handler;
+        iget-object v0, p0, LX/0ARw;->LLJLL:Ljava/lang/Runnable;
         ${if (drops) "invoke-virtual {v1, v0}, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V" else "invoke-virtual {v1, v0}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z"}
-        iget-object v3, p0, LX/0ATb;->LL:Landroid/os/Handler;
+        iget-object v3, p0, LX/0ARw;->LL:Landroid/os/Handler;
         ${if (drops) "invoke-virtual {v3, v0}, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V" else "nop"}
         return v5
     """)
@@ -263,8 +263,8 @@ class RailHoldHookTest {
     @Test
     fun `each of Share's long presses goes through the extension with TikTok's view and listener`() {
         val method = method(VIDEO_SHARE_ASSEM, "onViewCreated", listOf(view), "V", 4, """
-            new-instance v0, LX/0927;
-            invoke-direct {v0, p0}, LX/0927;-><init>($VIDEO_SHARE_ASSEM)V
+            new-instance v0, LX/08lz;
+            invoke-direct {v0, p0}, LX/08lz;-><init>($VIDEO_SHARE_ASSEM)V
             invoke-virtual {p1, v0}, $view->setOnLongClickListener($onLongClick)V
             const v1, 0x7f0c0000
             invoke-virtual {p1, v1}, $view->findViewById(I)$view
@@ -301,12 +301,12 @@ class RailHoldHookTest {
      * 47.9.3's Favorites listener as a press lands, cut down: the icon check unboxed into v5, so a
      * register slip shows, then the long press's post.
      */
-    private fun favoritesTouch(checks: Int = 1) = method("LX/0BQF;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 13, """
+    private fun favoritesTouch(checks: Int = 1) = method("LX/0BGU;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 13, """
         const/4 v8, 0x0
         invoke-virtual {p2}, Landroid/view/MotionEvent;->getAction()I
         move-result v1
         if-nez v1, :done
-        iget-object v0, p0, LX/0BQF;->check:$function2
+        iget-object v0, p0, LX/0BGU;->check:$function2
         if-eqz v0, :post
         ${"""
         invoke-interface {v0, p1, p2}, $function2->invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -318,7 +318,7 @@ class RailHoldHookTest {
         """.repeat(checks)}
         goto :done
         :post
-        iget-object v2, p0, LX/0BQF;->timer:Ljava/lang/Runnable;
+        iget-object v2, p0, LX/0BGU;->timer:Ljava/lang/Runnable;
         :done
         return v8
     """)
@@ -369,7 +369,7 @@ class RailHoldHookTest {
             new-instance v0, LX/0Dgw;
             invoke-direct {v0, p0}, LX/0Dgw;-><init>($VIDEO_FAVORITE_ASSEM)V
         """
-        val click = "invoke-static {v0, v4}, LX/00oX;->W7($onClick$view)V\n"
+        val click = "invoke-static {v0, v4}, LX/00iY;->W7($onClick$view)V\n"
         val plain = (1..plainClicks).joinToString("") { build + (if (it == 1 && jumpOntoClick) ":click\n" else "") + click }
         return method(VIDEO_FAVORITE_ASSEM, "A4", listOf("Ljava/lang/Object;"), "V", 8, """
             const/4 v1, 0x1
@@ -441,16 +441,16 @@ class RailHoldHookTest {
 
     @Test
     fun `the Favorites timer leads to the one touch listener it was built for`() {
-        val listener = classDef("LX/0BQF;", listOf("Landroid/view/View\$OnTouchListener;"))
-        val menu = classDef("LX/0BQD;", listOf("Lkotlin/jvm/functions/Function0;"))
+        val listener = classDef("LX/0BGU;", listOf("Landroid/view/View\$OnTouchListener;"))
+        val menu = classDef("LX/0BFZ;", listOf("Lkotlin/jvm/functions/Function0;"))
         val constructor = ImmutableMethod(
-            "LX/0BQG;", "<init>", listOf(listener.type, menu.type).map { ImmutableMethodParameter(it, null, null) }, "V",
+            "LX/0BGG;", "<init>", listOf(listener.type, menu.type).map { ImmutableMethodParameter(it, null, null) }, "V",
             AccessFlags.PUBLIC.value or AccessFlags.CONSTRUCTOR.value, null, null, null,
         )
-        val timer = classDef("LX/0BQG;", listOf("Ljava/lang/Runnable;"), listOf(constructor))
+        val timer = classDef("LX/0BGG;", listOf("Ljava/lang/Runnable;"), listOf(constructor))
         val types = listOf(listener, menu).associateBy { it.type }
 
-        assertEquals("LX/0BQF;", favoritesTouchListenerType(timer) { types[it] })
+        assertEquals("LX/0BGU;", favoritesTouchListenerType(timer) { types[it] })
         assertThrows(PatchException::class.java) { favoritesTouchListenerType(timer) { null } }
     }
 }

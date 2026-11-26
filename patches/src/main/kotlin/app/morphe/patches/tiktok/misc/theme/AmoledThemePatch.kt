@@ -169,8 +169,8 @@ internal const val RESTORE_ALL_STYLE = "${AMOLED_RESTORE_PREFIX}restore_all"
 
 /**
  * The theme attributes the switch can put back, sorted so each keeps one index: every surface
- * item, and every item whose value is one of the repainted colors itself (`@color/a2c`). On
- * 47.9.2 those are the dark app themes' g7g to g85 (g5h to g66 on 47.9.1), which point straight
+ * item, and every item whose value is one of the repainted colors itself (`@color/a2a`). On
+ * 48.0.2 those are the dark app themes' g7r to g8f (g7g to g85 on 47.9.3), which point straight
  * at the palette.
  */
 internal fun restorableAttributes(styles: List<Document>, surfaces: Set<String>, colors: Set<String>): List<String> {
@@ -323,12 +323,12 @@ internal fun renamedPathCollisions(
  * (47.4.3 added two), and an older build's names there are an accent and see-through white
  * overlays, which the patch painted black until this was read off the fixture (AmoledPaletteTest
  * holds every fixture's block to its entry here). Only the declared build is listed, so a build
- * the bundle moves to needs its own entry read off its fixture. 47.9.3's sit at a2c to a2p, well
+ * the bundle moves to needs its own entry read off its fixture. 48.0.2's sit at a2a to a2n, well
  * short of 47.6.3's a3w to a49, so a shift by one would have painted other colors. The block's pure
  * black is a token of its own and stays.
  */
 internal val DARK_BACKGROUND_COLORS: Map<String, Set<String>> = linkedMapOf(
-    "47.9.3" to setOf("a2c", "a2e", "a2f", "a2h", "a2p"),
+    "48.0.2" to setOf("a2a", "a2c", "a2d", "a2f", "a2n"),
 )
 
 /** This build's background grays, or a refusal: a name carried over from another build is a guess. */
@@ -351,51 +351,51 @@ internal fun declaredVersions(): Set<String> =
 /**
  * The dark style literals behind TikTok's sheets and pages per build, named by TikTok's own token
  * table (AmoledSheetTokensTest). On 47.9.3:
- * - aif is UISheetFlat1's dark value (attr/a26), the fill of the comment panel, the share sheet
+ * - ail is UISheetFlat1's dark value (attr/a2a), the fill of the comment panel, the share sheet
  *   and TikTok's other sheets, panels and modals.
- * - ail is UISheetGrouped1's (attr/a2b), the fill of the feed's long-press panel and the other
+ * - air is UISheetGrouped1's (attr/a2g), the fill of the feed's long-press panel and the other
  *   sheets that group their rows into cards.
- * - ain is UISheetGrouped2's (attr/a2d), those cards: the long-press panel's rows, the comment
+ * - ait is UISheetGrouped2's (attr/a2i), those cards: the long-press panel's rows, the comment
  *   menu's and the profile menu panel's. They stayed gray on a black sheet through 0.80.0 (#312).
- * - bx is BGPrimary, a literal of its own in the dark themes, which the Inbox Activity page, its
+ * - c1 is BGPrimary, a literal of its own in the dark themes, which the Inbox Activity page, its
  *   rows and New followers fill with.
- * - ags is UIPageGrouped2's (attr/a0i), the cards of TikTok's own settings pages: a TuxCell off
+ * - agy is UIPageGrouped2's (attr/a0n), the cards of TikTok's own settings pages: a TuxCell off
  *   a sheet fills with it. The pages behind them are UIPageGrouped1, black in TikTok's own dark
  *   mode already, so those cards were the only gray left on Settings and privacy (#152). A
  *   TuxCell on a sheet (the profile menu panel) fills with UISheetGrouped2 instead.
- * - agk and agq are UIPageFlat1's and UIPageGrouped1's (attr/a0a, attr/a0g), the pages
+ * - agq and agw are UIPageFlat1's and UIPageGrouped1's (attr/a0f, attr/a0l), the pages
  *   themselves: Inbox, profiles and TikTok's other full screens. They're #000000 in three dark
- *   themes and #0C0E12 in the tinted one, so a picked color left those pages black (#348).
- *   agl and agr are the same pages raised (UIPageFlat1Elevated, UIPageGrouped1Elevated, #1E1E1E),
- *   and agm is UIPageFlat2 (attr/a0c), the gray band a page sets off a part of itself with.
- * - agp (UIPageFlat3Elevated) and c3 were the comments and share sheets' own through 46.x, under
+ *   themes and #101316 in the tinted one, so a picked color left those pages black (#348).
+ *   agr and agx are the same pages raised (UIPageFlat1Elevated, UIPageGrouped1Elevated, #1E1E1E),
+ *   and ags is UIPageFlat2 (attr/a0h), the gray band a page sets off a part of itself with.
+ * - agv (UIPageFlat3Elevated) and c7 were the comments and share sheets' own through 46.x, under
  *   other names, and are dark surfaces of their own on 47.x.
- * - aij is UISheetFlat3's (attr/a2_), the fill of TikTok's toasts (the "You'll see fewer posts
+ * - aip is UISheetFlat3's (attr/a2e), the fill of TikTok's toasts (the "You'll see fewer posts
  *   like this" one after Not interested) and of its popover menus, the comments' sort menu among
- *   them: TuxToast's background and TuxTooltip's popover background both point at a2_. Both
+ *   them: TuxToast's background and TuxTooltip's popover background both point at a2e. Both
  *   stayed #3A3A3A under AMOLED through 0.81.0 (#368).
- * - aih is UISheetFlat2's (attr/a28), the second fill on a sheet: the circle behind the comment
- *   panel's close X (drawable afl, which CommentPageActionBarAssem sets on the X when TikTok draws
+ * - ain is UISheetFlat2's (attr/a2c), the second fill on a sheet: the circle behind the comment
+ *   panel's close X (drawable afo, which CommentPageActionBarAssem sets on the X when TikTok draws
  *   round header buttons), TuxTextCell's background, and other shapes, rows and panels on sheets.
- *   Its 61 uses in 47.9.3's XML are all solids and backgrounds, none a text, icon or stroke color
+ *   Its 61 uses in 47.9.3's XML were all solids and backgrounds, none a text, icon or stroke color
  *   (one is a 1px line under a card, which goes black with the sheet). It's #2C2C2C, #3A3A3A,
- *   #2A2F35 or #292D32 by palette, all under the plain gate, and the light themes send a28 to axs.
+ *   #2D3138 or #262A31 by palette, all under the plain gate, and the light themes send a2c to axz.
  *   The X stayed on a gray circle on the black comments before (#371).
  * The token names move a place or two with every build, and on 46.x a name these use now was
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.9.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr", "aij", "aih"),
+    "48.0.2" to setOf("agv", "c7", "ail", "air", "ait", "c1", "agy", "agq", "agr", "ags", "agw", "agx", "aip", "ain"),
 )
 
 /**
- * Surface items a palette sets lighter than [isDarkOpaqueLiteral]'s gate. UISheetFlat3 (aij) is
- * #484848 in a_j and #323C43 and #333D43 in the two tinted palettes the dark-mode experiment
+ * Surface items a palette sets lighter than [isDarkOpaqueLiteral]'s gate. UISheetFlat3 (aip) is
+ * #484848 in a_b and #363A41 and #2E3239 in the two tinted palettes the dark-mode experiment
  * applies, so under the 0x40 gate only the default palette's toast went black. These are taken
  * up to [RAISED_SURFACE_CEILING]; every value they hold is a raised sheet gray, never text.
  */
 internal val RAISED_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.9.3" to setOf("aij"),
+    "48.0.2" to setOf("aip"),
 )
 
 internal const val RAISED_SURFACE_CEILING = 0x50

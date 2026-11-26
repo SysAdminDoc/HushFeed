@@ -68,30 +68,6 @@ internal object ChatStickerBannerEnabledFingerprint : Fingerprint(
     custom = { _, classDef -> classDef.registersMessageListProtocol("PRESHOWN_STICKER_BANNER_PROTOCOL") },
 )
 
-/** The suggested reply cells in a chat's message list. On 47.4.3 R8 renamed the class (IMUnifiedSuggestedReplyMsgProtocol); it registers UNIFIED_SUGGESTED_REPLY_MSG. */
-internal object ChatSuggestedReplyEnabledFingerprint : Fingerprint(
-    classFingerprint = Fingerprint(
-        name = "<init>",
-        filters = listOf(app.morphe.patcher.fieldAccess(name = "UNIFIED_SUGGESTED_REPLY_MSG")),
-    ),
-    name = "isEnabled",
-    returnType = "Z",
-    parameters = emptyList(),
-    custom = { _, classDef -> classDef.registersMessageListProtocol("UNIFIED_SUGGESTED_REPLY_MSG") },
-)
-
-/** The banner that introduces suggested replies. On 47.4.3 R8 renamed the class (SmartReplyIntroBannerProtocol); it registers SMART_REPLY_ENTRANCE_CARD. */
-internal object ChatSmartReplyIntroEnabledFingerprint : Fingerprint(
-    classFingerprint = Fingerprint(
-        name = "<init>",
-        filters = listOf(app.morphe.patcher.fieldAccess(name = "SMART_REPLY_ENTRANCE_CARD")),
-    ),
-    name = "isEnabled",
-    returnType = "Z",
-    parameters = emptyList(),
-    custom = { _, classDef -> classDef.registersMessageListProtocol("SMART_REPLY_ENTRANCE_CARD") },
-)
-
 private const val CHAT_GESTURES_EXTENSION = "Lapp/morphe/extension/tiktok/inbox/ChatGestures;"
 
 /**
@@ -109,14 +85,16 @@ internal object ChatMessageGestureFingerprint : Fingerprint(
 
 /**
  * The dispatcher's gesture register (its last parameter), or a reason it can't be hooked: the
- * method has to be an instance method on three arguments with the gesture object last, a local
+ * method has to be an instance method on four arguments with the gesture object last, a local
  * below the parameters for the extension's answer, and the gesture has to fit a four-bit call.
+ * 48.0.2's XJ takes the cell's view, the message, a position and the gesture; 47.9.3's aB2 took
+ * three arguments, with no view or position.
  */
 internal fun chatGestureRegister(method: Method): Int {
     val code = method.implementation
         ?: throw PatchException("Hide inbox items: the chat gesture dispatcher has no code.")
     val parameters = method.parameterTypes.map(CharSequence::toString)
-    if (AccessFlags.STATIC.isSet(method.accessFlags) || parameters.size != 3 || !parameters.last().startsWith("L")) {
+    if (AccessFlags.STATIC.isSet(method.accessFlags) || parameters.size != 4 || !parameters.last().startsWith("L")) {
         throw PatchException("Hide inbox items: ${method.definingClass}->${method.name} no longer takes the gesture last on an instance.")
     }
     val parameterRegisters = 1 + parameters.sumOf { if (it == "J" || it == "D") 2 else 1 }

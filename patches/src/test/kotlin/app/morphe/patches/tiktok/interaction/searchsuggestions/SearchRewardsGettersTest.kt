@@ -176,7 +176,7 @@ class SearchRewardsGettersTest {
 
     private fun getter(feature: String, placeholder: String, asksForService: Boolean = true): Method {
         val mutable = MutableMethod(ImmutableMethod(
-            "LX/0ATg;", "invoke", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+            "LX/0ANM;", "invoke", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
             null, null, ImmutableMethodImplementation(9, emptyList(), null, null),
         ))
         val real = if (asksForService) {

@@ -56,12 +56,19 @@ class CommentSheetHeightAnchorsTest {
             assertTrue("${apk.name}: the panel reads no sheet mode", modeIndex >= 0)
             val result = instructions[modeIndex + 1]
             assertEquals("${apk.name}: the mode's answer is not moved next", Opcode.MOVE_RESULT, result.opcode)
-            assertEquals("${apk.name}: the mode is not tested next", Opcode.IF_LEZ, instructions[modeIndex + 2].opcode)
             val register = (result as OneRegisterInstruction).registerA
+            // Only constants for other registers may sit between the move and the test (48.0.2
+            // sets two there), so the lifted mode is what the test reads.
+            val testIndex = (modeIndex + 2 until instructions.size).first { instructions[it].opcode != Opcode.CONST_4 }
+            assertTrue(
+                "${apk.name}: a constant between the mode and its test writes the mode's register",
+                instructions.subList(modeIndex + 2, testIndex).all { (it as OneRegisterInstruction).registerA != register },
+            )
+            assertEquals("${apk.name}: the mode is not tested next", Opcode.IF_LEZ, instructions[testIndex].opcode)
             assertEquals(
                 "${apk.name}: the test reads another register",
                 register,
-                (instructions[modeIndex + 2] as OneRegisterInstruction).registerA,
+                (instructions[testIndex] as OneRegisterInstruction).registerA,
             )
 
             // The panel asks the height method by name once the mode passes.

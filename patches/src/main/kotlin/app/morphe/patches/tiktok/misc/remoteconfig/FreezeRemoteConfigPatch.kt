@@ -33,7 +33,7 @@ internal object ResponseStoreFingerprint : Fingerprint(
 )
 
 /**
- * The store of one chunk of a chunked response (`X.1QDJ.LIZ`, which FetchABTestCommonChunkTask's
+ * The store of one chunk of a chunked response (`X.1TQT.LIZ`, which FetchABTestCommonChunkTask's
  * runnable calls). It merges the chunk into what was stored before and saves the result.
  */
 internal object ChunkStoreFingerprint : Fingerprint(
@@ -44,7 +44,7 @@ internal object ChunkStoreFingerprint : Fingerprint(
 )
 
 /**
- * The store of a chunk on the optimized path (`X.0832.LIZLLL`), which the chunk observer's onNext
+ * The store of a chunk on the optimized path (`X.08Y6.LIZLLL`), which the chunk observer's onNext
  * calls with the parsed chunk. It writes the typed values itself or hands them to the main AB
  * store, so it's the one point every optimized chunk passes.
  */

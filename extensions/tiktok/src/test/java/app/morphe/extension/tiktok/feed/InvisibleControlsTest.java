@@ -53,12 +53,12 @@ import org.robolectric.annotation.Config;
 public class InvisibleControlsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    private static final String[] NAMES = {"view_rootview", "47.9.3:lq1", "47.9.3:bwy",
-            "videomusiccoverblock", "47.9.3:lpp", "47.9.3:v9j", "47.9.3:oxr"};
+    private static final String[] NAMES = {"view_rootview", "48.0.2:lq1", "48.0.2:bwy",
+            "videomusiccoverblock", "48.0.2:lpp", "48.0.2:v9j", "48.0.2:oxr"};
     private static final int[] IDS = {0x7f0a1101, 0x7f0a1102, 0x7f0a1103,
             0x7f0a1104, 0x7f0a1105, 0x7f0a1106, 0x7f0a1107};
     private static final int HOME_ID = 0x7f0a1108;
-    private static final String HOME_NAME = "47.9.3:oxj";
+    private static final String HOME_NAME = "48.0.2:oxj";
 
     private boolean overlays;
     private ActivityController<Activity> controller;

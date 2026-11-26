@@ -31,7 +31,7 @@ import org.junit.Test
 class RemoteConfigStoreAnchorsTest {
     private companion object {
         /** How many copies of the whole-response store each declared build has, read from its dex. */
-        val RESPONSE_STORE_COPIES = mapOf("47.9.3" to 2)
+        val RESPONSE_STORE_COPIES = mapOf("48.0.2" to 2)
     }
 
     @Test

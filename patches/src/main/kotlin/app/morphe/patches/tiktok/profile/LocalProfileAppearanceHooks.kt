@@ -40,21 +40,34 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 internal const val LOCAL_APPEARANCE = "Lapp/morphe/extension/tiktok/profile/LocalProfileAppearance;"
 internal const val LEGACY_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/userinfo/base/AccountNameInfoComponent;"
 internal const val NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/nickname/ProfileInfoNicknameProtocol;"
-internal const val NICKNAME_REPAINT = "LX/0P69;"
+internal const val NICKNAME_REPAINT = "LX/0RVb;"
 internal const val NAVBAR_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/ProfileNavbarNickNameProtocol;"
-internal const val NAVBAR_NICKNAME_REPAINT = "LX/0P3h;"
-internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0P3i;"
+internal const val NAVBAR_NICKNAME_REPAINT = "LX/0RVY;"
+internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0RVZ;"
+/**
+ * The protocol's bind override, one name in every owner here (47.9.3 `LJJLI`), and the members R8 renames
+ * with it: the nickname renderers (47.9.3 `LJZ`, the navbar's without 48.0.2's trailing Add name flag), the
+ * navbar's Add name builder and its cache flag (47.9.3 `LJLLLLLL`, `LLLLLLZZ`), and the protocol's data and
+ * root view fields (47.9.3 `LLJLLIL`, `LLJJL`, names 48.0.2 gives to fields of other types).
+ */
+internal const val PROTOCOL_BIND = "LJJLIIIJLLLLLLLZ"
+internal const val NICKNAME_RENDER = "LLFZ"
+internal const val NAVBAR_RENDER = "LLFZ"
+internal const val NAVBAR_ADD_NAME = "LLF"
+internal const val NAVBAR_ADD_NAME_CACHED = "LLLLJI"
+internal const val PROTOCOL_DATA = "LLJL"
+internal const val PROTOCOL_ROOT = "LLJJJIL"
 /** Where both navbar repaint callbacks keep their navbar, shared by the bridge and the site checks so a retarget moves both. */
 internal const val NAVBAR_REPAINT_OWNER = "LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER"
 internal const val NICKNAME_DATA = "Lcom/ss/android/ugc/profile/business/ur/platform/NickNameData;"
-internal const val ADD_NAME_VIEW = "LX/0V2y;"
-internal const val BADGE_ICON = "LX/03x5;"
-internal const val BADGE_SPAN = "LX/0GNL;"
+internal const val ADD_NAME_VIEW = "LX/0XUN;"
+internal const val BADGE_ICON = "LX/03Dw;"
+internal const val BADGE_SPAN = "LX/0EDR;"
 /** Kotlin's Ref.ObjectRef, which R8 renames (47.4.3 `LX/02xT;`). */
-internal const val OBJECT_REF = "LX/060e;"
+internal const val OBJECT_REF = "LX/08Ma;"
 /** The host's dp-to-pixel and pixel rounding helpers the native badge icon sizes itself with. */
-internal const val DIMENSION_DP = "LX/03lc;"
-internal const val PIXEL_ROUND = "LX/04DS;"
+internal const val DIMENSION_DP = "LX/03Md;"
+internal const val PIXEL_ROUND = "LX/03FR;"
 internal const val RESTRICTION_OWNER = "Lcom/ss/android/ugc/profile/business/pns/account/AccountAGSWarningProtocol;"
 internal const val NATIVE_BLUE_BADGE = 0x7f01026f
 internal const val APPEARANCE_SELECT = "hushfeedLocalNicknameBadge"
@@ -76,8 +89,12 @@ private const val NATIVE_ICON = "Lcom/ss/android/ugc/profile/platform/base/data/
 private const val CONTEXT = "Landroid/content/Context;"
 private const val TEXT_VIEW = "Lcom/bytedance/tux/input/TuxTextView;"
 private const val NAVBAR_CAPTURE_PARAMETERS = "$TEXT_VIEW" + OBJECT_REF + NAVBAR_NICKNAME_OWNER + INTEGER + "I" + STRING
+/** The nickname repaint also keeps the render's Add name flag (new in 48.0.2), the Add name repaint doesn't. */
+private const val NAVBAR_REPAINT_PARAMETERS = NAVBAR_CAPTURE_PARAMETERS + "Z"
+private const val NAVBAR_RENDER_PARAMETERS = "II$STRING$STRING" + "Z"
+private const val BIZ_DATA = "Lcom/ss/android/ugc/profile/platform/base/data/BizBaseData;"
 private const val APPEARANCE = "Local profile appearance"
-internal const val NOTICE_VISIBILITY = "LX/00oX;->LJLLL(ILandroid/view/View;)V"
+internal const val NOTICE_VISIBILITY = "LX/00iY;->LJLLLL(ILandroid/view/View;)V"
 
 private fun MethodReference.descriptor() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
 private fun Instruction.calls(descriptor: String) = getReference<MethodReference>()?.descriptor() == descriptor
@@ -137,8 +154,9 @@ internal fun Method.legacyAppearanceSite(): LegacyAppearanceSite? {
     val receiver = entry.registerA
     if (code.none { (it as? WideLiteralInstruction)?.wideLiteral == NATIVE_BLUE_BADGE.toLong() }) return null
     return code.indices.mapNotNull { index ->
+        // Kotlin's Intrinsics.areEqual, which R8 renames too (47.9.3 `LJI`).
         if (index < 4 || index + 2 >= code.size || code[index].opcode != Opcode.INVOKE_STATIC ||
-            !code[index].calls("Lkotlin/jvm/internal/Intrinsics;->LJI($OBJECT$OBJECT)Z")) return@mapNotNull null
+            !code[index].calls("Lkotlin/jvm/internal/Intrinsics;->LJFF($OBJECT$OBJECT)Z")) return@mapNotNull null
         val arguments = code[index].registers()?.takeIf { it.size == 2 } ?: return@mapNotNull null
         val (value, expected) = arguments
         if (!code[index - 3].calls("Lcom/ss/android/ugc/profile/platform/base/data/UserAccountInfo;->isVerified()$BOOLEAN") ||
@@ -164,36 +182,36 @@ private fun target(code: List<Instruction>, index: Int): Int? {
     return addresses.indexOf(addresses[index] + branch.codeOffset).takeIf { it in code.indices }
 }
 
-/** Keep the nullable native resource in v5, including the value captured by the native repaint. */
+/** Keep the nullable native resource in v6, including the value captured by the native repaint. */
 internal fun Method.nicknameAppearanceSite(): NicknameAppearanceSite? {
-    if (definingClass != NICKNAME_OWNER || !isInstance("LJJLI", "Z", emptyList(), 14)) return null
+    if (definingClass != NICKNAME_OWNER || !isInstance(PROTOCOL_BIND, "Z", emptyList(), 13)) return null
     val code = implementation!!.instructions.toList()
     val render = code.indices.singleOrNull { index -> index + 2 < code.size &&
-        code[index].calls("$INTEGER->intValue()I") && code[index].registers() == listOf(5) &&
+        code[index].calls("$INTEGER->intValue()I") && code[index].registers() == listOf(6) &&
         code[index + 1].opcode == Opcode.MOVE_RESULT && code[index + 1].namedRegisters() == listOf(0) &&
-        code[index + 2].calls("$NICKNAME_OWNER->LJZ(II$STRING)V") &&
-        code[index + 2].registers() == listOf(13, 0, 9, 4)
+        code[index + 2].calls("$NICKNAME_OWNER->$NICKNAME_RENDER(II$STRING)V") &&
+        code[index + 2].registers() == listOf(12, 0, 11, 5)
     } ?: return null
     val branch = code.indices.singleOrNull { index -> code[index].opcode == Opcode.IF_NEZ &&
-        code[index].namedRegisters() == listOf(5) && target(code, index)?.let { at ->
-            at < render && code[at].opcode == Opcode.IGET_OBJECT && code[at].namedRegisters() == listOf(0, 13) &&
-                code[at].getReference<FieldReference>()?.toString() == "$PROFILE_PROTOCOL->LLJLLIL:Lcom/ss/android/ugc/profile/platform/base/data/BizBaseData;"
+        code[index].namedRegisters() == listOf(6) && target(code, index)?.let { at ->
+            at < render && code[at].opcode == Opcode.IGET_OBJECT && code[at].namedRegisters() == listOf(0, 12) &&
+                code[at].getReference<FieldReference>()?.toString() == "$PROFILE_PROTOCOL->$PROTOCOL_DATA:$BIZ_DATA"
         } == true
     } ?: return null
     if (0 in RegisterLiveness.of(this).liveInto(branch)) return null
     val capture = code.indices.singleOrNull { code[it].calls("$NICKNAME_REPAINT-><init>(I$NICKNAME_OWNER$INTEGER$STRING)V") &&
-        code[it].registers() == listOf(0, 9, 13, 5, 4)
+        code[it].registers() == listOf(0, 11, 12, 6, 5)
     } ?: return null
     if (capture <= render || code.getOrNull(capture + 1)?.getReference<MethodReference>()?.name != "viewPost") return null
     val boxed = code.indices.singleOrNull { index -> code[index].calls("$INTEGER->valueOf(I)$INTEGER") &&
-        code.getOrNull(index + 1)?.namedRegisters() == listOf(5)
+        code.getOrNull(index + 1)?.namedRegisters() == listOf(6)
     } ?: return null
     val join = boxed + 2
     if (code[join].opcode != Opcode.CONST_4 || (code[join] as? WideLiteralInstruction)?.wideLiteral != 1L) return null
     val nullValue = code.indices.singleOrNull { index -> code[index].opcode == Opcode.MOVE_OBJECT &&
-        code[index].namedRegisters() == listOf(5, 6) && index + 1 < code.size && target(code, index + 1) == join
+        code[index].namedRegisters() == listOf(6, 7) && index + 1 < code.size && target(code, index + 1) == join
     } ?: return null
-    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5P;->LIZ:I" || nullValue <= capture) return null
+    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0Gpt;->LIZ:I" || nullValue <= capture) return null
     return NicknameAppearanceSite(branch, target(code, branch)!!, render, capture)
 }
 
@@ -209,7 +227,7 @@ internal fun Method.nicknameRepaintSite(): Int? {
         code[index + 1].opcode == Opcode.MOVE_RESULT && code[index + 1].namedRegisters() == listOf(1) &&
         code[index + 2].getReference<FieldReference>()?.toString() == "$NICKNAME_REPAINT->LLJJIJIL:I" &&
         code[index + 2].namedRegisters() == listOf(0, 8) &&
-        code[index + 3].calls("$NICKNAME_OWNER->LJZ(II$STRING)V") && code[index + 3].registers() == listOf(2, 1, 0, 3)
+        code[index + 3].calls("$NICKNAME_OWNER->$NICKNAME_RENDER(II$STRING)V") && code[index + 3].registers() == listOf(2, 1, 0, 3)
     }
 }
 
@@ -226,52 +244,65 @@ internal fun Method.nullableNicknameCapture(): Boolean {
         code[4].registers() == listOf(0)
 }
 
-/** The native Add name widget owns its plus span, text and account-arrow listeners. */
+/**
+ * The native Add name widget owns its plus span, text and account-arrow listeners. Its getter is
+ * 48.0.2's `LJLJJL` (47.9.3 `LJLIIIL`, a name 48.0.2 gives another getter).
+ */
 internal fun Method.nicknameAddNameSite(): Int? {
-    if (definingClass != NICKNAME_OWNER || !isInstance("LJJLI", "Z", emptyList(), 14)) return null
+    if (definingClass != NICKNAME_OWNER || !isInstance(PROTOCOL_BIND, "Z", emptyList(), 13)) return null
     val code = implementation!!.instructions.toList()
     return code.indices.singleOrNull { at -> at >= 3 &&
-        code[at].calls("$ADD_NAME_VIEW->setAddNameText($STRING)V") && code[at].registers() == listOf(0, 4) &&
-        code[at - 3].calls("$NICKNAME_OWNER->LJLIIIL()$ADD_NAME_VIEW") &&
-        code[at - 3].registers() == listOf(13) && code[at - 2].opcode == Opcode.MOVE_RESULT_OBJECT &&
+        code[at].calls("$ADD_NAME_VIEW->setAddNameText($STRING)V") && code[at].registers() == listOf(0, 5) &&
+        code[at - 3].calls("$NICKNAME_OWNER->LJLJJL()$ADD_NAME_VIEW") &&
+        code[at - 3].registers() == listOf(12) && code[at - 2].opcode == Opcode.MOVE_RESULT_OBJECT &&
         code[at - 2].namedRegisters() == listOf(0) && code[at - 1].opcode == Opcode.IF_EQZ &&
         code[at - 1].namedRegisters() == listOf(0) && target(code, at - 1) == at + 1
     }
 }
 
+/**
+ * 48.0.2 takes the Add name branch first and stages the render's arguments in v14 to v19 for a range
+ * call, the Add name flag in v13 last. The native resource is v10 throughout, null in the plain branch.
+ */
 internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
-    if (definingClass != NAVBAR_NICKNAME_OWNER || !isInstance("LJJLI", "Z", emptyList(), 20)) return null
+    if (definingClass != NAVBAR_NICKNAME_OWNER || !isInstance(PROTOCOL_BIND, "Z", emptyList(), 21)) return null
     val code = implementation!!.instructions.toList()
-    if (code.firstOrNull()?.opcode != Opcode.MOVE_OBJECT_FROM16 || code[0].namedRegisters() != listOf(9, 19)) return null
-    val render = code.indices.singleOrNull { at -> at + 2 < code.size &&
+    if (code.firstOrNull()?.opcode != Opcode.MOVE_OBJECT_FROM16 || code[0].namedRegisters() != listOf(9, 20)) return null
+    val staging = listOf(Opcode.MOVE_OBJECT to listOf(14, 9), Opcode.MOVE_FROM16 to listOf(16, 11),
+        Opcode.MOVE_OBJECT_FROM16 to listOf(17, 3), Opcode.MOVE_OBJECT_FROM16 to listOf(18, 12), Opcode.MOVE_FROM16 to listOf(19, 13))
+    val render = code.indices.singleOrNull { at -> at + 7 < code.size &&
         code[at].calls("$INTEGER->intValue()I") && code[at].registers() == listOf(10) &&
-        code[at + 1].opcode == Opcode.MOVE_RESULT && code[at + 1].namedRegisters() == listOf(2) &&
-        code[at + 2].calls("$NAVBAR_NICKNAME_OWNER->LJZ(II$STRING$STRING)V") &&
-        code[at + 2].registers() == listOf(9, 2, 11, 4, 12)
+        code[at + 1].opcode == Opcode.MOVE_RESULT && code[at + 1].namedRegisters() == listOf(15) &&
+        staging.indices.all { step -> code[at + 2 + step].let { it.opcode == staging[step].first && it.namedRegisters() == staging[step].second } } &&
+        code[at + 7].calls("$NAVBAR_NICKNAME_OWNER->$NAVBAR_RENDER($NAVBAR_RENDER_PARAMETERS)V") &&
+        code[at + 7].registers() == (14..19).toList()
     } ?: return null
     val branch = code.indices.singleOrNull { at -> at < render && code[at].opcode == Opcode.IF_EQZ &&
         code[at].namedRegisters() == listOf(10) && target(code, at)?.let { to -> to > render &&
-            code[to].calls("LX/036Y;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
+            code[to].calls("LX/04Do;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
     } ?: return null
     if (6 in RegisterLiveness.of(this).liveInto(branch)) return null
-    fun capture(owner: String) = code.indices.singleOrNull { at ->
-        code[at].calls("$owner-><init>($NAVBAR_CAPTURE_PARAMETERS)V") &&
-            code[at].registers() == (6..12).toList() && code.getOrNull(at + 1)?.getReference<MethodReference>()?.name == "viewPost"
+    fun capture(owner: String, parameters: String, registers: IntRange) = code.indices.singleOrNull { at ->
+        code[at].calls("$owner-><init>($parameters)V") &&
+            code[at].registers() == registers.toList() && code.getOrNull(at + 1)?.getReference<MethodReference>()?.name == "viewPost"
     }
-    val capture = capture(NAVBAR_NICKNAME_REPAINT) ?: return null
-    val addCapture = capture(NAVBAR_ADD_NAME_REPAINT) ?: return null
-    val cached = code.indices.singleOrNull { at -> at >= 1 && at + 1 < code.size &&
-        code[at].opcode == Opcode.IF_NEZ && code[at].namedRegisters() == listOf(2) &&
-        code[at - 1].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_OWNER->LLLLLLZZ:Z" &&
-        code[at - 1].namedRegisters() == listOf(2, 9) &&
-        code[at + 1].calls("$NAVBAR_NICKNAME_OWNER->LJLLLLLL(I$STRING$STRING)V") &&
-        code[at + 1].registers() == listOf(9, 11, 4, 12) && target(code, at) == at + 2
+    val capture = capture(NAVBAR_NICKNAME_REPAINT, NAVBAR_REPAINT_PARAMETERS, 6..13) ?: return null
+    val addCapture = capture(NAVBAR_ADD_NAME_REPAINT, NAVBAR_CAPTURE_PARAMETERS, 6..12) ?: return null
+    val cached = code.indices.singleOrNull { at -> at >= 1 && at + 4 < code.size &&
+        code[at].opcode == Opcode.IF_NEZ && code[at].namedRegisters() == listOf(3) &&
+        code[at - 1].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_OWNER->$NAVBAR_ADD_NAME_CACHED:Z" &&
+        code[at - 1].namedRegisters() == listOf(3, 9) &&
+        code[at + 1].getReference<FieldReference>()?.toString() == "$OBJECT_REF->element:$OBJECT" &&
+        code[at + 1].namedRegisters() == listOf(3, 8) && code[at + 2].opcode == Opcode.CHECK_CAST &&
+        code[at + 2].namedRegisters() == listOf(3) &&
+        code[at + 3].calls("$NAVBAR_NICKNAME_OWNER->$NAVBAR_ADD_NAME(I$STRING$STRING)V") &&
+        code[at + 3].registers() == listOf(9, 11, 3, 12) && target(code, at) == at + 4
     } ?: return null
     val boxed = code.indices.singleOrNull { at -> code[at].calls("$INTEGER->valueOf(I)$INTEGER") &&
         code.getOrNull(at + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT && code[at + 1].namedRegisters() == listOf(10)
     } ?: return null
-    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0F5P;->LIZ:I" ||
-        code.indices.count { at -> code[at].opcode == Opcode.MOVE_OBJECT && code[at].namedRegisters() == listOf(10, 3) &&
+    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0Gpt;->LIZ:I" ||
+        code.indices.count { at -> code[at].opcode == Opcode.MOVE_OBJECT && code[at].namedRegisters() == listOf(10, 1) &&
             at + 1 < code.size && target(code, at + 1) == boxed + 2 } != 1 ||
         capture <= render || addCapture <= cached) return null
     return NavbarAppearanceSite(branch, target(code, branch)!!, render, capture, addCapture, cached)
@@ -280,38 +311,44 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
 internal fun Method.navbarRepaintSite(): Int? {
     if (definingClass != NAVBAR_NICKNAME_REPAINT || !isInstance("LIZ", "V", emptyList(), 9)) return null
     val code = implementation!!.instructions.toList()
-    return code.indices.singleOrNull { at -> at >= 2 && at + 4 < code.size &&
+    return code.indices.singleOrNull { at -> at >= 2 && at + 5 < code.size &&
         code[at - 2].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->$NAVBAR_REPAINT_OWNER" &&
-        code[at - 2].namedRegisters() == listOf(3, 8) &&
+        code[at - 2].namedRegisters() == listOf(1, 8) &&
         code[at - 1].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJIJIL:$INTEGER" &&
         code[at - 1].namedRegisters() == listOf(0, 8) &&
         code[at].calls("$INTEGER->intValue()I") && code[at].registers() == listOf(0) &&
         code[at + 1].opcode == Opcode.MOVE_RESULT && code[at + 1].namedRegisters() == listOf(2) &&
         code[at + 2].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJJ:I" &&
-        code[at + 2].namedRegisters() == listOf(1, 8) &&
+        code[at + 2].namedRegisters() == listOf(3, 8) &&
         code[at + 3].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJJIL:$STRING" &&
-        code[at + 3].namedRegisters() == listOf(0, 8) &&
-        code[at + 4].calls("$NAVBAR_NICKNAME_OWNER->LJZ(II$STRING$STRING)V") &&
-        code[at + 4].registers() == listOf(3, 2, 1, 4, 0)
+        code[at + 3].namedRegisters() == listOf(5, 8) &&
+        code[at + 4].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJJJ:Z" &&
+        code[at + 4].namedRegisters() == listOf(6, 8) &&
+        code[at + 5].calls("$NAVBAR_NICKNAME_OWNER->$NAVBAR_RENDER($NAVBAR_RENDER_PARAMETERS)V") &&
+        code[at + 5].registers() == (1..6).toList()
     }
 }
 
 internal fun Method.nullableNavbarCapture(): Boolean {
+    val repaint = definingClass == NAVBAR_NICKNAME_REPAINT
+    val parameters = listOf(TEXT_VIEW, OBJECT_REF, NAVBAR_NICKNAME_OWNER, INTEGER, "I", STRING) + if (repaint) listOf("Z") else emptyList()
     if (definingClass !in listOf(NAVBAR_NICKNAME_REPAINT, NAVBAR_ADD_NAME_REPAINT) ||
-        !isInstance("<init>", "V", listOf(TEXT_VIEW, OBJECT_REF, NAVBAR_NICKNAME_OWNER, INTEGER, "I", STRING), 7)) return false
+        !isInstance("<init>", "V", parameters, parameters.size + 1)) return false
     val code = implementation!!.instructions.toList()
-    if (code.map { it.opcode } != listOf(Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT,
-            Opcode.IPUT_OBJECT, Opcode.IPUT, Opcode.IPUT_OBJECT, Opcode.INVOKE_DIRECT, Opcode.RETURN_VOID)) return false
+    if (code.map { it.opcode } != listOf(Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT,
+            Opcode.IPUT, Opcode.IPUT_OBJECT) + (if (repaint) listOf(Opcode.IPUT_BOOLEAN) else emptyList()) +
+            listOf(Opcode.INVOKE_DIRECT, Opcode.RETURN_VOID)) return false
     val fields = listOf("LL:$TEXT_VIEW", "LLJJIJI:$OBJECT_REF", NAVBAR_REPAINT_OWNER,
-        "LLJJIJIL:$INTEGER", "LLJJJ:I", "LLJJJIL:$STRING")
+        "LLJJIJIL:$INTEGER", "LLJJJ:I", "LLJJJIL:$STRING") + if (repaint) listOf("LLJJJJ:Z") else emptyList()
     return fields.indices.all { at -> code[at].getReference<FieldReference>()?.toString() == "$definingClass->${fields[at]}" &&
-        code[at].namedRegisters() == listOf(at + 1, 0) } && code[6].calls("$OBJECT-><init>()V") && code[6].registers() == listOf(0)
+        code[at].namedRegisters() == listOf(at + 1, 0) } && code[fields.size].calls("$OBJECT-><init>()V") &&
+        code[fields.size].registers() == listOf(0)
 }
 
 internal fun Method.navbarAddNameRepaintSite(): Boolean {
     if (definingClass != NAVBAR_ADD_NAME_REPAINT || !isInstance("LIZ", "V", emptyList(), 9)) return false
     val code = implementation!!.instructions.toList()
-    return code.indices.count { at -> at >= 3 && code[at].calls("$NAVBAR_NICKNAME_OWNER->LJLLLLLL(I$STRING$STRING)V") &&
+    return code.indices.count { at -> at >= 3 && code[at].calls("$NAVBAR_NICKNAME_OWNER->$NAVBAR_ADD_NAME(I$STRING$STRING)V") &&
         code[at].registers() == listOf(2, 1, 5, 0) &&
         code[at - 3].getReference<FieldReference>()?.toString() == "$NAVBAR_ADD_NAME_REPAINT->$NAVBAR_REPAINT_OWNER" &&
         code[at - 3].namedRegisters() == listOf(2, 8) &&
@@ -324,20 +361,20 @@ internal fun Method.navbarAddNameRepaintSite(): Boolean {
 
 /** All native plus/tag/dropdown spans are complete at this join, before publication or caching. */
 internal fun Method.navbarAddNameSite(): Int? {
-    if (definingClass != NAVBAR_NICKNAME_OWNER || !isInstance("LJLLLLLL", "V", listOf("I", STRING, STRING), 21)) return null
+    if (definingClass != NAVBAR_NICKNAME_OWNER || !isInstance(NAVBAR_ADD_NAME, "V", listOf("I", STRING, STRING), 21)) return null
     val code = implementation!!.instructions.toList()
     if (code.none { it.opcode == Opcode.MOVE_OBJECT_FROM16 && it.namedRegisters() == listOf(3, 17) }) return null
-    // The navbar's action ability getter (47.4.3 `LJLJLLL`, 47.5.3 `LJLJL`).
-    val at = code.indices.singleOrNull { index -> index >= 3 &&
-        code[index].getReference<MethodReference>()?.let { getter -> getter.definingClass == NAVBAR_NICKNAME_OWNER &&
-            getter.parameterTypes.isEmpty() &&
-            getter.returnType == "Lcom/ss/android/ugc/profile/platform/business/navbar/base/INavBarActionAbility;" } == true &&
-        code[index].registers() == listOf(3) && (index - 3 until index).all { before ->
-            code[before].setsSpan() && code[before].registers()?.first() == 4
-        }
+    // The navbar's action ability, read from its lazy field on 48.0.2 (a getter on 47.x: 47.4.3 `LJLJLLL`, 47.5.3 `LJLJL`).
+    val at = code.indices.singleOrNull { index -> index >= 3 && index + 3 < code.size &&
+        code[index].opcode == Opcode.IGET_OBJECT && code[index].namedRegisters().getOrNull(1) == 3 &&
+        code[index].getReference<FieldReference>()?.definingClass == NAVBAR_NICKNAME_OWNER &&
+        code[index + 1].getReference<MethodReference>()?.let { it.name == "getValue" && it.returnType == OBJECT } == true &&
+        code[index + 2].opcode == Opcode.MOVE_RESULT_OBJECT && code[index + 3].opcode == Opcode.CHECK_CAST &&
+        code[index + 3].getReference<TypeReference>()?.type == "Lcom/ss/android/ugc/profile/platform/business/navbar/base/INavBarActionAbility;" &&
+        (index - 3 until index).all { before -> code[before].setsSpan() && code[before].registers()?.first() == 4 }
     } ?: return null
     val publication = code.indices.filter { code[it].getReference<FieldReference>()?.toString() in listOf(
-        "LX/0NuY;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLJI:$SPANNABLE", "LX/0NTr;->LIZJ:Ljava/lang/CharSequence;") }
+        "LX/0Oyf;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLILZJ:$SPANNABLE", "LX/0FG9;->LIZJ:Ljava/lang/CharSequence;") }
     if (publication.isEmpty() || publication.any { it <= at } ||
         code.indices.count { before -> before < at && code[before].opcode == Opcode.NEW_INSTANCE &&
             code[before].getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == SPANNABLE &&
@@ -365,10 +402,10 @@ private fun List<Instruction>.readsWarningText() = indices.any { at -> at + 2 < 
 
 /**
  * Constant provenance distinguishes VISIBLE attempts from the two native GONE calls. The bind and the
- * (View)V refresh (47.4.3 `LJJLIIIJLLLLLLLZ`, 47.5.3 `LJJLIIJ`) both read the warning text view.
+ * (View)V refresh (47.4.3 `LJJLIIIJLLLLLLLZ`, 47.5.3 `LJJLIIJ`, 48.0.2 `LJJLJLI`) both read the warning text view.
  */
 internal fun Method.noticeAppearanceSites(): List<NoticeAppearanceSite> {
-    if (definingClass != RESTRICTION_OWNER || !(isInstance("LJJLI", "Z", emptyList(), 7) ||
+    if (definingClass != RESTRICTION_OWNER || !(isInstance(PROTOCOL_BIND, "Z", emptyList(), 7) ||
             (returnType == "V" && parameterTypes.map(CharSequence::toString) == listOf(VIEW) &&
                 !AccessFlags.STATIC.isSet(accessFlags) && implementation?.registerCount == 6))) return emptyList()
     val code = implementation!!.instructions.toList()
@@ -447,7 +484,7 @@ internal fun nicknameAppearanceBridge(getter: Method, owner: String = NICKNAME_O
     listOf(INTEGER), INTEGER, 5, instructions = """
         move-object v0, p1
         if-nez v0, :native_badge
-        iget-object v2, p0, $PROFILE_PROTOCOL->LLJLLIL:Lcom/ss/android/ugc/profile/platform/base/data/BizBaseData;
+        iget-object v2, p0, $PROFILE_PROTOCOL->$PROTOCOL_DATA:$BIZ_DATA
         instance-of v3, v2, $NICKNAME_DATA
         if-eqz v3, :native_badge
         check-cast v2, $NICKNAME_DATA
@@ -463,20 +500,22 @@ internal fun nicknameAppearanceBridge(getter: Method, owner: String = NICKNAME_O
         return-object v0
     """)
 
-/** Native callbacks capture the original nullable resource, never a local replacement. */
+/**
+ * Native callbacks capture the original nullable resource, never a local replacement. The navbar's
+ * renderer takes six registers, so the selected int replaces the resource in p1 for one range call.
+ */
 internal fun nicknameRenderBridge(owner: String = NICKNAME_OWNER) = bridge(owner, APPEARANCE_RENDER,
-    listOf(INTEGER, "I", STRING) + if (owner == NAVBAR_NICKNAME_OWNER) listOf(STRING) else emptyList(),
+    listOf(INTEGER, "I", STRING) + if (owner == NAVBAR_NICKNAME_OWNER) listOf(STRING, "Z") else emptyList(),
     "V", 1, visible = true, instructions = """
         invoke-direct { p0, p1 }, $owner->$APPEARANCE_SELECT($INTEGER)$INTEGER
         move-result-object v0
         if-eqz v0, :native_rebind
         invoke-virtual { v0 }, $INTEGER->intValue()I
-        move-result v0
-        ${if (owner == NAVBAR_NICKNAME_OWNER) "invoke-virtual { p0, v0, p2, p3, p4 }, $owner->LJZ(II$STRING$STRING)V"
-          else "invoke-virtual { p0, v0, p2, p3 }, $owner->LJZ(II$STRING)V"}
+        ${if (owner == NAVBAR_NICKNAME_OWNER) "move-result p1\n        invoke-virtual/range { p0 .. p5 }, $owner->$NAVBAR_RENDER($NAVBAR_RENDER_PARAMETERS)V"
+          else "move-result v0\n        invoke-virtual { p0, v0, p2, p3 }, $owner->$NICKNAME_RENDER(II$STRING)V"}
         return-void
         :native_rebind
-        invoke-virtual { p0 }, $owner->LJJLI()Z
+        invoke-virtual { p0 }, $owner->$PROTOCOL_BIND()Z
         return-void
     """)
 
@@ -578,7 +617,7 @@ internal fun noticeAppearanceBridge(getter: Method) = bridge(RESTRICTION_OWNER, 
     listOf("I", VIEW), "V", 5, instructions = """
         move v0, p1
         ${uidRead(getter, 1, 4, "native_visibility")}
-        iget-object v2, p0, $PROFILE_PROTOCOL->LLJJL:$VIEW
+        iget-object v2, p0, $PROFILE_PROTOCOL->$PROTOCOL_ROOT:$VIEW
         const-string v3, "user_account_ags_warning"
         invoke-static { v0, p2, v2, v1, v3 }, $LOCAL_APPEARANCE->noticeVisibility(I$VIEW$VIEW$STRING$STRING)I
         move-result v0
@@ -596,10 +635,10 @@ internal fun MutableMethod.replaceLegacyAppearance(site: LegacyAppearanceSite) {
 internal fun MutableMethod.replaceNicknameAppearance(site: NicknameAppearanceSite) {
     if (nicknameAppearanceSite() != site) throw PatchException("$APPEARANCE: current nickname bind changed")
     val target = implementation!!.instructions.toList()[site.target] as BuilderInstruction
-    replaceInstruction(site.render, "invoke-virtual { p0, v5, v9, v4 }, $NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING)V")
+    replaceInstruction(site.render, "invoke-virtual { p0, v6, v11, v5 }, $NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING)V")
     replaceInstruction(site.render + 1, "nop")
     replaceInstruction(site.render + 2, "nop")
-    replaceInstruction(site.branch, "invoke-direct { p0, v5 }, $NICKNAME_OWNER->$APPEARANCE_SELECT($INTEGER)$INTEGER")
+    replaceInstruction(site.branch, "invoke-direct { p0, v6 }, $NICKNAME_OWNER->$APPEARANCE_SELECT($INTEGER)$INTEGER")
     addInstructionsWithLabels(site.branch + 1, "move-result-object v0\nif-nez v0, :native_badge_layout",
         ExternalLabel("native_badge_layout", target))
 }
@@ -613,29 +652,36 @@ internal fun MutableMethod.replaceNicknameRepaint(index: Int) {
 
 internal fun MutableMethod.replaceNicknameAddName(index: Int) {
     if (nicknameAddNameSite() != index) throw PatchException("$APPEARANCE: Add name widget changed")
-    replaceInstruction(index, "invoke-direct { p0, v0, v4 }, $NICKNAME_OWNER->$APPEARANCE_ADD_NAME($ADD_NAME_VIEW$STRING)V")
+    replaceInstruction(index, "invoke-direct { p0, v0, v5 }, $NICKNAME_OWNER->$APPEARANCE_ADD_NAME($ADD_NAME_VIEW$STRING)V")
 }
 
 internal fun MutableMethod.replaceNavbarAppearance(site: NavbarAppearanceSite) {
     if (navbarAppearanceSite() != site) throw PatchException("$APPEARANCE: navbar nickname bind changed")
     val nativePlain = implementation!!.instructions.toList()[site.target] as BuilderInstruction
-    replaceInstruction(site.render, "invoke-virtual { v9, v10, v11, v4, v12 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING$STRING)V")
+    // The resource itself goes where the native int was staged, so the range call keeps its other arguments.
+    replaceInstruction(site.render, "move-object/from16 v15, v10")
     replaceInstruction(site.render + 1, "nop")
-    replaceInstruction(site.render + 2, "nop")
-    addInstructionsWithLabels(site.cached, """
-        invoke-direct { v9, v2 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_CACHED(Z)Z
-        move-result v2
-    """)
-    replaceInstruction(site.branch, "invoke-direct { v9, v10 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_SELECT($INTEGER)$INTEGER")
-    addInstructionsWithLabels(site.branch + 1, "move-result-object v6\nif-eqz v6, :native_plain",
-        ExternalLabel("native_plain", nativePlain))
+    replaceInstruction(site.render + 7, "invoke-virtual/range { v14 .. v19 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING$STRING" + "Z)V")
+    // Insert at the later site first so the earlier index still holds (48.0.2 checks the cache before the badge).
+    for (at in listOf(site.branch, site.cached).sortedDescending()) {
+        if (at == site.cached) {
+            addInstructionsWithLabels(at, """
+                invoke-direct { v9, v3 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_CACHED(Z)Z
+                move-result v3
+            """)
+        } else {
+            replaceInstruction(at, "invoke-direct { v9, v10 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_SELECT($INTEGER)$INTEGER")
+            addInstructionsWithLabels(at + 1, "move-result-object v6\nif-eqz v6, :native_plain",
+                ExternalLabel("native_plain", nativePlain))
+        }
+    }
 }
 
 internal fun MutableMethod.replaceNavbarRepaint(index: Int) {
     if (navbarRepaintSite() != index) throw PatchException("$APPEARANCE: navbar deferred nickname changed")
     replaceInstruction(index, "move-object v2, v0")
     replaceInstruction(index + 1, "nop")
-    replaceInstruction(index + 4, "invoke-virtual { v3, v2, v1, v4, v0 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING$STRING)V")
+    replaceInstruction(index + 5, "invoke-virtual/range { v1 .. v6 }, $NAVBAR_NICKNAME_OWNER->$APPEARANCE_RENDER(${INTEGER}I$STRING$STRING" + "Z)V")
 }
 
 internal fun MutableMethod.replaceNavbarAddName(index: Int) {
@@ -753,9 +799,9 @@ internal fun hookLocalProfileAppearance() {
         }
     }
     val legacyIdentity = legacyOwner.userNameIdentity() ?: throw PatchException("$APPEARANCE: missing native older nickname identity")
-    if (nicknameOwner.methods.none { it.name == "LJZ" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING) && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
-        navbarOwner.methods.none { it.name == "LJZ" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING, STRING) && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
-        classDefBy(PROFILE_PROTOCOL).fields.none { it.name == "LLJJL" && it.type == VIEW && !AccessFlags.STATIC.isSet(it.accessFlags) }) {
+    if (nicknameOwner.methods.none { it.name == NICKNAME_RENDER && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING) && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
+        navbarOwner.methods.none { it.name == NAVBAR_RENDER && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING, STRING, "Z") && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
+        classDefBy(PROFILE_PROTOCOL).fields.none { it.name == PROTOCOL_ROOT && it.type == VIEW && !AccessFlags.STATIC.isSet(it.accessFlags) }) {
         throw PatchException("$APPEARANCE: missing native renderer or warning root")
     }
     fun requireMethod(owner: String, name: String, parameters: List<String>, result: String, static: Boolean = false) {
@@ -772,7 +818,7 @@ internal fun hookLocalProfileAppearance() {
         listOf("LIZ", "LIZIZ", "LIZJ").any { name -> classDefBy(BADGE_ICON).fields.none {
             it.name == name && it.type == "I" && AccessFlags.PUBLIC.isSet(it.accessFlags) && !AccessFlags.STATIC.isSet(it.accessFlags) } } ||
         classDefBy(ADD_NAME_VIEW).fields.none { it.name == "LL" && it.type == TEXT_VIEW && AccessFlags.PUBLIC.isSet(it.accessFlags) && !AccessFlags.STATIC.isSet(it.accessFlags) } ||
-        classDefBy(PROFILE_PROTOCOL).fields.none { it.name == "LLJLLIL" && it.type == "Lcom/ss/android/ugc/profile/platform/base/data/BizBaseData;" && !AccessFlags.STATIC.isSet(it.accessFlags) }) {
+        classDefBy(PROFILE_PROTOCOL).fields.none { it.name == PROTOCOL_DATA && it.type == BIZ_DATA && !AccessFlags.STATIC.isSet(it.accessFlags) }) {
         throw PatchException("$APPEARANCE: missing native icon configuration or nickname text view")
     }
     val added = mapOf(LEGACY_NICKNAME_OWNER to listOf(APPEARANCE_LEGACY),

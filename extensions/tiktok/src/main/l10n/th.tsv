@@ -1868,8 +1868,6 @@ Hide call buttons	ซ่อนปุ่มการโทร
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	ปุ่มการโทรด้วยเสียงและวิดีโอคอลจะถูกนำออกจากด้านบนของการแชท สายโทรเข้ายังคงดังตามปกติ และปุ่มรายละเอียดการแชทจะยังคงอยู่
 Hide sticker suggestions	ซ่อนคำแนะนำสติกเกอร์
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	แบนเนอร์แนะนำสติกเกอร์จะไม่แสดงในการแชทอีกต่อไป สติกเกอร์ของคุณเองจะยังคงอยู่ในเครื่องมือเลือกสติกเกอร์
-Hide suggested replies	ซ่อนคำตอบที่แนะนำ
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	กล่องคำตอบที่แนะนำของ TikTok และแบนเนอร์แนะนำจะไม่แสดงในการแชทอีกต่อไป ข้อความที่คุณพิมพ์หรือได้รับจะไม่ได้รับผลกระทบ
 Hide online status	ซ่อนสถานะออนไลน์
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	เพื่อนจะไม่เห็นจุดสีเขียวหรือ "ใช้งานอยู่ตอนนี้" ในขณะที่คุณอยู่ใน TikTok ต้องเปิดโหมด Ghost สถานะของพวกเขาอาจหยุดอัปเดตสำหรับคุณ และสถานะล่าสุดของคุณอาจค้างอยู่ครู่หนึ่ง
 Stop LIVE previews opening by themselves	หยุดการเปิดตัวอย่าง LIVE โดยอัตโนมัติ
@@ -2529,7 +2527,6 @@ autoplay auto play	เล่นอัตโนมัติ การเล่น
 picture in picture PiP	ภาพซ้อนภาพ PiP
 search suggestions	คำแนะนำการค้นหา
 AI chat	แชท AI
-AI Tako	AI Tako
 save photos	บันทึกรูปภาพ
 download button	ปุ่มดาวน์โหลด ดาวน์โหลด
 It's in %1$s, under %2$s. Tap to go there.	อยู่ใน %1$s ใต้ %2$s แตะเพื่อไปที่นั่น

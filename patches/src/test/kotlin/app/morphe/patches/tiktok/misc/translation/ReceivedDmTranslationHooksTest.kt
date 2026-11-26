@@ -85,8 +85,8 @@ class ReceivedDmTranslationHooksTest {
         }
     }
 
-    private fun menu(owner: String = RECEIVED_MENU, registers: Int = 13, result: String = "return-object v0", prefix: String = "") =
-        method(owner, "lr", listOf("LX/0Bzr;"), "Ljava/util/List;", registers, """
+    private fun menu(owner: String = RECEIVED_MENU, registers: Int = 14, result: String = "return-object v0", prefix: String = "") =
+        method(owner, RECEIVED_MENU_BUILD, listOf("LX/0DJe;"), "Ljava/util/List;", registers, """
             if-eqz p1, :empty
             $prefix
             $nativeMenu
@@ -96,8 +96,8 @@ class ReceivedDmTranslationHooksTest {
             return-object v0
         """)
 
-    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, "Uq", listOf("LX/0NHc;", "Z"), "V", 40, """
-        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->hr()LX/0NAG;
+    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, RECEIVED_BIND, listOf("LX/0OM1;", "Z"), "V", 40, """
+        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->hr()LX/0OEj;
         move-result-object v0
         if-nez v0, :ready
         return-void
@@ -117,7 +117,7 @@ class ReceivedDmTranslationHooksTest {
 
     private companion object {
         const val nativeMenu = """
-            invoke-static/range {v1 .. v8}, LX/0YoV;->LIZ(LX/0Bzr;LX/0Ypc;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/0YoY;Ljava/lang/CharSequence;)Ljava/util/List;
+            invoke-static/range {v2 .. v11}, LX/0b9J;->LIZ(LX/0DJe;LX/1ShO;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;ZLjava/lang/String;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/0b9M;Ljava/lang/CharSequence;)Ljava/util/List;
             move-result-object v0
         """
     }

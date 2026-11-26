@@ -32,7 +32,8 @@ class ReceivedDmTranslationFixturesTest {
         val targets = findReceivedPreviewTargets(classes::get)
         assertEquals(RECEIVED_ASSEM, targets.bind.definingClass)
         assertEquals(RECEIVED_MENU, targets.menu.definingClass)
-        assertEquals(2, targets.bind.receivedBindReturns().size)
+        // 48.0.2's bind finishes once after its cancellation (47.9.3's twice).
+        assertEquals(1, targets.bind.receivedBindReturns().size)
         val native = targets.menu.implementation!!.instructions.toList()
         val patched = MutableMethod(targets.menu)
         patched.appendReceivedMenu(targets.result)
@@ -47,18 +48,19 @@ class ReceivedDmTranslationFixturesTest {
 
     @Test fun `ordinary untranslated text uses the same received model with nullable translation metadata`() = withClasses { classes ->
         // 47.5.3 obfuscates TextTranslateProtocol, so pin it by the skeleton protocol it implements and the cell it registers.
-        val protocol = classes.getValue("LX/0NHW;")
+        val protocol = classes.getValue("LX/0OLw;")
         assertTrue("Lcom/ss/android/ugc/aweme/im/sdk/chat/messagelist/skeleton/protocol/SkeletonMessageListProtocol;" in protocol.interfaces)
         assertTrue(protocol.methods.single { it.name == "<init>" }.implementation!!.instructions.any {
             it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == RECEIVED_CELL
         })
         val enabled = protocol.methods.single { it.name == "isEnabled" }
         assertEquals(listOf(Opcode.CONST_4, Opcode.RETURN), enabled.implementation!!.instructions.map { it.opcode })
-        val receive = protocol.methods.single { it.name == "LJII" }
+        // The received row's builder (47.9.3's LJII, 48.0.2's LIZLLL), the one that makes the received model.
+        val receive = protocol.methods.single { method -> method.calls().any { it.definingClass == "LX/0b9S;" && it.name == "<init>" } }
         val code = receive.implementation!!.instructions.toList()
         val offsets = code.runningFold(0) { offset, instruction -> offset + instruction.codeUnits }
         val metadata = code.indexOfFirst { it.getReference<MethodReference>()?.let { reference ->
-            reference.definingClass == "LX/0Dub;" && reference.name == "LJIIIZ"
+            reference.definingClass == "LX/0GaB;" && reference.returnType == "Lcom/ss/android/ugc/aweme/IMTranslationData;"
         } == true }
         assertTrue(metadata >= 0)
         assertEquals(Opcode.MOVE_RESULT_OBJECT, code[metadata + 1].opcode)
@@ -67,47 +69,55 @@ class ReceivedDmTranslationFixturesTest {
         val destination = offsets[metadata + 2] + (code[metadata + 2] as OffsetInstruction).codeOffset
         val language = code.indexOfFirst { it.getReference<FieldReference>()?.name == "sourceLanguage" }
         assertTrue(language > metadata && destination > offsets[language])
-        val constructor = code.indexOfFirst { it.getReference<MethodReference>()?.let { reference -> reference.definingClass == "LX/0Yp0;" && reference.name == "<init>" } == true }
+        val constructor = code.indexOfFirst { it.getReference<MethodReference>()?.let { reference -> reference.definingClass == "LX/0b9S;" && reference.name == "<init>" } == true }
         assertTrue(destination < offsets[constructor])
-        val model = classes.getValue("LX/0Yp0;")
-        assertTrue("LX/0NHc;" in model.interfaces)
-        assertTrue(model.methods.single { it.name == "LJIJI" }.fields().any { it.name == "LLJJJ" && it.type == "Ljava/lang/CharSequence;" })
-        assertTrue(model.methods.single { it.name == "LLJJ" }.calls().any { it.definingClass == "LX/0NHV;" && it.name == "LIZJ" })
+        val model = classes.getValue("LX/0b9S;")
+        assertTrue("LX/0OM1;" in model.interfaces)
+        assertTrue(model.methods.single { it.name == "LJIILL" }.fields().any { it.name == "LLJJJ" && it.type == "Ljava/lang/CharSequence;" })
+        assertTrue(model.methods.single { it.name == RECEIVED_TRANSLATED_TEXT }.calls().any { it.definingClass == "LX/0OLv;" && it.name == "LIZJ" })
     }
 
     @Test fun `native menu styles custom text and invokes only the added callback`() = withClasses { classes ->
-        for (owner in listOf("LX/1Eob;", "LX/1Eoc;")) {
+        for (owner in listOf("LX/19BP;", "LX/19BQ;")) {
             val binder = classes.getValue(owner).methods.single { it.name == "onBindViewHolder" }
-            assertTrue(binder.implementation!!.instructions.any { it.opcode == Opcode.CHECK_CAST && it.getReference<TypeReference>()?.type == "LX/1Eod;" })
-            assertTrue(binder.fields().any { it.definingClass == "LX/1Eod;" && it.name == "LIZ" && it.type == "Ljava/lang/String;" })
+            assertTrue(binder.implementation!!.instructions.any { it.opcode == Opcode.CHECK_CAST && it.getReference<TypeReference>()?.type == "LX/19BS;" })
+            assertTrue(binder.fields().any { it.definingClass == "LX/19BS;" && it.name == "LIZ" && it.type == "Ljava/lang/String;" })
             assertTrue(binder.calls().any { it.definingClass == "Landroid/widget/TextView;" && it.name == "setText" })
             assertTrue(binder.calls().any { it.definingClass == "Lcom/bytedance/tux/icon/TuxIconView;" && it.name == "setIconRes" })
         }
-        val dispatch = classes.getValue("Lcu6/AbS70S0100000_34_I1;")
-        for (name in listOf("LIZ\$22", "LIZ\$24")) {
+        val dispatch = classes.getValue("Lxv6/AbS682S0100000_31_I1;")
+        for (name in listOf("LIZ\$0", "LIZ\$19")) {
             val method = dispatch.methods.single { it.name == name }
             assertEquals(listOf("Lkotlin/jvm/functions/Function1;->invoke"), method.calls().map { "${it.definingClass}->${it.name}" })
-            assertEquals(listOf("LJII"), method.fields().filter { it.definingClass == "LX/1Eoa;" }.map { it.name })
+            assertEquals(listOf("LJII"), method.fields().filter { it.definingClass == "LX/19BR;" }.map { it.name })
             assertFalse(method.calls().any { it.name.contains("send", true) || it.name.contains("translate", true) })
         }
     }
 
     @Test fun `native text session and current model remain distinct from alignment and sent row owners`() = withClasses { classes ->
         val assem = classes.getValue(RECEIVED_ASSEM)
-        val rendering = assem.methods.single { it.name == "Yq" }
-        assertTrue(rendering.fields().any { it.definingClass == RECEIVED_ASSEM && it.name == "LLJL" && it.type == "LX/04YL;" })
-        assertTrue(rendering.fields().any { it.definingClass == "LX/0Mqo;" && it.name == "LL" && it.type.endsWith("/SessionInfo;") })
-        val getter = assem.methods.single { it.name == "mr" }
-        assertTrue(getter.fields().any { it.name == "LLJLIL" && it.type == "LX/04YL;" })
-        assertTrue(classes.getValue("LX/0NAG;").fields.any { it.name == "LL" && it.type == "Landroid/view/View;" })
-        val skeleton = classes.getValue("Lcom/ss/android/ugc/aweme/im/sdk/chat/messagelist/skeleton/cell/IMSkeletonLayoutReusedUISlotAssem;")
-        assertTrue(skeleton.methods.single { it.name == "hr" }.calls().any {
-            it.name == "tr" && it.returnType == "Lcom/ss/android/ugc/aweme/views/InterceptingConstraintLayout;"
-        })
+        // 47.9.3's Yq.
+        val rendering = assem.methods.single { it.name == "Jr" }
+        assertTrue(rendering.fields().any { it.definingClass == RECEIVED_ASSEM && it.name == RECEIVED_SESSION_LAZY && it.type == "LX/04ly;" })
+        assertTrue(rendering.fields().any { it.definingClass == "LX/0NvK;" && it.name == "LL" && it.type.endsWith("/SessionInfo;") })
+        val getter = assem.methods.single { it.name == RECEIVED_BODY }
+        assertTrue(getter.fields().any { it.name == "LLJJLIIIJLLLLLLLZ" && it.type == "LX/04ly;" })
+        assertTrue(classes.getValue("LX/0OEj;").fields.any { it.name == "LL" && it.type == "Landroid/view/View;" })
+        // The skeleton's own body (47.9.3's hr, from its tr layout) wraps the view it finds in its own container.
+        val skeletonType = "Lcom/ss/android/ugc/aweme/im/sdk/chat/messagelist/skeleton/cell/IMSkeletonLayoutReusedUISlotAssem;"
+        val skeleton = classes.getValue(skeletonType)
+        val alignment = skeleton.methods.single { it.name == "as" && it.returnType == "LX/0OEj;" }
+        val alignmentLazy = alignment.fields().single { it.definingClass == skeletonType }.name
+        val skeletonInit = skeleton.methods.single { it.name == "<init>" }.implementation!!.instructions.toList()
+        val stored = skeletonInit.indexOfFirst { it.opcode == Opcode.IPUT_OBJECT && it.getReference<FieldReference>()?.name == alignmentLazy }
+        val builder = skeletonInit.subList(0, stored).last { it.opcode == Opcode.NEW_INSTANCE }.getReference<TypeReference>()!!.type
+        val build = classes.getValue(builder).methods.single { it.name == "invoke" }
+        assertTrue(build.calls().any { it.definingClass == "LX/0OEj;" && it.name == "<init>" && it.parameterTypes.first().toString() == "Landroid/view/View;" })
+        assertTrue(build.fields().any { it.definingClass == builder && it.type == skeletonType })
         val unbind = assem.methods.single { it.name == "unBind" }
         assertEquals(listOf(RECEIVED_CANCEL), unbind.calls().map { it.name })
         val cancel = assem.methods.single { it.name == RECEIVED_CANCEL }
-        assertTrue(cancel.calls().any { it.name == "dispose" && it.definingClass == "LX/05ZM;" })
+        assertTrue(cancel.calls().any { it.name == "dispose" && it.definingClass == "LX/05HF;" })
         assertTrue(cancel.calls().any { it.definingClass == "Lkotlinx/coroutines/JobSupport;" && it.name == "LIZ" })
         assertTrue(classes.getValue(RECEIVED_ROW).superclass == RECEIVED_ASSEM)
         assertFalse(RECEIVED_ROW == "${RECEIVED_CONTENT}TextTranslateSendAssem;")
@@ -115,15 +125,15 @@ class ReceivedDmTranslationFixturesTest {
 
     @Test fun `changed received subtype session ownership and native menu constructors fail before wiring`() = withClasses { classes ->
         val menu = classes.getValue(RECEIVED_MENU)
-        val noCell = replace(menu, fields = menu.fields.filterNot { it.name == "LLLILZLLLI" })
+        val noCell = replace(menu, fields = menu.fields.filterNot { it.name == RECEIVED_MENU_CELL })
         assertThrows(PatchException::class.java) { findReceivedPreviewTargets((classes + (menu.type to noCell))::get) }
         val received = classes.getValue(RECEIVED_ROW)
         val wrongRow = replace(received, superclass = "${RECEIVED_CONTENT}TextTranslateSendAssem;")
         assertThrows(PatchException::class.java) { findReceivedPreviewTargets((classes + (received.type to wrongRow))::get) }
-        val holder = classes.getValue("LX/0Mqo;")
+        val holder = classes.getValue("LX/0NvK;")
         val noSession = replace(holder, fields = holder.fields.filterNot { it.name == "LL" })
         assertThrows(PatchException::class.java) { findReceivedPreviewTargets((classes + (holder.type to noSession))::get) }
-        val item = classes.getValue("LX/1Eoa;")
+        val item = classes.getValue("LX/19BR;")
         val noFactory = replace(item, methods = item.methods.filterNot { it.name == "<init>" })
         assertThrows(PatchException::class.java) { findReceivedPreviewTargets((classes + (item.type to noFactory))::get) }
     }
@@ -167,12 +177,12 @@ class ReceivedDmTranslationFixturesTest {
 
     @Test fun `incoming qualification independently requires the shared request language cancellation and response ABIs`() = withClasses { classes ->
         val defects = listOf(
-            "LX/03Bf;" to replace(classes.getValue("LX/03Bf;"), methods = classes.getValue("LX/03Bf;").methods.filterNot { it.name == "LL" }),
-            "LX/17vw;" to replace(classes.getValue("LX/17vw;"), methods = classes.getValue("LX/17vw;").methods.filterNot { it.name == "LIZ" }),
-            "LX/17vv;" to replace(classes.getValue("LX/17vv;"), methods = classes.getValue("LX/17vv;").methods.filterNot { it.name == "LJ" }),
-            "LX/03My;" to replace(classes.getValue("LX/03My;"), methods = classes.getValue("LX/03My;").methods.filterNot { it.name == "LIZJ" }),
-            "LX/03Or;" to replace(classes.getValue("LX/03Or;"), methods = classes.getValue("LX/03Or;").methods.filterNot { it.name == "onSubscribe" }),
-            "LX/03Kp;" to replace(classes.getValue("LX/03Kp;"), methods = classes.getValue("LX/03Kp;").methods.filterNot { it.name == "dispose" }),
+            "LX/03f6;" to replace(classes.getValue("LX/03f6;"), methods = classes.getValue("LX/03f6;").methods.filterNot { it.name == "LJJJJZ" }),
+            "LX/0FfI;" to replace(classes.getValue("LX/0FfI;"), methods = classes.getValue("LX/0FfI;").methods.filterNot { it.name == "LIZ" }),
+            "LX/0FfR;" to replace(classes.getValue("LX/0FfR;"), methods = classes.getValue("LX/0FfR;").methods.filterNot { it.name == "LIZLLL" }),
+            "LX/03B9;" to replace(classes.getValue("LX/03B9;"), methods = classes.getValue("LX/03B9;").methods.filterNot { it.name == "LIZJ" }),
+            "LX/03UG;" to replace(classes.getValue("LX/03UG;"), methods = classes.getValue("LX/03UG;").methods.filterNot { it.name == "onSubscribe" }),
+            "LX/03Ur;" to replace(classes.getValue("LX/03Ur;"), methods = classes.getValue("LX/03Ur;").methods.filterNot { it.name == "dispose" }),
             "Lcom/ss/android/ugc/aweme/translation/model/MultiTranslationResultDM;".let { type ->
                 type to replace(classes.getValue(type), fields = classes.getValue(type).fields.filterNot { it.name == "results" })
             },
@@ -227,7 +237,7 @@ class ReceivedDmTranslationFixturesTest {
     }
 
     @Test fun `independent previews share one account plan and never depend on late SDK logout`() = withClasses { classes ->
-        for (missing in listOf(DM_ASSEM, RECEIVED_MENU, "LX/0Cel;")) {
+        for (missing in listOf(DM_ASSEM, RECEIVED_MENU, "LX/0E45;")) {
             val plans = findDmPreviewPlans(false, { if (it == missing) null else classes[it] })
             assertNotNull(plans.accounts)
             assertEquals(missing != DM_ASSEM, plans.outgoing != null)

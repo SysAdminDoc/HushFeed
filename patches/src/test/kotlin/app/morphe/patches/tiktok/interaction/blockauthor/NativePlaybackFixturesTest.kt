@@ -21,7 +21,7 @@ class NativePlaybackFixturesTest {
     fun `the hold's current video, pause and resume resolve on every fixture`() {
         val expected = mapOf(
             // version to (current-video getter, player manager, pause, resume)
-            "47.9.3" to listOf("LLJJLIIIJLLLLLLLZ", "LX/04B1;", "LIZIZ", "LJIJ"),
+            "48.0.2" to listOf("LLJJLIIIJLLLLLLLZ", "LX/05Eh;", "LIZIZ", "LJIJ"),
         )
         assertEquals("a row for each declared build", Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -47,7 +47,7 @@ class NativePlaybackFixturesTest {
             // #83: the guard on TikTok's own resume sits in the implementation's resume, so that
             // class has to be the manager TikTok's interface calls land on, and its resume needs a
             // local for the hold's answer.
-            assertEquals("${apk.name}: the manager implementation", "LX/04B5;", members.implementation)
+            assertEquals("${apk.name}: the manager implementation", "LX/05Ej;", members.implementation)
             val implementation = classes.getValue(members.implementation)
             assertTrue("${apk.name}: ${members.implementation} implements ${members.manager}",
                 members.manager in implementation.interfaces)

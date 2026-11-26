@@ -151,7 +151,6 @@ A tap on Home or on the For You tab while For You is showing no longer reloads i
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,Video bạn tạm dừng sẽ tiếp tục ở trạng thái dừng khi bạn quay lại ứng dụng thay vì phát lại từ đầu. Video đang phát dở sẽ phát bình thường. Tính năng này hoạt động trên Android 10 trở lên.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,Địa chỉ web do ai đó để lại trong bình luận có thể được chạm vào thay vì phải sao chép thủ công. Chạm vào bất kỳ vị trí nào khác trong bình luận vẫn thực hiện chức năng ban đầu của nó.
 AI Self,AI tự thân
-AI Tako,AI Tako
 AI chat,Trò chuyện AI
 AI-generated posts,Bài đăng do AI tạo
 About,Giới thiệu
@@ -838,7 +837,6 @@ Hide stories from the feed.,Ẩn tin khỏi bảng tin.
 Hide stories tray,Ẩn khay chứa tin
 Hide subscriber-only videos,Ẩn video dành riêng cho người đăng ký kênh
 Hide suggested accounts,Ẩn tài khoản được đề xuất
-Hide suggested replies,Ẩn phản hồi được gợi ý
 Hide suggestions on the search page,Ẩn gợi ý trên trang tìm kiếm
 Hide surveys,Ẩn khảo sát
 Hide tabs TikTok adds later unless you allow them.,Ẩn các thẻ mà TikTok thêm vào sau trừ khi bạn cho phép.
@@ -2310,7 +2308,6 @@ TikTok's messages didn't start in time. It tries again at %1$s.,Tin nhắn của
 TikTok's own name,Tên gốc của TikTok
 TikTok's own value,Giá trị gốc của TikTok
 TikTok's size,Kích thước của TikTok
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,Các ô trả lời gợi ý của TikTok và biểu ngữ giới thiệu sẽ ngừng hiển thị trong khung chat. Tin nhắn bạn nhập hoặc nhận không bị ảnh hưởng.
 TikTok's total: %1$s. Filtered accounts: %2$s.,Tổng số của TikTok: %1$s. Tài khoản bị lọc: %2$s.
 Timed logging stopped,Đã dừng ghi nhật ký theo thời gian
 Times you can open the feed anyway,Số lần bạn vẫn có thể mở bảng tin

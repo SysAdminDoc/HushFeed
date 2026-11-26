@@ -1865,8 +1865,6 @@ Hide call buttons	Arama düğmelerini gizle
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Sesli ve görüntülü arama düğmeleri sohbetin üst kısmından kalkar. Aramalar yine çalar, sohbet ayrıntıları düğmesi ise yerinde kalır.
 Hide sticker suggestions	Çıkartma önerilerini gizle
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Çıkartma önerisi bannerı sohbette artık gösterilmez. Kendi çıkartmaların çıkartma seçicide durur.
-Hide suggested replies	Önerilen yanıtları gizle
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	TikTok'un önerdiği yanıtlar ve bunları tanıtan banner sohbette artık gösterilmez. Yazdığın veya aldığın mesajlara dokunulmaz.
 Hide online status	Çevrimiçi durumunu gizle
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	TikTok'tayken arkadaşların yeşil nokta veya Active now görmez. Ghost mode açık olmalı. Onların durumu sende güncellenmeyebilir, senin son durumun da bir süre görünür kalabilir.
 Stop LIVE previews opening by themselves	LIVE önizlemelerinin kendiliğinden açılmasını durdur
@@ -2526,7 +2524,6 @@ autoplay auto play	otomatik oynatma
 picture in picture PiP	resim içinde resim PiP
 search suggestions	arama önerileri
 AI chat	yapay zeka sohbeti
-AI Tako	yapay zeka Tako
 save photos	fotoğrafları kaydet
 download button	indirme düğmesi indir
 It's in %1$s, under %2$s. Tap to go there.	%1$s içinde, %2$s altında. Oraya gitmek için dokun.

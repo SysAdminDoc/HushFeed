@@ -23,9 +23,9 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
  * UI scale (#477, ported from inxomnyaa's pull request).
  *
  * TikTok's text size manager rewrites the app's display density from its text size factor: at
- * startup for the app's resources (X.03aF's LIZLLL(Context) on 47.9.3, run by TuxInitTask), on a
+ * startup for the app's resources (X.03Wq's LIZLLL(Context) on 48.0.2, run by TuxInitTask), on a
  * LIVE room's configuration change (LJFF(Activity)), and in the wrapper every activity's context
- * goes through (X.03Ji.invoke, which builds the activity's own configuration). Each reads the
+ * goes through (X.04yZ.invoke, which builds the activity's own configuration). Each reads the
  * factor from LIZ()F and divides the screen width in dp by it, so a smaller factor gives a smaller
  * density and layouts, icons and text all shrink together. The activity wrapper is what sizes the
  * screen, so scaling only the manager's reads changed nothing. UiScale scales the factor right

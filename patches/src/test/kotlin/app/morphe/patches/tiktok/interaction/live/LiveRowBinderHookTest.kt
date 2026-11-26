@@ -159,7 +159,7 @@ class LiveRowBinderHookTest {
             const v1, 0x7f061f38
             invoke-virtual {p0}, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;
             move-result-object v0
-            invoke-static {v1, v0}, LX/0JpC;->LIZIZ(ILandroid/content/Context;)I
+            invoke-static {v1, v0}, LX/0Kxa;->LIZIZ(ILandroid/content/Context;)I
             move-result v0
         """)
         assertEquals(listOf(1 to 1, 7 to 0), pageContexts(page))
@@ -199,7 +199,7 @@ class LiveRowBinderHookTest {
     @Test
     fun `a branch landing right after a context is refused`() {
         val page = page(before = "if-eqz p1, :colored", color = ":colored\nconst v0, 0x7f061f36\n" +
-            "invoke-static {v0, v1}, LX/0JpC;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0")
+            "invoke-static {v0, v1}, LX/0Kxa;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0")
         pageContexts(page)
         assertThrows(PatchException::class.java) { hookPageContexts(page) }
     }
@@ -243,7 +243,7 @@ class LiveRowBinderHookTest {
         context: String = "v1",
         ask: String = "invoke-virtual {p0}, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;",
         before: String = "",
-        color: String = "const v0, 0x7f061f36\ninvoke-static {v0, $context}, LX/0JpC;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0",
+        color: String = "const v0, 0x7f061f36\ninvoke-static {v0, $context}, LX/0Kxa;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0",
         after: String = "",
     ) = method(
         "Lcom/example/Page;", "onViewCreated", listOf("Landroid/view/View;", "Landroid/os/Bundle;"), "V", 5,

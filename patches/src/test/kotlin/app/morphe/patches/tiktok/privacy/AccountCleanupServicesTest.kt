@@ -35,8 +35,8 @@ import org.junit.Test
 
 private const val MANAGER = "Lcom/ss/android/ugc/aweme/framework/services/ServiceManager;"
 private const val FACTORY = "Lcom/bytedance/ies/ugc/aweme/network/IRetrofitFactory;"
-private const val CLIENT = "LX/05y0;"
-private const val SERVICE = "LX/1DT1;"
+private const val CLIENT = "LX/06AY;"
+private const val SERVICE = "LX/1R2l;"
 
 /**
  * What Account cleanup (#332) bridges to, held to each declared build: one liked videos list
@@ -100,7 +100,7 @@ class AccountCleanupServicesTest {
         assertEquals(SERVICE, service)
         assertEquals("$FACTORY->LIZ", recipe.factory.definingClass + "->" + recipe.factory.name)
         assertEquals(Opcode.INVOKE_INTERFACE, recipe.factoryCall)
-        assertEquals("LX/0464;->LIZJ", recipe.host.definingClass + "->" + recipe.host.name)
+        assertEquals("LX/04BM;->LIZJ", recipe.host.definingClass + "->" + recipe.host.name)
         assertEquals("$CLIENT->create", recipe.create.definingClass + "->" + recipe.create.name)
         assertEquals(Opcode.INVOKE_INTERFACE, recipe.createCall)
         checkBridge("hand-built", service, recipe)
@@ -109,7 +109,7 @@ class AccountCleanupServicesTest {
     @Test
     fun `a maker missing a step is not taken`() {
         assertEquals("the host isn't a String", emptyList<Any>(),
-            serviceRecipes(maker(host = ImmutableFieldReference("LX/0464;", "LIZJ", "LX/0464;"))))
+            serviceRecipes(maker(host = ImmutableFieldReference("LX/04BM;", "LIZJ", "LX/04BM;"))))
         assertEquals("the factory isn't from ServiceManager", emptyList<Any>(), serviceRecipes(maker(fromManager = false)))
         assertEquals("the class handed to create isn't the one loaded", emptyList<Any>(),
             serviceRecipes(maker(createRegisters = 1 to 1)))
@@ -119,7 +119,7 @@ class AccountCleanupServicesTest {
     fun `a general request service that changed shape is not taken`() {
         val get = "doGet" to listOf("Z", "I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
         val post = "doPost" to listOf("I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
-        assertTrue("47.9.3's shape", isNetworkApi(networkApi(get, post)))
+        assertTrue("48.0.2's shape", isNetworkApi(networkApi(get, post)))
         assertFalse("no doPost", isNetworkApi(networkApi(get)))
         assertFalse("a second doGet", isNetworkApi(networkApi(get, post, "doGet" to listOf("Ljava/lang/String;"))))
         assertFalse("doGet without its first flag", isNetworkApi(networkApi("doGet" to get.second.drop(1), post)))
@@ -133,7 +133,7 @@ class AccountCleanupServicesTest {
         NETWORK_API, flags, "Ljava/lang/Object;", null, null, null, null,
         methods.map { (name, parameters) ->
             ImmutableMethod(NETWORK_API, name, parameters.map { ImmutableMethodParameter(it, null, null) },
-                "LX/063E;", AccessFlags.PUBLIC.value or AccessFlags.ABSTRACT.value, null, null, null)
+                "LX/06Q7;", AccessFlags.PUBLIC.value or AccessFlags.ABSTRACT.value, null, null, null)
         },
     )
 
@@ -185,7 +185,7 @@ class AccountCleanupServicesTest {
 
     /** The liked list service's maker as 47.6.3 has it, cut down to the steps that make it. */
     private fun maker(
-        host: ImmutableFieldReference = ImmutableFieldReference("LX/0464;", "LIZJ", "Ljava/lang/String;"),
+        host: ImmutableFieldReference = ImmutableFieldReference("LX/04BM;", "LIZJ", "Ljava/lang/String;"),
         fromManager: Boolean = true,
         createRegisters: Pair<Int, Int> = 1 to 0,
     ): Method {
@@ -211,7 +211,7 @@ class AccountCleanupServicesTest {
             ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0),
         )
         return ImmutableMethod(
-            "LX/1DT0;", "make", listOf(), "Ljava/lang/Object;",
+            "LX/1R2k;", "make", listOf(), "Ljava/lang/Object;",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
             ImmutableMethodImplementation(2, instructions, null, null),
         )

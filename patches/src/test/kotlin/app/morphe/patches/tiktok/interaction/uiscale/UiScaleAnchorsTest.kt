@@ -84,8 +84,8 @@ class UiScaleAnchorsTest {
             val text = Manager(apk, version)
             val factor = text.factor()
             // Worked out here from the build alone: each call of the factor in a method that hands
-            // Android a configuration built from it. On 47.9.3 that's X.03aF's LIZLLL and LJFF and
-            // the two in X.03Ji.invoke, the wrapper every activity's context goes through.
+            // Android a configuration built from it. On 48.0.2 that's X.03Wq's LIZLLL and LJFF and
+            // the two in X.04yZ.invoke, the wrapper every activity's context goes through.
             val expected = text.build.methods.flatMap { (_, method) ->
                 val code = method.body()
                 if (code.none { it.isConfigurationHandOff() }) return@flatMap emptySequence()

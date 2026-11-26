@@ -129,7 +129,7 @@ internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isMod
 /**
  * Where a list the reader opened from a grid becomes the list TikTok's profile model plays: a
  * collection, or another grid handing its loaded videos to the video page (X.0OfL.LJIIL on 47.1.4,
- * called through X.0OeA from the collection click and one other grid). It copies the grid's list
+ * called through X.0Ph5 from the collection click and one other grid). It copies the grid's list
  * into the model's FeedItemList with setItems, then writes the paging on it. That FeedItemList
  * carries no profile uid and no profile parse saw it, so its getItems read ran the main feed's
  * rules (#135). R8 names the class and method; the shape and the maxCursor write name it.
@@ -162,7 +162,7 @@ internal object OpenedListFillFingerprint : Fingerprint(
  * The Following feed's loader: the static method that builds a `FollowFeedList` from the request
  * and reads its items back. It took the request and a cache on 47.5.3 (`LX/0NMJ;->LIZ`) and
  * five on 47.6.3 (`LX/0NHh;->LIZ`, a tag, a cursor and a count joining), and four on 47.7.2
- * (`LX/1O9c;->LIZ`, the cache gone), so only
+ * (`LX/1Qpm;->LIZ`, the cache gone), so only
  * "more than one" is asked of the parameter list. The one-argument cache lookup beside it also
  * reads the items, but never logs the "feed" it was asked for.
  */
@@ -342,7 +342,7 @@ internal fun MethodReference.coldStartCall(): String =
 /**
  * The static calls [orchestrator] makes to methods answering a flag, the golden and the offline
  * method aside: where R8 outlines one of the orchestrator's own stores. 47.9.2 moved the cold
- * cache's parse and store into `LX/04jO;->LIZIZ(Ljava/lang/String;)Z`, which stores the parsed list
+ * cache's parse and store into `LX/03P5;->LIZIZ(Ljava/lang/String;)Z`, which stores the parsed list
  * and answers whether one came back, the same hit flag the orchestrator branches on. A caller keeps
  * the ones whose method holds a FeedItemList store.
  */
@@ -665,8 +665,9 @@ internal const val LYNX_SSR_INFO_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/search/
  * The Top results list's own Lynx card holder binding a card's data into its row (LX/0Kah;->P5
  * on 47.0.3, called by the results adapter's bind). The Short Drama block is bound here: TikTok
  * builds it from a streamed chunk's patches and slots it into the adapter, past the result list
- * [SearchResultRequestIdFingerprint] filters. Named by the real types among its ten parameters:
- * the DynamicPatch second, the Lynx server-render info fifth and the card itself ninth.
+ * [SearchResultRequestIdFingerprint] filters. Named by the real types among its eleven parameters:
+ * the DynamicPatch second, the Lynx server-render info fifth and the card itself ninth. 48.0.2
+ * added the trailing flag (LX/0JrO;->V5 there); 47.9.3's bind took ten.
  */
 internal object SearchLynxHolderBindFingerprint : Fingerprint(
     returnType = "V",
@@ -681,6 +682,7 @@ internal object SearchLynxHolderBindFingerprint : Fingerprint(
         "Z",
         SEARCH_MIX_FEED_DESCRIPTOR,
         "I",
+        "Z",
     ),
     filters = listOf(
         methodCall(
@@ -1387,7 +1389,9 @@ internal object RecUserCardInsertFingerprint : Fingerprint(
 /**
  * The Lemon8 card handler's request builder, a LIZJ(handler, FeedCardInsertData, List) that
  * answers a list of card type requests. Every card-insert handler has this shape, and the one
- * that keeps the not-interested time of the Lemon8 big card is the only one with this key.
+ * that keeps the not-interested time of the Lemon8 big card is the only one with this key
+ * (LX/055i on 47.9.3). TikTok 48.0.2 dropped the handler, so nothing matches there and the
+ * patch skips the guard.
  */
 internal object Lemon8CardRequestFingerprint : Fingerprint(
     returnType = "Ljava/util/List;",
@@ -1400,7 +1404,7 @@ internal object Lemon8CardRequestFingerprint : Fingerprint(
 )
 
 /**
- * The full-screen "people you may know" card's request builder (#478), X.07ao.LIZLLL(List, X) on
+ * The full-screen "people you may know" card's request builder (#478), X.07kv.LIZLLL(List, X) on
  * 47.9.3: it reads the last round's card results and answers a one-item list asking for card
  * type 49 (FEED_REC_USER_BIG_CARD, drawn by TTRecUserBigCardViewHolder), or an empty list when
  * TikTok's experiment is off. Its log line names the flow index it asks at.
@@ -1483,7 +1487,8 @@ private fun Method.loadsLiveRequestTypes(): Boolean {
 /**
  * Where the LIVE page handler compares its provider's request type with the LIVE rows' names:
  * the handler itself through 47.7.3, or the one method of the [provider] it calls virtually
- * that loads both names (47.9.3's {@code LJLIL(I)V}). Null when neither loads them.
+ * that loads both names (47.9.1's {@code LJLIL(I)V}, 48.0.2's {@code LJLJJLL(I)V}). Null when
+ * neither loads them.
  */
 internal fun Method.liveRequestTypeCheck(provider: ClassDef): Method? {
     if (loadsLiveRequestTypes()) return this

@@ -33,8 +33,8 @@ import org.junit.Test
  */
 class ProgressClearRegistersTest {
     private val holder = "LX/195L;"
-    private val record = "LX/0Mlo;"
-    private val lazy = "LX/01xW;"
+    private val record = "LX/0NqM;"
+    private val lazy = "LX/01v9;"
 
     @Test
     fun `the three registers are the ones the put names`() {

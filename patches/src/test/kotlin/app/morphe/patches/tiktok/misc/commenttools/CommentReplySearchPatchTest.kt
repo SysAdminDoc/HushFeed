@@ -27,10 +27,10 @@ class CommentReplySearchPatchTest {
     @Test
     fun `each reply bind return passes its own parent and native state without changing the frame`() {
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/CommentMoreItemCell;"
-        val model = "LX/0mEA;"
+        val model = "LX/0niW;"
         val method = MutableMethod(
             ImmutableMethod(
-                cell, "onBindItemView", listOf(ImmutableMethodParameter("LX/0aHZ;", null, null)),
+                cell, "onBindItemView", listOf(ImmutableMethodParameter("LX/0cKu;", null, null)),
                 "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
                 ImmutableMethodImplementation(30, emptyList(), null, null),
             ),
@@ -42,7 +42,7 @@ class CommentReplySearchPatchTest {
                     move-object/from16 v2, p1
                     check-cast v2, $model
                     move-object/from16 v3, p0
-                    invoke-super {v3, v2}, Lcom/bytedance/ies/powerlist/PowerCell;->onBindItemView(LX/0aHZ;)V
+                    invoke-super {v3, v2}, Lcom/bytedance/ies/powerlist/PowerCell;->onBindItemView(LX/0cKu;)V
                     const/4 v1, 0
                     if-eqz v1, :other
                     invoke-virtual {v3, v2, v1}, $cell->Q5(${model}Z)V
@@ -100,9 +100,9 @@ class CommentReplySearchPatchTest {
                 val extra = (bridge[6] as ReferenceInstruction).reference as FieldReference
                 assertEquals(model, extra.definingClass)
                 assertEquals("LLILZIL", extra.name)
-                assertEquals("LX/1FW2;", extra.type)
+                assertEquals("LX/1T6u;", extra.type)
                 val parent = (bridge[7] as ReferenceInstruction).reference as FieldReference
-                assertEquals("LX/1FW2;", parent.definingClass)
+                assertEquals("LX/1T6u;", parent.definingClass)
                 assertEquals("LJI", parent.name)
                 assertEquals("Lcom/ss/android/ugc/aweme/comment/model/Comment;", parent.type)
                 for (index in listOf(6, 7)) {
@@ -136,16 +136,16 @@ class CommentReplySearchPatchTest {
         // 46.8.3: the model is LX/0lDH;, handed over as LX/0U5F;, relaid out by Y5, and its
         // parent's data sits in LLJILLL of LX/0lDJ;. Not one of those names is 46.2.3's.
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/CommentMoreItemCell;"
-        val method = bind(cell, "LX/0eC1;", "LX/0RYJ;", "Y5")
-        method.registerReplySearch(replyClasses(cell, "LX/0eC1;", "Y5", "LLJILLL", "LX/1Cd3;"))
+        val method = bind(cell, "LX/0eC1;", "LX/0T4K;", "Y5")
+        method.registerReplySearch(replyClasses(cell, "LX/0eC1;", "Y5", "LLJILLL", "LX/0iBM;"))
         val references = method.implementation!!.instructions
             .mapNotNull { (it as? ReferenceInstruction)?.reference?.toString() }
         assertTrue(references.toString(), "LX/0eC1;" in references)
         assertTrue(references.toString(), "LX/0eC1;->LIZ()I" in references)
-        assertTrue(references.toString(), "LX/0eC1;->LLJILLL:LX/1Cd3;" in references)
+        assertTrue(references.toString(), "LX/0eC1;->LLJILLL:LX/0iBM;" in references)
         assertTrue(
             references.toString(),
-            "LX/1Cd3;->LJI:Lcom/ss/android/ugc/aweme/comment/model/Comment;" in references,
+            "LX/0iBM;->LJI:Lcom/ss/android/ugc/aweme/comment/model/Comment;" in references,
         )
         assertTrue(references.toString(), references.none { "0nlo" in it || "0nls" in it })
     }
@@ -153,9 +153,9 @@ class CommentReplySearchPatchTest {
     @Test
     fun `a model with two fields that could hold the parent is refused rather than guessed`() {
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/CommentMoreItemCell;"
-        val method = bind(cell, "LX/0mEA;", "LX/0aHZ;", "Q5")
+        val method = bind(cell, "LX/0niW;", "LX/0cKu;", "Q5")
         try {
-            method.registerReplySearch(replyClasses(cell, "LX/0mEA;", secondHolder = true))
+            method.registerReplySearch(replyClasses(cell, "LX/0niW;", secondHolder = true))
             fail("expected a refusal")
         } catch (refused: PatchException) {
             assertTrue(refused.message.orEmpty(), "hold the parent comment, found 2" in refused.message.orEmpty())
@@ -165,7 +165,7 @@ class CommentReplySearchPatchTest {
     @Test
     fun `a late reply model refusal applies none of the earlier writes`() {
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/CommentMoreItemCell;"
-        val method = bind(cell, "LX/0mEA;", "LX/0aHZ;", "Q5")
+        val method = bind(cell, "LX/0niW;", "LX/0cKu;", "Q5")
         val original = method.implementation!!.instructions.toList()
         var settingsWrites = 0
         var dislikeWrites = 0
@@ -174,7 +174,7 @@ class CommentReplySearchPatchTest {
             applyAfterCommentToolsPreflight(
                 { { settingsWrites++ } },
                 { { dislikeWrites++ } },
-                { method.resolveReplySearch(replyClasses(cell, "LX/0mEA;", secondHolder = true)) },
+                { method.resolveReplySearch(replyClasses(cell, "LX/0niW;", secondHolder = true)) },
             )
             fail("expected a refusal")
         } catch (refused: PatchException) {
@@ -243,7 +243,7 @@ class CommentReplySearchPatchTest {
         model: String,
         relayout: String = "Q5",
         dataField: String = "LLILZIL",
-        data: String = "LX/1FW2;",
+        data: String = "LX/1T6u;",
         secondHolder: Boolean = false,
     ): (String) -> ClassDef? {
         fun field(owner: String, name: String, type: String) = ImmutableField(

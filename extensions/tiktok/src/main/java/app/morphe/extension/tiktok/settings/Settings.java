@@ -1658,8 +1658,6 @@ public class Settings extends BaseSettings {
             new BooleanSetting("hide_chat_call_buttons", FALSE);
     public static final BooleanSetting HIDE_CHAT_STICKER_BANNER =
             new BooleanSetting("hide_chat_sticker_banner", FALSE);
-    public static final BooleanSetting HIDE_CHAT_AI_REPLIES =
-            new BooleanSetting("hide_chat_ai_replies", FALSE);
     /** A message's double tap and sideways swipe in a chat, read at each gesture. */
     public static final BooleanSetting TURN_OFF_CHAT_DOUBLE_TAP =
             new BooleanSetting("turn_off_chat_double_tap", FALSE);

@@ -1868,8 +1868,6 @@ Hide call buttons	Anruftasten ausblenden
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Die Tasten für Sprach- und Videoanrufe verschwinden oben im Chat. Anrufe klingeln weiterhin, und die Taste für die Chat-Details bleibt.
 Hide sticker suggestions	Sticker-Vorschläge ausblenden
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Das Banner mit Sticker-Vorschlägen erscheint im Chat nicht mehr. Deine eigenen Sticker bleiben in der Sticker-Auswahl.
-Hide suggested replies	Vorgeschlagene Antworten ausblenden
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	Die vorgeschlagenen Antworten von TikTok und das Banner, das sie vorstellt, erscheinen im Chat nicht mehr. Nachrichten, die du schreibst oder bekommst, bleiben unberührt.
 Hide online status	Onlinestatus verbergen
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Freunde sehen keinen grünen Punkt und kein „Active now“, solange du in TikTok bist. Dafür muss der Ghost-Modus an sein. Der Status deiner Freunde wird bei dir eventuell nicht mehr aktualisiert, und dein letzter Status kann eine Weile sichtbar bleiben.
 Stop LIVE previews opening by themselves	LIVE-Vorschauen nicht von selbst öffnen
@@ -2529,7 +2527,6 @@ autoplay auto play	automatische Wiedergabe Autoplay
 picture in picture PiP	Bild-im-Bild PiP
 search suggestions	Suchvorschläge
 AI chat	KI-Chat
-AI Tako	KI Tako
 save photos	Fotos speichern
 download button	Download-Button herunterladen
 It's in %1$s, under %2$s. Tap to go there.	Zu finden unter %1$s bei %2$s. Tippe, um dorthin zu springen.

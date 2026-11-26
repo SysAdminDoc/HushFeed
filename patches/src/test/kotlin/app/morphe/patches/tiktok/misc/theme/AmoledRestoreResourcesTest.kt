@@ -179,7 +179,7 @@ class AmoledRestoreResourcesTest {
 
             val palette = darkBackgroundColors(version)
             assertTrue("$version: every surface is restorable", restorable.containsAll(surfaceStyleItems(version)))
-            assertTrue("$version: the dark app themes' palette items, $restorable", "g7g" in restorable && "g85" in restorable)
+            assertTrue("$version: the dark app themes' palette items, $restorable", "g7r" in restorable && "g8f" in restorable)
 
             assertTrue("$version: attrs moved", before.attrNames.filter { (id, name) -> after.attrNames[id] != name }.isEmpty())
             assertTrue("$version: colors moved", before.colorNames.filter { (id, name) -> after.colorNames[id] != name }.isEmpty())

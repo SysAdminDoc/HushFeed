@@ -104,7 +104,7 @@ public final class LivePanelTheme {
     private static final Map<Object, Context> DARK_PANELS = Collections.synchronizedMap(new WeakHashMap<>());
     /** The Compose views of LIVE pages under a darkened panel, which take the dark palette. */
     private static final Map<View, Boolean> DARK_COMPOSE = Collections.synchronizedMap(new WeakHashMap<>());
-    /** The name of the Dark constant of TikTok's Compose palette modes (X.0ofT on 47.9.3: Auto, Light, Dark). */
+    /** The name of the Dark constant of TikTok's Compose palette modes (X.0hLJ on 48.0.2: Auto, Light, Dark). */
     static final String DARK_COMPOSE_MODE = "Dark";
     /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
     private static final int LABEL_DEFAULT = 0x0F161823;

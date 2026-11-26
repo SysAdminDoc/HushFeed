@@ -44,13 +44,13 @@ class RootSignalAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             val expected = mapOf(
-                RootSignal.STATUS to "classes4.dex:LX/064n;->LJIL()Z",
+                RootSignal.STATUS to "classes4.dex:LX/05jz;->LJIL()Z",
                 RootSignal.PACKAGES to "classes20.dex:LX/0eoc;->LJ(Landroid/content/Context;)$MAP",
                 RootSignal.PATHS to "classes20.dex:LX/0eoc;->LJFF()$MAP",
                 RootSignal.WHICH_SU to "classes20.dex:LX/0eoc;->LJIILIIL()$MAP",
                 RootSignal.SU_COMMAND to "classes20.dex:LX/0eoc;->LJI()$MAP",
             )
-            assertEquals("47.9.3", Fixtures.versionOf(apk))
+            assertEquals("48.0.2", Fixtures.versionOf(apk))
             assertEquals(expected, found.targets.mapValues { (_, target) -> "${target.dex}:${signature(target.method)}" })
             assertEquals(1, found.targets.filterKeys { it != RootSignal.STATUS }.values.map { it.owner.type }.toSet().size)
             for ((signal, target) in found.targets) {
@@ -144,7 +144,7 @@ class RootSignalAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             val code = found.collector.implementation!!.instructions.toList()
-            assertEquals("LX/0FW7;->LIZ(${STRING}LX/136q;)LX/136r;", signature(found.collector))
+            assertEquals("LX/0FW7;->LIZ(${STRING}LX/136q;)LX/0oHo;", signature(found.collector))
             for ((key, signal) in mapOf("root_packages" to RootSignal.PACKAGES, "root_paths" to RootSignal.PATHS,
                 "which_su" to RootSignal.WHICH_SU, "su_command" to RootSignal.SU_COMMAND, "is_root" to RootSignal.STATUS)) {
                 assertTrue(strings(found.collector).contains(key))

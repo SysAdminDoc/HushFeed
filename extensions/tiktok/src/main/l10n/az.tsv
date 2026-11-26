@@ -1865,8 +1865,6 @@ Hide call buttons	Zəng düymələrini gizlədin
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Səsli və video zəng düymələri çatın yuxarısından yoxa çıxır. Zənglər yenə də çalır, çat təfərrüatları düyməsi isə qalır.
 Hide sticker suggestions	Stiker təkliflərini gizlədin
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Stiker təklifi bannerı çatda göstərilməyi dayandırır. Öz stikerləriniz stiker seçicisində qalır.
-Hide suggested replies	Təklif olunan cavabları gizlədin
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	TikTok-un təklif etdiyi cavab xanaları və onların təqdimat bannerı çatda göstərilməyi dayandırır. Yazdığınız və ya aldığınız mesajlara toxunulmur.
 Hide online status	Onlayn statusu gizlət
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Siz TikTok-dasınızkən dostlar yaşıl nöqtə və ya Active now görməyəcək. Ghost mode açıq olmalıdır. Onların statusu sizdə yenilənməyə bilər, sizin son statusunuz isə bir müddət görünə bilər.
 Stop LIVE previews opening by themselves	LIVE önizləmələrinin özbaşına açılmasını dayandır
@@ -2526,7 +2524,6 @@ autoplay auto play	avtomatik oynatma avtooynatma
 picture in picture PiP	şəkil içində şəkil PiP
 search suggestions	axtarış təklifləri
 AI chat	Sİ söhbəti
-AI Tako	Sİ Tako
 save photos	fotoları saxla
 download button	yükləmə düyməsi yüklə
 It's in %1$s, under %2$s. Tap to go there.	%1$s bölməsində, %2$s altındadır. Ora keçmək üçün toxunun.

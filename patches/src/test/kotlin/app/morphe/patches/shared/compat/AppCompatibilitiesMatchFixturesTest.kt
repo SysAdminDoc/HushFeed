@@ -64,7 +64,7 @@ class AppCompatibilitiesMatchFixturesTest {
     @Test
     fun `each declared target carries the version code of its vendor build`() {
         val targets = AppCompatibilities.tiktok().single().targets
-        val expected = mapOf("47.9.3" to AppCompatibilities.TIKTOK_4793_VERSION_CODE)
+        val expected = mapOf("48.0.2" to AppCompatibilities.TIKTOK_4802_VERSION_CODE)
         assertEquals("declared versions", expected.keys, targets.map { it.version }.toSet())
         assertEquals("the codes the Play Store patch accepts", expected.values.toSet(), AppCompatibilities.TIKTOK_VERSION_CODES)
         for (target in targets) {

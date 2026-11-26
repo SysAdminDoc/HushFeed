@@ -7,7 +7,6 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
-import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -19,33 +18,32 @@ import org.junit.Test
 /**
  * Where Hide comment surveys answers, held to every declared build.
  *
- * <p>A comment list asks one static config getter for the survey to show. It reads the survey
- * arrays the server's comment_survey setting filled and answers null when they're empty, which is
- * what every account without a survey gets. The patch answers that same null first while the switch
- * is on, so the callers need nothing they don't already handle.
+ * <p>A comment list asks one resolver for the survey a video shows. It reads the survey the video
+ * brought in its comment config, or the arrays the server's comment_survey setting filled, and
+ * answers a holder; a video without a survey gets the holder class's own empty instance, which is
+ * what every account without a survey sees. The patch answers that same empty holder first while
+ * the switch is on, so the callers need nothing they don't already handle.
  */
 class CommentSurveyAnchorsTest {
     @Test
-    fun `the survey config is one static getter on every declared build, and null is already one of its answers`() {
+    fun `the survey resolver is one method on every declared build, and its empty holder is already one of its answers`() {
         Fixtures.forEachDeclared { apk ->
             val taken = methodsOf(apk).filter { (classDef, method) -> CommentSurveyConfigFingerprint.takes(method, classDef) }.toList()
             assertEquals(taken.map { "${it.first.type}->${it.second.name}" }.toString(), 1, taken.size)
-            val getter = taken.single().second
-            assertTrue("the getter is no longer static", AccessFlags.STATIC.isSet(getter.accessFlags))
-            assertTrue("the getter has no register for the answer", getter.implementation!!.registerCount >= 1)
+            val resolver = taken.single().second
+            assertTrue("the resolver became static", !AccessFlags.STATIC.isSet(resolver.accessFlags))
+            val locals = resolver.implementation!!.registerCount - (1 + resolver.parameterTypes.size)
+            assertTrue("the resolver has no local for the answer", locals >= 1)
 
-            val instructions = getter.implementation!!.instructions.toList()
-            val answersNull = instructions.zipWithNext().any { (load, ret) ->
-                load.opcode == Opcode.CONST_4 && (load as NarrowLiteralInstruction).narrowLiteral == 0 &&
+            val none = resolver.noCommentSurveyAnswer()
+            val instructions = resolver.implementation!!.instructions.toList()
+            val answersNone = instructions.zipWithNext().any { (load, ret) ->
+                load.opcode == Opcode.SGET_OBJECT &&
+                    ((load as ReferenceInstruction).reference as FieldReference).name == none.name &&
                     ret.opcode == Opcode.RETURN_OBJECT &&
                     (ret as OneRegisterInstruction).registerA == (load as OneRegisterInstruction).registerA
             }
-            assertTrue("the getter never answers null, so its callers may not expect it", answersNull)
-            val readsSurveys = instructions.any { instruction ->
-                instruction.opcode == Opcode.SGET_OBJECT &&
-                    ((instruction as ReferenceInstruction).reference as FieldReference).type == "[$COMMENT_SURVEY_ITEM"
-            }
-            assertTrue("the getter no longer reads the survey arrays", readsSurveys)
+            assertTrue("the resolver never answers its empty holder, so its callers may not expect it", answersNone)
         }
     }
 
@@ -53,11 +51,11 @@ class CommentSurveyAnchorsTest {
     fun `the patch answers no survey first while the switch is on`() {
         val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
         val source = File(root, "app/morphe/patches/tiktok/misc/commenttools/CommentToolsPatch.kt").readText()
-        assertTrue("the getter is not hooked", source.contains("val method = CommentSurveyConfigFingerprint.method"))
-        assertTrue("the getter does not ask the switch first", source.contains(
+        assertTrue("the resolver is not hooked", source.contains("val method = CommentSurveyConfigFingerprint.method"))
+        assertTrue("the resolver does not ask the switch first", source.contains(
             "method.guardAtEntry(\n                        \"Comment tools\",\n" +
                 "                        \"invoke-static {}, \$COMMENT_SURVEY_CLASS_DESCRIPTOR->hide()Z\",\n" +
-                "                        \"const/4 v0, 0x0\\nreturn-object v0\","))
+                "                        \"sget-object v0, \${none.definingClass}->\${none.name}:\${none.type}\\nreturn-object v0\","))
     }
 
     /** Every method of one build, walked on each ask and never held (the dex has millions). */

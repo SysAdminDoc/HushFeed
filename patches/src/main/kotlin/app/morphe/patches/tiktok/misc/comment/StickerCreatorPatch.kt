@@ -4,8 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.comment
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -22,6 +25,7 @@ import app.morphe.util.addInstructionsAtControlFlowLabel
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -31,11 +35,13 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 
 internal const val STICKER_CREATOR = "Lapp/morphe/extension/tiktok/comment/StickerCreator;"
 internal const val FAVOURITE_STICKER_PAGE = "Lcom/ss/android/ugc/aweme/im/sticker/basic/panel/BasicFavouriteStickerPageCell;"
 private const val IM_STICKER_API = "Lcom/ss/android/ugc/aweme/im/sticker/api/IMStickerApi;"
 private const val STICKER_ITEM = "Lcom/ss/android/ugc/aweme/im/common/model/StickerItem;"
+private const val PHOTO_TO_STICKER_RESPONSE = "Lcom/ss/android/ugc/aweme/comment/easteregg/model/PhotoToStickerResponse;"
 private const val STICKER_UPLOAD_CONFIG_API = "Lcom/ss/android/ugc/aweme/subscription/pgc/jsbridge/upload/StickerUploadConfigApi;"
 private const val STICKER_ACCOUNT_SERVICE = "Lcom/ss/android/ugc/aweme/IAccountService;"
 private const val STICKER_OBJECT = "Ljava/lang/Object;"
@@ -57,7 +63,7 @@ private fun Method.stickerMethodCalls(): List<MethodReference> =
 /**
  * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source, the
  * canvas text (null when there is none, new on 47.9.3) and the continuation. R8 renames it
- * (LIZIZ on TikTok 47.9.3).
+ * (LJII on TikTok 47.9.3, LIZIZ on 48.0.2).
  */
 internal fun MethodReference.isStickerSaveCall(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
@@ -105,23 +111,33 @@ internal object StickerServerParameterFingerprint : Fingerprint(
 )
 
 /**
- * The DM canvas saver (0hMc.LIZIZ on TikTok 47.9.3): it saves a
- * drawing through im/sticker/save and adds the answer to Saved. Every call the bridges make comes
- * out of it. 47.9.3 grew its parameters from four to nine (the canvas text, flags and two
- * callbacks), and a sibling in the same class that posts to the sticker store carries
- * "dm_ai_canvas" too, so the save and the Saved store call are what pick it, not its parameters.
+ * The static getter of TikTok's StickerApiV2 client, which takes it off a lazy (0Cae.LIZJ on
+ * TikTok 47.9.3, 0F4G.LIZJ on 48.0.2). Up to 47.9.3 the bridges read it, the save and the Saved
+ * store calls out of the DM canvas saver (0kNa.LIZIZ, "dm_ai_canvas"). 48.0.2 dropped that saver
+ * and every call to im/sticker/save, though StickerApiV2 still declares the save, so each piece
+ * now comes from where it lives: this getter, the API interface and Photo to sticker's add to Saved.
  */
-internal object CanvasStickerSaverFingerprint : Fingerprint(
-    returnType = STICKER_OBJECT,
-    strings = listOf("dm_ai_canvas"),
-    custom = { method, _ ->
-        val calls = method.stickerMethodCalls()
-        calls.any { it.isStickerSaveCall() } &&
-            calls.any { it.definingClass == IM_STICKER_API && it.name == "getImStickerStoreService" }
-    },
+internal object StickerApiGetterFingerprint : Fingerprint(
+    returnType = STICKER_API,
+    parameters = listOf(),
+    filters = listOf(checkCast(STICKER_API)),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
 )
 
-/** One call the canvas saver makes, with the invoke it makes it with. */
+/**
+ * Photo to sticker's last step (17eQ.invokeSuspend on TikTok 47.9.3, 12QJ.invokeSuspend on
+ * 48.0.2): once a comment photo is saved as a sticker, it adds the answer to Saved through the IM
+ * sticker store, the same holder, getter, store and add the canvas saver used.
+ */
+internal object StickerSavedStoreFingerprint : Fingerprint(
+    returnType = STICKER_OBJECT,
+    filters = listOf(
+        fieldAccess(definingClass = PHOTO_TO_STICKER_RESPONSE, name = "stickerItem", type = STICKER_ITEM),
+        methodCall(definingClass = IM_STICKER_API, name = "getImStickerStoreService"),
+    ),
+)
+
+/** One call a bridge makes, with the invoke TikTok makes it with. */
 internal data class StickerCall(val invoke: String, val reference: MethodReference)
 
 internal class StickerCreatorCalls(
@@ -145,12 +161,19 @@ private fun Opcode.stickerInvoke(): String? = when (this) {
 }
 
 /**
- * Reads every call the bridges need from the canvas saver, and checks the two suspend calls take
- * the same continuation, since one proxy answers both.
+ * Reads every call the bridges need: the sticker API from its [apiGetter], the save from the
+ * [api] interface that declares it, and the Saved store calls from Photo to sticker's [store] step.
+ * Checks the two suspend calls take the same continuation, since one proxy answers both.
  */
-internal fun stickerCreatorCalls(uploadConfig: Method, serverParameter: Method, saver: Method): StickerCreatorCalls {
-    val instructions = saver.implementation?.instructions?.toList()
-        ?: throw PatchException("Create stickers: the canvas saver has no code")
+internal fun stickerCreatorCalls(
+    uploadConfig: Method,
+    serverParameter: Method,
+    apiGetter: Method,
+    api: ClassDef,
+    store: Method,
+): StickerCreatorCalls {
+    val instructions = store.implementation?.instructions?.toList()
+        ?: throw PatchException("Create stickers: the Saved store step has no code")
 
     fun call(what: String, wanted: (MethodReference) -> Boolean): StickerCall {
         val found = instructions.mapNotNull { instruction ->
@@ -158,12 +181,24 @@ internal fun stickerCreatorCalls(uploadConfig: Method, serverParameter: Method, 
             val invoke = instruction.opcode.stickerInvoke()
             if (reference != null && invoke != null && wanted(reference)) StickerCall(invoke, reference) else null
         }.distinct()
-        if (found.size != 1) throw PatchException("Create stickers: ${found.size} $what calls in the canvas saver, expected 1")
+        if (found.size != 1) throw PatchException("Create stickers: ${found.size} $what calls in the Saved store step, expected 1")
         return found.single()
     }
 
-    val save = call("im/sticker/save") { it.isStickerSaveCall() }
-    val stickerApi = call("sticker API") { it.returnType == STICKER_API && it.parameterTypes.isEmpty() }
+    if (api.type != STICKER_API) throw PatchException("Create stickers: ${api.type} is not the sticker API")
+    val saves = api.methods.filter { it.isStickerSaveCall() }
+    if (saves.size != 1) throw PatchException("Create stickers: the sticker API declares ${saves.size} im/sticker/save methods, expected 1")
+    val saveInvoke = if (AccessFlags.INTERFACE.isSet(api.accessFlags)) "invoke-interface" else "invoke-virtual"
+    val save = saves.single().let {
+        StickerCall(saveInvoke, ImmutableMethodReference(it.definingClass, it.name, it.parameterTypes, it.returnType))
+    }
+    if (!AccessFlags.STATIC.isSet(apiGetter.accessFlags) || apiGetter.returnType != STICKER_API || apiGetter.parameterTypes.isNotEmpty()) {
+        throw PatchException("Create stickers: the sticker API getter isn't static")
+    }
+    val stickerApi = StickerCall(
+        "invoke-static",
+        ImmutableMethodReference(apiGetter.definingClass, apiGetter.name, apiGetter.parameterTypes, apiGetter.returnType),
+    )
     val storeService = call("sticker store") {
         it.definingClass == IM_STICKER_API && it.name == "getImStickerStoreService" && it.parameterTypes.isEmpty()
     }
@@ -178,9 +213,8 @@ internal fun stickerCreatorCalls(uploadConfig: Method, serverParameter: Method, 
         .mapNotNull { (it as ReferenceInstruction).reference as? FieldReference }
         .filter { it.definingClass == IM_STICKER_API && it.type == storeApi.reference.definingClass }
         .distinct()
-    if (holders.size != 1) throw PatchException("Create stickers: ${holders.size} IMStickerApi holders in the canvas saver, expected 1")
+    if (holders.size != 1) throw PatchException("Create stickers: ${holders.size} IMStickerApi holders in the Saved store step, expected 1")
 
-    if (stickerApi.invoke != "invoke-static") throw PatchException("Create stickers: the sticker API getter isn't static")
     for (call in listOf(storeApi, storeService, addToStore)) {
         if (call.invoke == "invoke-static") throw PatchException("Create stickers: ${call.reference.name} is called static")
     }
@@ -442,7 +476,9 @@ val createStickersPatch = bytecodePatch(
         val calls = stickerCreatorCalls(
             StickerUploadConfigFingerprint.originalMethod,
             StickerServerParameterFingerprint.originalMethod,
-            CanvasStickerSaverFingerprint.originalMethod,
+            StickerApiGetterFingerprint.originalMethod,
+            classDefBy(STICKER_API),
+            StickerSavedStoreFingerprint.originalMethod,
         )
         mutableClassDefBy(STICKER_CREATOR).swapStickerStubs(calls)
         FavouriteStickerPageFingerprint.method.addStickerCreatorButton()

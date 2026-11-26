@@ -31,11 +31,11 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.9.3" to Triple("LX/08j5;", "LX/07rk;", 0x7f0a20e8 to 0x7f0a8a72),
+            "48.0.2" to Triple("LX/08bE;", "LX/08LG;", 0x7f0a20ba to 0x7f0a89bc),
         )
         // The instruction after each of the factory's two calls to the builder's font input. 47.7.3
-        // had them at 86 and 276. 47.9.3's LJZL calls 0A23.LJI at 83 and 273.
-        val sizeInputIndexes = mapOf("47.9.3" to listOf(84, 274))
+        // had them at 86 and 276. 48.0.2's LJLLLL calls 08LG.LJII at 83 and 273.
+        val sizeInputIndexes = mapOf("48.0.2" to listOf(84, 274))
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
@@ -54,20 +54,21 @@ class FeedTextFixturesTest {
             assertEquals(listOf(2, 10), native.sizeInputs.map { it.builderRegister })
             assertEquals(sizeInputIndexes.getValue(version), native.sizeInputs.map { it.index })
             assertEquals(30, native.layoutFactory.implementation!!.registerCount)
-            assertEquals("LIZJ", native.builderPaint.name)
-            assertEquals("LJIIJ", native.builderSize.name)
-            assertEquals("LJFF", native.builderCache.name)
+            assertEquals("LIZ", native.builderPaint.name)
+            assertEquals("LJIIIIZZ", native.builderSize.name)
+            assertEquals("LIZLLL", native.builderCache.name)
             assertEquals(6, native.layoutCaches.size)
-            assertEquals("LJJLIIIJLJLI", native.refreshOriginal.name)
-            assertEquals("LJJLIIJ", native.refreshTranslated.name)
-            // The author binder's name moves between builds (47.7.3: lr, 47.8.3: vr, 47.9.1: Dr, 47.9.2: Jr).
-            assertEquals("Sr", native.authorBind.name)
-            assertEquals("LLLIIIIL", native.authorView.name)
+            assertEquals("LJLJJLL", native.refreshOriginal.name)
+            assertEquals("LJLJLJ", native.refreshTranslated.name)
+            // The author binder's name moves between builds (47.7.3: lr, 47.8.3: vr, 47.9.1: Dr, 47.9.2: Jr,
+            // 47.9.3: Sr).
+            assertEquals("Gs", native.authorBind.name)
+            assertEquals("LLJLILLLLZIIL", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
             })
             // The post date beside the name: the same owner loads it, as the same kind of text view.
-            assertEquals("LLLIIIL", native.dateView.name)
+            assertEquals("LLJLL", native.dateView.name)
             assertEquals(AUTHOR, native.dateView.definingClass)
             assertEquals(native.authorView.type, native.dateView.type)
             val loaderCode = native.authorLoader.implementation!!.instructions.toList()
@@ -101,7 +102,7 @@ class FeedTextFixturesTest {
             assertEquals(Opcode.IF_NEZ, flow.instructions[branch].opcode)
             // v2 holds the controller at entry (move-object/from16 v2, p0); v0 is still the caption there.
             assertEquals(2, (flow.instructions[fresh] as RegisterRangeInstruction).startRegister)
-            // 47.9.3 shuffles the fallback's arguments down into v0..v6 with plain moves before the
+            // 48.0.2 shuffles the fallback's arguments down into v0..v6 with plain moves before the
             // uncached call. The bypass lands on the first move, where the native empty-caption check lands.
             val shuffle = flow.normal[branch].single { it != branch + 1 }
             assertTrue(flow.instructions.indices.any {

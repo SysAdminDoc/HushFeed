@@ -42,6 +42,23 @@ class BackgroundPlayAnchorsTest {
         (opcode == Opcode.CONST_STRING || opcode == Opcode.CONST_STRING_JUMBO) &&
             getReference<StringReference>()?.string == key
 
+    /**
+     * The strings a set getter fills its set with, following it through its implementers and
+     * through getters that only pass another getter's set on, two hops at most.
+     */
+    private fun sceneList(getter: MethodReference, classes: Map<String, ClassDef>, depth: Int = 0): List<String> {
+        val owners = listOf(getter.definingClass) + classes.values.filter { getter.definingClass in it.interfaces }.map { it.type }
+        return owners.flatMap { owner ->
+            classes[owner]?.methods?.filter { it.name == getter.name && it.returnType == "Ljava/util/Set;" && it.parameterTypes.isEmpty() }.orEmpty()
+        }.flatMap { method ->
+            val instructions = method.implementation?.instructions?.toList().orEmpty()
+            val strings = instructions.mapNotNull { instruction -> instruction.getReference<StringReference>()?.string?.takeIf { instruction.loads(it) } }
+            if (strings.isNotEmpty() || depth >= 2) strings else instructions.mapNotNull { instruction ->
+                instruction.getReference<MethodReference>()?.takeIf { it.returnType == "Ljava/util/Set;" && it.parameterTypes.isEmpty() }
+            }.flatMap { sceneList(it, classes, depth + 1) }
+        }
+    }
+
     @Test
     fun `the mode read and the remembered switch reads resolve on each build`() {
         Fixtures.forEachDeclared { apk ->
@@ -122,12 +139,19 @@ class BackgroundPlayAnchorsTest {
             }
             val call = body[lookup] as FiveRegisterInstruction
 
-            // The set it looks in is TikTok's scene list, filled with the feeds' event types.
-            val load = body.subList(0, lookup).last { it.opcode == Opcode.SGET_OBJECT && (it as OneRegisterInstruction).registerA == call.registerC }
-            val list = load.getReference<FieldReference>()!!
-            val listed = classes.getValue(list.definingClass).methods.single { it.name == "<clinit>" }.implementation!!.instructions
-                .mapNotNull { instruction -> instruction.getReference<StringReference>()?.string?.takeIf { instruction.loads(it) } }
-            assertTrue("$version: ${list.definingClass} lists $listed",
+            // The set it looks in is TikTok's scene list, filled with the feeds' event types: a static
+            // field before 48.0.2, the background play service's list (asked through LX/07fF) on it.
+            val source = (0 until lookup).last { (body[it] as? OneRegisterInstruction)?.registerA == call.registerC }
+            val listed = when (body[source].opcode) {
+                Opcode.SGET_OBJECT -> {
+                    val list = body[source].getReference<FieldReference>()!!
+                    classes.getValue(list.definingClass).methods.single { it.name == "<clinit>" }.implementation!!.instructions
+                        .mapNotNull { instruction -> instruction.getReference<StringReference>()?.string?.takeIf { instruction.loads(it) } }
+                }
+                Opcode.MOVE_RESULT_OBJECT -> sceneList(body[source - 1].getReference<MethodReference>()!!, classes)
+                else -> emptyList()
+            }
+            assertTrue("$version: the scene list from ${body[source]} lists $listed",
                 listed.containsAll(listOf("homepage_hot", "homepage_follow", "others_homepage")))
 
             // What it looks up is the event type, the second parameter, and the answer lands elsewhere.
@@ -137,16 +161,13 @@ class BackgroundPlayAnchorsTest {
             assertEquals("$version: the lookup's answer is not kept", Opcode.MOVE_RESULT, result.opcode)
             assertNotEquals(call.registerD, (result as OneRegisterInstruction).registerA)
 
-            // Photo posts are ruled out here (47.0.3) or in the one post check it calls (47.1.x).
+            // Photo posts are ruled out here (47.0.3) or in the one post check it reaches (47.1.x on).
             val photoCheck = if (body.photoModeCall() >= 0) body else {
-                val helpers = body.filter { it.isStaticAwemeCheck() }.mapNotNull { instruction ->
-                    val reference = instruction.getReference<MethodReference>()!!
-                    classes[reference.definingClass]?.methods?.firstOrNull {
-                        it.name == reference.name && it.parameterTypes.map(CharSequence::toString) == listOf(AWEME) && it.returnType == "Z"
-                    }?.implementation?.instructions?.toList()
-                }.filter { it.photoModeCall() >= 0 }
-                assertEquals("$version: post checks ruling out photo posts", 1, helpers.size)
-                helpers.single()
+                val posts = classes.values.flatMap { classDef -> classDef.methods.filter { BackgroundPlayPostCheckFingerprint.takes(it, classDef) } }
+                assertEquals("$version: the post check takes ${posts.map { "${it.definingClass}->${it.name}" }}", 1, posts.size)
+                assertTrue("$version: the scene check doesn't reach ${posts.single().definingClass}",
+                    reachesPostCheck(check, posts.single(), classes::get))
+                posts.single().implementation!!.instructions.toList()
             }
             assertEquals("$version: the photo post check is not kept", Opcode.MOVE_RESULT, photoCheck[photoCheck.photoModeCall() + 1].opcode)
 

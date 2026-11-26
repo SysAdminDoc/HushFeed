@@ -21,7 +21,7 @@ import org.junit.Test
  *
  * <p>The block is a Lynx card TikTok builds from a streamed chunk's patches and slots into the Top
  * results adapter, so it never passes the result list the other search filters read. The adapter's
- * bind hands each such card to one of two holders, the ten-parameter one or DynamicViewHolder,
+ * bind hands each such card to one of two holders, the eleven-parameter one or DynamicViewHolder,
  * depending on the card's feed type and a server list (review #7 found the second one unhooked).
  * Both hooks pass (holder, fragment, patch), which holds while each bind is an instance method of
  * a RecyclerView view holder whose first two parameters are the fragment and the patch. The other
@@ -44,11 +44,11 @@ class SearchLynxCardAnchorsTest {
             }
             build.single(SearchLynxCardBindFingerprint)
 
-            // The results adapter's bind is the ten-parameter holder bind's one caller. Every view
+            // The results adapter's bind is the eleven-parameter holder bind's one caller. Every view
             // holder method it calls with a DynamicPatch has to be one of the two hooked binds.
-            val tenParameter = binds.first().second
-            val adapters = build.methods.filter { (_, method) -> method.calls(tenParameter) }.toList()
-            assertEquals("callers of the ten-parameter holder bind: ${adapters.map { it.second.name }}", 1, adapters.size)
+            val elevenParameter = binds.first().second
+            val adapters = build.methods.filter { (_, method) -> method.calls(elevenParameter) }.toList()
+            assertEquals("callers of the eleven-parameter holder bind: ${adapters.map { it.second.name }}", 1, adapters.size)
             val hooked = binds.map { (_, bind) -> key(bind.definingClass, bind.name, bind.parameterTypes) }.toSet()
             val lynxCalls = adapters.single().second.implementation!!.instructions.mapNotNull { instruction ->
                 ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.takeIf { reference ->

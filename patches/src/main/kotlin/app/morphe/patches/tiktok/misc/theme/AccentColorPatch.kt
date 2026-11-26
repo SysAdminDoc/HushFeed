@@ -226,7 +226,7 @@ val accentColorPatch = patch(
  * AccentColorPaletteTest holds each declared build's fixture to its entry here.
  */
 internal val ACCENT_TOKENS: Map<String, Map<String, Pair<String, String>>> = linkedMapOf(
-    "47.9.3" to linkedMapOf(
+    "48.0.2" to linkedMapOf(
         "UIShapePrimary" to ("ah8" to "awi"),
         "UIShapePrimary2" to ("ah9" to "awj"),
         "UIShapePrimary3" to ("ah_" to "awk"),
@@ -260,7 +260,7 @@ internal fun unreadAccentRefusal(versionName: String?): String {
  * AccentColorPaletteTest holds each declared build's fixture to its entry here.
  */
 internal val ACCENT_ICONS: Map<String, List<String>> = linkedMapOf(
-    "47.9.3" to listOf("btj"),
+    "48.0.2" to listOf("btj"),
 )
 
 /** The drawables to recolor on this build, or a refusal. */
@@ -281,7 +281,7 @@ internal fun missingAccentIconRefusal(name: String): String =
  * each declared build's fixture to its entry here.
  */
 internal val ACCENT_BADGES: Map<String, List<String>> = linkedMapOf(
-    "47.9.3" to listOf("bv6", "bwb"),
+    "48.0.2" to listOf("bv6", "bwb"),
 )
 
 /** The badge drawables to recolor on this build, or a refusal. */

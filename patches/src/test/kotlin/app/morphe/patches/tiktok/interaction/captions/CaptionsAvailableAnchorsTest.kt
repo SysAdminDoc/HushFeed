@@ -130,9 +130,9 @@ class CaptionsAvailableAnchorsTest {
         assertEquals("the read's move-result", 4, read(EXPERIMENT_READ).experimentReadAnswer())
         assertEquals("no key loaded", -1, read(EXPERIMENT_READ, loadsKey = false).experimentReadAnswer())
         assertEquals("a read answered as a boolean", -1,
-            read(ImmutableMethodReference("LX/04wD;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "Z")).experimentReadAnswer())
+            read(ImmutableMethodReference("LX/06Gn;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "Z")).experimentReadAnswer())
         assertEquals("a read with other parameters", -1,
-            read(ImmutableMethodReference("LX/04wD;", "LJIIJJI", listOf("I", "Ljava/lang/String;"), "I")).experimentReadAnswer())
+            read(ImmutableMethodReference("LX/06Gn;", "LJIIJJI", listOf("I", "Ljava/lang/String;"), "I")).experimentReadAnswer())
     }
 
     @Test
@@ -145,7 +145,7 @@ class CaptionsAvailableAnchorsTest {
     }
 
     private val EXPERIMENT_READ =
-        ImmutableMethodReference("LX/04wD;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "I")
+        ImmutableMethodReference("LX/06Gn;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "I")
 
     /**
      * The row lambda cut down, as 47.4.3 has it: get the experiments, load the key into v3, read
@@ -155,11 +155,11 @@ class CaptionsAvailableAnchorsTest {
         val key = if (loadsKey) {
             ImmutableInstruction21c(Opcode.CONST_STRING, 3, ImmutableStringReference(CAPTIONS_ROW_KEY))
         } else {
-            ImmutableInstruction21c(Opcode.CONST_CLASS, 3, ImmutableTypeReference("LX/0Kjx;"))
+            ImmutableInstruction21c(Opcode.CONST_CLASS, 3, ImmutableTypeReference("LX/0Lri;"))
         }
         val instructions = listOf(
             ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,
-                ImmutableMethodReference("LX/04wD;", "LJIIIZ", listOf(), "LX/04wD;")),
+                ImmutableMethodReference("LX/06Gn;", "LJIIIZ", listOf(), "LX/06Gn;")),
             ImmutableInstruction11x(Opcode.MOVE_RESULT_OBJECT, 4),
             key,
             ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 5, 4, 1, 0, 3, 2, call),

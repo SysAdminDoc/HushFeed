@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.misc.navigation
 import app.morphe.patcher.Fingerprint
 import app.morphe.patches.tiktok.shared.dispatchesOnIndex
 import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -24,6 +25,7 @@ private const val TAB_ABILITY = "/TabAbilityAssem;"
 private const val COPY_ON_WRITE = "Ljava/util/concurrent/CopyOnWriteArrayList;"
 private const val TOP_TAB_SCENE = "scene_get_top_tab"
 private const val BOTTOM_TAB_SCENE = "scene_get_bottom_tab"
+private val LIST_QUESTIONS = setOf("isEmpty", "size")
 
 /**
  * Whether the method is a tab list getter for [scene]: fill the tabs, hand back the list.
@@ -33,28 +35,43 @@ private const val BOTTOM_TAB_SCENE = "scene_get_bottom_tab"
  * they are called on 46.2.3 and not on any build since, and through 47.5.3 each was three
  * instructions long: call the filler, read the list, return it. On 47.6.3 both grew a fast path
  * that hands back a cached list first, and the top getter's filler reports its scene one call
- * further down. What still sets the two apart from the getters beside them, which check their
- * list and rebuild it, is that each reads one own `CopyOnWriteArrayList` field, hands it straight
- * back, calls nothing on the list itself, and calls an own `()V` filler that reports
- * `scene_get_top_tab` or `scene_get_bottom_tab`, in its own body or through one of its own `()V`
- * calls. Those two strings are on every build since 46.2.3.
+ * further down. On 48.0.2 the bottom getter (`Ao1`) also seeds both lists on a cold launch when
+ * they're still empty, under a lock, so it asks its lists whether they're empty and how big they
+ * are and no longer ends on its return. What still sets the two apart from the getters beside
+ * them (`gB` and `W7` there), which check their list and hand both lists to a rebuild, is that
+ * every read of an own `CopyOnWriteArrayList` field goes straight to a return or to that list's
+ * own `isEmpty()` or `size()`, the last return hands back one own list read just before it, and
+ * the getter calls an own `()V` filler that reports `scene_get_top_tab` or
+ * `scene_get_bottom_tab`, in its own body or through one of its own `()V` calls. Those two
+ * strings are on every build since 46.2.3.
  */
 private fun Method.isTabModelList(classDef: ClassDef, scene: String): Boolean {
     val instructions = implementation?.instructions?.toList() ?: return false
-    if (instructions.size < 3) return false
-    if (instructions.last().opcode != Opcode.RETURN_OBJECT) return false
-    val handedBack = instructions[instructions.size - 2]
-    if (handedBack.opcode != Opcode.IGET_OBJECT) return false
-    val list = handedBack.getReference<FieldReference>() ?: return false
-    if (list.definingClass != classDef.type || list.type != COPY_ON_WRITE) return false
-    val ownListReads = instructions.count {
-        it.opcode == Opcode.IGET_OBJECT && it.getReference<FieldReference>()?.let { field ->
+    fun ownListRead(index: Int) = instructions.getOrNull(index)?.let { instruction ->
+        instruction.opcode == Opcode.IGET_OBJECT && instruction.getReference<FieldReference>()?.let { field ->
             field.definingClass == classDef.type && field.type == COPY_ON_WRITE
         } == true
+    } == true
+    val lastReturn = instructions.indexOfLast { it.opcode == Opcode.RETURN_OBJECT }
+    if (!ownListRead(lastReturn - 1)) return false
+    val handedBack = instructions.indices
+        .filter { instructions[it].opcode == Opcode.RETURN_OBJECT && ownListRead(it - 1) }
+        .map { instructions[it - 1].getReference<FieldReference>()!!.name }
+        .distinct()
+    if (handedBack.size != 1) return false
+    val readsStayPut = instructions.indices.filter(::ownListRead).all { index ->
+        val list = (instructions[index] as TwoRegisterInstruction).registerA
+        val next = instructions.getOrNull(index + 1) ?: return@all false
+        when (next.opcode) {
+            Opcode.RETURN_OBJECT -> (next as OneRegisterInstruction).registerA == list
+            Opcode.INVOKE_VIRTUAL -> next.getReference<MethodReference>()?.let { call ->
+                call.definingClass == COPY_ON_WRITE && call.name in LIST_QUESTIONS && call.parameterTypes.isEmpty()
+            } == true && (next as FiveRegisterInstruction).registerCount == 1 && next.registerC == list
+            else -> false
+        }
     }
-    if (ownListReads != 1) return false
+    if (!readsStayPut) return false
     val calls = instructions.mapNotNull { it.getReference<MethodReference>() }
-    if (calls.any { it.definingClass == COPY_ON_WRITE }) return false
     val fillers = calls.filter {
         it.definingClass == classDef.type && it.returnType == "V" && it.parameterTypes.isEmpty()
     }.map { it.name }.distinct()
@@ -588,14 +605,17 @@ internal object FeedButtonStateFingerprint : Fingerprint(
  * TikTok's handler for a hold on a bottom tab, where holding Profile opens the account switcher
  * sheet: ProfileTabLongPressHandlerImpl's observer of the tab tag the long press posts. It checks
  * the tag is "USER", logs long_press_profile_tab and shows the sheet with the
- * switch_account_long_press source, which nothing else on 47.9.1 loads. 47.9.1 merged the
- * observer into a shared class as a static method taking the observer first, which leaves the
- * tag in p1 as before.
+ * switch_account_long_press source, which nothing else loads. R8 gives the observer one of two
+ * shapes: its own onChanged (48.0.2), or a static in a shared lambda class that takes the
+ * observer first (47.9.1 to 47.9.3). Either way the tag is p1.
  */
 internal object ProfileTabSwitcherFingerprint : Fingerprint(
     returnType = "V",
-    parameters = listOf("L", "Ljava/lang/Object;"),
     strings = listOf("USER", "long_press_profile_tab", "switch_account_long_press"),
+    custom = { method, _ ->
+        method.parameterTypes.lastOrNull() == "Ljava/lang/Object;" &&
+            method.parameterTypes.size == if (AccessFlags.STATIC.isSet(method.accessFlags)) 2 else 1
+    },
 )
 
 /**

@@ -178,18 +178,18 @@ final class NativeAccountLists implements AccountListSession.Transport {
         ReflectBridge(ClassLoader loader) { this.loader = loader; }
 
         @Override public Object saved(long cursor, int count, Guard guard) throws ReflectiveOperationException {
-            Class<?> wrapper = NativeAccountRows.type(loader, "X.1TVY");
-            Class<?> api = NativeAccountRows.type(loader, "X.1TVZ");
+            Class<?> wrapper = NativeAccountRows.type(loader, "X.1RBk");
+            Class<?> api = NativeAccountRows.type(loader, "X.1RBl");
             Object singleton = NativeAccountRows.field(wrapper, "LIZIZ", wrapper, true).get(null);
             Object service = NativeAccountRows.field(wrapper, "LIZ", api).get(singleton);
             if (!guard.current()) return null;
-            return NativeAccountRows.method(api, "LIZ", NativeAccountRows.type(loader, "X.02tX"), long.class, int.class)
+            return NativeAccountRows.method(api, "LIZ", NativeAccountRows.type(loader, "X.02uj"), long.class, int.class)
                     .invoke(service, cursor, count);
         }
 
         @Override public Future<?> blocked(int index, int count, Guard guard) throws ReflectiveOperationException {
-            Class<?> api = NativeAccountRows.type(loader, "X.18r1");
-            Object service = NativeAccountRows.field(NativeAccountRows.type(loader, "X.18r0"), "LIZ", api, true).get(null);
+            Class<?> api = NativeAccountRows.type(loader, "X.1CLl");
+            Object service = NativeAccountRows.field(NativeAccountRows.type(loader, "X.1CLk"), "LIZ", api, true).get(null);
             if (!guard.current()) return null;
             Object value = NativeAccountRows.method(api, "LIZ", NativeAccountRows.type(loader,
                     "com.google.common.util.concurrent.ListenableFuture"), int.class, int.class).invoke(service, index, count);
@@ -198,7 +198,7 @@ final class NativeAccountLists implements AccountListSession.Transport {
         }
 
         @Override public void subscribe(Object observable, Observer observer) throws ReflectiveOperationException {
-            Class<?> observerType = NativeAccountRows.type(loader, "X.02tY");
+            Class<?> observerType = NativeAccountRows.type(loader, "X.02vF");
             Object proxy = Proxy.newProxyInstance(loader, new Class<?>[]{observerType}, (self, method, args) -> {
                 switch (method.getName()) {
                     case "onSubscribe": observer.subscribed(args[0]); return null;
@@ -211,7 +211,7 @@ final class NativeAccountLists implements AccountListSession.Transport {
                     default: throw new IllegalStateException("Changed saved-post observer ABI");
                 }
             });
-            NativeAccountRows.method(NativeAccountRows.type(loader, "X.02tX"), "LIZ", void.class, observerType)
+            NativeAccountRows.method(NativeAccountRows.type(loader, "X.02uj"), "LIZ", void.class, observerType)
                     .invoke(observable, proxy);
         }
 
@@ -240,7 +240,7 @@ final class NativeAccountLists implements AccountListSession.Transport {
 
         @Override public void dispose(Object value) {
             if (value == null) return;
-            try { NativeAccountRows.method(NativeAccountRows.type(loader, "X.02tk"), "dispose", void.class).invoke(value); }
+            try { NativeAccountRows.method(NativeAccountRows.type(loader, "X.02vP"), "dispose", void.class).invoke(value); }
             catch (ReflectiveOperationException | RuntimeException unavailable) {
                 Logger.printInfo(() -> "Saved posts request cancellation failed");
             }

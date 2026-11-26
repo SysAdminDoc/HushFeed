@@ -25,7 +25,7 @@ internal const val FOLLOWING_INTEREST_USER = "Lcom/ss/android/ugc/aweme/feed/mod
 internal const val ROW_ORDER_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRowOrder;"
 
 /**
- * Where a tap on a LIVE in the row at the top of Following opens the room (X.1J8a.LJIIL on
+ * Where a tap on a LIVE in the row at the top of Following opens the room (X.1TDs.LJIIL on
  * 47.9.3): (Context, the tapped FollowingInterestUser, the row's list of them, position, view,
  * enter_from_merge, enter_method, skylight_data_from, two times). It builds the room's
  * EnterRoomConfig, room ids in the row's order included, and hands it to watchLive.

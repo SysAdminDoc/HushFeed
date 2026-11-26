@@ -82,7 +82,7 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
     private static volatile boolean truncated, firstObservationComplete;
     private static volatile ReadinessState contextReadiness = ReadinessState.UNOBSERVED;
     private static volatile ReadinessState captureReadiness = ReadinessState.UNOBSERVED;
-    // 0 means no native profile was installed, 1 is the verified global 47.9.3 profile, 2 unsupported.
+    // 0 means no native profile was installed, 1 is the verified global 48.0.2 profile, 2 unsupported.
     private static volatile int nativeProfile;
 
     private PushDeliveryReport() {}
@@ -91,7 +91,7 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
         nativeProfile = 1;
         install();
         try {
-            HookStatus.bound("Push delivery diagnostics", "global 47.9.3 native anchors");
+            HookStatus.bound("Push delivery diagnostics", "global 48.0.2 native anchors");
             HookStatus.runsWhilePaused("Push delivery diagnostics");
         } catch (RuntimeException | LinkageError failure) { unavailable(Problem.PROFILE_REGISTRATION); }
     }
@@ -304,7 +304,7 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
     private static List<String> renderLines() {
         List<String> lines = new ArrayList<>();
         lines.add("Current process only, except the suggested push line. Zero means unobserved, not failure. No server delivery is inferred.");
-        lines.add("Native registration anchors: " + (nativeProfile == 1 ? "global 47.9.3 installed"
+        lines.add("Native registration anchors: " + (nativeProfile == 1 ? "global 48.0.2 installed"
                 : nativeProfile == 2 ? "unsupported package/version" : "not installed"));
         lines.add("Native upload counters include all transports. Tokens and messages are not correlated.");
         lines.add("Android snapshots cover timed-capture attempts only. None means unobserved.");

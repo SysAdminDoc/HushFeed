@@ -115,7 +115,7 @@ final class SecurePopupProbe {
      * R8 named them.
      */
     private static String[] composeNames() {
-        return new String[]{"X.014x", "X.01pU", "X.014v", "X.01u7"};
+        return new String[]{"X.013P", "X.01pA", "X.013N", "X.01t1"};
     }
 
     private static int dp(Activity activity, int value) {

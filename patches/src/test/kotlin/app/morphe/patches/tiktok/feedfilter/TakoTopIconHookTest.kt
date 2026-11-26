@@ -24,16 +24,16 @@ import org.junit.Test
  */
 class TakoTopIconHookTest {
     private val stock = """
-        invoke-super {p0}, LX/02y2;->onCreate()V
-        invoke-static {}, LX/05lo;->LIZJ()LX/05lo;
+        invoke-super {p0}, LX/02t2;->onCreate()V
+        invoke-static {}, LX/07N8;->LIZLLL()LX/07N8;
         move-result-object v2
-        iget-object v0, p0, $TAKO_TOP_ICON_ASSEM->LL:LX/02ok;
-        invoke-interface {v0}, LX/02ok;->getValue()Ljava/lang/Object;
+        iget-object v0, p0, $TAKO_TOP_ICON_ASSEM->LL:LX/02pq;
+        invoke-interface {v0}, LX/02pq;->getValue()Ljava/lang/Object;
         move-result-object v1
         if-nez v1, :add
         return-void
         :add
-        iget-object v0, v2, LX/05lo;->LJFF:Ljava/util/concurrent/ConcurrentLinkedDeque;
+        iget-object v0, v2, LX/07N8;->LJFF:Ljava/util/concurrent/ConcurrentLinkedDeque;
         invoke-virtual {v0, v1}, Ljava/util/concurrent/ConcurrentLinkedDeque;->add(Ljava/lang/Object;)Z
         return-void
     """
@@ -70,9 +70,9 @@ class TakoTopIconHookTest {
     @Test
     fun `a build whose onCreate no longer opens with the super call goes without the hook`() {
         val body = """
-            invoke-static {}, LX/05lo;->LIZJ()LX/05lo;
+            invoke-static {}, LX/07N8;->LIZLLL()LX/07N8;
             move-result-object v0
-            invoke-super {p0}, LX/02y2;->onCreate()V
+            invoke-super {p0}, LX/02t2;->onCreate()V
             return-void
         """
         val refused = assertThrows(PatchException::class.java) {
@@ -85,7 +85,7 @@ class TakoTopIconHookTest {
     @Test
     fun `a build with no local for the answer goes without the hook`() {
         val body = """
-            invoke-super {p0}, LX/02y2;->onCreate()V
+            invoke-super {p0}, LX/02t2;->onCreate()V
             return-void
         """
         val refused = assertThrows(PatchException::class.java) {

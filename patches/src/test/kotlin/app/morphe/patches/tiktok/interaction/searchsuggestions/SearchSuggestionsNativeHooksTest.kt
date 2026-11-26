@@ -23,8 +23,8 @@ import org.junit.Test
 class SearchSuggestionsNativeHooksTest {
     @Test
     fun `both native first-screen branches pass their actual result through the hook`() {
-        val method = method("LX/18A2;", "LIZ", emptyList(), "Z", 3, true, """
-            sget v2, LX/18A2;->LIZIZ:I
+        val method = method("LX/0q71;", "LIZ", emptyList(), "Z", 3, true, """
+            sget v2, LX/0q71;->LIZIZ:I
             const/4 v1, 0x1
             if-eq v2, v1, :result
             const/4 v0, 0x2
@@ -50,11 +50,11 @@ class SearchSuggestionsNativeHooksTest {
 
     @Test
     fun `initial parameter hook receives the original key and object without losing native work`() {
-        val method = method("LX/0DgB;", "LIZ", listOf("Ljava/lang/String;"), "Ljava/lang/Object;", 3, true, """
-            invoke-static {}, LX/09a8;->LJ()LX/09a8;
+        val method = method("LX/0Eag;", "LIZ", listOf("Ljava/lang/String;"), "Ljava/lang/Object;", 3, true, """
+            invoke-static {}, LX/09TM;->LJ()LX/09TM;
             move-result-object v1
             const/4 v0, 0x0
-            invoke-virtual {v1, p0, v0}, LX/09a8;->LJIIJJI(Ljava/lang/String;Z)Ljava/lang/Object;
+            invoke-virtual {v1, p0, v0}, LX/09TM;->LJIIJJI(Ljava/lang/String;Z)Ljava/lang/Object;
             move-result-object v0
             return-object v0
         """)
@@ -169,9 +169,9 @@ class SearchSuggestionsNativeHooksTest {
                     val args = indices.map { registers[it] }
                     pending = when (target.definingClass) {
                         "Lapp/morphe/extension/tiktok/search/SearchSuggestions;" -> filter(target.name, args)
-                        "LX/09a8;", "LX/0Da7;" -> if (target.name == "LJIIJJI") {
+                        "LX/09TM;", "LX/0Da7;" -> if (target.name == "LJIIJJI") {
                             assertEquals(1, ++nativeReads)
-                            assertEquals(if (target.definingClass == "LX/09a8;") initial[2]
+                            assertEquals(if (target.definingClass == "LX/09TM;") initial[2]
                                 else "show_suggest_search_words", args[args.size - 2])
                             nativeValue
                         } else Any()

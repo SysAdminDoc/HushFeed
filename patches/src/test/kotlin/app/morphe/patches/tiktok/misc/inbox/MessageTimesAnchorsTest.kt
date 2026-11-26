@@ -10,6 +10,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.takes
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.cloneMutable
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -25,7 +26,6 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -77,10 +77,13 @@ class MessageTimesAnchorsTest {
 
     private fun checkHook(version: String, native: Method, bind: MessageRowBind) {
         val before = native.implementation!!.instructions.toList()
-        assertFalse("$version: nothing lands right after the padding", native.isBranchTarget(bind.padding + 1))
+        // 48.0.2's IM slot pads only when its update flags ask, and that test jumps right past the
+        // padding; the other slot pads on every bind.
+        val skips = native.parameterTypes.size == 2
+        assertEquals("$version: what lands right after the padding", skips, native.isBranchTarget(bind.padding + 1))
         val padding = before[bind.padding] as FiveRegisterInstruction
         assertEquals("$version: the padded row is the setPadding's receiver", padding.registerC, bind.row)
-        assertEquals("$version: the item is the last register", native.implementation!!.registerCount - 1, bind.item)
+        assertEquals("$version: the item is the first parameter", native.implementation!!.registerCount - native.parameterTypes.size, bind.item)
 
         val patched = MutableMethod(native)
         patched.reportMessageRow(bind)
@@ -149,33 +152,49 @@ class MessageTimesAnchorsTest {
         assertNull("no message on the way", bind(writesItem = false, paddings = 1).messageRowBind { false })
     }
 
-    private val ITEM = "LX/0NBI;"
-    private val HOLDER = "LX/0NAA;"
-    private val INNER = "LX/0NAF;"
-    private val MESSAGE_TYPE = "LX/0Bzr;"
-    private val SPACING = "LX/0N35;"
+    @Test
+    fun `a flagged bind that jumps past its padding is taken, a jump back to it is not`() {
+        val skipped = bind(writesItem = false, paddings = 1, flags = true).messageRowBind { it == MESSAGE_TYPE }
+        assertNotNull(skipped)
+        // The flag test sits at 0, so everything moves down by one; p1 is v3 of five registers.
+        assertEquals(12, skipped!!.padding)
+        assertEquals(3, skipped.item)
+        assertNull("a jump back", bind(writesItem = false, paddings = 1, flags = true, loops = true).messageRowBind { it == MESSAGE_TYPE })
+    }
+
+    private val ITEM = "LX/0OFl;"
+    private val HOLDER = "LX/0OEd;"
+    private val INNER = "LX/0OEi;"
+    private val MESSAGE_TYPE = "LX/0DJe;"
+    private val SPACING = "LX/0O7Z;"
+    private val FLAGS = "LX/0b9w;"
 
     /**
      * A bind cut down to the part the reader looks at, as 47.9.3 has it, in four registers: the
      * message read (indexes 0-3), TikTok's spacing read into v0 (4-8), the row into v1 (9-10), and
-     * setPadding on the row at index 11. p1 is v3.
+     * setPadding on the row at index 11. p1 is v3. With [flags] it takes the IM slot's update flags
+     * as p2 (five registers) and first tests one that skips to right after the padding, and with
+     * [loops] a jump after the padding also goes back there.
      */
-    private fun bind(writesItem: Boolean, paddings: Int): Method {
+    private fun bind(writesItem: Boolean, paddings: Int, flags: Boolean = false, loops: Boolean = false): Method {
         val padding = "invoke-virtual { v1, v0, v0, v0, v0 }, Landroid/view/View;->setPadding(IIII)V"
+        val parameters = listOfNotNull(ITEM, FLAGS.takeIf { flags }).map { ImmutableMethodParameter(it, null, null) }
         val method = MutableMethod(
             ImmutableMethod(
-                MESSAGE_ROW_SLOTS[0], "Rq", listOf(ImmutableMethodParameter(ITEM, null, null)), "V",
+                MESSAGE_ROW_SLOTS[0], "Nr", parameters, "V",
                 AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
-                ImmutableMethodImplementation(4, emptyList(), null, null),
+                ImmutableMethodImplementation(if (flags) 5 else 4, emptyList(), null, null),
             ),
         )
-        method.addInstructions(
+        method.addInstructionsWithLabels(
+            0,
             """
-                invoke-interface { p1 }, $ITEM->LLJZIJLIL()$HOLDER
+                ${if (flags) "if-eqz p2, :padded" else ""}
+                invoke-interface { p1 }, $ITEM->LJIILIIL()$HOLDER
                 move-result-object v0
                 iget-object v0, v0, $HOLDER->LIZ:$INNER
                 iget-object v0, v0, $INNER->LIZ:$MESSAGE_TYPE
-                invoke-interface { p1 }, $ITEM->LLJZIJLIL()$HOLDER
+                invoke-interface { p1 }, $ITEM->LJIILIIL()$HOLDER
                 ${if (writesItem) "move-result-object p1" else "move-result-object v0"}
                 iget-object v0, v0, $HOLDER->LIZIZ:$SPACING
                 invoke-interface { v0 }, $SPACING->getPaddingDp()I
@@ -183,7 +202,9 @@ class MessageTimesAnchorsTest {
                 invoke-virtual { p0 }, ${MESSAGE_ROW_SLOTS[0]}->Lq()Landroid/view/View;
                 move-result-object v1
                 $padding
+                :padded
                 ${if (paddings > 1) padding else "nop"}
+                ${if (loops) "if-eqz v0, :padded" else "nop"}
                 return-void
             """,
         )

@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @RunWith(RobolectricTestRunner.class)
 public class LiveComposeModeTest {
-    /** TikTok's Compose palette modes, named as X.0ofT names them on 47.9.3. */
+    /** TikTok's Compose palette modes, named as X.0hLJ names them on 48.0.2. */
     enum Mode { Auto, Light, Dark }
 
     /** The guest spot page: a plain fragment under the guest panel; only getParentFragment is read. */

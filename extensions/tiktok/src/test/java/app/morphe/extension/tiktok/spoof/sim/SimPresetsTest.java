@@ -41,6 +41,9 @@ public class SimPresetsTest {
         SimPreset serbia = SimPresets.findSelected("rs", "22003", "mt:s");
         assertEquals("Europe/Belgrade", serbia.timeZone);
         assertTrue(serbia.matches("serbia"));
+        SimPreset azerbaijan = SimPresets.findSelected("az", "40001", "Azercell");
+        assertEquals("#537 preset az", "Asia/Baku", azerbaijan.timeZone);
+        assertTrue(azerbaijan.matches("azer"));
     }
 
     @Test

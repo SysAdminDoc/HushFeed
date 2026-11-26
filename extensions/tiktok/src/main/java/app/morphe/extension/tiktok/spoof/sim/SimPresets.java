@@ -40,6 +40,7 @@ public class SimPresets {
             new SimPreset("Hungary", "hu", "21630", "Magyar Telekom", "Europe/Budapest"),
             new SimPreset("Ireland", "ie", "27201", "Vodafone", "Europe/Dublin"),
             new SimPreset("Turkey", "tr", "28601", "Turkcell", "Europe/Istanbul"),
+            new SimPreset("Azerbaijan", "az", "40001", "Azercell", "Asia/Baku"),
             new SimPreset("United Arab Emirates", "ae", "42402", "Etisalat", "Asia/Dubai"),
             new SimPreset("Saudi Arabia", "sa", "42001", "stc", "Asia/Riyadh"),
             new SimPreset("Qatar", "qa", "42701", "Ooredoo", "Asia/Qatar"),

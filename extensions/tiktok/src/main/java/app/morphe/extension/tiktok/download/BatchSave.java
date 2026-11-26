@@ -234,6 +234,7 @@ final class BatchSave {
         try {
             File picture = temp(app, temporary);
             RemoteMedia.fetch(source.video, picture, RemoteMedia.Kind.VIDEO);
+            PlayableVideo.check(picture);
             File result = picture;
             if (!source.audio.isEmpty()) {
                 File sound = temp(app, temporary);

@@ -547,6 +547,7 @@ Copy the video link,Copy the video link
 Copy user ID,Copy user ID
 Copy username,Copy username
 Copy video ID,Copy video ID
+Copy-protected videos can't be saved,Copy-protected videos can't be saved
 Couldn't add the caption. Saving without it.,Couldn't add the caption. Saving without it.
 Couldn't add the older seen videos. Try again.,Couldn't add the older seen videos. Try again.
 Couldn't change the Lab settings. Try again.,Couldn't change the Lab settings. Try again.
@@ -1597,6 +1598,7 @@ Not interested in this video,Not interested in this video
 Not read yet,Not read yet
 Not requested in this process yet,Not requested in this process yet
 Not saved yet,Not saved yet
+Not saved. The file wasn't a playable video.,Not saved. The file wasn't a playable video.
 Not seen,Not seen
 Not seen yet,Not seen yet
 "Nothing has been checked yet, so there's nothing to report.","Nothing has been checked yet, so there's nothing to report."

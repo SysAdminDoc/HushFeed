@@ -1605,6 +1605,8 @@ Save again	Erneut speichern
 The saved-video choice couldn't open. Try again.	Auswahl zum Video nicht geöffnet. Versuch es erneut.
 The saved-video choice is still open	Auswahl zum gespeicherten Video noch offen
 No full file for this video. Try again later.	Keine ganze Datei für das Video. Später nochmal.
+Copy-protected videos can't be saved	Kopiergeschützte Videos lassen sich nicht speichern
+Not saved. The file wasn't a playable video.	Nicht gespeichert. Die Datei war kein abspielbares Video.
 Saving video to %1$s	Video wird in %1$s gespeichert
 Video and details saved to %1$s	Video und Details in %1$s gespeichert
 Saved, but a later save may make a second copy	Gespeichert, erneutes Speichern evtl. doppelt

@@ -372,6 +372,7 @@ final class VideoDownloads {
             boolean[] soundSaved = {false};
             boolean[] remembered = {!checkSaved};
             boolean[] stamped = {false};
+            PlayableVideo.Problem[] refused = {null};
             try {
                 SaveProgress.Outcome outcome = progress.run(index -> {
                     if (index == 0) {
@@ -401,6 +402,9 @@ final class VideoDownloads {
                                 separate = false;
                                 stamped[0] = true;
                             }
+                            // Encrypted, or no picture to play (#544): it stays out of the
+                            // gallery, and the temporary files go below.
+                            PlayableVideo.check(picture[0]);
                             File result = picture[0];
                             if (separate && !muted) {
                                 result = temp(app, temporary);
@@ -424,6 +428,10 @@ final class VideoDownloads {
                             if (burnCaption) result = captioned(app, temporary, result, facts, progress);
                             if (!tags.isEmpty()) result = tagged(app, temporary, result, tags);
                             published[0] = MediaFileWriter.publishForResult(app, result, name, "video/mp4", path, true);
+                        } catch (PlayableVideo.Refused refusal) {
+                            refused[0] = refusal.problem;
+                            progress.stop();
+                            throw refusal;
                         } catch (IOException | RuntimeException failure) {
                             progress.stop();
                             throw failure;
@@ -456,7 +464,9 @@ final class VideoDownloads {
                         subtitles[0]++;
                     }
                 });
-                if (published[0] == null && burnCaption && outcome.cancelled > 0
+                if (refused[0] != null) {
+                    PlayableVideo.tell(refused[0]);
+                } else if (published[0] == null && burnCaption && outcome.cancelled > 0
                         && outcome.stop == SaveProgress.Stop.NONE) {
                     // Cancel while the caption was written in, which stops at once and leaves
                     // nothing in the gallery.

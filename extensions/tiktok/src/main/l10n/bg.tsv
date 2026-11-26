@@ -1605,6 +1605,8 @@ Save again	Запази отново
 The saved-video choice couldn't open. Try again.	Изборът за запазено видео не се отвори. Опитай пак.
 The saved-video choice is still open	Изборът за запазеното видео още е отворен
 No full file for this video. Try again later.	Няма пълен файл за това видео. Опитай пак по-късно.
+Copy-protected videos can't be saved	Видеа със защита от копиране не могат да се запазват
+Not saved. The file wasn't a playable video.	Не е запазено. Файлът не е видео за възпроизвеждане.
 Saving video to %1$s	Запазване на видеото в %1$s
 Video and details saved to %1$s	Видеото и данните са запазени в %1$s
 Saved, but a later save may make a second copy	Запазено, но следващо запазване може да създаде второ копие

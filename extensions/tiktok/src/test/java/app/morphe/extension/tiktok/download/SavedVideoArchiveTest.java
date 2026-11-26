@@ -54,7 +54,8 @@ import org.robolectric.util.ReflectionHelpers;
 public class SavedVideoArchiveTest {
     @Rule public final SettingsContextRule settings = new SettingsContextRule();
     private static final String FOLDER = "DCIM/SavedVideoArchiveTest";
-    private static final byte[] VIDEO = new byte[]{0, 0, 0, 16, 'f', 't', 'y', 'p', 'i', 's', 'o', 'm', 0, 0, 0, 0};
+    /** A video with a picture track, since a save reads the tracks before publishing (#544). */
+    private static final byte[] VIDEO = Mp4Fixture.playable();
     private final AtomicInteger requests = new AtomicInteger();
     private final AtomicInteger coverRequests = new AtomicInteger();
     private final List<String> fetched = new java.util.concurrent.CopyOnWriteArrayList<>();

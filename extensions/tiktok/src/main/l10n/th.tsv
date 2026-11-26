@@ -1605,6 +1605,8 @@ Save again	บันทึกอีกครั้ง
 The saved-video choice couldn't open. Try again.	ไม่สามารถเปิดตัวเลือกสำหรับวิดีโอที่บันทึกไว้ได้ โปรดลองอีกครั้ง
 The saved-video choice is still open	ตัวเลือกสำหรับวิดีโอที่บันทึกไว้ยังคงเปิดอยู่
 No full file for this video. Try again later.	ไม่มีไฟล์ฉบับเต็มสำหรับวิดีโอนี้ โปรดลองอีกครั้งในภายหลัง
+Copy-protected videos can't be saved	วิดีโอที่ป้องกันการคัดลอกบันทึกไม่ได้
+Not saved. The file wasn't a playable video.	ไม่ได้บันทึก ไฟล์นี้ไม่ใช่วิดีโอที่เล่นได้
 Saving video to %1$s	กำลังบันทึกวิดีโอไปยัง %1$s
 Video and details saved to %1$s	บันทึกวิดีโอและรายละเอียดไปยัง %1$s แล้ว
 Saved, but a later save may make a second copy	บันทึกแล้ว แต่การบันทึกครั้งหน้าอาจได้สำเนาซ้ำ

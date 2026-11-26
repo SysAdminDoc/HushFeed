@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config;
 
 /**
  * The read a download gets before it reaches the gallery (#544), on files built box by box and on
- * a real DASH stream.
+ * a real DASH stream, and the two markers in TikTok's model that refuse a save up front.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -103,6 +103,27 @@ public class PlayableVideoTest {
                 refused instanceof SaveProgress.Skip);
         refused = assertThrows(PlayableVideo.Refused.class, () -> PlayableVideo.check(write(ftyp())));
         assertEquals(Problem.UNPLAYABLE, refused.problem);
+    }
+
+    @Test public void tikToksMarkersRefuseAPostUpFront() throws Exception {
+        PhotoConversionTest.VideoPost post = new PhotoConversionTest.VideoPost("1",
+                new AdvancedDownloadsTest.VideoData(List.of()));
+        assertNull("an ordinary post", PlayableVideo.marked(post));
+        assertNull("nothing to read", PlayableVideo.marked(null));
+        assertNull("a model with neither flag", PlayableVideo.marked(new Object()));
+        PlayableVideo.checkMarkers(post);
+
+        post.video.enableIntertrustDrm = true;
+        assertEquals(Problem.COPY_PROTECTED, PlayableVideo.marked(post));
+        post.isSubOnlyVideo = true;
+        assertEquals("subscriber-only is the reason a reader knows", Problem.SUBSCRIBER_ONLY, PlayableVideo.marked(post));
+        PlayableVideo.Refused refused = assertThrows(PlayableVideo.Refused.class, () -> PlayableVideo.checkMarkers(post));
+        assertEquals(Problem.SUBSCRIBER_ONLY, refused.problem);
+
+        // TikTok's Aweme answers through its getter, Aweme.isSubOnlyVideo()Z.
+        assertEquals(Problem.SUBSCRIBER_ONLY, PlayableVideo.marked(new Object() {
+            @SuppressWarnings("unused") public boolean isSubOnlyVideo() { return true; }
+        }));
     }
 
     private Problem problem(byte[] bytes) throws IOException {

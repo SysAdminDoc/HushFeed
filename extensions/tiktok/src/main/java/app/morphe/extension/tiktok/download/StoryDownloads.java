@@ -276,6 +276,7 @@ public final class StoryDownloads {
             Utils.showToastShort(L10n.t("Open the story again and try once more"));
             return true;
         }
+        if (PlayableVideo.refusedUpFront(aweme)) return true;
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {

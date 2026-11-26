@@ -33,7 +33,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 
 /**
- * A subscriber-only video saved as a file that played black with no sound (#544). A download
+ * A subscriber-only video saved as a file that played black with no sound (#544). A post TikTok
+ * marks as subscriber-only or DRM-sourced is refused before anything is fetched, and a download
  * that comes down encrypted or as no video at all never reaches the gallery. Every save path that
  * publishes a fetched video is covered: the single save, a story's own save and a run of picked
  * videos. An ordinary save still lands byte for byte.
@@ -44,6 +45,7 @@ public class UnplayableSaveTest {
     private static final String VIDEO_URL = "https://v16.tiktokcdn.com/video/one";
     private static final String OTHER_URL = "https://v16.tiktokcdn.com/video/two";
     private static final String COPY_PROTECTED = "Copy-protected videos can't be saved";
+    private static final String SUBSCRIBER_ONLY = "Subscriber-only posts can't be saved";
     private static final String NOT_A_VIDEO = "Not saved. The file wasn't a playable video.";
 
     @Rule public final SettingsContextRule settings = new SettingsContextRule();
@@ -164,6 +166,43 @@ public class UnplayableSaveTest {
         }
     }
 
+    @Test public void aSubscriberOnlyPostIsRefusedBeforeAnythingIsFetched() throws Exception {
+        served.put(VIDEO_URL, Mp4Fixture.playable());
+        PhotoConversionTest.VideoPost post = post("subscribers-1", VIDEO_URL);
+        post.isSubOnlyVideo = true;
+
+        assertTrue("TikTok's download is refused too", OriginalPhotos.start(post, RuntimeEnvironment.getApplication()));
+        settle();
+        assertEquals(SUBSCRIBER_ONLY, ShadowToast.getTextOfLatestToast());
+
+        ShadowToast.reset();
+        OriginalPhotos.startFromButton(post, RuntimeEnvironment.getApplication());
+        settle();
+        assertEquals("the save button says the same", SUBSCRIBER_ONLY, ShadowToast.getTextOfLatestToast());
+
+        assertEquals("nothing was fetched", List.of(), asked);
+        assertEquals(List.of(), added());
+        assertFalse(VideoDownloads.saving(post.getAid()));
+    }
+
+    @Test public void aDrmSourcedVideoIsRefusedBeforeAnythingIsFetched() throws Exception {
+        served.put(VIDEO_URL, Mp4Fixture.playable());
+        PhotoConversionTest.VideoPost post = post("drm-1", VIDEO_URL);
+        post.video.enableIntertrustDrm = true;
+
+        assertTrue(OriginalPhotos.start(post, RuntimeEnvironment.getApplication()));
+        settle();
+        assertEquals(COPY_PROTECTED, ShadowToast.getTextOfLatestToast());
+
+        ShadowToast.reset();
+        OriginalPhotos.startFromButton(post, RuntimeEnvironment.getApplication());
+        settle();
+        assertEquals(COPY_PROTECTED, ShadowToast.getTextOfLatestToast());
+
+        assertEquals("nothing was fetched", List.of(), asked);
+        assertEquals(List.of(), added());
+    }
+
     @Test public void aStoryIsCheckedTheSameWay() throws Exception {
         // Automatic with nothing taller listed: the story's own save takes TikTok's clean address.
         Settings.DOWNLOAD_VIDEO_QUALITY.save("auto");
@@ -179,6 +218,19 @@ public class UnplayableSaveTest {
         assertEquals(List.of(), added());
         assertEquals(COPY_PROTECTED, ShadowToast.getTextOfLatestToast());
         assertNoTemporaryLeft("story-");
+
+        asked.clear();
+        ShadowToast.reset();
+        AdvancedDownloadsTest.VideoData locked = new AdvancedDownloadsTest.VideoData(List.of());
+        locked.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address(VIDEO_URL, 900);
+        PhotoConversionTest.VideoPost subscribers = new PhotoConversionTest.VideoPost("story-2", locked);
+        subscribers.isSubOnlyVideo = true;
+        ownIds.add(subscribers.getAid());
+        assertTrue(StoryDownloads.saveSingle(RuntimeEnvironment.getApplication(), subscribers));
+        settle();
+        assertEquals("a subscriber-only story is refused before the fetch", List.of(), asked);
+        assertEquals(SUBSCRIBER_ONLY, ShadowToast.getTextOfLatestToast());
+        assertEquals(List.of(), added());
     }
 
     @Test public void aRunOfPickedVideosLeavesOutTheOnesThatDontPlay() throws Exception {
@@ -187,11 +239,13 @@ public class UnplayableSaveTest {
         served.put(OTHER_URL, movie);
         PhotoConversionTest.VideoPost locked = post("run-1", VIDEO_URL);
         PhotoConversionTest.VideoPost plain = post("run-2", OTHER_URL);
+        PhotoConversionTest.VideoPost subscribers = post("run-3", "https://v16.tiktokcdn.com/video/three");
+        subscribers.isSubOnlyVideo = true;
 
-        assertTrue(BatchSave.start(RuntimeEnvironment.getApplication(), List.of(locked, plain)));
+        assertTrue(BatchSave.start(RuntimeEnvironment.getApplication(), List.of(locked, plain, subscribers)));
         settle();
 
-        assertEquals(List.of(VIDEO_URL, OTHER_URL), asked);
+        assertEquals("the subscriber-only post is never fetched", List.of(VIDEO_URL, OTHER_URL), asked);
         List<File> added = added();
         assertEquals("only the video that plays is saved: " + added, 1, added.size());
         assertArrayEquals(movie, Files.readAllBytes(added.get(0).toPath()));

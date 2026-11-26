@@ -1740,6 +1740,7 @@ Save again	Сохранить снова
 The saved-video choice couldn't open. Try again.	Выбор сохранённого видео не открылся. Повторите.
 The saved-video choice is still open	Выбор для сохранённого видео всё ещё открыт
 No full file for this video. Try again later.	Полного файла нет. Повторите позже.
+Subscriber-only posts can't be saved	Нельзя сохранить публикации для платных подписчиков
 Copy-protected videos can't be saved	Видео с защитой от копирования нельзя сохранить
 Not saved. The file wasn't a playable video.	Не сохранено. Файл не воспроизводится как видео.
 Saving video to %1$s	Видео сохраняется в %1$s

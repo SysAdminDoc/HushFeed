@@ -28,6 +28,9 @@ public final class OriginalPhotos {
     private OriginalPhotos() {}
 
     public static boolean start(Object aweme, Context context) {
+        // A post TikTok marks subscriber-only or DRM-sourced would come down as a file that
+        // doesn't play (#544), here, in another app or in TikTok's own save, so none of them runs.
+        if (PlayableVideo.refusedUpFront(aweme)) return true;
         // Handing the link to another app replaces the save, so it comes before all of it.
         if (ExternalDownloader.handOff(aweme, context)) return true;
         // With Ask for the quality on each save on, the choice comes before any of the save, the
@@ -54,6 +57,7 @@ public final class OriginalPhotos {
             Utils.showToastShort(L10n.t("No video selected. Open a video first."));
             return;
         }
+        if (PlayableVideo.refusedUpFront(aweme)) return;
         if (ExternalDownloader.handOff(aweme, context)) return;
         if (QualityChoice.offer(aweme, context)) return;
         if (!VideoDownloads.savesTheCover()) CoverSaver.beside(context, aweme);

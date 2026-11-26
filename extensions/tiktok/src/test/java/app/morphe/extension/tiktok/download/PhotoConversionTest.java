@@ -251,6 +251,8 @@ public class PhotoConversionTest {
     public static final class VideoPost {
         public final AdvancedDownloadsTest.Info photoModeImageInfo = null;
         public final AdvancedDownloadsTest.VideoData video;
+        /** TikTok's is_sub_only_video: only the creator's subscribers can watch it (#544). */
+        public boolean isSubOnlyVideo;
         private final String aid;
         VideoPost(String aid, AdvancedDownloadsTest.VideoData video) { this.aid = aid; this.video = video; }
         public String getAid() { return aid; }

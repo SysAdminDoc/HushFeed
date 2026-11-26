@@ -78,6 +78,8 @@ public class AdvancedDownloadsTest {
         public List<Audio> bitRateAudio = List.of();
         public boolean dash;
         public Address downloadNoWatermarkAddr, downloadAddr, playAddr;
+        /** TikTok's is_drm_source: the stream is encrypted for the player's DRM (#544). */
+        public boolean enableIntertrustDrm;
         VideoData(List<Gear> gears) { bitRate = gears; }
         public List<Gear> getBitRate() { throw new AssertionError("Must not recurse into playback getter"); }
         public boolean hasDashBitrate() { return dash; }

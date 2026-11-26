@@ -279,6 +279,8 @@ Block the creator in one tap. Once TikTok confirms, skip to the next video. A sm
 Block this commenter	Bu yorumu yazanı engelle
 Block this creator	Bu içerik üreticisini engelle
 Block this sound	Bu sesi engelle
+Block sound	Sesi engelle
+Unblock sound	Sesin engelini kaldır
 Blocked	Engellendi
 Blocked %1$s	%1$s engellendi
 Blocked %1$s. Unblock	%1$s engellendi. Engeli kaldır
@@ -1104,6 +1106,8 @@ Show the mute button on videos	Videolarda sesi kapatma düğmesini göster
 Add a button beside the block control that turns the feed's sound off and on.	Engelleme düğmesinin yanına, akışın sesini kapatıp açan bir düğme ekle.
 Show the block button on videos	Videolarda engelle düğmesini göster
 Show the block sound button	Sesi engelle düğmesini göster
+Show Block sound on sound pages	Ses sayfalarında Sesi engelle düğmesini göster
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Bir sesin sayfasında, videodaki dönen plağın açtığı sayfada, Kaydet'in altına Sesi engelle düğmesi ekler. O sesi kullanan her videoyu atlar.
 Show the country a video was posted from next to the creator's name.	Videonun paylaşıldığı ülkeyi içerik üreticisinin adının yanında göster.
 Show the current spoken caption while the other controls are hidden.	Diğer kontroller gizliyken o an konuşulan altyazıyı göster.
 Show the handle instead of the name	Ad yerine kullanıcı adını göster

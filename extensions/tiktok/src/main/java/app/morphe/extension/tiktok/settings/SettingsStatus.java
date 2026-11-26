@@ -107,6 +107,7 @@ public class SettingsStatus {
     public static boolean appIconPickerEnabled = false;
     public static boolean diagnosticsEnabled = false;
     public static boolean blockAuthorEnabled = false;
+    public static boolean soundPageBlockEnabled = false;
     public static boolean authorRegionEnabled = false;
     public static boolean sensitiveWarningsEnabled = false;
     /** Skip content warnings found Aweme's risk model getter, so the unverified notices switch works. */
@@ -606,6 +607,10 @@ public class SettingsStatus {
 
     public static void enableBlockAuthor() {
         blockAuthorEnabled = true;
+    }
+
+    public static void enableSoundPageBlock() {
+        soundPageBlockEnabled = true;
     }
 
     public static void enableHideSuggestedAccounts() {

@@ -330,6 +330,8 @@ Block new bottom tabs	Блокировать новые нижние вклад�
 Block this commenter	Заблокировать этого комментирующего
 Block this creator	Заблокировать этого автора
 Block this sound	Заблокировать этот звук
+Block sound	Заблокировать звук
+Unblock sound	Разблокировать звук
 Blocked	Заблокировано
 Blocked %1$s	Заблокировано: %1$s
 Blocked %1$s. Unblock	Заблокировано: %1$s. Разблокировать
@@ -1150,6 +1152,8 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	Показывать превью видео при перетаскивании полосы прогресса.
 Show the block button on videos	Показывать кнопку блокировки на видео
 Show the block sound button	Показывать кнопку блокировки звука
+Show Block sound on sound pages	Показывать «Заблокировать звук» на страницах звуков
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Добавляет кнопку «Заблокировать звук» под «Сохранить» на странице звука, которую открывает вращающаяся пластинка на видео. Пропускает все видео с этим звуком.
 Show failures on screen	Показывать ошибки на экране
 Show gates	Показывать переключатели
 Show last report	Показать последний отчёт

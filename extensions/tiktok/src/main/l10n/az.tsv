@@ -279,6 +279,8 @@ Block the creator in one tap. Once TikTok confirms, skip to the next video. A sm
 Block this commenter	Bu şərh yazanı bloklayın
 Block this creator	Bu yaradıcını bloklayın
 Block this sound	Bu səsi bloklayın
+Block sound	Səsi blokla
+Unblock sound	Səsi blokdan çıxar
 Blocked	Bloklanıb
 Blocked %1$s	%1$s bloklandı
 Blocked %1$s. Unblock	%1$s bloklandı. Blokdan çıxarın
@@ -1104,6 +1106,8 @@ Show the mute button on videos	Videolarda səssiz düyməsini göstərin
 Add a button beside the block control that turns the feed's sound off and on.	Bloklama idarəetməsinin yanına lentin səsini söndürüb yandıran düymə əlavə edin.
 Show the block button on videos	Videolarda bloklama düyməsini göstərin
 Show the block sound button	Səsi bloklama düyməsini göstərin
+Show Block sound on sound pages	Səs səhifələrində Səsi blokla düyməsini göstər
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Səs səhifəsində Yadda saxla düyməsinin altına Səsi blokla düyməsi əlavə edir. Bu, videodakı fırlanan valın açdığı səhifədir. O səsdən istifadə edən bütün videoları keçir.
 Show the country a video was posted from next to the creator's name.	Videonun paylaşıldığı ölkəni yaradıcının adının yanında göstərin.
 Show the current spoken caption while the other controls are hidden.	Digər idarəetmələr gizlədiləndə cari danışılan başlığı göstərin.
 Show the handle instead of the name	Ad əvəzinə istifadəçi adını göstərin

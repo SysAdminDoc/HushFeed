@@ -1613,6 +1613,84 @@
   "notes": "The buttons are never pressed (a press sends a real block request). Hide this creator and Block this sound need the Feed filter patch in the build (SettingsStatus.feedFilterEnabled, BlockAuthorOverlay.java:setFeedVisible), true on an all-patches APK. The sound button also needs a usable sound on the current video and the overlay only shows on the recommendation feed with no comment sheet open, so a sound-less first video (a photo post or LIVE) can make that one finddesc fail; swipe once and rerun. The probe set for block_author_button runs the overlay refresh itself, the restart is for the other two switches."
  },
  {
+  "name": "Block sound on sound pages",
+  "category": "Interaction",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/blockauthor/SoundPageBlockPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/SoundPageBlockButton.java"
+  ],
+  "settings": [
+   {
+    "key": "sound_page_block_button",
+    "default": true,
+    "type": "bool",
+    "row": "Show Block sound on sound pages"
+   }
+  ],
+  "surface": "other",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.soundPageBlockEnabled is true, so the sound page hook is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "soundPageBlockEnabled"
+      },
+      "expect": "\\bsoundPageBlockEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "switch-drives-hook",
+    "what": "With the switch on and Feed filter in the APK, the page's button is wanted (and not when the switch is off).",
+    "steps": [
+     {
+      "set": {
+       "sound_page_block_button": "true"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.blockauthor.SoundPageBlockButton",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> true",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "sound_page_block_button": "false"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.blockauthor.SoundPageBlockButton",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> false",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "sound_page_block_button": "true"
+      }
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "MusicDetailActivity.onResume calls SoundPageBlockButton.onResume, which puts a Block sound pill under Save (the first Button in the header's HorizontalScrollView) once the header is built. The sound is the page intent's \"id\" extra, the id the feed filter matches; a Music handed to the page adds the name. Check on a phone: tap the spinning record on a video, tap Block sound, see the banner and the label turn to Unblock sound, and the id land in blocked_sound_ids; tap again to take it off."
+ },
+ {
   "name": "Block contact list access",
   "category": "Privacy",
   "default": true,

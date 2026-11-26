@@ -17,6 +17,7 @@ Every Hushfeed release, newest first.
 * `Record` in a LIVE starts again after a recording that ended before any video came through. Stopping right away, or leaving the LIVE in the first second or two, left an empty recording behind that blocked every later one, and `Retry` couldn't clear it (#531).
 * With `LIVE buttons in the long-press menu` on, Ghost mode's eye moves into that menu too, under Record and Auto tap, so nothing sits on the stream. The row says what a tap does, `Let the host see you` or `Hide from the host next time`. A LIVE you're watching unseen doesn't get that menu, because TikTok holds back the room's chat and buttons along with your visit. So in those rooms the eye, Record and Auto tap stay on the video until TikTok lets you in (#359).
 * `Video bitrate limit` has a 1.5 Mb/s choice between 1 and 2 Mb/s (#533).
+* New `Block sound on sound pages` patch. Tap the spinning record on a video and the sound's page has a `Block sound` button under `Save`, which skips every video using that sound. Tap it again to unblock. It needs `Feed filter`, and you can switch it off in Hushfeed settings > Feed screen.
 
 ## 0.85.0 (2026-11-24)
 

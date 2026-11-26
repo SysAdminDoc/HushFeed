@@ -136,6 +136,9 @@
       "hide_live_bubble",
       "hide_wind_down_screens"
     ],
+    "Block sound on sound pages": [
+      "sound_page_block_button"
+    ],
     "Block suggested video notifications": [
       "block_suggested_video_notifications"
     ],
@@ -4820,6 +4823,12 @@
       "key": "sound_grid_sort",
       "type": "string",
       "default": "off"
+    },
+    "sound_page_block_button": {
+      "field": "SOUND_PAGE_BLOCK_BUTTON",
+      "key": "sound_page_block_button",
+      "type": "boolean",
+      "default": true
     },
     "sound_seekbar": {
       "field": "SOUND_SEEKBAR",

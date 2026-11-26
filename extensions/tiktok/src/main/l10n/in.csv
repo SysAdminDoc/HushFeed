@@ -268,6 +268,8 @@ Block new bottom tabs,Blokir tab bawah yang baru
 Block this commenter,Blokir pengomentar ini
 Block this creator,Blokir kreator ini
 Block this sound,Blokir suara ini
+Block sound,Blokir suara
+Unblock sound,Buka blokir suara
 Blocked,Diblokir
 Blocked %1$s,%1$s diblokir
 Blocked %1$s. Unblock,%1$s diblokir. Buka blokir
@@ -1059,6 +1061,8 @@ Show TikTok's own progress bar on videos where it's normally hidden.,Tampilkan b
 Show a video preview thumbnail while dragging the progress bar.,Tampilkan pratinjau video saat menggeser bilah progres.
 Show the block button on videos,Tampilkan tombol blokir di video
 Show the block sound button,Tampilkan tombol blokir suara
+Show Block sound on sound pages,Tampilkan Blokir suara di halaman suara
+"Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.","Menambahkan tombol Blokir suara di bawah Simpan pada halaman suara, yang dibuka oleh piringan berputar di video. Melewati setiap video yang memakai suara itu."
 Show failures on screen,Tampilkan kegagalan di layar
 Show gates,Tampilkan gate
 Show last report,Tampilkan laporan terakhir

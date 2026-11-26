@@ -285,6 +285,8 @@ Block new bottom tabs	Neue untere Tabs blockieren
 Block this commenter	Diesen Kommentierenden blockieren
 Block this creator	Diesen Ersteller blockieren
 Block this sound	Diesen Sound blockieren
+Block sound	Sound blockieren
+Unblock sound	Sound entblocken
 Blocked	Blockiert
 Blocked %1$s	%1$s blockiert
 Blocked %1$s. Unblock	%1$s blockiert. Entblocken
@@ -1075,6 +1077,8 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	Beim Ziehen des Fortschrittsbalkens ein Vorschaubild des Videos zeigen.
 Show the block button on videos	Blockieren-Schaltfläche auf Videos anzeigen
 Show the block sound button	Die Schaltfläche zum Blockieren des Sounds anzeigen
+Show Block sound on sound pages	„Sound blockieren“ auf Sound-Seiten anzeigen
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Fügt auf der Seite eines Sounds, die die drehende Platte an einem Video öffnet, unter „Speichern“ eine Schaltfläche „Sound blockieren“ hinzu. Sie überspringt jedes Video mit diesem Sound.
 Show failures on screen	Fehler auf dem Bildschirm anzeigen
 Show gates	Schalter anzeigen
 Show last report	Letzten Bericht anzeigen

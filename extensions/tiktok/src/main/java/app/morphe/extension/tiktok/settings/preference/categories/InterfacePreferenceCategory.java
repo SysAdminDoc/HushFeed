@@ -225,11 +225,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
 
     /**
      * Every control Hushfeed draws on the video, in one card. They were split between Feed filter
-     * and Playback, so nobody could see in one place which of them would show up. Each starts off.
+     * and Playback, so nobody could see in one place which of them would show up. Each starts off,
+     * except Block sound on sound pages, which only shows on a page someone opened on purpose.
      */
     private void addButtonsOnVideos(Context context) {
         boolean any = SettingsStatus.blockAuthorEnabled || SettingsStatus.notInterestedEnabled
-                || SettingsStatus.feedMuteEnabled || SettingsStatus.advancedDownloadsEnabled;
+                || SettingsStatus.feedMuteEnabled || SettingsStatus.advancedDownloadsEnabled
+                || (SettingsStatus.soundPageBlockEnabled && SettingsStatus.feedFilterEnabled);
         if (!any) return;
         addPreference(new SectionHeadingPreference(context, "Buttons on videos"));
         if (SettingsStatus.blockAuthorEnabled) {
@@ -255,6 +257,15 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show the block sound button",
                     "Add a separate button that skips videos using the current sound.",
                     Settings.BLOCK_SOUND_BUTTON
+            ));
+        }
+        // Not on the video but beside its block sound button, since it's the same block.
+        if (SettingsStatus.soundPageBlockEnabled && SettingsStatus.feedFilterEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Show Block sound on sound pages",
+                    "Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.",
+                    Settings.SOUND_PAGE_BLOCK_BUTTON
             ));
         }
         if (SettingsStatus.notInterestedEnabled) {

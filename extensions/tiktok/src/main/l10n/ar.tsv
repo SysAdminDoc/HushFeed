@@ -345,6 +345,8 @@ Block new bottom tabs	حظر التبويبات السفلية الجديدة
 Block this commenter	حظر هذا المعلق
 Block this creator	حظر هذا الصانع
 Block this sound	حظر هذا الصوت
+Block sound	حظر الصوت
+Unblock sound	إلغاء حظر الصوت
 Blocked	محظور
 Blocked %1$s	تم حظر %1$s
 Blocked %1$s. Unblock	تم حظر %1$s. إلغاء الحظر
@@ -1175,6 +1177,8 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	أظهر صورة مصغرة للفيديو أثناء سحب شريط التقدم.
 Show the block button on videos	إظهار زر الحظر على الفيديوهات
 Show the block sound button	إظهار زر حظر الصوت
+Show Block sound on sound pages	إظهار حظر الصوت في صفحات الأصوات
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	يضيف زر حظر الصوت أسفل حفظ في صفحة الصوت، وهي الصفحة التي تفتحها الأسطوانة الدوّارة في الفيديو. يتخطى كل فيديو يستخدم هذا الصوت.
 Show failures on screen	إظهار الأخطاء على الشاشة
 Show gates	إظهار البوابات
 Show last report	عرض آخر تقرير

@@ -24,6 +24,11 @@ public final class CurrentVideoSound {
         this.author = author;
     }
 
+    /** A sound that isn't the current video's, named the same way (a sound's own page). */
+    static CurrentVideoSound of(String id, String name, String author) {
+        return new CurrentVideoSound(id, name, author);
+    }
+
     /** @return the current sound, or null when the current item has none. */
     public static CurrentVideoSound get() {
         return current;

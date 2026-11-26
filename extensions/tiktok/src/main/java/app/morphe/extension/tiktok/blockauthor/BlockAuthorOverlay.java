@@ -1331,7 +1331,10 @@ public final class BlockAuthorOverlay {
                     toastInstead(message, ranItsTime);
                     return;
                 }
-                Activity activity = controlsActivity();
+                // The page the root is on measures it: a sound's page isn't the feed, and the
+                // feed's activity behind it would place the banner by the wrong window.
+                Activity activity = ownerOf(root);
+                if (activity == null) activity = controlsActivity();
                 if (activity == null) {
                     toastInstead(message, ranItsTime);
                     return;
@@ -1388,6 +1391,19 @@ public final class BlockAuthorOverlay {
     }
 
     /** A toast can't be replaced by the next banner, so it has run its time once it's shown. */
+    /** The live activity whose window holds {@code root}, or null. */
+    private static Activity ownerOf(View root) {
+        android.content.Context context = root.getContext();
+        while (context instanceof android.content.ContextWrapper) {
+            if (context instanceof Activity) {
+                Activity activity = (Activity) context;
+                return activity.isFinishing() || activity.isDestroyed() ? null : activity;
+            }
+            context = ((android.content.ContextWrapper) context).getBaseContext();
+        }
+        return null;
+    }
+
     private static void toastInstead(String message, Runnable ranItsTime) {
         Utils.showToastShort(message);
         if (ranItsTime != null) ranItsTime.run();

@@ -219,6 +219,7 @@ Activity,Activity
 Activity center,Activity center
 Activity center (PIA),Activity center (PIA)
 Add,Add
+"Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.","Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound."
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.
 Add a button beside the block control that turns the feed's sound off and on.,Add a button beside the block control that turns the feed's sound off and on.
 Add a button beside the block control to send feedback about the current video.,Add a button beside the block control to send feedback about the current video.
@@ -380,6 +381,7 @@ Block motion sensors,Block motion sensors
 Block new bottom tabs,Block new bottom tabs
 Block new feed tabs,Block new feed tabs
 Block popups,Block popups
+Block sound,Block sound
 Block suggested video notifications,Block suggested video notifications
 Block the advertising ID,Block the advertising ID
 "Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.","Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts."
@@ -2220,6 +2222,7 @@ Shorter,Shorter
 Shortest first,Shortest first
 Show,Show
 Show @username beside a video instead of the display name the creator chose.,Show @username beside a video instead of the display name the creator chose.
+Show Block sound on sound pages,Show Block sound on sound pages
 Show See translation,Show See translation
 "Show Thoughts on profiles and in your inbox, and the prompt to share one, for accounts TikTok hasn't turned them on for. TikTok's servers may still refuse to post one. Restart TikTok to apply this.","Show Thoughts on profiles and in your inbox, and the prompt to share one, for accounts TikTok hasn't turned them on for. TikTok's servers may still refuse to post one. Restart TikTok to apply this."
 "Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.","Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work."
@@ -2856,6 +2859,7 @@ Unavailable saved videos,Unavailable saved videos
 Unavailable saved videos cleared,Unavailable saved videos cleared
 Unavailable since %1$s,Unavailable since %1$s
 Unblock,Unblock
+Unblock sound,Unblock sound
 Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s
 "Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back.","Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back."

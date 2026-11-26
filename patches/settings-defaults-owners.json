@@ -122,6 +122,9 @@
       "VIDEO_BUTTON_SIZE",
       "VIDEO_BUTTONS_OVER_RAIL"
     ],
+    "Block sound on sound pages": [
+      "SOUND_PAGE_BLOCK_BUTTON"
+    ],
     "Block contact list access": [
       "BLOCK_CONTACT_LIST"
     ],

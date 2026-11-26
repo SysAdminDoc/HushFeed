@@ -1553,6 +1553,9 @@ public class Settings extends BaseSettings {
             new BooleanSetting("local_hide_button", FALSE);
     public static final BooleanSetting BLOCK_SOUND_BUTTON =
             new BooleanSetting("block_sound_button", FALSE);
+    /** Block sound under Save on a sound's own page. On, since the patch itself is the opt-in. */
+    public static final BooleanSetting SOUND_PAGE_BLOCK_BUTTON =
+            new BooleanSetting("sound_page_block_button", TRUE);
     public static final StringSetting BLOCK_AUTHOR_BUTTON_POSITION =
             new StringSetting("block_author_button_position", "");
     public static final StringSetting LOCAL_HIDE_BUTTON_POSITION =

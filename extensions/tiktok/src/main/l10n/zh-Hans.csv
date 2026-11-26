@@ -292,6 +292,8 @@ Block the advertising ID,屏蔽广告ID
 Block this commenter,屏蔽该评论者
 Block this creator,阻止该创作者
 Block this sound,阻止此声音
+Block sound,阻止声音
+Unblock sound,取消阻止声音
 Blocked,被阻止
 Blocked %1$s,已屏蔽 %1$s
 Blocked %1$s. Unblock,已阻止 %1$s。解锁
@@ -1674,6 +1676,8 @@ Show search in LIVE,在 LIVE 中显示搜索
 Show the Not interested button,显示不感兴趣按钮
 Show the block button on videos,在视频上显示阻止按钮
 Show the block sound button,显示阻止声音按钮
+Show Block sound on sound pages,在声音页面显示阻止声音
+"Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.",在声音页面（点视频上旋转的唱片打开的页面）的保存下方添加阻止声音按钮。会跳过所有使用该声音的视频.
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,显示评论者的账号在评论时间后设置的国家/地区。来自账号 TikTok 的评论不会按原样发送居住国家/地区.
 Show the country a video was posted from next to the creator's name.,在创作者姓名旁边显示视频发布的国家/地区.
 Show the country as a flag,将国家显示为国旗

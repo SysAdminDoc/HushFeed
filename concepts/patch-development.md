@@ -215,7 +215,7 @@ Treat a target update as a new reverse-engineering pass. TikTok can reuse short 
 
 ### Retarget
 
-`scripts/retarget/retarget.ps1` does the mechanical part of a target move. It renames the old build's obfuscated classes and members to the new build's, swaps the version name, code and constants, and brings `obfuscated-identities.txt` up to date. Start it from a clean tree under pwsh 7:
+`scripts/retarget/retarget.ps1` does the mechanical part of a target move. It renames the old build's obfuscated classes and members to the new build's, swaps the version name, code and constants, renames the view names the extension looks up on the phone, and brings `obfuscated-identities.txt` up to date. Start it from a clean tree under pwsh 7:
 
 ```
 scripts/retarget/retarget.ps1 -OldFixture <old fixture folder> -NewFixture <new fixture folder>
@@ -225,7 +225,7 @@ Each folder holds that build's universal APK and its .apkm, and `-OldFixture` de
 
 The tracer, `Propagate.java`, starts from the classes that keep their names plus any `-Seeds` pairs ("old new", one per line). It lines up their methods by shape and lets the references in matched bodies vote on what every obfuscated class, member and resource id became. It holds about 3.5 GB while it runs.
 
-Read the reports before you build. In `rename.txt`, `U` lines are classes the tracer couldn't pair. Find those by hand and rerun from a reset tree with `-Extra <pairs file>` (add `-ReuseTrace` to skip the tracer). `M` lines are member references it left alone. `R` lines named the old build and were moved anyway, so check that each still reads right. `swap.txt` lists its history lines (`H`, things like "47.9.1 added a field") and leaves them as they were. `git checkout -- .` undoes a whole pass.
+Read the reports before you build. In `rename.txt`, `U` lines are classes the tracer couldn't pair. Find those by hand and rerun from a reset tree with `-Extra <pairs file>` (add `-ReuseTrace` to skip the tracer). `M` lines are member references it left alone. `R` lines named the old build and were moved anyway, so check that each still reads right. `swap.txt` lists its history lines (`H`, things like "47.9.1 added a field") and leaves them as they were. `viewmap.txt` renames a view name only when every vote for its id agreed. Its `unmapped` lines are the rest, and each one is still the old build's name under the new build's prefix. Run `RuntimeViewIdAnchorsTest` against the new fixture: a broken line names the id its owner and tell pick on the new build, and that's usually the name to use. When TikTok reordered the owner's ids, move the tell too. `git checkout -- .` undoes a whole pass.
 
 Then build the bundle and run the command the script prints last. That's `verify-all-patches.ps1`, which runs the CLI with `--continue-on-error`, so one run lists every patch the new build broke.
 

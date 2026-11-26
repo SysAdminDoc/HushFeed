@@ -12,13 +12,15 @@
       Propagate     the tracer: class, member and resource id pairs by vote (propagate.tsv)
       rename.py     --write: member refs, then class names, outside history lines (rename.txt)
       swap.py       --write: version name, code and constants, outside history lines (swap.txt)
+      viewmap.py    --write: the view names the extension looks up, by the tracer's id votes (viewmap.txt)
       identities.py --write: obfuscated-identities.txt follows the code (identities.txt)
 
     Then it prints the full-bundle patch run that goes past failing patches, so one run lists
     every patch the new build broke. Read every report before building: rename.txt's U lines
     (classes the tracer couldn't pair), M lines (member refs left alone) and R lines (lines that
-    named the old build), and swap.txt's H lines (history left alone). Seeds ("old new" class
-    pairs, one per line) start the tracer where same-named classes don't reach; -Extra adds
+    named the old build), swap.txt's H lines (history left alone) and viewmap.txt's unmapped lines
+    (view names to pick by hand: RuntimeViewIdAnchorsTest names what each owner and tell pick).
+    Seeds ("old new" class pairs, one per line) start the tracer where same-named classes don't reach; -Extra adds
     ClassMatch picks on top of the tracer's own pairs.
 
     The tracked tree has to be clean: a second rename over an already renamed tree could move a
@@ -169,6 +171,7 @@ $swapArguments = @($root, "--old=$($old.versionName)", "--new=$($new.versionName
 $passes = @(
     @('rename.py', $renameArguments, 'rename.txt', '^=='),
     @('swap.py', $swapArguments, 'swap.txt', '^=='),
+    @('viewmap.py', @($WorkDir, "--repo=$root", "--build=$($new.versionName)", '--write'), 'viewmap.txt', '^(==|unmapped)'),
     @('identities.py', @($root, '--write'), 'identities.txt', '^(added|gone|written)')
 )
 foreach ($pass in $passes) {
@@ -179,7 +182,7 @@ foreach ($pass in $passes) {
 
 $verifyAll = Join-Path $scripts 'verify-all-patches.ps1'
 Write-Host ''
-Write-Host "[retarget] Reports: $WorkDir (rename.txt, swap.txt, identities.txt). Next, build the bundle"
+Write-Host "[retarget] Reports: $WorkDir (rename.txt, swap.txt, viewmap.txt, identities.txt). Next, build the bundle"
 Write-Host '  (:patches:generatePatchesList then :patches:buildAndroid), and patch the new build with every patch,'
 Write-Host '  past failures (the CLI runs with --continue-on-error):'
 Write-Host "  & `"$verifyAll`" -Apk `"$newApk`" -DesktopJar `"$DesktopJar`" -WorkDir `"$(Join-Path $WorkDir 'verify')`""

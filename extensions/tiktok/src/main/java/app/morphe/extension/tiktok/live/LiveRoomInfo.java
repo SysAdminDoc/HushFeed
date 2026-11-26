@@ -90,6 +90,8 @@ public final class LiveRoomInfo {
     private static Boolean drawnCollapsed;
     private static boolean ticking;
     private static boolean statsFailed;
+    /** The last room whose player had none of the line's numbers, noted in the log once. */
+    private static String roomWithoutNumbers;
 
     static boolean enabled() {
         return SettingsStatus.liveControlsEnabled && !Setting.isPaused()
@@ -188,7 +190,14 @@ public final class LiveRoomInfo {
         boolean showRoom = room != null && Settings.LIVE_ROOM_INFO.get();
         String running = room != null && Settings.LIVE_RUNNING_TIME.get()
                 ? runningLine(roomObject, System.currentTimeMillis()) : null;
-        String text = showRoom ? text(room, stats()) : "";
+        JSONObject stats = showRoom ? stats() : null;
+        String text = showRoom ? text(room, stats) : "";
+        if (showRoom && !room.equals(roomWithoutNumbers) && connection(stats).isEmpty()) {
+            // With the room ID hidden this leaves no line at all (#534), so say why once a room.
+            roomWithoutNumbers = room;
+            Logger.printDebug(() -> "LIVE room line: no connection numbers for room " + room
+                    + (stats == null ? ", the player gave no stats" : ", its stats hold " + stats.names()));
+        }
         if (running != null) text = text.isEmpty() ? running : text + "\n" + running;
         if (text.isEmpty()) {
             removeLabel();
@@ -414,6 +423,7 @@ public final class LiveRoomInfo {
         HANDLER.removeCallbacksAndMessages(null);
         ticking = false;
         statsFailed = false;
+        roomWithoutNumbers = null;
         PAGES.clear();
         removeLabel();
         host = new WeakReference<>(null);

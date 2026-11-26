@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 * New `Block sound on sound pages` patch. Tap the spinning record on a video and the sound's page has a `Block sound` button under `Save`, which skips every video using that sound. Tap it again to unblock. It needs `Feed filter`, and you can switch it off in Hushfeed settings > Feed screen.
 * New `Hide sound page buttons` patch. Turn on its switch in Hushfeed settings > Feed screen and a sound's page no longer shows `Jam Sound` and `Use sound` at the bottom (#535).
 * A diagnostic report now remembers suggested video notifications after TikTok restarts. Its push section says how many `Block suggested video notifications` stopped and how many got through, and when the last one came, so a report exported the next day still shows them.
+* With `Dark LIVE panels` on, a LIVE you open from search results shows the line under the sender's name in its gift banner again. It was there but drawn in no color at all (#362).
 
 ## 0.85.0 (2026-11-24)
 

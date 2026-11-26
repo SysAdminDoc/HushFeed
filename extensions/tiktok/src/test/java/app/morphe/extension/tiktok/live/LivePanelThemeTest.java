@@ -111,6 +111,7 @@ public class LivePanelThemeTest {
     }
 
     @After public void tearDown() {
+        LivePanelTheme.colorThemeForTests = null;
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         Settings.DARK_LIVE_PANELS.save(Settings.DARK_LIVE_PANELS.defaultValue);
@@ -917,6 +918,89 @@ public class LivePanelThemeTest {
         LivePanelTheme.liveColorTheme(live, false);
         assertNull("a darkened room isn't a screen", ReflectionHelpers.<Map<Activity, Resources.Theme>>getStaticField(
                 LivePanelTheme.class, "LIGHT_SCREENS").get(live));
+    }
+
+    /**
+     * #362, 2026-11-26: in a LIVE opened from a search result, the gift combo bar's line under the
+     * sender's name was blank with Dark LIVE panels on. TikTok's dark LIVE colors (style jm on
+     * 47.9.3) leave that line's color unset, only its light ones set it, and an unset color draws
+     * nothing. A darkened room has it from the room's own dark theme, but the search screen doesn't,
+     * so after LIVE's dark colors go on there, TikTok's own light pick fills what they left unset.
+     */
+    @Test public void aScreenUnderALiveGetsTheColorsLivesDarkOnesLeaveUnset() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Settings.DARK_LIVE_PANELS.save(true);
+        // TikTok's LIVE color theme as patched: the hook first, then its pick, applied without force.
+        LivePanelTheme.ColorTheme tikTok = (context, force) -> {
+            LivePanelTheme.liveColorTheme(context, force);
+            if (LiveControls.darkLivePanels(context)) {
+                context.getTheme().applyStyle(DARK_PICK, force);
+            } else {
+                context.getTheme().applyStyle(LIGHT_PICK, force);
+                context.getTheme().applyStyle(LIGHT_ONLY, force);
+            }
+        };
+        LivePanelTheme.colorThemeForTests = tikTok;
+        Activity feed = room();
+        Context widget = new android.content.MutableContextWrapper(feed);
+        assertEquals("the screen has neither of its own", 0, attr(feed, android.R.attr.windowEnterAnimation));
+        assertEquals(0, attr(feed, android.R.attr.activityOpenEnterAnimation));
+
+        tikTok.apply(feed, false);
+        assertEquals("the dark pick wins where both set it", style(DARK_PICK, android.R.attr.windowEnterAnimation),
+                attr(feed, android.R.attr.windowEnterAnimation));
+        assertEquals("the light pick fills what the dark one leaves unset",
+                style(LIGHT_ONLY, android.R.attr.activityOpenEnterAnimation), attr(feed, android.R.attr.activityOpenEnterAnimation));
+        assertTrue(!LivePanelTheme.askingStock());
+        assertEquals("the pinned rows' copy takes the light pick", style(LIGHT_PICK, android.R.attr.windowEnterAnimation),
+                attr(LivePanelTheme.lightRoomView(widget), android.R.attr.windowEnterAnimation));
+
+        // The next screen is filled too, so nothing of the first run stays behind.
+        Activity next = room();
+        tikTok.apply(next, false);
+        assertEquals(style(DARK_PICK, android.R.attr.windowEnterAnimation), attr(next, android.R.attr.windowEnterAnimation));
+        assertEquals(style(LIGHT_ONLY, android.R.attr.activityOpenEnterAnimation), attr(next, android.R.attr.activityOpenEnterAnimation));
+
+        // A room the room hook darkened has its own dark theme, so it gets only the dark pick.
+        Activity live = room();
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        tikTok.apply(live, false);
+        assertEquals(style(DARK_PICK, android.R.attr.windowEnterAnimation), attr(live, android.R.attr.windowEnterAnimation));
+        assertEquals(0, attr(live, android.R.attr.activityOpenEnterAnimation));
+
+        // With the switch off, a screen gets TikTok's light pick as before.
+        Settings.DARK_LIVE_PANELS.save(false);
+        Activity stock = room();
+        tikTok.apply(stock, false);
+        assertEquals(style(LIGHT_PICK, android.R.attr.windowEnterAnimation), attr(stock, android.R.attr.windowEnterAnimation));
+        assertEquals(style(LIGHT_ONLY, android.R.attr.activityOpenEnterAnimation), attr(stock, android.R.attr.activityOpenEnterAnimation));
+    }
+
+    /** Stands in for LIVE's dark colors: the window animations, which the light pick sets too. */
+    private static final int DARK_PICK = android.R.style.Animation_Toast;
+    /** Stands in for LIVE's light colors: the same attributes with other values... */
+    private static final int LIGHT_PICK = android.R.style.Animation_Dialog;
+    /** ...plus one the dark pick leaves out, like the gift line's color. */
+    private static final int LIGHT_ONLY = android.R.style.Animation_Activity;
+
+    /** The attribute's resource or value in the context's theme, 0 when it has none. */
+    private static int attr(Context context, int attr) {
+        TypedValue value = new TypedValue();
+        if (!context.getTheme().resolveAttribute(attr, value, true)) {
+            return 0;
+        }
+        return value.resourceId != 0 ? value.resourceId : value.data;
+    }
+
+    /** What the style alone sets the attribute to. */
+    private static int style(int style, int attr) {
+        Resources.Theme theme = RuntimeEnvironment.getApplication().getResources().newTheme();
+        theme.applyStyle(style, true);
+        TypedValue value = new TypedValue();
+        assertTrue(theme.resolveAttribute(attr, value, true));
+        int answer = value.resourceId != 0 ? value.resourceId : value.data;
+        assertTrue(answer != 0);
+        return answer;
     }
 
     /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */

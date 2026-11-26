@@ -83,6 +83,8 @@ public final class LivePanelTheme {
     private static final Map<Class<?>, Integer> PANEL_TYPES = new ConcurrentHashMap<>();
     /** Set while a stock panel asks TikTok's own provider answer for its overlay. */
     private static final ThreadLocal<Boolean> STOCK_ANSWER = new ThreadLocal<>();
+    /** Set while {@link #fillScreenColors} runs TikTok's color theme, so its hook stands down. */
+    private static final ThreadLocal<Boolean> FILLING_SCREEN = new ThreadLocal<>();
     /**
      * Set once a stock panel has inflated with the switch on. Until then no fragment can sit under
      * one, so the fragments the rest of the app inflates skip the walk up their parents.
@@ -1637,23 +1639,32 @@ public final class LivePanelTheme {
      * overlays, and the dark one's is white, on their white bubbles (#362, Login2, 2026-11-13).
      * So before TikTok styles the room, its color theme runs once on the room's light copy, with
      * the dark theme answer left to TikTok as in light mode. A screen that shows a room without
-     * being the room activity gets its copy here the first time ({@link #lightScreenCopy}). Every
+     * being the room activity gets its copy here the first time ({@link #lightScreenCopy}), and
+     * its own theme gets what LIVE's dark colors leave unset ({@link #fillScreenColors}). Every
      * other context is TikTok's alone.
      */
     public static void liveColorTheme(Context context, boolean force) {
+        if (FILLING_SCREEN.get() != null) {
+            return;
+        }
         try {
             Context light = lightColorTheme(context);
+            boolean screen = false;
             if (light == null) {
                 light = lightScreenCopy(context);
+                screen = light != null;
             }
             if (light == null) {
                 return;
             }
             STOCK_ANSWER.set(Boolean.TRUE);
             try {
-                applyLiveColorTheme(light, force);
+                runColorTheme(light, force);
             } finally {
                 STOCK_ANSWER.remove();
+            }
+            if (screen) {
+                fillScreenColors(context, force);
             }
         } catch (Throwable failure) {
             if (!colorThemeFailureLogged) {
@@ -1682,6 +1693,48 @@ public final class LivePanelTheme {
             }
         }
         return null;
+    }
+
+    /**
+     * Fills in what LIVE's dark colors leave unset on a screen that shows a room without being the
+     * room activity ({@link #lightScreenCopy}), right as they first go on it. In the search feed
+     * TikTok picks the dark style that never sets the gift bar's line under the sender's name
+     * (style jm and attr f_8 on 47.9.3), so with the switch on that line had no color and the bars
+     * above chat showed who sent a gift but not what (#362, 2026-11-26). A room never misses it:
+     * its own styles set it before LIVE's dark colors go on. So the color theme runs here first
+     * with the switch's answer, then once more with TikTok's own, and since TikTok applies its
+     * styles without force, the light style only fills what the dark one left unset. TikTok's
+     * own run afterwards changes nothing.
+     */
+    private static void fillScreenColors(Context context, boolean force) {
+        FILLING_SCREEN.set(Boolean.TRUE);
+        try {
+            runColorTheme(context, force);
+            STOCK_ANSWER.set(Boolean.TRUE);
+            try {
+                runColorTheme(context, false);
+            } finally {
+                STOCK_ANSWER.remove();
+            }
+        } finally {
+            FILLING_SCREEN.remove();
+        }
+    }
+
+    /** TikTok's LIVE color theme as a test stands it in, with the hook's call first as patched. */
+    interface ColorTheme {
+        void apply(Context context, boolean force);
+    }
+
+    static volatile ColorTheme colorThemeForTests;
+
+    private static void runColorTheme(Context context, boolean force) {
+        ColorTheme stand = colorThemeForTests;
+        if (stand != null) {
+            stand.apply(context, force);
+        } else {
+            applyLiveColorTheme(context, force);
+        }
     }
 
     /** TikTok's LIVE color theme. The patch rewrites this to call it. */

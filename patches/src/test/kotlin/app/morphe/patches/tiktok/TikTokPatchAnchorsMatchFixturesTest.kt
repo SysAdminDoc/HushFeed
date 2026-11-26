@@ -1020,6 +1020,26 @@ class TikTokPatchAnchorsMatchFixturesTest {
     }
 
     /**
+     * A save refuses a video whose stream is encrypted for the player's DRM (#544) by asking
+     * Video.enableIntertrustDrm() by name, filled from the feed's is_drm_source. A build that
+     * drops or renames it leaves only the read after the download to catch the locked file.
+     */
+    @Test
+    fun `the DRM source flag resolves on every declared build`() {
+        val videoType = "Lcom/ss/android/ugc/aweme/feed/model/Video;"
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val video = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .firstOrNull { it.type == videoType } ?: throw AssertionError("$videoType is missing")
+            assertTrue(
+                "Video.enableIntertrustDrm()Z is missing",
+                video.methods.any { it.name == "enableIntertrustDrm" && it.parameterTypes.isEmpty() && it.returnType == "Z" },
+            )
+        }
+    }
+
+    /**
      * Match text stickers too reads Aweme's sticker list and each sticker's type and textStruct.
      * TikTok's own translation service is what says a type 18 sticker's textStruct is its words:
      * it checks the type against 18 before it reads the string; type 5 keeps anchor JSON there.

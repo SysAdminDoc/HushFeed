@@ -71,7 +71,7 @@ try {
     throw "Could not read patch list ${PatchList}: $($_.Exception.Message)"
 }
 $expectedTarget = Get-PatchTarget -PatchList $catalog
-$names = @($catalog.patches | ForEach-Object { $_.name })
+$names = @(Get-PackagePatchNames -PatchList $catalog -PackageName $expectedTarget.PackageName)
 if ($names.Count -eq 0 -or @($names | Where-Object { [string]::IsNullOrWhiteSpace($_) }).Count -ne 0) {
     throw "No valid patches listed in $PatchList."
 }

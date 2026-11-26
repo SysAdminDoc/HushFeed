@@ -11,7 +11,9 @@
     PackageVersions lists them oldest first; PackageVersion is the newest, for one-line text.
     The target is the one package every patch declares. Some patches also declare TikTok Lite
     (com.zhiliaoapp.musically.go, #48); that's a second app those patches apply to, never the
-    bundle's target, so its versions don't count here.
+    bundle's target, so its versions don't count here. A patch made for Lite alone (Dark mode,
+    #543) doesn't count either: the target is the package every other patch declares, and
+    Get-PackagePatchNames gives the patches a run against one app should enable.
 #>
 
 . (Join-Path $PSScriptRoot 'patch-report.ps1')
@@ -23,9 +25,11 @@ function Get-PatchTarget {
     $patches = @($PatchList.patches)
     if ($patches.Count -eq 0) { throw 'patches-list.json contains no patches.' }
 
+    $sideApp = 'com.zhiliaoapp.musically.go'
     $targets = @{}
     $versionSets = @{}
     $declaringPatches = @{}
+    $mainPatches = 0
     foreach ($patch in $patches) {
         if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
         $nameProperty = $patch.PSObject.Properties['name']
@@ -42,6 +46,7 @@ function Get-PatchTarget {
         if ($packages.Count -eq 0) {
             throw "$patchName has no compatible package in patches-list.json."
         }
+        if (@($packages | Where-Object { $_.Name -cne $sideApp }).Count -gt 0) { $mainPatches++ }
         foreach ($property in $packages) {
             $versions = @($property.Value | ForEach-Object { [string]$_ } |
                 Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
@@ -60,10 +65,10 @@ function Get-PatchTarget {
         }
     }
 
-    $packages = @($targets.Keys | Where-Object { $declaringPatches[$_] -eq $patches.Count } | Sort-Object)
+    $packages = @($targets.Keys | Where-Object { $_ -cne $sideApp -and $declaringPatches[$_] -eq $mainPatches } | Sort-Object)
     if ($packages.Count -ne 1) {
         $all = @($targets.Keys | Sort-Object)
-        throw "Expected one package that every patch declares, found $(if ($packages.Count) { $packages -join ', ' } else { 'none' }) among $($all -join ', ')."
+        throw "Expected one package that every patch not made for TikTok Lite alone declares, found $(if ($packages.Count) { $packages -join ', ' } else { 'none' }) among $($all -join ', ')."
     }
     $packageName = $packages[0]
     $packageSets = $versionSets[$packageName]
@@ -79,13 +84,26 @@ function Get-PatchTarget {
     }
 }
 
+function Get-PackagePatchNames {
+    <# The names of the patches that declare $PackageName, in catalog order. #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][object]$PatchList,
+        [Parameter(Mandatory = $true)][string]$PackageName
+    )
+
+    @($PatchList.patches | Where-Object {
+            $_.compatiblePackages -and $null -ne $_.compatiblePackages.PSObject.Properties[$PackageName]
+        } | ForEach-Object { [string]$_.name })
+}
+
 function Get-DeclaredPatchTargets {
-    <# The advertised package and its exact versions, with every patch in the catalog. #>
+    <# The advertised package and its exact versions, with every patch that declares it. #>
     [CmdletBinding()]
     param([Parameter(Mandatory = $true)][object]$PatchList)
 
     $target = Get-PatchTarget -PatchList $PatchList
-    $names = @($PatchList.patches | ForEach-Object { [string]$_.name })
+    $names = @(Get-PackagePatchNames -PatchList $PatchList -PackageName $target.PackageName)
     [pscustomobject]@{
         PackageName = $target.PackageName
         PackageVersions = @($target.PackageVersions)

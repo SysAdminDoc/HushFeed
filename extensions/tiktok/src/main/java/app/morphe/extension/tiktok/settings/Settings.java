@@ -2076,6 +2076,14 @@ public class Settings extends BaseSettings {
             "network_proxy_password", "", true, false, null, Setting.parent(NETWORK_PROXY));
 
     /**
+     * Hands TikTok Android's running-low memory trim once its Java heap passes five eighths of
+     * the limit, before Android closes the main screen at three quarters (#419). On by default:
+     * it does nothing below that line, and the trim is the one Android itself sends a running
+     * app. Read after each garbage collection, so it applies without a restart.
+     */
+    public static final BooleanSetting FREE_MEMORY_EARLY = new BooleanSetting("free_memory_early", TRUE);
+
+    /**
      * Made once per install so a hashed account id in a diagnostic report cannot be checked
      * against a guess. Never shown, never exported: it is excluded from the backup for the
      * same reason the installation bookkeeping is.

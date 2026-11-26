@@ -216,6 +216,7 @@
       "morphe_debug",
       "morphe_debug_log_filters",
       "morphe_capture_java_crashes",
+      "free_memory_early",
       "morphe_debug_stacktrace",
       "morphe_debug_toast_on_error"
     ],
@@ -2192,6 +2193,12 @@
       "key": "for_you_hold_opens_watch_history",
       "type": "boolean",
       "default": false
+    },
+    "free_memory_early": {
+      "field": "FREE_MEMORY_EARLY",
+      "key": "free_memory_early",
+      "type": "boolean",
+      "default": true
     },
     "freeze_remote_config": {
       "field": "FREEZE_REMOTE_CONFIG",

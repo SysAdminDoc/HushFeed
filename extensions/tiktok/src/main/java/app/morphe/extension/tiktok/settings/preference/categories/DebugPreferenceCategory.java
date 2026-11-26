@@ -15,6 +15,7 @@ import app.morphe.extension.shared.settings.preference.ClearLogBufferPreference;
 import app.morphe.extension.shared.settings.preference.ExportDiagnosticReportPreference;
 import app.morphe.extension.shared.settings.preference.LogExportFilterPreference;
 import app.morphe.extension.tiktok.Utils;
+import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.FeatureGateRecorderPreference;
 import app.morphe.extension.tiktok.settings.preference.FeedCapturePreference;
@@ -80,6 +81,16 @@ public class DebugPreferenceCategory extends ConditionalPreferenceCategory {
                     "Saves TikTok's latest crash report on this phone so it can go in the "
                             + "diagnostic report.",
                     BaseSettings.CAPTURE_JAVA_CRASHES
+            ));
+
+            // Not a logging switch: it frees memory for everyone, and lives here beside the
+            // report that says what it freed (#419).
+            addPreference(new TogglePreference(
+                    context,
+                    "Free memory early",
+                    "Asks TikTok to clear its caches when its memory nears the point where Android "
+                            + "closes the main screen and the feed starts over.",
+                    Settings.FREE_MEMORY_EARLY
             ));
 
             addPreference(new HookStatusPreference(context));

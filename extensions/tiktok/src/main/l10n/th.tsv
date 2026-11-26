@@ -312,6 +312,7 @@ Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post d
 Captions	คำบรรยาย
 Captions, gestures and on-screen controls	คำบรรยาย ท่าทาง และการควบคุมบนหน้าจอ
 Capture crash reports locally	บันทึกรายงานการขัดข้องไว้ในเครื่อง
+Free memory early	คืนหน่วยความจำล่วงหน้า
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	เลือกวิดีโอ %1$d ถึง %2$d รายการ ค่าที่อยู่นอกช่วงนี้จะใช้ขีดจำกัดที่ถูกต้องที่ใกล้เคียงที่สุด เริ่มการทำงานของ TikTok ใหม่เพื่อนำการตั้งค่านี้ไปใช้
 Choose a backup file. Your current settings are kept for Undo.	เลือกไฟล์สำรองข้อมูล การตั้งค่าปัจจุบันของคุณจะถูกเก็บไว้สำหรับการเลิกทำ
 Pick a folder on internal storage, not an SD card	เลือกโฟลเดอร์ในที่จัดเก็บข้อมูลภายใน ไม่ใช่การ์ด SD
@@ -1006,6 +1007,7 @@ Save media	บันทึกสื่อ
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.	บันทึกการตั้งค่า Hushfeed และกฎ Feature Gate Lab ของคุณลงในไฟล์
 Save subtitles beside videos	บันทึกคำบรรยายควบคู่กับวิดีโอ
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.	บันทึกรายงานข้อขัดข้องล่าสุดของ TikTok บนโทรศัพท์เครื่องนี้เพื่อให้สามารถใส่ลงในรายงานการวินิจฉัยได้
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.	ขอให้ TikTok ล้างแคชเมื่อหน่วยความจำใกล้ถึงจุดที่ Android ปิดหน้าจอหลักและฟีดเริ่มใหม่ตั้งแต่ต้น
 Save the original sound	บันทึกเสียงต้นฉบับ
 Save the sound as well	บันทึกเสียงด้วยเช่นกัน
 Save videos without sound	บันทึกวิดีโอโดยไม่มีเสียง

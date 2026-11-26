@@ -295,6 +295,7 @@ Author text size,Ukuran nama kreator
 Captions,Teks
 "Captions, gestures and on-screen controls","Keterangan, gestur, dan kontrol di layar"
 Capture crash reports locally,Rekam laporan mogok di perangkat
+Free memory early,Kosongkan memori lebih awal
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Pilih %1$d sampai %2$d video. Nilai di luar rentang ini memakai batas valid terdekat. Mulai ulang TikTok agar berlaku.
 Choose a backup file. Your current settings are kept for Undo.,Pilih berkas cadangan. Pengaturanmu yang sekarang disimpan untuk Urungkan.
 "Pick a folder on internal storage, not an SD card","Pilih folder di penyimpanan internal, bukan kartu SD"
@@ -990,6 +991,7 @@ Save media,Simpan media
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.,Menyimpan pengaturan Hushfeed dan aturan Feature Gate Lab ke satu file.
 Save subtitles beside videos,Simpan subtitle bersama video
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,Menyimpan laporan error TikTok terbaru di ponsel ini agar bisa dimasukkan ke laporan diagnostik.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.,Meminta TikTok mengosongkan cache-nya saat memorinya mendekati batas tempat Android menutup layar utama dan feed mulai dari awal.
 Save the original sound,Simpan suara asli
 Save the sound as well,Simpan suaranya juga
 Save videos without sound,Simpan video tanpa suara

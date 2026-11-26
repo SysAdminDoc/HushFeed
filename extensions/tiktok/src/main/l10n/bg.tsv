@@ -312,6 +312,7 @@ Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post d
 Captions	Субтитри
 Captions, gestures and on-screen controls	Субтитри, жестове и контроли на екрана
 Capture crash reports locally	Локално записване на отчетите за сривове
+Free memory early	Ранно освобождаване на паметта
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Избери от %1$d до %2$d видеа. Стойностите извън този диапазон използват най-близката валидна граница. Рестартирай TikTok, за да се приложи това.
 Choose a backup file. Your current settings are kept for Undo.	Избери файл с резервно копие. Текущите ти настройки се пазят, за да можеш да отмениш.
 Pick a folder on internal storage, not an SD card	Избери папка във вътрешната памет, а не на SD карта
@@ -1006,6 +1007,7 @@ Save media	Запазване на медия
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.	Запазва настройките ти на Hushfeed и правилата от Feature Gate Lab във файл.
 Save subtitles beside videos	Запазване на субтитри до видеата
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.	Запазва последния отчет за срив на TikTok на този телефон, за да влезе в диагностичния отчет.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.	Моли TikTok да изчисти кеша си, когато паметта му наближи прага, при който Android затваря главния екран и емисията започва отначало.
 Save the original sound	Запазване на оригиналния звук
 Save the sound as well	Запазване и на звука
 Save videos without sound	Запазване на видеата без звук

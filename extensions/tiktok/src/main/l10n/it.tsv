@@ -312,6 +312,7 @@ Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post d
 Captions	Sottotitoli
 Captions, gestures and on-screen controls	Sottotitoli, gesti e controlli sullo schermo
 Capture crash reports locally	Salva le segnalazioni di arresto anomalo in locale
+Free memory early	Libera memoria in anticipo
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Scegli da %1$d a %2$d video. I valori fuori da questo intervallo usano il limite valido più vicino. Riavvia TikTok per applicare la modifica.
 Choose a backup file. Your current settings are kept for Undo.	Scegli un file di backup. Le tue impostazioni attuali vengono conservate per Annulla.
 Pick a folder on internal storage, not an SD card	Scegli una cartella nella memoria interna, non su SD
@@ -1006,6 +1007,7 @@ Save media	Salva i media
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.	Salva le tue impostazioni di Hushfeed e le regole del Feature Gate Lab in un file.
 Save subtitles beside videos	Salva i sottotitoli insieme ai video
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.	Salva su questo telefono l'ultimo report di arresto anomalo di TikTok, così può finire nel report diagnostico.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.	Chiede a TikTok di svuotare le sue cache quando la memoria si avvicina al punto in cui Android chiude la schermata principale e il feed ricomincia da capo.
 Save the original sound	Salva l'audio originale
 Save the sound as well	Salva anche l'audio
 Save videos without sound	Salva i video senza audio

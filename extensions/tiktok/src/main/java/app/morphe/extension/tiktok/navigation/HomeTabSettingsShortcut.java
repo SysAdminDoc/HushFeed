@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.diagnostics.HeapRelief;
 import app.morphe.extension.tiktok.diagnostics.MainScreenRestarts;
 import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -103,6 +104,9 @@ public final class HomeTabSettingsShortcut {
         // And a report line when the main screen starts over in a running app, which resets the
         // feed with no crash to show for it (#419).
         if (context instanceof Activity) MainScreenRestarts.onMainActivityCreate((Activity) context);
+        // And the trim that heads that off, asked for after a collection leaves the Java heap
+        // near the line where Android closes the main screen (#419).
+        if (context instanceof Activity) HeapRelief.onMainActivityCreate((Activity) context);
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
             FRONT.add((Activity) context);

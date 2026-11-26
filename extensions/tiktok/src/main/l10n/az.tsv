@@ -306,6 +306,7 @@ Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post d
 Captions	Başlıqlar
 Captions, gestures and on-screen controls	Başlıqlar, jestlər və ekrandakı idarəetmələr
 Capture crash reports locally	Qəza hesabatlarını yerli olaraq toplayın
+Free memory early	Yaddaşı erkən boşalt
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	%1$d - %2$d video seçin. Bu aralıqdan kənar dəyərlər ən yaxın etibarlı limitdən istifadə edir. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Choose a backup file. Your current settings are kept for Undo.	Ehtiyat nüsxə faylını seçin. Cari ayarlarınız Geri qaytar üçün saxlanılır.
 Pick a folder on internal storage, not an SD card	Daxili yaddaşda qovluq seçin, SD kart olmaz
@@ -1026,6 +1027,7 @@ Save media	Medianı saxlayın
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.	Hushfeed ayarlarınızı və Feature Gate Lab qaydalarınızı fayla saxlayır.
 Save subtitles beside videos	Altyazıları videoların yanında saxlayın
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.	TikTok-un ən son çökmə hesabatını bu telefonda saxlayır ki, diaqnostik hesabata daxil edilə bilsin.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.	TikTok-un yaddaşı Android-in əsas ekranı bağladığı və lentin yenidən başladığı həddə yaxınlaşanda TikTok-dan keşini təmizləməyi xahiş edir.
 Save the original sound	Orijinal səsi saxlayın
 Save the sound as well	Səsi də saxla
 Save videos without sound	Videoları səssiz saxlayın

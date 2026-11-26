@@ -332,6 +332,7 @@ Caption text size,标题文字大小
 Captions,字幕
 "Captions, gestures and on-screen controls",字幕、手势和屏幕控制
 Capture crash reports locally,本地捕获崩溃报告
+Free memory early,提前释放内存
 Capture the feed,捕获信息流
 Changes in Hushfeed %1$s,Hushfeed %1$s 的变化
 Changes to %1$s at %2$s,更改为 %1$s（位于 %2$s）
@@ -1535,6 +1536,7 @@ Saved videos put back,保存的视频放回
 "Saved, override off",已保存，覆盖关闭
 Saved. Restart TikTok to apply this.,已保存。重新启动 TikTok 以应用此操作.
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,在此手机上保存 TikTok 的最新崩溃报告，以便将其纳入诊断报告中.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.,当 TikTok 的内存接近 Android 关闭主屏幕、动态从头开始的界限时，请 TikTok 先清理缓存.
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.",与视频一起保存字幕 (SRT) 文件。他们会在 Android 11 及更高版本上转到“电影”，在 Android 10 上转到“下载”，在旧版本上会转到你的视频文件夹。在 Android 11 及更高版本上，如果打开“保存详细信息”，视频将移至“下载”或“文档”，而字幕仍保留在“电影”中.
 "Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",将标题、创建者、链接和发布日期保存在视频旁边的文本文件中，图片帖子的原图则共用一个文件。在 Android 10 及更高版本上，它们会进入同一文件夹名称下的“下载”或“文档”。适用于 Hushfeed 进行的保存.
 Couldn't write the details file. Save the post again.,详情文件未能写入，请重新保存该帖子.

@@ -340,6 +340,7 @@ Caption text size,Cỡ chữ phụ đề
 Captions,Phụ đề
 "Captions, gestures and on-screen controls","Phụ đề, cử chỉ và điều khiển trên màn hình"
 Capture crash reports locally,Lưu cục bộ báo cáo sự cố
+Free memory early,Giải phóng bộ nhớ sớm
 Capture the feed,Thu thập bảng tin
 "Capturing. Find the problem, then come back to stop.","Đang ghi lại. Hãy tìm sự cố, sau đó quay lại để dừng."
 Changes in Hushfeed %1$s,Thay đổi trong Hushfeed %1$s
@@ -1714,6 +1715,7 @@ Saved videos put back,Đã khôi phục lại các video đã lưu
 "Saved, override off","Đã lưu, tắt ghi đè"
 Saved. Restart TikTok to apply this.,Đã lưu. Khởi động lại TikTok để áp dụng.
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,Lưu báo cáo sự cố mới nhất của TikTok trên điện thoại này để đưa vào báo cáo chẩn đoán.
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.,Yêu cầu TikTok xóa bộ nhớ đệm khi bộ nhớ của nó gần đến ngưỡng mà Android đóng màn hình chính và bảng tin bắt đầu lại từ đầu.
 Saves at once,Số lượt lưu đồng thời
 Saves right now,Các lượt lưu đang thực hiện
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.","Lưu tệp phụ đề (SRT) cùng với video. Tệp sẽ lưu vào thư mục Phim (Movies) trên Android 11 trở lên, thư mục Tải xuống (Download) trên Android 10 và thư mục video của bạn trên các bản cũ hơn. Trên Android 11 trở lên nếu bật Lưu chi tiết, video sẽ chuyển sang Tải xuống hoặc Tài liệu còn phụ đề vẫn ở thư mục Phim."

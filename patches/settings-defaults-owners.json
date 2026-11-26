@@ -213,6 +213,7 @@
       "DEBUG",
       "DEBUG_LOG_FILTERS",
       "CAPTURE_JAVA_CRASHES",
+      "FREE_MEMORY_EARLY",
       "DEBUG_STACKTRACE",
       "DEBUG_TOAST_ON_ERROR"
     ],

@@ -331,6 +331,7 @@ As TikTok sent it (M4A or MP3),As TikTok sent it (M4A or MP3)
 "Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.","Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions."
 Ask for the quality on each save,Ask for the quality on each save
 "Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone.","Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone."
+Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.,Asks TikTok to clear its caches when its memory nears the point where Android closes the main screen and the feed starts over.
 "At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.","At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it."
 Attention,Attention
 Audience control,Audience control
@@ -859,6 +860,7 @@ Forgotten. Tap to put them back.,Forgotten. Tap to put them back.
 Found %1$s in your chats.,Found %1$s in your chats.
 Frame saved to %1$s,Frame saved to %1$s
 Free data,Free data
+Free memory early,Free memory early
 Free up space,Free up space
 Freeze TikTok's experiments,Freeze TikTok's experiments
 Friends,Friends

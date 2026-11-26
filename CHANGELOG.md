@@ -15,7 +15,7 @@ Every Hushfeed release, newest first.
 * With `Keep suggestions on profiles` on, `View all` above a profile's suggestions opens a full list again instead of an empty page (#462).
 * `Save episodes` only saves whole episodes you can already watch. An episode of a drama you haven't unlocked saves as the short preview TikTok shows, since the rest is what TikTok sells. Episodes TikTok sends with no video at all show as `Locked` in the list and can't be picked (#527, #463).
 * `Record` in a LIVE starts again after a recording that ended before any video came through. Stopping right away, or leaving the LIVE in the first second or two, left an empty recording behind that blocked every later one, and `Retry` couldn't clear it (#531).
-* With `LIVE buttons in the long-press menu` on, Ghost mode's eye moves into that menu too, under Record and Auto tap, so nothing sits on the stream. The row says what a tap does, `Let the host see you` or `Hide from the host next time` (#359).
+* With `LIVE buttons in the long-press menu` on, Ghost mode's eye moves into that menu too, under Record and Auto tap, so nothing sits on the stream. The row says what a tap does, `Let the host see you` or `Hide from the host next time`. A LIVE you're watching unseen doesn't get that menu, because TikTok holds back the room's chat and buttons along with your visit. So in those rooms the eye, Record and Auto tap stay on the video until TikTok lets you in (#359).
 * `Video bitrate limit` has a 1.5 Mb/s choice between 1 and 2 Mb/s (#533).
 
 ## 0.85.0 (2026-11-24)

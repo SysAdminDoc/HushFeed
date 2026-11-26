@@ -70,6 +70,12 @@ public final class LiveUnseen {
     /** Revealed rooms an enter went out for since the eye, so leaving one ends its visit. */
     private static final Set<String> ENTERED =
             Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    /**
+     * Rooms TikTok's own enter went out for this visit, which is what builds a room's chat, host
+     * bar and the menu from holding the middle. A held enter sent as it was builds none of them.
+     */
+    private static final Set<String> BUILT =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     /** The latest enter held for each room, guarded by itself. */
     private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
     /** When an enter was last held, and when one was last held without a readable room. */
@@ -134,6 +140,7 @@ public final class LiveUnseen {
             room = FollowDiagnostics.liveRoomIdOf(request);
             boolean revealed = room != null && REVEALED.contains(room);
             if (!GhostMode.holdLiveEnter(revealed)) {
+                if (room != null) BUILT.add(room);
                 if (revealed) ENTERED.add(room);
                 return;
             }
@@ -198,7 +205,9 @@ public final class LiveUnseen {
         } catch (Throwable unreadable) {
             return;
         }
-        if (room != null && ENTERED.remove(room)) REVEALED.remove(room);
+        if (room == null) return;
+        BUILT.remove(room);
+        if (ENTERED.remove(room)) REVEALED.remove(room);
     }
 
     /**
@@ -246,6 +255,16 @@ public final class LiveUnseen {
      */
     public static boolean hiding(String room) {
         return room != null && enabled() && !revealed(room);
+    }
+
+    /**
+     * Whether {@code room} is open with no enter of TikTok's own gone out for it, so TikTok built
+     * none of its in-room widgets: no chat, no host bar, and no menu from holding the middle
+     * (D#359). Never while the switch is off, and never for a room that can't be read, which
+     * leaves those as they were.
+     */
+    public static boolean unbuilt(String room) {
+        return room != null && enabled() && !BUILT.contains(room);
     }
 
     /** Gets the outcome of {@link #reveal}. API 24's Consumer is above the payload's floor. */
@@ -371,6 +390,7 @@ public final class LiveUnseen {
         reentry = LiveUnseen::enterAgain;
         REVEALED.clear();
         ENTERED.clear();
+        BUILT.clear();
         synchronized (HELD) {
             HELD.clear();
         }

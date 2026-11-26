@@ -27,6 +27,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.download.LiveRecorder;
 import app.morphe.extension.tiktok.download.LiveRecordingSaver;
+import app.morphe.extension.tiktok.ghostmode.LiveUnseenButton;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -175,7 +176,16 @@ public final class LiveRecordChip {
 
     /** True while Record is offered in the menu from holding the middle of a LIVE (#359). */
     public static boolean inMenu() {
-        return enabled() && Settings.LIVE_BUTTONS_IN_MENU.get();
+        return enabled() && buttonsInMenu();
+    }
+
+    /**
+     * Whether LIVE buttons in the long-press menu has the room's buttons in that menu now. A room
+     * Watch LIVEs unseen holds opens with none of TikTok's own widgets, so holding its middle
+     * opens nothing, and there they stay on the video until TikTok enters the room (D#359).
+     */
+    public static boolean buttonsInMenu() {
+        return Settings.LIVE_BUTTONS_IN_MENU.get() && !LiveUnseenButton.roomUnbuilt();
     }
 
     /** What Record's row in that menu says, which is what a tap on it will do. */
@@ -376,7 +386,7 @@ public final class LiveRecordChip {
     }
 
     private static void showChip(Activity activity) {
-        if (Settings.LIVE_BUTTONS_IN_MENU.get()) {
+        if (buttonsInMenu()) {
             removeChip();
             return;
         }
@@ -1150,7 +1160,7 @@ public final class LiveRecordChip {
             }
             // Keep watching while a recording runs or the button is offered, on the video or in
             // the menu; a new resume restarts it.
-            if (recorder != null || (showing && (chip != null || Settings.LIVE_BUTTONS_IN_MENU.get()))) {
+            if (recorder != null || (showing && (chip != null || buttonsInMenu()))) {
                 scheduleTick();
             }
         } catch (Throwable failure) {

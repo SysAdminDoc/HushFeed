@@ -119,7 +119,7 @@ public final class LiveAutoTap {
 
     /** True while Auto tap is offered in the menu from holding the middle of a LIVE (#359). */
     public static boolean inMenu() {
-        return enabled() && Settings.LIVE_BUTTONS_IN_MENU.get();
+        return enabled() && LiveRecordChip.buttonsInMenu();
     }
 
     /** What Auto tap's row in that menu says, which is what a tap on it will do. */
@@ -653,7 +653,7 @@ public final class LiveAutoTap {
         downY = down.getY();
         fingerMoved = false;
         int hold = ++gesture;
-        if (!Settings.LIVE_BUTTONS_IN_MENU.get()) return;
+        if (!LiveRecordChip.buttonsInMenu()) return;
         HANDLER.postDelayed(() -> holdEnds(hold), ViewConfiguration.getLongPressTimeout() + HOLD_SETTLE_MS);
     }
 
@@ -689,7 +689,7 @@ public final class LiveAutoTap {
     }
 
     private static void showChip(Activity activity) {
-        if (Settings.LIVE_BUTTONS_IN_MENU.get()) {
+        if (LiveRecordChip.buttonsInMenu()) {
             removeChip();
             return;
         }

@@ -25,7 +25,6 @@ import app.morphe.extension.tiktok.blockauthor.OverlayGlyphDrawable;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.live.LiveRecordChip;
 import app.morphe.extension.tiktok.settings.L10n;
-import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import java.lang.ref.WeakReference;
@@ -154,7 +153,16 @@ public final class LiveUnseenButton {
      * button on the video (D#359), with LIVE buttons in the long-press menu on.
      */
     public static boolean inMenu() {
-        return enabled() && Settings.LIVE_BUTTONS_IN_MENU.get();
+        return enabled() && LiveRecordChip.buttonsInMenu();
+    }
+
+    /**
+     * Whether the room in front is one Watch LIVEs unseen holds, which TikTok opened without its
+     * chat, its host bar or the menu from holding the middle (D#359).
+     */
+    public static boolean roomUnbuilt() {
+        Activity activity = host.get();
+        return activity != null && LiveUnseen.unbuilt(roomInFront(activity));
     }
 
     /** Whether the host of the room in front can see you, for the eye drawn on the menu row. */
@@ -188,7 +196,8 @@ public final class LiveUnseenButton {
     static void refresh(Activity activity) {
         if (activity == null) return;
         // In the long-press menu, the eye is a row there and nothing covers the stream (D#359).
-        boolean wanted = enabled() && !Settings.LIVE_BUTTONS_IN_MENU.get()
+        // A held room has no such menu, so there the eye stays: it's the only way out of the hold.
+        boolean wanted = enabled() && !LiveRecordChip.buttonsInMenu()
                 && !activity.isFinishing() && !activity.isDestroyed()
                 && !FeedVisibility.isFeedWindow(activity) && !inPictureInPicture(activity);
         if (!wanted) {

@@ -10,6 +10,9 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.BooleanSetting;
@@ -122,12 +125,71 @@ public final class RailHold {
     public static boolean skipFavoritesMenu() {
         if (holdDownloads()) {
             HookStatus.bound(FAMILY, "favorites hold download");
-            Context context = Utils.getActivity();
-            OriginalPhotos.startFromButton(GestureActions.onScreenAweme(),
-                    context != null ? context : Utils.getContext());
+            saveOnScreen();
             return true;
         }
         return Button.FAVORITES.skipsMenu();
+    }
+
+    /** Saves the video on screen with the download settings, as a hold on Favorites does. */
+    private static void saveOnScreen() {
+        Context context = Utils.getActivity();
+        OriginalPhotos.startFromButton(GestureActions.onScreenAweme(),
+                context != null ? context : Utils.getContext());
+    }
+
+    /**
+     * Buttons Favorites' bind gave only a plain click, which carry Hushfeed's own long press, each
+     * with whether it took long presses before. Main thread only, where TikTok binds.
+     */
+    private static final Map<View, Boolean> CLICK_ONLY = new WeakHashMap<>();
+
+    /**
+     * Favorites' bind, right after TikTok took its touch listener off the button. A button given
+     * Hushfeed's long press on an earlier bind loses it here, so a bind that hands the button
+     * TikTok's own long press never leaves both on it (#499).
+     */
+    public static void favoritesBound(View button) {
+        HookStatus.bound(FAMILY, "favorites bind");
+        Boolean longClickable = CLICK_ONLY.remove(button);
+        if (longClickable == null) return;
+        button.setOnLongClickListener(null);
+        button.setLongClickable(longClickable);
+    }
+
+    /**
+     * Favorites' bind giving the button only a plain click: signed out, in the landscape feed, or
+     * on a post still publishing or scheduled. TikTok then has no long press on it at all, so a
+     * hold did nothing however Hold TikTok's save button to download was set (#499). The button
+     * gets a long press of Hushfeed's own, which asks the switches at each press, so a change
+     * applies to buttons already on screen.
+     */
+    public static void favoritesClickOnly(View button) {
+        HookStatus.bound(FAMILY, "favorites click only");
+        if (!CLICK_ONLY.containsKey(button)) CLICK_ONLY.put(button, button.isLongClickable());
+        button.setOnLongClickListener(FavoritesHold.INSTANCE);
+    }
+
+    /**
+     * The long press a plain-click Favorites button gets. With the hold save on it saves the
+     * video; a press the hold check let through at the hold speed is taken too, so letting go
+     * after the hold doesn't count as a tap. Anything else is left to TikTok's click, as before.
+     */
+    static final class FavoritesHold implements View.OnLongClickListener {
+        static final FavoritesHold INSTANCE = new FavoritesHold();
+
+        private FavoritesHold() {
+        }
+
+        @Override public boolean onLongClick(View view) {
+            HookStatus.bound(FAMILY, "favorites own long press");
+            if (holdDownloads()) {
+                HookStatus.bound(FAMILY, "favorites hold download");
+                saveOnScreen();
+                return true;
+            }
+            return Button.FAVORITES.skipsMenu();
+        }
     }
 
     /**
@@ -179,6 +241,7 @@ public final class RailHold {
 
     static void resetForTests() {
         forgetPasses();
+        CLICK_ONLY.clear();
     }
 
     /**

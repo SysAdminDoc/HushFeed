@@ -240,6 +240,9 @@ val longPressPatch = bytecodePatch(
             method.name == "onTouch" && method.returnType == "Z" &&
                 method.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;", "Landroid/view/MotionEvent;")
         }.letFavoritesPressAnywhere()
+        // Signed out, in the landscape feed and on a post still going out, TikTok gives Favorites
+        // only a click and no long press at all, so the hold save brings one of its own (#499).
+        FavoritesBindFingerprint.method.giveFavoritesItsOwnHold()
         ShareViewCreatedFingerprint.method.routeLongClicks("setShareLongClick")
         // A creator's videos can get For You's full long-press menu instead of the small sheet (#120).
         LongPressSceneFingerprint.method.aliasProfileLongPressScene()

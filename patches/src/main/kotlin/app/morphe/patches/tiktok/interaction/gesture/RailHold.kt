@@ -15,6 +15,7 @@ import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.patches.tiktok.misc.navigation.branchTargets
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
@@ -23,6 +24,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -39,7 +41,10 @@ internal const val FAVORITES_MENU_KEY = "video_favorite_button_long_click"
 internal const val FAVORITES_MENU_EVENT = "long_press_favorite"
 internal const val EDGE_SPEEDUP_ABILITY = "Lcom/ss/android/ugc/aweme/feed/longvideo/edgespeedup/EdgeSpeedupAbility;"
 internal const val FAVORITES_TOUCH_LABEL = "getQuickFavoriteOnTouchDelegate"
+internal const val VIDEO_FAVORITE_ASSEM = "Lcom/ss/android/ugc/aweme/feed/favorite/VideoFavoriteAssem;"
+internal const val FAVORITES_BIND_LABEL = "VideoFavoriteAssem onBind"
 private const val VIEW = "Landroid/view/View;"
+private const val ON_CLICK = "Landroid/view/View\$OnClickListener;"
 private const val ON_LONG_CLICK = "Landroid/view/View\$OnLongClickListener;"
 private const val ON_TOUCH = "Landroid/view/View\$OnTouchListener;"
 private const val HANDLER = "Landroid/os/Handler;"
@@ -156,6 +161,95 @@ internal fun MutableMethod.letFavoritesPressAnywhere() {
             move-result v$register
         """,
     )
+}
+
+/**
+ * Favorites' bind, run each time the button is put on a video (A4 on 47.9.3). It takes TikTok's
+ * touch listener off the button, then gives it one of two things. Signed in, outside the
+ * landscape feed and on a post that's out, it's the touch listener whose timer starts the long
+ * press. Otherwise it's only a click listener of the assem's own, and there's no long press at
+ * all (#499). The method names itself in a trace label.
+ */
+internal object FavoritesBindFingerprint : Fingerprint(
+    definingClass = VIDEO_FAVORITE_ASSEM,
+    returnType = "V",
+    parameters = listOf("Ljava/lang/Object;"),
+    strings = listOf(FAVORITES_BIND_LABEL),
+)
+
+/** Whether the instruction is a View.setOnTouchListener call. */
+internal fun Instruction.setsTouch(): Boolean =
+    opcode == Opcode.INVOKE_VIRTUAL && getReference<MethodReference>()?.let {
+        it.definingClass == VIEW && it.name == "setOnTouchListener" &&
+            it.parameterTypes.map(CharSequence::toString) == listOf(ON_TOUCH)
+    } == true
+
+/**
+ * The two places in Favorites' bind the hold save hooks, each an index with the button's register
+ * there: [clearAt] is where TikTok takes its touch listener off the button, [plainClickAt] is where
+ * it gives the button only its plain click.
+ */
+internal data class FavoritesBindSites(val clearAt: Int, val clearButton: Int, val plainClickAt: Int, val plainClickButton: Int)
+
+/**
+ * Reads [FavoritesBindSites] from the bind. The clear is the touch listener set to a register just
+ * loaded with null. The plain click is the static call taking a click listener and the button,
+ * whose listener was built from the assem the instruction before. Both are refused unless there's
+ * exactly one, and unless nothing jumps onto the instruction a hook goes in front of.
+ */
+internal fun Method.favoritesBindSites(): FavoritesBindSites {
+    val instructions = implementation?.instructions?.toList()
+        ?: throw PatchException("Long-press controls: $definingClass->$name has no code.")
+    val clears = instructions.indices.filter { index ->
+        val set = instructions[index]
+        set.setsTouch() && instructions.getOrNull(index - 1)?.let { load ->
+            load.opcode == Opcode.CONST_4 && (load as NarrowLiteralInstruction).narrowLiteral == 0 &&
+                (load as OneRegisterInstruction).registerA == (set as FiveRegisterInstruction).registerD
+        } == true
+    }
+    val plainClicks = instructions.indices.filter { index ->
+        val call = instructions[index]
+        call.opcode == Opcode.INVOKE_STATIC && call.getReference<MethodReference>()?.let {
+            it.returnType == "V" && it.parameterTypes.map(CharSequence::toString) == listOf(ON_CLICK, VIEW)
+        } == true && instructions.getOrNull(index - 1)?.let { built ->
+            built.opcode == Opcode.INVOKE_DIRECT && built.getReference<MethodReference>()?.let {
+                it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf(VIDEO_FAVORITE_ASSEM)
+            } == true && (built as FiveRegisterInstruction).registerC == (call as FiveRegisterInstruction).registerC
+        } == true
+    }
+    if (clears.size != 1) {
+        throw PatchException("Long-press controls: $definingClass->$name takes the touch listener off ${clears.size} times, not once.")
+    }
+    if (plainClicks.size != 1) {
+        throw PatchException("Long-press controls: $definingClass->$name gives the plain click ${plainClicks.size} times, not once.")
+    }
+    val clearAt = clears.single()
+    val plainClickAt = plainClicks.single()
+    val targets = branchTargets()
+    if (clearAt + 1 in targets || plainClickAt in targets) {
+        throw PatchException("Long-press controls: a jump in $definingClass->$name lands where the hold save would go.")
+    }
+    return FavoritesBindSites(
+        clearAt, (instructions[clearAt] as FiveRegisterInstruction).registerC,
+        plainClickAt, (instructions[plainClickAt] as FiveRegisterInstruction).registerD,
+    )
+}
+
+/**
+ * Gives Favorites a long press of Hushfeed's own where TikTok's bind leaves it only a click (#499):
+ * signed out, in the landscape feed, on a post still publishing or scheduled. The extension puts
+ * its listener on the button at the plain click and takes it off again right after TikTok clears
+ * its touch listener, so a button bound to TikTok's own long press next never has both. Inserted
+ * last one first so the indexes found hold.
+ */
+internal fun MutableMethod.giveFavoritesItsOwnHold() {
+    val sites = favoritesBindSites()
+    listOf(
+        sites.plainClickAt to "invoke-static/range {v${sites.plainClickButton} .. v${sites.plainClickButton}}, " +
+            "$RAIL_HOLD_EXTENSION->favoritesClickOnly($VIEW)V",
+        sites.clearAt + 1 to "invoke-static/range {v${sites.clearButton} .. v${sites.clearButton}}, " +
+            "$RAIL_HOLD_EXTENSION->favoritesBound($VIEW)V",
+    ).sortedByDescending { it.first }.forEach { (at, smali) -> addInstructions(at, smali) }
 }
 
 /** Whether the instruction is a Handler.removeCallbacks(Runnable) call. */

@@ -5,8 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
@@ -22,6 +25,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
@@ -251,6 +255,112 @@ public class RailHoldTest {
 
             SettingsStatus.advancedDownloadsEnabled = false;
             assertFalse("nor without the download patch", RailHold.favoritesPressCounts(0));
+        } finally {
+            SettingsStatus.advancedDownloadsEnabled = wasEnabled;
+        }
+    }
+
+    /**
+     * Favorites as TikTok binds it signed out, in the landscape feed or on a post still going
+     * out: a plain click and no long press, on screen so a real press runs.
+     */
+    private View clickOnlyFavorites(int[] taps) {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout rail = new FrameLayout(activity);
+        View favorites = new View(activity);
+        rail.addView(favorites, new FrameLayout.LayoutParams(100, 100));
+        activity.setContentView(rail);
+        favorites.setOnTouchListener(null);
+        RailHold.favoritesBound(favorites);
+        favorites.setOnClickListener(view -> taps[0]++);
+        RailHold.favoritesClickOnly(favorites);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        return favorites;
+    }
+
+    /** A finger on the button for [heldMs], then lifted. */
+    private static void press(View view, long heldMs) {
+        long down = SystemClock.uptimeMillis();
+        MotionEvent press = MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 50, 50, 0);
+        view.dispatchTouchEvent(press);
+        press.recycle();
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(heldMs));
+        MotionEvent lift = MotionEvent.obtain(down, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 50, 50, 0);
+        view.dispatchTouchEvent(lift);
+        lift.recycle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    /**
+     * #499: signed out, TikTok gives Favorites only a click, so holding it did nothing even with
+     * Hold TikTok's save button to download on. The button gets a long press of its own that
+     * saves, and letting go after it isn't the tap that asks you to sign in.
+     */
+    @Test @Config(sdk = 28, qualifiers = "en")
+    public void aFavoritesButtonWithOnlyAClickHoldsToSave() {
+        boolean wasEnabled = SettingsStatus.advancedDownloadsEnabled;
+        try {
+            SettingsStatus.advancedDownloadsEnabled = true;
+            int[] taps = {0};
+            View favorites = clickOnlyFavorites(taps);
+            ShadowToast.reset();
+
+            press(favorites, 50);
+            assertEquals("a tap is TikTok's click", 1, taps[0]);
+            press(favorites, 800);
+            assertEquals("switched off, a hold is still only TikTok's click", 2, taps[0]);
+            assertNull("and saves nothing", ShadowToast.getTextOfLatestToast());
+
+            Settings.HOLD_SAVE_TO_DOWNLOAD.save(true);
+            press(favorites, 800);
+            assertEquals("switched on, letting go after the hold is no tap", 2, taps[0]);
+            assertEquals("the hold ran the save, which says so with no video here to save",
+                    "No video selected. Open a video first.", ShadowToast.getTextOfLatestToast());
+            press(favorites, 50);
+            assertEquals("a tap is still TikTok's click", 3, taps[0]);
+
+            SettingsStatus.advancedDownloadsEnabled = false;
+            ShadowToast.reset();
+            press(favorites, 800);
+            assertEquals("without the download patch a hold is TikTok's click again", 4, taps[0]);
+            assertNull(ShadowToast.getTextOfLatestToast());
+        } finally {
+            SettingsStatus.advancedDownloadsEnabled = wasEnabled;
+        }
+    }
+
+    @Test public void aHoldAtTheHoldSpeedOnAClickOnlyFavoritesIsNoTap() {
+        int[] taps = {0};
+        View favorites = clickOnlyFavorites(taps);
+        Settings.RAIL_HOLD_FAVORITES.save(true);
+        assertFalse("the check let the press through to TikTok's hold", RailHold.favoritesStopsHold(true));
+        assertTrue("so the long press is taken", favorites.performLongClick());
+        RailHold.resetForTests();
+        assertFalse("with no pass, a hold is left to TikTok's click", favorites.performLongClick());
+        assertEquals(0, taps[0]);
+    }
+
+    /** A button bound to TikTok's own long press next (signed in since) loses Hushfeed's. */
+    @Test public void theNextBindTakesHushfeedsLongPressBackOff() {
+        boolean wasEnabled = SettingsStatus.advancedDownloadsEnabled;
+        try {
+            SettingsStatus.advancedDownloadsEnabled = true;
+            Settings.HOLD_SAVE_TO_DOWNLOAD.save(true);
+            View favorites = button();
+            favorites.setLongClickable(false);
+            RailHold.favoritesClickOnly(favorites);
+            RailHold.favoritesClickOnly(favorites);
+            assertTrue(favorites.isLongClickable());
+
+            RailHold.favoritesBound(favorites);
+            assertFalse("the button takes long presses as it did before", favorites.isLongClickable());
+            ShadowToast.reset();
+            assertFalse("and a long press saves nothing of Hushfeed's", favorites.performLongClick());
+            assertNull(ShadowToast.getTextOfLatestToast());
+
+            View tikToks = button();
+            RailHold.favoritesBound(tikToks);
+            assertTrue("a button Hushfeed never touched keeps its own", tikToks.isLongClickable());
         } finally {
             SettingsStatus.advancedDownloadsEnabled = wasEnabled;
         }

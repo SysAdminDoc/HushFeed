@@ -19,6 +19,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -349,6 +350,90 @@ class RailHoldHookTest {
     fun `a Favorites listener with no icon check, or two, is refused`() {
         assertThrows(PatchException::class.java) { favoritesTouch(checks = 0).letFavoritesPressAnywhere() }
         assertThrows(PatchException::class.java) { favoritesTouch(checks = 2).letFavoritesPressAnywhere() }
+    }
+
+    private val onTouch = "Landroid/view/View\$OnTouchListener;"
+    private val onClick = "Landroid/view/View\$OnClickListener;"
+
+    /**
+     * 47.9.3's Favorites bind (A4), cut down: the touch listener taken off the button in v5, then
+     * signed in the touch listener with the long press, signed out only the plain click, given
+     * the button from v4 so a register slip shows.
+     */
+    private fun favoritesBind(clears: Int = 1, plainClicks: Int = 1, jumpOntoClick: Boolean = false): MutableMethod {
+        val clear = """
+            const/4 v0, 0x0
+            invoke-virtual {v5, v0}, $view->setOnTouchListener($onTouch)V
+        """
+        val build = """
+            new-instance v0, LX/0Dgw;
+            invoke-direct {v0, p0}, LX/0Dgw;-><init>($VIDEO_FAVORITE_ASSEM)V
+        """
+        val click = "invoke-static {v0, v4}, LX/00oX;->W7($onClick$view)V\n"
+        val plain = (1..plainClicks).joinToString("") { build + (if (it == 1 && jumpOntoClick) ":click\n" else "") + click }
+        return method(VIDEO_FAVORITE_ASSEM, "A4", listOf("Ljava/lang/Object;"), "V", 8, """
+            const/4 v1, 0x1
+            invoke-virtual {p0}, $VIDEO_FAVORITE_ASSEM->getContentView()$view
+            move-result-object v5
+            ${clear.repeat(clears)}
+            invoke-virtual {p0}, $VIDEO_FAVORITE_ASSEM->getContext()Landroid/content/Context;
+            invoke-virtual {p0}, $VIDEO_FAVORITE_ASSEM->isLogin()Z
+            move-result v0
+            if-eqz v0, :plain
+            new-instance v3, Lqua/a;
+            invoke-direct {v3}, Lqua/a;-><init>()V
+            invoke-virtual {v5, v3}, $view->setOnTouchListener($onTouch)V
+            ${if (jumpOntoClick) "goto :click" else "goto :done"}
+            :plain
+            move-object v4, v5
+            ${plain.ifEmpty { "nop" }}
+            :done
+            const-string v2, "$FAVORITES_BIND_LABEL"
+            return-void
+        """)
+    }
+
+    @Test
+    fun `Favorites' bind hands the button to the extension after the clear and before the plain click`() {
+        val method = favoritesBind()
+        val before = method.implementation!!.instructions.toList()
+        val kept = branches(before)
+        val clearAt = before.indexOfFirst { it.setsTouch() }
+        val plainAt = before.indexOfFirst { it.getReference<MethodReference>()?.name == "W7" }
+
+        method.giveFavoritesItsOwnHold()
+
+        val after = method.implementation!!.instructions.toList()
+        assertEquals(before.size + 2, after.size)
+        assertSame(before[clearAt], after[clearAt])
+        val bound = after[clearAt + 1]
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, bound.opcode)
+        assertExtensionCall(bound, "favoritesBound", listOf(view), "V")
+        assertEquals("the button TikTok cleared", 5, (bound as RegisterRangeInstruction).startRegister)
+        assertEquals(1, bound.registerCount)
+        val clickAt = after.indexOfFirst { it === before[plainAt] }
+        val clickOnly = after[clickAt - 1]
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, clickOnly.opcode)
+        assertExtensionCall(clickOnly, "favoritesClickOnly", listOf(view), "V")
+        assertEquals("the button TikTok gives the click", 4, (clickOnly as RegisterRangeInstruction).startRegister)
+        assertEquals(1, clickOnly.registerCount)
+        assertSame("the listener's build comes right before", before[plainAt - 1], after[clickAt - 2])
+        // Signed out reaches the click-only call; signed in, with TikTok's own long press, jumps past it.
+        val signedOut = after.indexOfFirst { it.opcode == Opcode.IF_EQZ }
+        assertTrue(after.targetOf(signedOut) < clickAt - 1)
+        val signedIn = after.indexOfFirst { it.opcode == Opcode.GOTO }
+        assertTrue(after.targetOf(signedIn) > clickAt)
+        assertEquals(before, after.filter { it.getReference<MethodReference>()?.definingClass != RAIL_HOLD_EXTENSION })
+        assertBranchesKept(kept, after)
+    }
+
+    @Test
+    fun `a Favorites bind that clears twice, gives no plain click or two, or jumps onto it is refused`() {
+        assertThrows(PatchException::class.java) { favoritesBind(clears = 2).giveFavoritesItsOwnHold() }
+        assertThrows(PatchException::class.java) { favoritesBind(clears = 0).giveFavoritesItsOwnHold() }
+        assertThrows(PatchException::class.java) { favoritesBind(plainClicks = 0).giveFavoritesItsOwnHold() }
+        assertThrows(PatchException::class.java) { favoritesBind(plainClicks = 2).giveFavoritesItsOwnHold() }
+        assertThrows(PatchException::class.java) { favoritesBind(jumpOntoClick = true).giveFavoritesItsOwnHold() }
     }
 
     private fun classDef(type: String, interfaces: List<String>, methods: List<ImmutableMethod> = emptyList()) =

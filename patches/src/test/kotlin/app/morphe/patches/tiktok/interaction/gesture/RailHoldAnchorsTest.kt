@@ -9,6 +9,8 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -121,6 +123,57 @@ class RailHoldAnchorsTest {
     }
 
     @Test
+    fun `Favorites' bind clears the button once and gives it only a click when signed out, on every fixture`() {
+        for (apk in Fixtures.apks()) {
+            val build = Build(apk)
+            val assem = build.byType.getValue(VIDEO_FAVORITE_ASSEM)
+            val taken = assem.methods.filter { FavoritesBindFingerprint.takes(it, assem) }
+            assertEquals("${apk.name}: ${taken.map { it.name }}", 1, taken.size)
+            val bind = taken.single()
+            val sites = bind.favoritesBindSites()
+            val instructions = bind.implementation!!.instructions.toList()
+            // The touch listener that starts TikTok's long press goes on the same button, after the clear.
+            val installs = instructions.indices.filter { instructions[it].setsTouch() && it != sites.clearAt }
+            assertEquals("${apk.name}: the bind sets ${installs.size} touch listeners besides the clear", 1, installs.size)
+            assertEquals(sites.clearButton, (instructions[installs.single()] as FiveRegisterInstruction).registerC)
+            assertTrue("${apk.name}: the clear no longer comes first", sites.clearAt < installs.single() && sites.clearAt < sites.plainClickAt)
+            assertEquals("${apk.name}: the plain click goes to another view", sites.clearButton, sites.plainClickButton)
+            // Signed out, the login check jumps straight to the plain click (#499).
+            val login = instructions.indexOfFirst {
+                it.getReference<MethodReference>()?.let { call -> call.name == "isLogin" && call.returnType == "Z" } == true
+            }
+            assertTrue("${apk.name}: the bind no longer asks whether you're signed in", login >= 0)
+            assertEquals(Opcode.MOVE_RESULT, instructions[login + 1].opcode)
+            val signedOut = instructions[login + 2]
+            assertEquals("${apk.name}: the login answer isn't tested for no", Opcode.IF_EQZ, signedOut.opcode)
+            assertTrue("${apk.name}: signed out doesn't reach the plain click",
+                instructions.runsOnto(instructions.targetOf(login + 2), sites.plainClickAt))
+        }
+    }
+
+    private fun List<Instruction>.address(index: Int) = take(index).sumOf { it.codeUnits }
+
+    private fun List<Instruction>.targetOf(index: Int): Int {
+        val address = address(index) + (this[index] as OffsetInstruction).codeOffset
+        return indices.first { address(it) == address }
+    }
+
+    /** Whether straight-line code and plain gotos from [from] get to [to] before anything else branches or returns. */
+    private fun List<Instruction>.runsOnto(from: Int, to: Int): Boolean {
+        var at = from
+        repeat(size) {
+            if (at == to) return true
+            val instruction = this[at]
+            at = when {
+                instruction.opcode in listOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32) -> targetOf(at)
+                instruction is OffsetInstruction || !instruction.opcode.canContinue() -> return false
+                else -> at + 1
+            }
+        }
+        return false
+    }
+
+    @Test
     fun `the hold's touch listener is one method on every fixture, dropping its post in each way a press ends`() {
         for (apk in Fixtures.apks()) {
             val build = Build(apk)
@@ -159,6 +212,7 @@ class RailHoldAnchorsTest {
         assertTrue("Comment's emoji row is not skipped", source.contains("CommentMenuFingerprint.method.skipCommentMenuWhenHeld()"))
         assertTrue("Favorites' offer is not skipped", source.contains("FavoritesMenuFingerprint.method.skipFavoritesMenuWhenHeld()"))
         assertTrue("Favorites' icon check is not answered", source.contains(".letFavoritesPressAnywhere()"))
+        assertTrue("Favorites' plain click gets no hold", source.contains("FavoritesBindFingerprint.method.giveFavoritesItsOwnHold()"))
         assertTrue("a dropped hold doesn't forget its passes", source.contains("HoldTouchFingerprint.method.routeHoldDrops()"))
         assertTrue("Share's long presses are not wrapped", source.contains("ShareViewCreatedFingerprint.method.routeLongClicks(\"setShareLongClick\")"))
     }

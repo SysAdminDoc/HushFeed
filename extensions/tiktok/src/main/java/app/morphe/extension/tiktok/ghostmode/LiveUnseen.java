@@ -129,15 +129,23 @@ public final class LiveUnseen {
      * Called by TikTok's network interceptor right before it sends a request, with itself and its
      * chain. Throws for a LIVE room enter while it's held, which TikTok handles as a connection
      * that failed, and returns for everything else.
+     *
+     * <p>With the switch off an enter still goes on the record as built, so a room the switch is
+     * turned on inside keeps its menu: TikTok's own enter already built it.
      */
     public static void holdEnter(Object interceptor, Object chain) throws IOException {
-        if (!enabled()) return;
+        boolean on = enabled();
+        if (!on && (Utils.getContext() == null || !SettingsStatus.ghostModeEnabled)) return;
         String room;
         try {
             Object request = Reflect.requiredField(interceptor, "mOriginalRequest", HOOK_FAMILY);
             Object path = Reflect.required(request, "getPath", HOOK_FAMILY);
             if (!isEnter(path instanceof String ? (String) path : null)) return;
             room = FollowDiagnostics.liveRoomIdOf(request);
+            if (!on) {
+                if (room != null) BUILT.add(room);
+                return;
+            }
             boolean revealed = room != null && REVEALED.contains(room);
             if (!GhostMode.holdLiveEnter(revealed)) {
                 if (room != null) BUILT.add(room);
@@ -149,7 +157,7 @@ public final class LiveUnseen {
             if (room != null) keep(room, new HeldEnter(interceptor, chain));
             else unknownHeldAt = now;
         } catch (Throwable unreadable) {
-            HookStatus.threw(HOOK_FAMILY, GhostMode.LIVE_ENTER, unreadable);
+            if (on) HookStatus.threw(HOOK_FAMILY, GhostMode.LIVE_ENTER, unreadable);
             return;
         }
         if (!loggedHold) {

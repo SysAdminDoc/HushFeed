@@ -494,6 +494,21 @@ public class LiveUnseenTest {
         }
     }
 
+    @Test public void aRoomEnteredWithTheSwitchOffStaysBuiltWhenTheSwitchGoesOnInsideIt() throws Exception {
+        Settings.GHOST_MODE.save(true);
+        // Watch LIVEs unseen off: TikTok's own enter goes out and builds the room's menu.
+        LiveUnseen.holdEnter(new Interceptor(ENTER), "chain");
+        assertEquals(0, LiveUnseen.heldForTests());
+        Settings.GHOST_HIDE_LIVE_VIEWS.save(true);
+        assertFalse("turned on inside the room, it still has its menu", LiveUnseen.unbuilt(ROOM));
+
+        // Leaving ends the visit, and the next one is held as usual.
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.USER_CLOSE_CLICK));
+        assertTrue(LiveUnseen.unbuilt(ROOM));
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertTrue(LiveUnseen.unbuilt(ROOM));
+    }
+
     @Test public void noRoomReadsAsNoRoom() {
         assertNull(app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(null));
         assertEquals(ROOM, app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(new Request(ENTER)));

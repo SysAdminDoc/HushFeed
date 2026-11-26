@@ -3066,6 +3066,8 @@ Fade the controls out,Pudarkan kontrol
 "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.","Tombol, keterangan, dan tab memudar alih-alih hilang seketika, dan sentuhan saat memudar memunculkannya lagi. Jika animasi Android dimatikan, semuanya tetap hilang seketika."
 Date instead of age,Tanggal alih-alih usia
 "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.","Video baru menampilkan tanggal diunggah di samping nama kreator, seperti 10-12, alih-alih usia seperti 2 hr lalu. Hari sebelum bulan dan Tulis bulan sebagai kata mengubahnya dengan cara yang sama."
+Use this date format everywhere,Gunakan format tanggal ini di mana saja
+"Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.","Menulis tanggal pada komentar, judul tanggal di chat, dan tanggal pada hasil pencarian dengan cara yang sama seperti tiga baris di atas menulis tanggal di samping nama kreator."
 Keep your place in chats,Pertahankan posisi di obrolan
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,Obrolan yang sudah kamu gulir ke atas tetap di posisimu saat kembali dari video atau mengirim balasan. Mengirim pesan biasa atau mengetuk panah bawah tetap membawamu ke yang terbaru.
 Fill wide videos too,Penuhi juga dengan video lebar

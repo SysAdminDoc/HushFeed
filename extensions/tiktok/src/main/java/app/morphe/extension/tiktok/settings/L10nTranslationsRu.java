@@ -15,7 +15,7 @@ final class L10nTranslationsRu {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6594);
+        Map<String, String> table = new HashMap<>(6598);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6466,11 +6466,13 @@ final class L10nTranslationsRu {
                 "Использовать разделённый макет на более широких экранах. Перезапустите TikTok, чтобы это применить. Если старый макет всё ещё отображается, разверните телефон ещё раз.");
         table.put("Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.",
                 "Выберите экспорт JSON из TikTok для этого аккаунта, до %1$s МБ и %2$s записей. Для дат без часового пояса используется часовой пояс этого телефона.");
-        table.put("Use this phone's own IDs",
-                "Использовать ID этого телефона");
+        table.put("Use this date format everywhere",
+                "Использовать этот формат даты везде");
     }
 
     private static void fill52(Map<String, String> table) {
+        table.put("Use this phone's own IDs",
+                "Использовать ID этого телефона");
         table.put("Use translation",
                 "Использовать перевод");
         table.put("Use up to 40 letters and numbers. Spaces, dots, dashes and brackets are fine too.",
@@ -6589,11 +6591,11 @@ final class L10nTranslationsRu {
                 "Ждём, пока приложение для файлов отпустит последний файл. Если этого не произойдёт, перезапустите TikTok.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Ожидание записи. Перейдите к экрану, который нужно записать.");
-        table.put("Waiting to save %1$s files",
-                "%1$s файлов ожидают сохранения");
     }
 
     private static void fill53(Map<String, String> table) {
+        table.put("Waiting to save %1$s files",
+                "%1$s файлов ожидают сохранения");
         table.put("Waiting to save %1$s files|few",
                 "%1$s файла ожидают сохранения");
         table.put("Waiting to save %1$s files|many",
@@ -6712,11 +6714,13 @@ final class L10nTranslationsRu {
                 "Пишет дату TikTok рядом с именем автора, начиная с дня, например 29.09, а для старого видео добавляет год. Возраст вроде 2 дн. назад остаётся как есть.");
         table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
                 "Пишет дату TikTok рядом с именем автора с названием месяца, например Oct 12. С параметром «День перед месяцем» получится 12 Oct.");
-        table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
-                "Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.");
     }
 
     private static void fill54(Map<String, String> table) {
+        table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
+                "Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.");
+        table.put("Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.",
+                "Пишет даты у комментариев, заголовки с датой в чатах и даты в результатах поиска так же, как три строки выше пишут дату рядом с именем автора.");
         table.put("Writing",
                 "Написание");
         table.put("Writing the caption on the video",

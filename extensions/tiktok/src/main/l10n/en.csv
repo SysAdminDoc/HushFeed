@@ -2920,6 +2920,7 @@ Use system font,Use system font
 Use the preset for the region TikTok reports for your account and its shop too. May affect search.,Use the preset for the region TikTok reports for your account and its shop too. May affect search.
 "Use the split layout on wider screens. Restart TikTok to apply this. If the old layout is still there, unfold again.","Use the split layout on wider screens. Restart TikTok to apply this. If the old layout is still there, unfold again."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone."
+Use this date format everywhere,Use this date format everywhere
 Use this phone's own IDs,Use this phone's own IDs
 Use translation,Use translation
 "Use up to 40 letters and numbers. Spaces, dots, dashes and brackets are fine too.","Use up to 40 letters and numbers. Spaces, dots, dashes and brackets are fine too."
@@ -3038,6 +3039,7 @@ Write the username and caption on the video,Write the username and caption on th
 "Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.","Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are."
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct."
 "Writes the date before the time to the second the short way your language does, like 10/7/25.","Writes the date before the time to the second the short way your language does, like 10/7/25."
+"Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.","Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name."
 Writing,Writing
 Writing the caption on the video,Writing the caption on the video
 Writing the caption on the video: %1$s,Writing the caption on the video: %1$s

@@ -179,6 +179,9 @@ public class FeedScreenCoverageTest {
         put("publish_date_month_name", YES, YES, NONE);
         // The same row's age written as a date, so it reaches where that row does (#461).
         put("publish_date_instead_of_age", YES, YES, NONE);
+        // The same rows on comment times (#536): the comment sheet opens over a video in either
+        // feed window, and a LIVE room's chat isn't one. Chats and search cards are none of the three.
+        put("publish_date_everywhere", YES, YES, NONE);
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("video_length_on_grid", NONE, NONE, NONE);

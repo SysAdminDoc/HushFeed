@@ -41,7 +41,47 @@ public class PublishDateRowsTest {
     @After public void tearDown() {
         SettingsStatus.alwaysShowPublishDateEnabled = false;
         SettingsStatus.publishDateGridsEnabled = false;
+        SettingsStatus.publishDateEverywhereEnabled = false;
         Settings.ALWAYS_SHOW_PUBLISH_DATE.resetToDefault();
+        Settings.PUBLISH_DATE_DAY_FIRST.resetToDefault();
+        Settings.PUBLISH_DATE_MONTH_NAME.resetToDefault();
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.resetToDefault();
+        Settings.PUBLISH_DATE_EVERYWHERE.resetToDefault();
+    }
+
+    /**
+     * Use this date format everywhere (#536) shows only where comments, chats and search cards
+     * were hooked, off until picked, and it has nothing to carry until one of the date rows is on.
+     */
+    @Test public void theEverywhereRowShowsOnlyWhereThoseDatesWereHooked() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.alwaysShowPublishDateEnabled = true;
+
+            SettingsStatus.publishDateEverywhereEnabled = false;
+            PreferenceScreen lite = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, lite);
+            assertNotNull(lite.findPreference(Settings.PUBLISH_DATE_DAY_FIRST.key));
+            assertNull(lite.findPreference(Settings.PUBLISH_DATE_EVERYWHERE.key));
+
+            SettingsStatus.publishDateEverywhereEnabled = true;
+            PreferenceScreen tiktok = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, tiktok);
+            assertNotNull(tiktok.findPreference(Settings.PUBLISH_DATE_EVERYWHERE.key));
+            assertFalse(Settings.PUBLISH_DATE_EVERYWHERE.get());
+            assertFalse(Settings.PUBLISH_DATE_EVERYWHERE.rebootApp);
+
+            assertFalse(Settings.PUBLISH_DATE_EVERYWHERE.isAvailable());
+            Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+            assertTrue(Settings.PUBLISH_DATE_EVERYWHERE.isAvailable());
+            Settings.PUBLISH_DATE_DAY_FIRST.save(false);
+            Settings.PUBLISH_DATE_MONTH_NAME.save(true);
+            assertTrue(Settings.PUBLISH_DATE_EVERYWHERE.isAvailable());
+            Settings.PUBLISH_DATE_MONTH_NAME.save(false);
+            Settings.PUBLISH_DATE_INSTEAD_OF_AGE.save(true);
+            assertTrue(Settings.PUBLISH_DATE_EVERYWHERE.isAvailable());
+        }
     }
 
     /**

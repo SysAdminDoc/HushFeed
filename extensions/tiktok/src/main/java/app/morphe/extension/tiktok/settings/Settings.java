@@ -1083,6 +1083,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PUBLISH_DATE_MONTH_NAME = new BooleanSetting("publish_date_month_name", FALSE);
     /** A recent video's date by the creator's name in place of TikTok's age, 10-12 for 2d ago (#461). */
     public static final BooleanSetting PUBLISH_DATE_INSTEAD_OF_AGE = new BooleanSetting("publish_date_instead_of_age", FALSE);
+    /** The three date rows above on comments, chat date headers and search result cards too (#536). */
+    public static final BooleanSetting PUBLISH_DATE_EVERYWHERE = new BooleanSetting("publish_date_everywhere", FALSE,
+            false, Setting.parentsAny(PUBLISH_DATE_DAY_FIRST, PUBLISH_DATE_MONTH_NAME, PUBLISH_DATE_INSTEAD_OF_AGE));
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);

@@ -49,7 +49,7 @@ private val FORMATTER_CALLS = setOf(
 val alwaysShowPublishDatePatch = bytecodePatch(
     name = "Always show publish date",
     description = "Shows the date a video was posted next to the creator's name, so you can " +
-        "tell how old it is. It can also show the exact time, dates and lengths on profile grids, hide the view counts there, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by " +
+        "tell how old it is. It can also show the exact time, dates and lengths on profile grids, hide the view counts there, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. Its date options can cover the dates on comments, chats and search results too. On by " +
         "default. Turn it off in Hushfeed settings > Feed screen.",
     default = true,
 ) {
@@ -95,6 +95,14 @@ val alwaysShowPublishDatePatch = bytecodePatch(
             )
             showPostTimeForMainFeeds()
         }
+        // Use this date format everywhere (#536): a search result card's date and a chat's date
+        // headers. Comments get it through Show commenter handle and region's time hook.
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePublishDateEverywhere()V",
+        )
+        SearchCardDateFingerprint.method.hookSearchCardDate()
+        ChatDateFingerprint.method.hookChatDate { classDefByOrNull(it) }
         hookGridSortOn(packageMetadata.versionName)
         // Round the corners on profile grids (#487): each cell's root view as its holder binds.
         ProfileGridHolderBindFingerprint.method.hookGridCorners(ProfileGridHolderBindFingerprint.originalMethod) {

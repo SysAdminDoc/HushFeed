@@ -15,7 +15,7 @@ final class L10nTranslationsAr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6728);
+        Map<String, String> table = new HashMap<>(6732);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6606,6 +6606,8 @@ final class L10nTranslationsAr {
                 "استخدم التخطيط المقسم على الشاشات الأعرض. أعد تشغيل TikTok لتطبيق هذا. إذا كان التخطيط القديم ما زال موجودا، فافتح الجهاز مرة أخرى.");
         table.put("Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.",
                 "استخدم ملف تصدير TikTok JSON لهذا الحساب، بحجم يصل إلى %1$s ميغابايت و%2$s إدخال. التواريخ بدون منطقة زمنية تستخدم المنطقة الزمنية لهذا الهاتف.");
+        table.put("Use this date format everywhere",
+                "استخدم تنسيق التاريخ هذا في كل مكان");
         table.put("Use this phone's own IDs",
                 "استخدم IDs هذا الهاتف");
         table.put("Use translation",
@@ -6714,11 +6716,11 @@ final class L10nTranslationsAr {
                 "مستوى الصوت");
         table.put("Wait a day to loosen the budget",
                 "انتظر يومًا قبل تخفيف الميزانية");
-        table.put("Wait a day to loosen the budget is on, so Hushfeed stays on",
-                "انتظر يومًا قبل تخفيف الميزانية مفعل، لذا يبقى Hushfeed مفعل");
     }
 
     private static void fill54(Map<String, String> table) {
+        table.put("Wait a day to loosen the budget is on, so Hushfeed stays on",
+                "انتظر يومًا قبل تخفيف الميزانية مفعل، لذا يبقى Hushfeed مفعل");
         table.put("Wait before hiding the controls.",
                 "انتظر قبل إخفاء عناصر التحكم.");
         table.put("Wait for loading to finish",
@@ -6837,11 +6839,11 @@ final class L10nTranslationsAr {
                 "قواعد الكلمات فقط، وليس كل مرشحات الخلاصة:");
         table.put("Words, countries and languages",
                 "كلمات، دول ولغات");
-        table.put("Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.",
-                "يعمل فقط مع YTDLnis (com.deniscerri.ytdl). يختار الصوت أو الفيديو عندما يرسل له زر الحفظ رابطا.");
     }
 
     private static void fill55(Map<String, String> table) {
+        table.put("Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.",
+                "يعمل فقط مع YTDLnis (com.deniscerri.ytdl). يختار الصوت أو الفيديو عندما يرسل له زر الحفظ رابطا.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "يعمل فقط مع YTDLnis (com.deniscerri.ytdl). يبدأ التنزيل في الخلفية دون إظهار بطاقة التنزيل الخاصة به.");
         table.put("Write the month as a word",
@@ -6856,6 +6858,8 @@ final class L10nTranslationsAr {
                 "يكتب تاريخ TikTok بجانب اسم صانع المحتوى باسم الشهر، مثل Oct 12. ويجعله خيار اليوم قبل الشهر 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "يكتب التاريخ قبل الوقت بالثواني بالطريقة القصيرة التي تستخدمها لغتك، مثل 10/7/25.");
+        table.put("Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.",
+                "يكتب تواريخ التعليقات وعناوين التاريخ في الدردشات وتواريخ نتائج البحث بالطريقة التي تكتب بها الصفوف الثلاثة أعلاه التاريخ بجانب اسم صانع المحتوى.");
         table.put("Writing",
                 "الكتابة");
         table.put("Writing the caption on the video",
@@ -6958,13 +6962,13 @@ final class L10nTranslationsAr {
                 "حفظ الصور");
         table.put("search suggestions",
                 "اقتراحات البحث");
+    }
+
+    private static void fill56(Map<String, String> table) {
         table.put("this creator",
                 "هذا الصانع");
         table.put("Русский",
                 "Русский");
-    }
-
-    private static void fill56(Map<String, String> table) {
         table.put("العربية",
                 "العربية");
         table.put("ไทย",

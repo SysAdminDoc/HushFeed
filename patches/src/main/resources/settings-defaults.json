@@ -66,6 +66,7 @@
       "publish_date_day_first",
       "publish_date_month_name",
       "publish_date_instead_of_age",
+      "publish_date_everywhere",
       "publish_date_on_grid",
       "video_length_on_grid",
       "hide_grid_view_count",
@@ -4230,6 +4231,12 @@
     "publish_date_day_first": {
       "field": "PUBLISH_DATE_DAY_FIRST",
       "key": "publish_date_day_first",
+      "type": "boolean",
+      "default": false
+    },
+    "publish_date_everywhere": {
+      "field": "PUBLISH_DATE_EVERYWHERE",
+      "key": "publish_date_everywhere",
       "type": "boolean",
       "default": false
     },

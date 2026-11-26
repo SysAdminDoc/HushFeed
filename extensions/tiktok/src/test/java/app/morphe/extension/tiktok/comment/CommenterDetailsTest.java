@@ -29,6 +29,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import com.ss.android.ugc.aweme.profile.model.User;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +52,7 @@ public class CommenterDetailsTest {
         public User user;
         public String replyToUserId;
         public Object commerceInfo;
+        public long createTime;
 
         Remark(User user) {
             this.user = user;
@@ -76,8 +80,14 @@ public class CommenterDetailsTest {
         }
     }
 
+    /** 2025-10-07 15:04:05 UTC. */
+    private static final long POSTED = 1_759_849_445L;
+
     private Context context;
     private boolean patched;
+    private boolean publishDatePatched;
+    private Locale locale;
+    private TimeZone zone;
 
     @Before
     public void setUp() {
@@ -85,6 +95,9 @@ public class CommenterDetailsTest {
         Utils.setContext(context);
         patched = SettingsStatus.commenterDetailsEnabled;
         SettingsStatus.commenterDetailsEnabled = true;
+        publishDatePatched = SettingsStatus.alwaysShowPublishDateEnabled;
+        locale = Locale.getDefault();
+        zone = TimeZone.getDefault();
         CommenterDetails.forget();
     }
 
@@ -93,8 +106,30 @@ public class CommenterDetailsTest {
         Settings.SHOW_COMMENTER_HANDLE.save(false);
         Settings.SHOW_COMMENTER_REGION.save(false);
         Settings.COLOR_COMMENTER_NAMES.save(false);
+        Settings.PUBLISH_DATE_EVERYWHERE.resetToDefault();
+        Settings.PUBLISH_DATE_DAY_FIRST.resetToDefault();
+        Settings.PUBLISH_DATE_MONTH_NAME.resetToDefault();
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.resetToDefault();
         SettingsStatus.commenterDetailsEnabled = patched;
+        SettingsStatus.alwaysShowPublishDateEnabled = publishDatePatched;
+        Locale.setDefault(locale);
+        TimeZone.setDefault(zone);
         CommenterDetails.forget();
+    }
+
+    /** Always show publish date patched, in American English on UTC, with its date rows as given. */
+    private static void datesEverywhere(boolean on) {
+        Locale.setDefault(Locale.US);
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        SettingsStatus.alwaysShowPublishDateEnabled = true;
+        Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+        Settings.PUBLISH_DATE_EVERYWHERE.save(on);
+    }
+
+    private static Remark postedBy(String uid, String region, long createTime) {
+        Remark remark = by(uid, "a" + uid, region);
+        remark.createTime = createTime;
+        return remark;
     }
 
     private static User account(String uid, String handle, String nickname, String region) {
@@ -353,6 +388,79 @@ public class CommenterDetailsTest {
         CommenterDetails.onCommentTime(by("1", "a", "FR"), time);
 
         assertEquals("FR", time.getText().toString());
+    }
+
+    /** #536: Use this date format everywhere writes a comment's date the way the creator's row does. */
+    @Test
+    public void theCommentTimeTakesThePublishDateRows() {
+        datesEverywhere(true);
+        TimeView time = timeSaying("2025-10-07");
+
+        CommenterDetails.onCommentTime(postedBy("1", null, POSTED), time);
+
+        assertEquals("07.10.25", time.getText().toString());
+        assertEquals(1, time.writes);
+    }
+
+    @Test
+    public void theDatedTimeKeepsTheRegionAfterIt() {
+        datesEverywhere(true);
+        Settings.SHOW_COMMENTER_REGION.save(true);
+        TimeView time = timeSaying("2025-10-07");
+        Remark remark = postedBy("1", "US", POSTED);
+
+        CommenterDetails.onCommentTime(remark, time);
+        assertEquals("07.10.25 · US", time.getText().toString());
+
+        // A second call over the same write neither dates the date again nor stacks the region.
+        CommenterDetails.onCommentTime(remark, time);
+        assertEquals("07.10.25 · US", time.getText().toString());
+        assertEquals(1, time.writes);
+
+        // TikTok rebinds the cell and writes its own time again.
+        time.tikTokWrites("2025-10-07");
+        CommenterDetails.onCommentTime(remark, time);
+        assertEquals("07.10.25 · US", time.getText().toString());
+    }
+
+    @Test
+    public void withTheSwitchOffTheCommentTimeIsTikToks() {
+        datesEverywhere(false);
+        TimeView time = timeSaying("2025-10-07");
+
+        CommenterDetails.onCommentTime(postedBy("1", null, POSTED), time);
+
+        assertEquals("2025-10-07", time.getText().toString());
+        assertEquals(0, time.writes);
+    }
+
+    @Test
+    public void turningTheSwitchOffPutsTikToksTimeBack() {
+        datesEverywhere(true);
+        TimeView time = timeSaying("2025-10-07");
+        Remark remark = postedBy("1", null, POSTED);
+        CommenterDetails.onCommentTime(remark, time);
+        assertEquals("07.10.25", time.getText().toString());
+
+        Settings.PUBLISH_DATE_EVERYWHERE.save(false);
+        CommenterDetails.onCommentTime(remark, time);
+
+        assertEquals("2025-10-07", time.getText().toString());
+    }
+
+    @Test
+    public void aCommentWithNoTimeKeepsTikToksText() {
+        datesEverywhere(true);
+        TimeView time = timeSaying("2025-10-07");
+        CommenterDetails.onCommentTime(postedBy("1", null, POSTED), time);
+        assertEquals("07.10.25", time.getText().toString());
+
+        // The cell is rebound to a comment the model gives no time.
+        time.tikTokWrites("2025-09-30");
+        CommenterDetails.onCommentTime(postedBy("2", null, 0), time);
+
+        assertEquals("2025-09-30", time.getText().toString());
+        assertEquals(0, time.writes);
     }
 
     @Test

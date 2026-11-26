@@ -850,7 +850,8 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/AlwaysShowPublishDatePatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch.java",
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/GridCorners.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/GridCorners.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/GridCorners.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/DatesEverywhere.kt"
   ],
   "settings": [
    {
@@ -883,6 +884,12 @@
     "default": false,
     "type": "bool",
     "row": "Day before month"
+   },
+   {
+    "key": "publish_date_everywhere",
+    "default": false,
+    "type": "bool",
+    "row": "Use this date format everywhere"
    },
    {
     "key": "publish_date_on_grid",

@@ -3237,6 +3237,8 @@ The buttons, caption and tabs fade away instead of vanishing at once, and a touc
 # context: #461 Date instead of age, a switch under Write the month as a word
 Date instead of age	Дата вместо изминало време
 Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.	Скорошните видеа показват датата на публикуване до името на създателя, например 10-12, вместо изминалото време, например преди 2 д. „Ден преди месеца“ и „Изписване на месеца с дума“ я променят по същия начин.
+Use this date format everywhere	Използване на този формат на датата навсякъде
+Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.	Изписва датите на коментарите, заглавията с дати в чатовете и датите в резултатите от търсенето така, както трите реда по-горе изписват датата до името на създателя.
 # context: #503 Keep your place in chats, an Inbox switch under Show message times; the down arrow is the button that jumps a chat to its newest message
 Keep your place in chats	Запазване на мястото ти в чатовете
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.	Ако превъртиш нагоре в чат, той остава на същото място, когато се върнеш от видео или изпратиш отговор. Изпращането на обикновено съобщение или докосването на стрелката надолу пак те води до най-новото.

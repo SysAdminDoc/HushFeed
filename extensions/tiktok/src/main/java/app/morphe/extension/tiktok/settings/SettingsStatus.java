@@ -576,6 +576,16 @@ public class SettingsStatus {
         publishDateGridsEnabled = true;
     }
 
+    /**
+     * Always show publish date hooked TikTok's chat date headers and search result cards, the
+     * places Use this date format everywhere reaches (#536). TikTok Lite has neither.
+     */
+    public static boolean publishDateEverywhereEnabled = false;
+
+    public static void enablePublishDateEverywhere() {
+        publishDateEverywhereEnabled = true;
+    }
+
     public static void enableDiagnostics() {
         diagnosticsEnabled = true;
     }

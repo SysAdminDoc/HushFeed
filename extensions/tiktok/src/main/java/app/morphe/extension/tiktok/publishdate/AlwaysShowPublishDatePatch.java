@@ -69,13 +69,7 @@ public final class AlwaysShowPublishDatePatch {
 
     private static String exactOrOriginal(String original, Object item) {
         if (!Settings.PUBLISH_DATE_EXACT_TIME.get()) {
-            boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
-            if (Settings.PUBLISH_DATE_INSTEAD_OF_AGE.get()) {
-                String date = insteadOfAge(original, item, Settings.PUBLISH_DATE_MONTH_NAME.get(), dayFirst);
-                if (date != null) return date;
-            }
-            if (Settings.PUBLISH_DATE_MONTH_NAME.get()) return monthName(original, item, dayFirst);
-            return dayFirst ? dayFirst(original, item) : original;
+            return dateRows(original, item);
         }
         try {
             long now = System.currentTimeMillis();
@@ -105,11 +99,14 @@ public final class AlwaysShowPublishDatePatch {
      * a date in words, is TikTok's to keep.
      */
     static String dayFirst(String original, Object item) {
+        return dayFirstAt(original, postedAt(item, System.currentTimeMillis()));
+    }
+
+    /** {@link #dayFirst} for a time made at {@code seconds}, Unix seconds; 0 or less keeps TikTok's. */
+    private static String dayFirstAt(String original, long seconds) {
         try {
             int groups = numberGroups(original);
-            if (groups < 2 || groups > 3) return original;
-            long seconds = postedAt(item, System.currentTimeMillis());
-            if (seconds <= 0) return original;
+            if (groups < 2 || groups > 3 || seconds <= 0) return original;
             Calendar posted = Calendar.getInstance();
             posted.setTimeInMillis(seconds * 1000L);
             String day = String.format(Locale.ROOT, "%02d.%02d",
@@ -127,11 +124,14 @@ public final class AlwaysShowPublishDatePatch {
      * that isn't all numbers is TikTok's to keep, as in {@link #dayFirst}.
      */
     static String monthName(String original, Object item, boolean dayFirst) {
+        return monthNameAt(original, postedAt(item, System.currentTimeMillis()), dayFirst);
+    }
+
+    /** {@link #monthName} for a time made at {@code seconds}, Unix seconds; 0 or less keeps TikTok's. */
+    private static String monthNameAt(String original, long seconds, boolean dayFirst) {
         try {
             int groups = numberGroups(original);
-            if (groups < 2 || groups > 3) return original;
-            long seconds = postedAt(item, System.currentTimeMillis());
-            if (seconds <= 0) return original;
+            if (groups < 2 || groups > 3 || seconds <= 0) return original;
             String pattern = groups == 2
                     ? (dayFirst ? "d MMM" : "MMM d")
                     : (dayFirst ? "d MMM y" : "MMM d, y");
@@ -152,9 +152,20 @@ public final class AlwaysShowPublishDatePatch {
     private static String insteadOfAge(String original, Object item, boolean monthName, boolean dayFirst) {
         if (original == null || original.trim().isEmpty()) return null;
         try {
+            if (StoryShareSave.isStory(item)) return null;
+            return insteadOfAgeAt(original, postedAt(item, System.currentTimeMillis()), monthName, dayFirst);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write the date in place of the age", ex);
+            return null;
+        }
+    }
+
+    /** {@link #insteadOfAge} for a time made at {@code seconds}, Unix seconds, or null to keep TikTok's. */
+    private static String insteadOfAgeAt(String original, long seconds, boolean monthName, boolean dayFirst) {
+        if (original == null || original.trim().isEmpty()) return null;
+        try {
             long now = System.currentTimeMillis();
-            long seconds = postedAt(item, now);
-            if (seconds <= 0 || StoryShareSave.isStory(item)) return null;
+            if (seconds <= 0) return null;
             Locale locale = Locale.getDefault();
             TimeZone zone = TimeZone.getDefault();
             if (writesADate(original, seconds, locale, zone)) return null;
@@ -166,6 +177,172 @@ public final class AlwaysShowPublishDatePatch {
             return null;
         }
     }
+
+    /**
+     * Day before month, Write the month as a word and Date instead of age on TikTok's text for
+     * {@code item}, the way the creator's row writes it without the time to the second.
+     */
+    private static String dateRows(String original, Object item) {
+        boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
+        if (Settings.PUBLISH_DATE_INSTEAD_OF_AGE.get()) {
+            String date = insteadOfAge(original, item, Settings.PUBLISH_DATE_MONTH_NAME.get(), dayFirst);
+            if (date != null) return date;
+        }
+        if (Settings.PUBLISH_DATE_MONTH_NAME.get()) return monthName(original, item, dayFirst);
+        return dayFirst ? dayFirst(original, item) : original;
+    }
+
+    /** {@link #dateRows} for something made at {@code seconds}, Unix seconds. */
+    private static String dateRowsAt(String original, long seconds) {
+        boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
+        boolean monthName = Settings.PUBLISH_DATE_MONTH_NAME.get();
+        if (Settings.PUBLISH_DATE_INSTEAD_OF_AGE.get()) {
+            String date = insteadOfAgeAt(original, seconds, monthName, dayFirst);
+            if (date != null) return date;
+        }
+        if (monthName) return monthNameAt(original, seconds, dayFirst);
+        return dayFirst ? dayFirstAt(original, seconds) : original;
+    }
+
+    /**
+     * Use this date format everywhere (#536): the date rows reach comments, chat date headers and
+     * search result cards too, under a patched Always show publish date.
+     */
+    public static boolean everywhere() {
+        return SettingsStatus.alwaysShowPublishDateEnabled && Settings.PUBLISH_DATE_EVERYWHERE.get();
+    }
+
+    /**
+     * A comment's time (#536) with the date rows on it, from the comment's createTime (Unix
+     * seconds, or milliseconds from an older model), while Use this date format everywhere is on.
+     * Otherwise, or with no plausible time, TikTok's text as it came.
+     */
+    public static String commentTime(String original, long createTime) {
+        if (!everywhere() || original == null) return original;
+        try {
+            long seconds = createTime >= MILLISECONDS_FROM ? createTime / 1000 : createTime;
+            if (!plausible(seconds, System.currentTimeMillis())) return original;
+            return dateRowsAt(original, seconds);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write a comment's date", ex);
+            return original;
+        }
+    }
+
+    /**
+     * Called where a search result card has its date ready ("2d ago", "10-12"), with the card's
+     * video (#536). Returns the date rows' text for it while Use this date format everywhere is
+     * on, else TikTok's.
+     */
+    public static String searchCardDate(String original, Object aweme) {
+        if (!everywhere() || original == null) return original;
+        try {
+            return dateRows(original, aweme);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write a search card's date", ex);
+            return original;
+        }
+    }
+
+    /**
+     * Called where a chat's date header has its text ready, with TikTok's item for it (#536).
+     * TikTok writes the day and then the time ("Nov 3 14:05"), or the time alone for today; the
+     * day becomes the date rows' date and TikTok's own time stays after it.
+     */
+    public static String chatDate(String original, Object item) {
+        if (!everywhere() || original == null) return original;
+        try {
+            return chatDateAt(original, createdAtOf(item), System.currentTimeMillis());
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write a chat's date header", ex);
+            return original;
+        }
+    }
+
+    /**
+     * A chat date header made at {@code created} (milliseconds, or seconds) with the date rows
+     * applied to its day. A header with only a time is today's and stays. A day TikTok wrote as a
+     * word ("Yesterday", "Mon") becomes a date only with Date instead of age, as on the creator's
+     * row, and a date TikTok wrote stays whenever neither date shape is picked.
+     */
+    static String chatDateAt(String original, long created, long nowMillis) {
+        long seconds = created >= MILLISECONDS_FROM ? created / 1000 : created;
+        if (original == null || !plausible(seconds, nowMillis)) return original;
+        Locale locale = Locale.getDefault();
+        TimeZone zone = TimeZone.getDefault();
+        String text = trimSeparators(original);
+        String clock = null;
+        String day = text;
+        for (Pattern shape : clockShapes(locale)) {
+            Matcher match = shape.matcher(text);
+            if (match.find()) {
+                clock = trimSeparators(match.group());
+                day = text.substring(0, match.start()) + text.substring(match.end());
+                break;
+            }
+        }
+        day = trimSeparators(day);
+        if (day.isEmpty()) return original;
+        boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
+        boolean monthName = Settings.PUBLISH_DATE_MONTH_NAME.get();
+        if (writesADate(day, seconds, locale, zone)) {
+            if (!dayFirst && !monthName) return original;
+        } else if (!Settings.PUBLISH_DATE_INSTEAD_OF_AGE.get()) {
+            return original;
+        }
+        String date = fixedDate(seconds, nowMillis, monthName, dayFirst, locale, zone);
+        return clock == null ? date : date + " " + clock;
+    }
+
+    /**
+     * A time of day at the end of a header ("14:05", "2:05 PM", "오후 2:05"), then one at its
+     * start, with the language's own AM and PM words on either side of it.
+     */
+    private static Pattern[] clockShapes(Locale locale) {
+        StringBuilder marks = new StringBuilder("AM|PM|am|pm");
+        for (String mark : DateFormatSymbols.getInstance(locale).getAmPmStrings()) {
+            if (mark != null && !mark.trim().isEmpty()) marks.append('|').append(Pattern.quote(mark.trim()));
+        }
+        // ICU puts a no-break space before PM, which Java's \s doesn't cover.
+        String space = "[\\s\\p{Z}]*";
+        String clock = "(?:(?:" + marks + ")" + space + ")?\\p{Nd}{1,2}[:.]\\p{Nd}{2}(?:" + space + "(?:" + marks + "))?";
+        return new Pattern[]{Pattern.compile(space + clock + "$"), Pattern.compile("^" + clock + space)};
+    }
+
+    /** The day with the comma or dot that joined it to the time taken off its ends. */
+    private static String trimSeparators(String day) {
+        int start = 0;
+        int end = day.length();
+        while (start < end && isSeparator(day.charAt(start))) start++;
+        while (end > start && isSeparator(day.charAt(end - 1))) end--;
+        return day.substring(start, end);
+    }
+
+    private static boolean isSeparator(char c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == ',' || c == ARABIC_COMMA
+                || c == MIDDLE_DOT || c == '|';
+    }
+
+    private static final char ARABIC_COMMA = 0x060C;
+    private static final char MIDDLE_DOT = 0x00B7;
+
+    /**
+     * When TikTok's chat date item was made: its createdAt, read from the item's own
+     * description ("DateViewHolderData(uuid=..., createdAt=1732600000000, ..."), which keeps its
+     * names through TikTok's renaming. 0 when it has none.
+     */
+    static long createdAtOf(Object item) {
+        if (item == null) return 0;
+        Matcher match = CREATED_AT.matcher(String.valueOf(item));
+        if (!match.find()) return 0;
+        try {
+            return Long.parseLong(match.group(1));
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
+    private static final Pattern CREATED_AT = Pattern.compile("[(,]\\s*createdAt=(\\d+)");
 
     /**
      * The day a video posted at {@code seconds} was posted, in {@code zone}: "10-12" the way

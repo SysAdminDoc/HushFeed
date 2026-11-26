@@ -3064,6 +3064,8 @@ Fade the controls out,Làm mờ dần điều khiển
 "The buttons, caption and tabs fade away instead of vanishing at once, and a touch during the fade brings them back. With Android's animations turned off they still vanish at once.","Các nút, chú thích và thẻ mờ dần thay vì biến mất ngay, và một lần chạm trong lúc mờ dần sẽ hiển thị lại chúng. Khi tắt hiệu ứng động của Android, chúng vẫn biến mất ngay."
 Date instead of age,Ngày thay cho thời gian
 "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.","Video mới hiện ngày đăng cạnh tên nhà sáng tạo, như 10-12, thay cho thời gian như 2 ngày trước. Ngày trước tháng và Viết tháng bằng chữ cũng đổi nó theo cùng cách."
+Use this date format everywhere,Dùng định dạng ngày này ở mọi nơi
+"Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.","Viết ngày ở bình luận, tiêu đề ngày trong chat và ngày ở kết quả tìm kiếm giống cách ba hàng ở trên viết ngày cạnh tên nhà sáng tạo."
 Keep your place in chats,Giữ vị trí trong cuộc trò chuyện
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.,Cuộc trò chuyện bạn đã cuộn lên sẽ giữ nguyên chỗ khi bạn quay lại từ video hoặc gửi câu trả lời. Gửi tin nhắn thường hoặc chạm vào mũi tên xuống vẫn đưa bạn đến tin mới nhất.
 Fill wide videos too,Lấp đầy màn hình cả với video ngang

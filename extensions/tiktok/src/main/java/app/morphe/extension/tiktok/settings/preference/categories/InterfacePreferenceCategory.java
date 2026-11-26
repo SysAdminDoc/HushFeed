@@ -384,6 +384,15 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.",
                     Settings.PUBLISH_DATE_INSTEAD_OF_AGE
             ));
+            // Comments, chats and search cards are TikTok's alone; Lite hooks none of them.
+            if (SettingsStatus.publishDateEverywhereEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Use this date format everywhere",
+                        "Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.",
+                        Settings.PUBLISH_DATE_EVERYWHERE
+                ));
+            }
         }
         // TikTok Lite's Always show publish date has no profile grid hooks (#502).
         if (SettingsStatus.alwaysShowPublishDateEnabled && SettingsStatus.publishDateGridsEnabled) {

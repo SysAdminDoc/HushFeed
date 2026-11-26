@@ -15,7 +15,7 @@ final class L10nTranslationsBg {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6192);
+        Map<String, String> table = new HashMap<>(6196);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6058,6 +6058,8 @@ final class L10nTranslationsBg {
                 "Използва разделеното оформление на по-широки екрани. Рестартирай TikTok, за да се приложи това. Ако старото оформление още е там, разгъни телефона отново.");
         table.put("Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.",
                 "Използвай JSON експорта от TikTok за този акаунт, до %1$s MB и %2$s записа. Датите без часова зона използват часовата зона на този телефон.");
+        table.put("Use this date format everywhere",
+                "Използване на този формат на датата навсякъде");
         table.put("Use this phone's own IDs",
                 "Използване на собствените ID на телефона");
         table.put("Use translation",
@@ -6094,11 +6096,11 @@ final class L10nTranslationsBg {
                 "Стойност: от %1$s до %2$s");
         table.put("Verified accounts",
                 "Потвърдени акаунти");
-        table.put("Version %1$s",
-                "Версия %1$s");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("Version %1$s",
+                "Версия %1$s");
         table.put("Version %1$s for TikTok %2$s",
                 "Версия %1$s за TikTok %2$s");
         table.put("Version, changes and licenses",
@@ -6217,11 +6219,11 @@ final class L10nTranslationsBg {
                 "Когато TikTok се стартира и реши, че езикът на телефона е сменен, той забравя езика, който си избрал в настройките му, и следва телефона. Когато това е включено, изборът ти остава. Важи от следващото стартиране на TikTok.");
         table.put("When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.",
                 "Когато създател, който е в LIVE, има и история, докосването на снимката му в профила му или в чата ви във „Входящи“ отваря историята. Докосни снимката отново, за да влезеш в LIVE излъчването.");
-        table.put("When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.",
-                "Когато видео на цял екран свърши, остава на него, вместо да минава на следващото. Плъзгането пак минава нататък.");
     }
 
     private static void fill50(Map<String, String> table) {
+        table.put("When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.",
+                "Когато видео на цял екран свърши, остава на него, вместо да минава на следващото. Плъзгането пак минава нататък.");
         table.put("When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.",
                 "Когато видео свърши, докато TikTok свири на заден план, то започва отначало, вместо да чака да натиснеш „Пусни“ в известието. Обаждане или звук от друго приложение пак го спират на пауза.");
         table.put("When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.",
@@ -6300,6 +6302,8 @@ final class L10nTranslationsBg {
                 "Изписва датата на TikTok до името на създателя с името на месеца, например окт 12. „Ден преди месеца“ я прави 12 окт.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Изписва датата пред часа до секундата по краткия начин за твоя език, например 7.10.25.");
+        table.put("Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.",
+                "Изписва датите на коментарите, заглавията с дати в чатовете и датите в резултатите от търсенето така, както трите реда по-горе изписват датата до името на създателя.");
         table.put("Writing",
                 "Писане");
         table.put("Writing the caption on the video",
@@ -6338,13 +6342,13 @@ final class L10nTranslationsBg {
                 "Изборът ти за „Дълго натискане“ работи само в лявата и дясната третина на видеото. Натискане в средата пак отваря собственото меню на TikTok. Изисква за „Дълго натискане“ да е избрано нещо различно от „По подразбиране на TikTok“.");
         table.put("Your TikTok account changed. Choose the file again for this account.",
                 "Акаунтът ти в TikTok е сменен. Избери файла отново за този акаунт.");
+    }
+
+    private static void fill51(Map<String, String> table) {
         table.put("Your account changed. Close this list and open it again.",
                 "Акаунтът ти е сменен. Затвори този списък и го отвори отново.");
         table.put("Your account changed. Open the count editor again.",
                 "Акаунтът е сменен. Отвори пак редактора на бройките.");
-    }
-
-    private static void fill51(Map<String, String> table) {
         table.put("Your downloader app isn't installed. Check Downloads.",
                 "Приложението за изтегляне липсва. Виж „Изтегляния“.");
         table.put("Your feed",

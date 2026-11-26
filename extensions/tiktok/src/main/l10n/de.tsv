@@ -3237,6 +3237,8 @@ The buttons, caption and tabs fade away instead of vanishing at once, and a touc
 # context: #461 Date instead of age, a switch under Write the month as a word
 Date instead of age	Datum statt Alter
 Recent videos show the date they were posted by the creator's name, like 10-12, in place of an age like 2d ago. Day before month and Write the month as a word change it the same way.	Neue Videos zeigen neben dem Namen des Creators das Datum, an dem sie gepostet wurden, etwa 10-12, statt einer Angabe wie vor 2 T. Tag vor Monat und Monat als Wort schreiben ändern es genauso.
+Use this date format everywhere	Dieses Datumsformat überall verwenden
+Writes the dates on comments, the date headers in chats and the dates on search results the way the three rows above write the date by the creator's name.	Schreibt die Daten bei Kommentaren, die Datumszeilen in Chats und die Daten in Suchergebnissen so, wie die drei Zeilen darüber das Datum neben dem Namen des Creators schreiben.
 # context: #503 Keep your place in chats, an Inbox switch under Show message times; the down arrow is the button that jumps a chat to its newest message
 Keep your place in chats	Position in Chats behalten
 A chat you've scrolled up in stays where you were when you come back from a video or send a reply. Sending a regular message or tapping the down arrow still takes you to the newest.	Ein Chat, in dem du nach oben gescrollt hast, bleibt, wo du warst, wenn du von einem Video zurückkommst oder eine Antwort sendest. Eine normale Nachricht senden oder auf den Pfeil nach unten tippen bringt dich weiterhin zur neuesten.

@@ -20,6 +20,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.feed.AuthorRegion;
+import app.morphe.extension.tiktok.publishdate.AlwaysShowPublishDatePatch;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -207,8 +208,9 @@ public final class CommenterDetails {
 
     /**
      * Called right after the cell writes the comment's time on {@code time}. Adds the
-     * commenter's country after it, the way the feed adds a video's after the creator's name.
-     * With the switch off, or no country on the account, TikTok's time stays as it is.
+     * commenter's country after it, the way the feed adds a video's after the creator's name, and
+     * writes the time with the publish date's date rows under Use this date format everywhere
+     * (#536). With both off, or nothing to add, TikTok's time stays as it is.
      */
     public static void onCommentTime(Object comment, TextView time) {
         HookStatus.bound(FAMILY, "time");
@@ -227,8 +229,9 @@ public final class CommenterDetails {
                 base = "";
             }
 
+            CharSequence dated = datedTime(comment, base);
             String region = regionsOn() ? AuthorRegion.shown(regionOf(comment)) : null;
-            if (region == null) {
+            if (region == null && dated == base) {
                 STAMPED.remove(time);
                 if (base != shown) {
                     time.setText(base);
@@ -236,9 +239,9 @@ public final class CommenterDetails {
                 return;
             }
 
-            CharSequence target = base.length() == 0
-                    ? region
-                    : TextUtils.concat(base, AuthorRegion.SEPARATOR + region);
+            CharSequence target = region == null ? dated
+                    : dated.length() == 0 ? region
+                    : TextUtils.concat(dated, AuthorRegion.SEPARATOR + region);
             String written = target.toString();
             STAMPED.put(time, new String[]{written, base.toString()});
             if (!written.equals(current)) {
@@ -247,6 +250,23 @@ public final class CommenterDetails {
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not show the commenter's region", ex);
         }
+    }
+
+    /**
+     * TikTok's time for the comment with Always show publish date's date rows on it, while Use
+     * this date format everywhere is on (#536), or {@code base} itself when nothing changes.
+     */
+    private static CharSequence datedTime(Object comment, CharSequence base) {
+        if (comment == null || base.length() == 0 || !AlwaysShowPublishDatePatch.everywhere()) {
+            return base;
+        }
+        Object created = Reflect.property(comment, "getCreateTime", "createTime");
+        if (!(created instanceof Number)) {
+            return base;
+        }
+        String original = base.toString();
+        String dated = AlwaysShowPublishDatePatch.commentTime(original, ((Number) created).longValue());
+        return dated == null || dated.equals(original) ? base : dated;
     }
 
     /**

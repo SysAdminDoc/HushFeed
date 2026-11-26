@@ -2782,7 +2782,9 @@ dialog popup greeting	ไดอะล็อก ป๊อปอัป ข้อ�
 Don't show again	ไม่ต้องแสดงอีก
 # context: a switch under See-through bottom bar; it stops the video blinking as it slides under the clear tab bar
 Stop the blink under the bar	หยุดการกะพริบใต้แถบ
+Pages under the bar	หน้าใต้แถบ
 If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.	หากวิดีโอในฟีดกะพริบขณะที่คุณปัดเมื่อเปิดใช้งาน "แถบด้านล่างแบบโปร่งใส" ตัวเลือกนี้จะเรนเดอร์วิดีโอภายใน TikTok แทนที่จะอยู่บนเลเยอร์แยกต่างหาก อาจใช้แบตเตอรี่เพิ่มขึ้นเล็กน้อย ต้องใช้แถบด้านล่างแบบโปร่งใส
+Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar.	ให้ตารางชุมชนในหน้าหลักและหน้าอื่นๆ ที่สิ้นสุดเหนือแท็บต่อลงไปใต้แถบโปร่งใส จึงมองเห็นผ่านแถบแทนแถบสีดำหรือสีขาว แถวสุดท้ายยังเลื่อนขึ้นมาเหนือแท็บได้ ต้องใช้แถบด้านล่างแบบโปร่งใส
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	หักเหภาพวิดีโอที่ขอบ
 The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	ขอบของแถบแก้วทรงแคปซูลจะหักเหภาพวิดีโอฟีดที่เบลอด้านหลัง เหมือนกับขอบของแก้วจริง และสีสันจะดูสดใสขึ้นเล็กน้อย ต้องเปิดใช้งาน "เบลอวิดีโอด้านหลังแถบ" และต้องเป็น Android 13 ขึ้นไป

@@ -2782,7 +2782,9 @@ dialog popup greeting	диалог изскачащ прозорец поздр�
 Don't show again	Не показвай повече
 # context: a switch under See-through bottom bar; it stops the video blinking as it slides under the clear tab bar
 Stop the blink under the bar	Спиране на премигването под лентата
+Pages under the bar	Страници под лентата
 If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.	Ако видеото в лентата премигва, когато плъзгаш с включена „Прозрачна долна лента“, това го изобразява вътре в TikTok вместо на отделен слой. Може да харчи малко повече батерия. Изисква „Прозрачна долна лента“.
+Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar.	Позволява мрежата „Общност“ в Начало и другите страници, които свършват над разделите, да продължат под прозрачната лента, така че да прозират през нея вместо черната или бялата ивица. Последният ред пак може да се превърти над разделите. Изисква „Прозрачна долна лента“.
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Пречупване на видеото по краищата
 The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	Краищата на стъклената капсула пречупват размазаното видео зад тях като ръб на истинско стъкло, а цветовете му изглеждат малко по-наситени. Изисква „Размазване на видеото зад лентата“ и Android 13 или по-нов.

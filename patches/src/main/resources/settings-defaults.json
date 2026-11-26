@@ -517,6 +517,7 @@
       "invisible_controls_keep_caption",
       "see_through_bottom_bar",
       "see_through_video_in_window",
+      "pages_under_bottom_bar",
       "floating_bottom_bar",
       "liquid_glass_bottom_bar",
       "glass_tab_lens",
@@ -4047,6 +4048,12 @@
     "original_audio": {
       "field": "ORIGINAL_AUDIO",
       "key": "original_audio",
+      "type": "boolean",
+      "default": false
+    },
+    "pages_under_bottom_bar": {
+      "field": "PAGES_UNDER_BOTTOM_BAR",
+      "key": "pages_under_bottom_bar",
       "type": "boolean",
       "default": false
     },

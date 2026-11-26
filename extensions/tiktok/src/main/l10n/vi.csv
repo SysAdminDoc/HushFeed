@@ -2712,7 +2712,9 @@ Close with Back or a tap outside,Đóng bằng nút Quay lại hoặc chạm ra 
 dialog popup greeting,hộp thoại cửa sổ bật lên lời chào
 Don't show again,Không hiện lại
 Stop the blink under the bar,Hết nhấp nháy dưới thanh
+Pages under the bar,Trang dưới thanh
 "If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","Nếu video nhấp nháy khi bạn vuốt lúc bật Thanh dưới cùng trong suốt, tùy chọn này vẽ video ngay trong TikTok thay vì trên một lớp riêng. Có thể tốn pin hơn một chút. Yêu cầu bật Thanh dưới cùng trong suốt."
+"Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar.","Cho lưới Cộng đồng ở Trang chủ và các trang khác kết thúc phía trên các thẻ chạy tiếp xuống dưới thanh trong suốt, để chúng hiện qua thanh thay cho dải màu đen hoặc trắng. Hàng cuối vẫn cuộn lên được phía trên các thẻ. Yêu cầu bật Thanh dưới cùng trong suốt."
 Bend the video at the edges,Bẻ cong video ở viền
 "The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.","Viền của thanh hình viên thuốc bằng kính bẻ cong phần video bị làm mờ phía sau, giống mép kính thật, và màu sắc hiện lên đậm hơn một chút. Yêu cầu bật Làm mờ video phía sau thanh điều hướng và thiết bị chạy Android 13 trở lên."
 Hide On this day,Ẩn Ngày này năm xưa (On this day)

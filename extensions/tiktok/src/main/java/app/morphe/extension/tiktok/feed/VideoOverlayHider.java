@@ -815,7 +815,7 @@ public final class VideoOverlayHider {
                     || clearControls || detailSearchBox
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
                     || seeThroughBar || lensBarNow || fillUnderBar || SeeThroughBottomBar.holdsBackground()
-                    || openedBar != null || VideoUnderGestureBar.holdsAny()
+                    || openedBar != null || VideoUnderGestureBar.holdsAny() || PageUnderBar.holds()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || !MUSIC_WRAPPERS_SQUEEZED.isEmpty()
                     || !SEEK_BARS_LIFTED.isEmpty()
@@ -929,15 +929,23 @@ public final class VideoOverlayHider {
                     View tabs = floatingBarNow ? bottomTabs : null;
                     int rise = tabs != null && tabs.isShown() ? SeeThroughBottomBar.riseOver(tabs) : 0;
                     pillRiseNow = rise;
-                    // Over a page that stops at the bar's top, Home's Community grid or another
-                    // tab's, the strip the pill stands in is painted, so the pill stays inside the
-                    // bottom area (#436). Over the feed's video it stays clear.
-                    SeeThroughBottomBar.paintRiseStrip(tabs, rise > 0 && !(seeThroughBar
-                            && FeedVisibility.isOnFeed(activity) && feedCellOnScreen(root, cellId)));
+                    boolean pagesUnder = seeThroughBar && Settings.PAGES_UNDER_BOTTOM_BAR.get();
+                    boolean feedInFront = seeThroughBar && (rise > 0 || pagesUnder)
+                            && FeedVisibility.isOnFeed(activity) && feedCellOnScreen(root, cellId);
+                    // With Pages under the bar, a page that stops at the bar's top, Home's
+                    // Community grid or another tab's, runs on under it instead, its last row
+                    // still clear of the tabs (#436). The feed's own pager is never one.
+                    boolean pageUnder = PageUnderBar.apply(activity, bottomTabs, rise, cellId, pagesUnder,
+                            !feedInFront);
+                    // Over a page that still stops at the bar's top, the strip the pill stands in
+                    // is painted, so the pill stays inside the bottom area (#436). Over the feed's
+                    // video, or a page that runs on under the bar, it stays clear.
+                    SeeThroughBottomBar.paintRiseStrip(tabs, rise > 0 && !feedInFront && !pageUnder);
                     // The feed goes on under the gesture bar too, while it's the page in front: the
-                    // tab host's other pages keep the room TikTok gives them (#408).
+                    // tab host's other pages keep the room TikTok gives them (#408), but for one
+                    // that runs on under the bar.
                     VideoUnderGestureBar.FEED.apply(activity, bottomTabs,
-                            seeThroughBar && FeedVisibility.isOnFeed(activity));
+                            seeThroughBar && (FeedVisibility.isOnFeed(activity) || pageUnder));
                     VideoUnderGestureBar.OPENED.apply(activity, openedBar, openedBar != null);
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, liftForStrip, layerId, cellId, infoIds, cardHintId, rise, roomLayers,

@@ -1404,6 +1404,14 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SEE_THROUGH_VIDEO_IN_WINDOW = new BooleanSetting(
             "see_through_video_in_window", FALSE, true, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
     /**
+     * With See-through bottom bar, lets a page that stops at the bar's top (Home's Community grid,
+     * another tab's list) run on under the bar, its last row padded clear of the tabs (#436).
+     * PageUnderBar does it on each layout and puts it back when this goes off. Off by default: it
+     * moves TikTok's own pages, not just the feed's, so it's asked for.
+     */
+    public static final BooleanSetting PAGES_UNDER_BOTTOM_BAR = new BooleanSetting(
+            "pages_under_bottom_bar", FALSE, false, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
+    /**
      * With See-through bottom bar, draws the tabs on a rounded see-through pill inset from the
      * bar's sides and bottom instead of nothing (#124). Only the bar's background changes, so the
      * tabs keep their places. Read on each layout.

@@ -170,7 +170,7 @@ final class VideoUnderGestureBar {
      * pager and the comment bar's slot.
      */
     @Nullable
-    private static ViewGroup maskOf(@Nullable View bar) {
+    static ViewGroup maskOf(@Nullable View bar) {
         View branch = bar;
         for (int hop = 0; branch != null && hop < MAX_HOPS; hop++) {
             if (!(branch.getParent() instanceof ViewGroup)) return null;

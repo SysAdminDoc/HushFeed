@@ -998,6 +998,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.",
                     Settings.SEE_THROUGH_VIDEO_IN_WINDOW
             ));
+            // #436: Community and the other pages that stop at the bar, under it.
+            addPreference(new TogglePreference(
+                    context,
+                    "Pages under the bar",
+                    "Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar.",
+                    Settings.PAGES_UNDER_BOTTOM_BAR
+            ));
             addPreference(new TogglePreference(
                     context,
                     "Floating bottom bar",

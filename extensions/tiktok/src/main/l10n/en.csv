@@ -1358,6 +1358,7 @@ Let the host see you,Let the host see you
 Let the last video finish,Let the last video finish
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.
 "Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.","Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are."
+"Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar.","Lets Home's Community grid and other pages that stop above the tabs run on under the see-through bar, so they show through it in place of the black or white band. Their last row still scrolls up clear of the tabs. Needs See-through bottom bar."
 Letting the host see you,Letting the host see you
 Licenses,Licenses
 Lift text length limits,Lift text length limits
@@ -1719,6 +1720,7 @@ Overrides are disabled in the Feature Gate Lab.,Overrides are disabled in the Fe
 Overrides disabled. Restart TikTok to apply.,Overrides disabled. Restart TikTok to apply.
 Overrides enabled. Restart TikTok to apply.,Overrides enabled. Restart TikTok to apply.
 Own profile counts,Own profile counts
+Pages under the bar,Pages under the bar
 Paid partnerships,Paid partnerships
 Pass TikTok's install checks,Pass TikTok's install checks
 Pause,Pause

@@ -310,6 +310,9 @@ public class FeedScreenCoverageTest {
         put("see_through_bottom_bar", YES, NONE, NONE);
         // How the video under that same bar is drawn (#232).
         put("see_through_video_in_window", YES, NONE, NONE);
+        // The tab pages under that same bar (#436), Community's grid, profiles and the inbox: none
+        // of the three windows, whose feed it leaves where it is.
+        put("pages_under_bottom_bar", NONE, NONE, NONE);
         // Only the look of that same bar (#124).
         put("floating_bottom_bar", YES, NONE, NONE);
         // And of that pill (#218).

@@ -89,6 +89,8 @@ public class PauseAnswersUnpatchedTest {
             "session_budget_reset_hour",
             // The day the streak's message last went, so a pause can't send a second one.
             "auto_streak_state",
+            // Whether this phone already ran AMOLED dark mode's switch, saved paused or not (#521).
+            "amoled_switch_built_in",
             // The settings screen's recent searches, which it still lists and adds to while paused.
             "recent_settings_searches",
             // Downloads rewrite TikTok's folder and file name with no switch in front.

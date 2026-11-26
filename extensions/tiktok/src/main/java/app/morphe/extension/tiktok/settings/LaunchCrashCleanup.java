@@ -36,6 +36,7 @@ public final class LaunchCrashCleanup {
             app.morphe.extension.tiktok.ghostmode.LocalLikes.PREFS_NAME,
             app.morphe.extension.tiktok.profile.ProfileChanges.PREFS_NAME,
             app.morphe.extension.tiktok.feed.LiteVideoRegion.PREFS_NAME,
+            app.morphe.extension.tiktok.inbox.PushDeliveryReport.PREFS_NAME,
     };
 
     private LaunchCrashCleanup() {

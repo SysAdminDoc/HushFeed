@@ -69,7 +69,7 @@ public class LaunchCrashCleanupTest {
                         "hushfeed_release_notes", "hushfeed_device_identity", "hushfeed_group_chats",
                         "hushfeed_sticker_recents", "hushfeed_new_dots", "hushfeed_story_reads",
                         "hushfeed_picture_in_picture", "hushfeed_local_likes", "hushfeed_profile_changes",
-                        "hushfeed_lite_regions"),
+                        "hushfeed_lite_regions", "hushfeed_suggested_pushes"),
                 Arrays.asList(kept).subList(TIKTOK_KEEPS.length, kept.length));
         assertArrayEquals(LaunchCrashCleanup.HUSHFEED_FILES, LaunchCrashCleanup.keepHushfeedFiles(null));
     }
@@ -89,6 +89,7 @@ public class LaunchCrashCleanupTest {
         expected.put("settings/preference/ReleaseNotes.java", Arrays.asList(
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));
         expected.put("inbox/GroupChats.java", Arrays.asList("PREFS_NAME", "PREFS_NAME"));
+        expected.put("inbox/PushDeliveryReport.java", Arrays.asList("PREFS_NAME"));
         expected.put("misc/RemoteConfigFreeze.java", Arrays.asList("Setting.PREFERENCES_NAME"));
         expected.put("playback/PictureInPicture.java", Arrays.asList("STATE"));
         expected.put("privacy/DeviceIdentity.java", Arrays.asList("PREFERENCES", "PREFERENCES"));

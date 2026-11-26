@@ -125,6 +125,59 @@ public class PushDeliveryReportTest {
         assertFalse(text().contains("NATIVE_UPLOAD_ACCEPTED UNKNOWN"));
     }
 
+    private static final String STAMP = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}";
+
+    @Test public void aDroppedSuggestedPushIsStillInTheReportAfterARestart() {
+        SuggestedVideoPushBlock.notify(manager, 79, notification("recommend_video_push_associated_4"));
+        assertEquals(0, Shadows.shadowOf(manager).getAllNotifications().size());
+        assertTrue(text().contains("NOTIFY_SUGGESTED SUGGESTED 1"));
+
+        PushDeliveryReport.resetForTests(); // a new process: every count held in memory is gone
+        String after = text();
+        assertFalse(after, after.contains("NOTIFY_SUGGESTED SUGGESTED"));
+        assertTrue(after, after.matches("(?s).*\nSuggested pushes since " + STAMP + ": dropped 1 \\(last "
+                + STAMP + "\\), posted 0\n.*"));
+        assertFalse(after.contains("associated_4"));
+        assertFalse(after.contains("private-"));
+    }
+
+    @Test public void aSuggestedPushPostedWithTheSwitchOffIsKeptAsPosted() {
+        Settings.BLOCK_SUGGESTED_VIDEO_NOTIFICATIONS.save(false);
+        SuggestedVideoPushBlock.notify(manager, 80, notification("recommend_video_push_associated_4"));
+        SuggestedVideoPushBlock.notify(manager, 81, notification("im_push_associated_4"));
+        assertEquals(2, Shadows.shadowOf(manager).getAllNotifications().size());
+
+        PushDeliveryReport.resetForTests();
+        String after = text();
+        assertTrue(after, after.matches("(?s).*\nSuggested pushes since " + STAMP + ": dropped 0, posted 1 \\(last "
+                + STAMP + "\\)\n.*"));
+    }
+
+    @Test public void aStoreThatFailsCostsTheLineNotThePushOrTheCounts() {
+        PushDeliveryReport.setObserverForTests(new PushDeliveryReport.Observer() {
+            @Override public Context context() {
+                return new ContextWrapper(context) {
+                    @Override public android.content.SharedPreferences getSharedPreferences(String name, int mode) {
+                        throw new IllegalStateException("disk full");
+                    }
+                };
+            }
+            @Override public boolean captureRunning() { return false; }
+            @Override public void register(LogBufferManager.ReportSection section) { }
+        });
+        SuggestedVideoPushBlock.notify(manager, 82, notification("recommend_video_push_associated_4"));
+        SuggestedVideoPushBlock.notify(manager, 83, notification("im_push_associated_4"));
+        assertEquals("the IM push still posts", 1, Shadows.shadowOf(manager).getAllNotifications().size());
+        String text = text();
+        assertTrue(text, text.contains("NOTIFY_SUGGESTED SUGGESTED 1"));
+        assertTrue(text, text.contains("NOTIFY_RETURNED IM 1"));
+        assertTrue(text, text.contains("SUGGESTED_STORE"));
+    }
+
+    @Test public void aReportWithNothingKeptSaysSo() {
+        assertTrue(text(), text().contains("\nSuggested pushes kept across restarts: none yet\n"));
+    }
+
     @Test public void genuineChannelFamiliesPassWhileSuggestionAndFollowerPoliciesStayEnabled() {
         Settings.HIDE_FOLLOWER_NOTIFICATIONS.save(true);
         assertFalse(NotificationControls.shouldDropPush(new NotificationControlsTest.Push("im_push")));

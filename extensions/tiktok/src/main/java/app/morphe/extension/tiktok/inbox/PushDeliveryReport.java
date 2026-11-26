@@ -9,11 +9,15 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -43,7 +47,18 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
     private enum State { UNKNOWN, ENABLED, DISABLED, NOT_REQUIRED, MISSING, BLOCKED, ALLOWED }
     private enum ReadinessState { UNOBSERVED, READY, NOT_READY, UNAVAILABLE }
     private enum Problem { COUNTER, REPORT_REGISTRATION, PROFILE_REGISTRATION, FIRST_CONTEXT,
-        FIRST_CAPTURE, CHANNEL_READ, CAPTURE_GATE, ANDROID_SNAPSHOT, EXPORT_SWITCHES, EXPORT_RENDER }
+        FIRST_CAPTURE, CHANNEL_READ, CAPTURE_GATE, ANDROID_SNAPSHOT, EXPORT_SWITCHES, EXPORT_RENDER,
+        SUGGESTED_STORE }
+
+    /**
+     * Suggested pushes dropped and posted, kept across restarts. Every other count here lives and
+     * dies with the process, so a suggested push dropped before a restart left nothing to read.
+     * Counts and times only, nothing from the notification.
+     */
+    public static final String PREFS_NAME = "hushfeed_suggested_pushes";
+    /** The report's own bound. Past it the last times still move, so the line stays current. */
+    private static final int SUGGESTED_LIMIT = 255;
+    private static final Object SUGGESTED_LOCK = new Object();
 
     interface Observer {
         Context context();
@@ -121,6 +136,10 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
             unavailable(Problem.COUNTER);
             return;
         }
+        if (family == Family.SUGGESTED
+                && (stage == Stage.NOTIFY_SUGGESTED || stage == Stage.NOTIFY_RETURNED)) {
+            keepSuggested(stage == Stage.NOTIFY_SUGGESTED);
+        }
         install();
         if (FIRST.compareAndSet(false, true)) {
             try { contextReadiness = observer.context() != null ? ReadinessState.READY : ReadinessState.NOT_READY; }
@@ -135,6 +154,47 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
             }
             firstObservationComplete = true;
         }
+    }
+
+    private static SharedPreferences suggestedStore(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    /** Never throws into notify: a store that fails costs the line, not the push. */
+    private static void keepSuggested(boolean dropped) {
+        try {
+            Context context = observer.context();
+            if (context == null) return;
+            String count = dropped ? "dropped" : "posted";
+            long now = System.currentTimeMillis();
+            synchronized (SUGGESTED_LOCK) {
+                SharedPreferences store = suggestedStore(context);
+                SharedPreferences.Editor editor = store.edit()
+                        .putInt(count, Math.min(SUGGESTED_LIMIT, store.getInt(count, 0) + 1))
+                        .putLong(count + "_last", now);
+                if (!store.contains("since")) editor.putLong("since", now);
+                editor.apply();
+            }
+        } catch (RuntimeException | LinkageError failure) {
+            unavailable(Problem.SUGGESTED_STORE);
+        }
+    }
+
+    private static String suggestedLine(Context context) {
+        SharedPreferences store = suggestedStore(context);
+        if (!store.contains("since")) return "Suggested pushes kept across restarts: none yet";
+        int dropped = store.getInt("dropped", 0), posted = store.getInt("posted", 0);
+        StringBuilder line = new StringBuilder("Suggested pushes since ")
+                .append(time(store.getLong("since", 0))).append(": dropped ").append(dropped);
+        if (dropped > 0) line.append(" (last ").append(time(store.getLong("dropped_last", 0))).append(')');
+        line.append(", posted ").append(posted);
+        if (posted > 0) line.append(" (last ").append(time(store.getLong("posted_last", 0))).append(')');
+        if (dropped >= SUGGESTED_LIMIT || posted >= SUGGESTED_LIMIT) line.append(", capped at ").append(SUGGESTED_LIMIT);
+        return line.toString();
+    }
+
+    private static String time(long millis) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(new Date(millis));
     }
 
     static Family family(String channel) {
@@ -243,7 +303,7 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
 
     private static List<String> renderLines() {
         List<String> lines = new ArrayList<>();
-        lines.add("Current process only. Zero means unobserved, not failure. No server delivery is inferred.");
+        lines.add("Current process only, except the suggested push line. Zero means unobserved, not failure. No server delivery is inferred.");
         lines.add("Native registration anchors: " + (nativeProfile == 1 ? "global 47.9.3 installed"
                 : nativeProfile == 2 ? "unsupported package/version" : "not installed"));
         lines.add("Native upload counters include all transports. Tokens and messages are not correlated.");
@@ -260,6 +320,10 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
                     + " followerFilter=" + Settings.HIDE_FOLLOWER_NOTIFICATIONS.get()
                     + " suggestionFilter=" + Settings.BLOCK_SUGGESTED_VIDEO_NOTIFICATIONS.get());
         } } catch (RuntimeException | LinkageError failure) { unavailable(Problem.EXPORT_SWITCHES); }
+        try {
+            Context context = observer.context();
+            if (context != null) lines.add(suggestedLine(context));
+        } catch (RuntimeException | LinkageError failure) { unavailable(Problem.SUGGESTED_STORE); }
         lines.add(firstObservationComplete ? "First observation: context=" + contextReadiness + " capture=" + captureReadiness
                 : "First observation: " + (FIRST.get() ? "readiness unobserved" : "unobserved"));
         int problems = UNAVAILABLE.get();

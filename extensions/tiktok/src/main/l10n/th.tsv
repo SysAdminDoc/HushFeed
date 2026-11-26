@@ -2842,6 +2842,8 @@ Hide Send to new group	ซ่อน "ส่งไปยังกลุ่มใ�
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	ซ่อนปุ่มที่เปลี่ยนบุคคลที่คุณเลือกให้เป็นแชทกลุ่มใหม่ ปุ่ม "ส่งแยกกัน" จะยังคงอยู่
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	โหมดมืด AMOLED
+Dark mode	โหมดมืด
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	เปิดธีมมืดที่มีอยู่ใน TikTok Lite แต่ไม่เคยให้เลือก รีสตาร์ท TikTok Lite เพื่อดูการเปลี่ยนแปลง
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	เติมเต็มโหมดมืดด้วยสีที่เลือกไว้ขณะทำการแพตช์ ซึ่งจะเป็นสีดำสนิทเว้นแต่จะเลือกสีอื่นไว้ ปิดใช้งานตัวเลือกนี้เพื่อใช้สีเทาเข้มตามปกติของ TikTok โหมดสว่างจะไม่เปลี่ยนแปลง รีสตาร์ท TikTok เพื่อดูการเปลี่ยนแปลง
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

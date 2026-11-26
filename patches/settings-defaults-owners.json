@@ -204,6 +204,9 @@
       "DELETE_WATCHED_OFFLINE_VIDEOS",
       "KEEP_OFFLINE_VIDEOS"
     ],
+    "Dark mode": [
+      "LITE_DARK_MODE"
+    ],
     "Device privacy guard": [
       "BLOCK_CLIPBOARD_READS",
       "HIDE_VPN",

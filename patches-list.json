@@ -2889,6 +2889,55 @@
       ]
     },
     {
+      "name": "Dark mode",
+      "description": "Turns on the dark theme TikTok Lite carries but never lets you pick. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok Lite.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically.go": [
+          "47.8.2"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok Lite",
+          "packageName": "com.zhiliaoapp.musically.go",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "d7811ec4166fea6cc720ba66699dc84b584ac9e6986613a76d4e43d8cbe32b27"
+          ],
+          "targets": [
+            {
+              "version": "47.8.2",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 470802,
+                "ARMEABI_V7A": 470802,
+                "X86": 470802,
+                "X86_64": 470802
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "lite_dark_mode",
+          "title": "Default: lite dark mode",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Device privacy guard",
       "description": "Stops TikTok reading what you copied and gives it a blank advertising ID. Can also hide a VPN connection and root status with details about root tools, and give TikTok a new device identity. Each switch starts off in Hushfeed settings > Privacy. Changing Hide root needs a restart.",
       "category": "Privacy",

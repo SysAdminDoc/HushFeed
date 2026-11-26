@@ -3090,6 +3090,8 @@ Hide Send to new group	إخفاء «إرسال إلى مجموعة جديدة»
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	يخفي الزر الذي يحوّل الأشخاص الذين اخترتهم إلى محادثة جماعية جديدة. يبقى الإرسال المنفصل.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	وضع AMOLED الداكن
+Dark mode	الوضع الداكن
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	يشغّل المظهر الداكن الموجود في TikTok Lite الذي لا يتيح لك اختياره أبدا. أعد تشغيل TikTok Lite لترى التغيير.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	يملأ الوضع الداكن باللون المختار أثناء التعديل، أسود نقي ما لم يُختر لون آخر. أوقف تشغيله للحصول على درجات TikTok الرمادية الداكنة. الوضع الفاتح لا يتغير. أعد تشغيل TikTok لرؤية التغيير.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

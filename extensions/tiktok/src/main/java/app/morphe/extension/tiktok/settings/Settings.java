@@ -147,6 +147,9 @@ public class Settings extends BaseSettings {
     // On by default: AMOLED dark theme is in a build only when it was picked, so black is the ask.
     // Off puts TikTok's own dark grays back at the next start (#372).
     public static final BooleanSetting AMOLED_DARK_MODE = new BooleanSetting("amoled_dark_mode", TRUE, true);
+    // TikTok Lite only: its own dark theme, which nothing in Lite lets you pick (#543). Off leaves
+    // Lite on the mode it saved, light unless something saved another.
+    public static final BooleanSetting LITE_DARK_MODE = new BooleanSetting("lite_dark_mode", FALSE, true);
     // Saved the first time a build with that switch runs (#521). For AMOLED dark theme to be
     // picked by default its switch has to start off, or every dark mode turns black at the next
     // update (#372), and this is what will keep it on for the people who already had it.

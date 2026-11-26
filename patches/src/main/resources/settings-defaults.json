@@ -207,6 +207,9 @@
       "delete_watched_offline_videos",
       "keep_offline_videos"
     ],
+    "Dark mode": [
+      "lite_dark_mode"
+    ],
     "Device privacy guard": [
       "block_clipboard_reads",
       "hide_vpn",
@@ -3529,6 +3532,12 @@
     "liquid_glass_bottom_bar": {
       "field": "LIQUID_GLASS_BOTTOM_BAR",
       "key": "liquid_glass_bottom_bar",
+      "type": "boolean",
+      "default": false
+    },
+    "lite_dark_mode": {
+      "field": "LITE_DARK_MODE",
+      "key": "lite_dark_mode",
       "type": "boolean",
       "default": false
     },

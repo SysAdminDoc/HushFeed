@@ -51,6 +51,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
     public static boolean isAvailable() {
         return SettingsStatus.foldableSplitViewEnabled
                 || SettingsStatus.amoledDarkModeEnabled
+                || SettingsStatus.liteDarkModeEnabled
                 || SettingsStatus.systemFontEnabled
                 || SettingsStatus.smallerTextSizesEnabled
                 || SettingsStatus.uiScaleEnabled
@@ -115,11 +116,22 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     "Split comment minimum width", "Window width needed to enable the layout. Restart TikTok to apply this.",
                     Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP, "%1$s dp", "%1$s dp"));
         }
-        if (SettingsStatus.amoledDarkModeEnabled || SettingsStatus.systemFontEnabled
+        if (SettingsStatus.amoledDarkModeEnabled || SettingsStatus.liteDarkModeEnabled
+                || SettingsStatus.systemFontEnabled
                 || SettingsStatus.smallerTextSizesEnabled || SettingsStatus.uiScaleEnabled
                 || SettingsStatus.turnOffHapticsEnabled || SettingsStatus.screenTransitionsEnabled
                 || hasAppIconPicker()) {
             addPreference(new SectionHeadingPreference(context, "Appearance"));
+        }
+        if (SettingsStatus.liteDarkModeEnabled) {
+            // TikTok Lite only (#543): the patch is declared for Lite alone.
+            addPreference(new TogglePreference(
+                    context,
+                    "Dark mode",
+                    "Turns on the dark theme TikTok Lite carries but never lets you pick. Restart "
+                            + "TikTok Lite to see the change.",
+                    Settings.LITE_DARK_MODE
+            ));
         }
         if (SettingsStatus.amoledDarkModeEnabled) {
             addPreference(new TogglePreference(

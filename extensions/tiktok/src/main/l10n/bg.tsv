@@ -2842,6 +2842,8 @@ Hide Send to new group	Скриване на „Изпрати до нова г�
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Скрива бутона, който прави от избраните хора нов групов чат. „Изпрати поотделно“ остава.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	AMOLED тъмен режим
+Dark mode	Тъмен режим
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	Включва тъмната тема, която TikTok Lite има, но никога не дава да избереш. Рестартирай TikTok Lite, за да видиш промяната.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Запълва тъмния режим с цвета, избран при пачването, чисто черно, ако не е избран друг. Изключи го за тъмносивите тонове на TikTok. Светлият режим не се променя. Рестартирай TikTok, за да видиш промяната.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

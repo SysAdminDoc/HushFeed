@@ -2839,6 +2839,8 @@ Hide Send to new group	Nascondi “Invia a un nuovo gruppo”
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Nasconde il pulsante che trasforma le persone scelte in una nuova chat di gruppo. “Invia separatamente” resta.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	Modalità scura AMOLED
+Dark mode	Modalità scura
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	Attiva il tema scuro che TikTok Lite include ma non lascia mai scegliere. Riavvia TikTok Lite per vedere la modifica.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Riempie la modalità scura con il colore scelto durante il patch, nero puro se non ne è stato scelto un altro. Disattivala per avere i grigi scuri di TikTok. La modalità chiara non cambia. Riavvia TikTok per vedere la modifica.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

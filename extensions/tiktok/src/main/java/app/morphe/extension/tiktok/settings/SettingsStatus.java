@@ -103,6 +103,7 @@ public class SettingsStatus {
     public static boolean uiScaleEnabled = false;
     public static boolean turnOffHapticsEnabled = false;
     public static boolean amoledDarkModeEnabled = false;
+    public static boolean liteDarkModeEnabled = false;
     public static boolean screenTransitionsEnabled = false;
     public static boolean appIconPickerEnabled = false;
     public static boolean diagnosticsEnabled = false;
@@ -555,6 +556,10 @@ public class SettingsStatus {
 
     public static void enableAmoledDarkMode() {
         amoledDarkModeEnabled = true;
+    }
+
+    public static void enableLiteDarkMode() {
+        liteDarkModeEnabled = true;
     }
 
     public static void enableScreenTransitions() {

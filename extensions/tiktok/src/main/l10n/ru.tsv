@@ -3025,6 +3025,8 @@ Hide Send to new group	Скрывать «Отправить в новую гр�
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Скрывает кнопку, которая делает из выбранных людей новый групповой чат. «Отправить по отдельности» остаётся.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	Тёмная тема AMOLED
+Dark mode	Тёмная тема
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	Включает тёмную тему, которая есть в TikTok Lite, но которую там нельзя выбрать. Перезапустите TikTok Lite, чтобы увидеть изменения.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Заливает тёмную тему цветом, выбранным при патчинге, чисто чёрным, если не выбран другой. Выключите, чтобы вернуть собственные тёмно-серые цвета TikTok. Светлая тема не меняется. Перезапустите TikTok, чтобы увидеть изменения.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

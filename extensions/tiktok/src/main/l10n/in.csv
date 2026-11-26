@@ -299,7 +299,8 @@ Free memory early,Kosongkan memori lebih awal
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Pilih %1$d sampai %2$d video. Nilai di luar rentang ini memakai batas valid terdekat. Mulai ulang TikTok agar berlaku.
 Choose a backup file. Your current settings are kept for Undo.,Pilih berkas cadangan. Pengaturanmu yang sekarang disimpan untuk Urungkan.
 "Pick a folder on internal storage, not an SD card","Pilih folder di penyimpanan internal, bukan kartu SD"
-Choose a preset to fill the SIM details.,Pilih preset untuk mengisi detail SIM.
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.","Centang satu preset untuk mengisi detail SIM, atau beberapa untuk memakai preset yang berbeda setiap kali TikTok dibuka."
+"A different preset each time TikTok starts, in this order: %1$s","Preset berbeda setiap kali TikTok dibuka, dengan urutan ini: %1$s"
 Choose a subfolder under %1$s.,Pilih subfolder di %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pilih tindakan yang ingin dihapus dari lembar berbagi. Nama yang kamu ketik sendiri dan belum ditampilkan TikTok tetap ada di daftar di atas.
 Choose what reaches your feed,Pilih apa yang sampai ke feed-mu

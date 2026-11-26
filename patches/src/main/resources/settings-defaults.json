@@ -751,6 +751,7 @@
       "simspoof_time_zone",
       "simspoof_mccmnc",
       "simspoof_op_name",
+      "simspoof_presets",
       "simspoof_feed_real",
       "live_feed_countries"
     ],
@@ -789,6 +790,7 @@
       "simspoof_iso",
       "simspoof_mccmnc",
       "simspoof_op_name",
+      "simspoof_presets",
       "simspoof_feed_real"
     ],
     "Sanitize sharing links": [
@@ -4807,6 +4809,12 @@
       "key": "simspoof_op_name",
       "type": "string",
       "default": "T-Mobile"
+    },
+    "simspoof_presets": {
+      "field": "SIM_SPOOF_PRESETS",
+      "key": "simspoof_presets",
+      "type": "string",
+      "default": ""
     },
     "simspoof_time_zone": {
       "field": "SIM_SPOOF_TIME_ZONE",

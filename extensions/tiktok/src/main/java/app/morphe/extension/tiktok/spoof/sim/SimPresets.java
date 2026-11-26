@@ -6,6 +6,9 @@ package app.morphe.extension.tiktok.spoof.sim;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimPresets {
     public static final SimPreset[] PRESETS = {
             new SimPreset("United States", "us", "310260", "T-Mobile", "America/New_York"),
@@ -92,6 +95,40 @@ public class SimPresets {
         }
 
         return null;
+    }
+
+    /** The first preset for a two-letter country code, or null when the list has none. */
+    @Nullable
+    public static SimPreset forCountry(@Nullable String iso) {
+        String code = trimOrEmpty(iso);
+        for (SimPreset preset : PRESETS) {
+            if (preset.iso.equalsIgnoreCase(code)) return preset;
+        }
+        return null;
+    }
+
+    /**
+     * The presets a saved list names, in its order, each once. A code with no preset (typed in a
+     * backup by hand, or one this list dropped) is passed over rather than failing the rest.
+     */
+    public static List<SimPreset> listed(@Nullable String saved) {
+        List<SimPreset> presets = new ArrayList<>();
+        if (saved == null) return presets;
+        for (String code : saved.split(",")) {
+            SimPreset preset = forCountry(code);
+            if (preset != null && !presets.contains(preset)) presets.add(preset);
+        }
+        return presets;
+    }
+
+    /** The saved form of a list of presets: their country codes, comma separated. */
+    public static String saved(List<SimPreset> presets) {
+        StringBuilder saved = new StringBuilder();
+        for (SimPreset preset : presets) {
+            if (saved.length() > 0) saved.append(',');
+            saved.append(preset.iso);
+        }
+        return saved.toString();
     }
 
     public static boolean hasEmptyCurrentValues(String iso, String mccMnc, String operatorName) {

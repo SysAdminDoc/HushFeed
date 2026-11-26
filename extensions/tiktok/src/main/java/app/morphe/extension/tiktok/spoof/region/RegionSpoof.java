@@ -19,6 +19,7 @@ import app.morphe.extension.tiktok.feedfilter.RegionFilter;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.spoof.sim.SimPreset;
 import app.morphe.extension.tiktok.spoof.sim.SimPresets;
+import app.morphe.extension.tiktok.spoof.sim.SimRotation;
 import app.morphe.extension.tiktok.spoof.sim.SpoofSimPatch;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -329,6 +330,7 @@ public final class RegionSpoof {
 
     private static String presetCountry() {
         if (Utils.getContext() == null || !Settings.SIM_SPOOF.get() || !Settings.REGION_SPOOF.get()) return "";
+        SimRotation.ensure();
         String value = Settings.SIM_SPOOF_ISO.get();
         if (value == null) return "";
         String[] last = lastCountry;
@@ -434,6 +436,7 @@ public final class RegionSpoof {
         TelephonyManager phone = (TelephonyManager) Utils.getContext().getSystemService(Context.TELEPHONY_SERVICE);
         List<String> set = new ArrayList<>();
         if (phone != null) {
+            SimRotation.ensure();
             String preset = Settings.SIM_SPOOF_ISO.get();
             String country = firstOf(phone.getSimCountryIso(), phone.getNetworkCountryIso());
             if (preset != null && !country.isEmpty()) {
@@ -563,6 +566,7 @@ public final class RegionSpoof {
 
     /** The first three digits of the SIM preset's operator code, or null when there isn't a usable one. */
     private static String presetMcc() {
+        SimRotation.ensure();
         String code = Settings.SIMSPOOF_MCCMNC.get();
         if (code == null || !SpoofSimPatch.validMccMnc(code)) return null;
         return code.trim().substring(0, 3);
@@ -665,6 +669,9 @@ public final class RegionSpoof {
     /** From the host application's attachBaseContext, right after the extension gets its context. */
     public static void applyProcessZone() {
         try {
+            // The earliest moment the extension runs, so this start's SIM preset is decided
+            // before TikTok reads any of it.
+            SimRotation.ensure();
             syncProcessZone(presetZone());
         } catch (RuntimeException error) {
             Logger.printException(() -> "Region spoof could not set the app's time zone", error);

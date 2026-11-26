@@ -316,7 +316,8 @@ Free memory early	Libera memoria in anticipo
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Scegli da %1$d a %2$d video. I valori fuori da questo intervallo usano il limite valido più vicino. Riavvia TikTok per applicare la modifica.
 Choose a backup file. Your current settings are kept for Undo.	Scegli un file di backup. Le tue impostazioni attuali vengono conservate per Annulla.
 Pick a folder on internal storage, not an SD card	Scegli una cartella nella memoria interna, non su SD
-Choose a preset to fill the SIM details.	Scegli un preset per compilare i dati della SIM.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	Spunta un preset per compilare i dati della SIM, o più di uno per usarne uno diverso a ogni avvio di TikTok.
+A different preset each time TikTok starts, in this order: %1$s	Un preset diverso a ogni avvio di TikTok, in quest'ordine: %1$s
 Choose a subfolder under %1$s.	Scegli una sottocartella in %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Scegli le azioni da rimuovere dal menu di condivisione. I nomi digitati a mano che TikTok non ha ancora mostrato restano nell'elenco qui sopra.
 Choose what reaches your feed	Scegli cosa arriva nel tuo feed

@@ -348,7 +348,8 @@ Check for already-saved videos,Kiểm tra các video đã lưu trước đó
 Check the brackets and quotes in this JSON,Kiểm tra dấu ngoặc và dấu nháy trong JSON này
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Chọn từ %1$d đến %2$d video. Giá trị ngoài phạm vi này sẽ sử dụng giới hạn hợp lệ gần nhất. Khởi động lại TikTok để áp dụng.
 Choose a backup file. Your current settings are kept for Undo.,Chọn tệp sao lưu. Các cài đặt hiện tại của bạn được giữ lại để hoàn tác.
-Choose a preset to fill the SIM details.,Chọn một cấu hình sẵn có để điền thông tin SIM.
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.","Đánh dấu một cấu hình sẵn có để điền thông tin SIM, hoặc nhiều cấu hình để dùng một cấu hình khác mỗi lần TikTok khởi động."
+"A different preset each time TikTok starts, in this order: %1$s","Một cấu hình sẵn có khác mỗi lần TikTok khởi động, theo thứ tự này: %1$s"
 Choose a subfolder under %1$s.,Chọn một thư mục con dưới %1$s.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,Chọn số lượng cho tài khoản đã đăng nhập này. Để trống để sử dụng số lượng mặc định của TikTok. Số 0 hiển thị là 0. Lựa chọn được lưu trên điện thoại này.
 Choose what reaches your feed,Chọn nội dung hiển thị trong bảng tin của bạn

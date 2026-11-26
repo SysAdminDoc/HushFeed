@@ -310,7 +310,8 @@ Free memory early	Yaddaşı erkən boşalt
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	%1$d - %2$d video seçin. Bu aralıqdan kənar dəyərlər ən yaxın etibarlı limitdən istifadə edir. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Choose a backup file. Your current settings are kept for Undo.	Ehtiyat nüsxə faylını seçin. Cari ayarlarınız Geri qaytar üçün saxlanılır.
 Pick a folder on internal storage, not an SD card	Daxili yaddaşda qovluq seçin, SD kart olmaz
-Choose a preset to fill the SIM details.	SIM məlumatlarını doldurmaq üçün hazır ayar seçin.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	SIM məlumatlarını doldurmaq üçün bir hazır ayar işarələyin, ya da TikTok hər dəfə açılanda fərqli birini istifadə etmək üçün bir neçəsini.
+A different preset each time TikTok starts, in this order: %1$s	TikTok hər dəfə açılanda fərqli hazır ayar, bu ardıcıllıqla: %1$s
 Choose a subfolder under %1$s.	%1$s altında alt qovluq seçin.
 Choose what reaches your feed	Lentinizə nələrin çatacağını seçin
 Choose which bottom tabs stay visible.	Hansı alt tabların görünən qalacağını seçin.

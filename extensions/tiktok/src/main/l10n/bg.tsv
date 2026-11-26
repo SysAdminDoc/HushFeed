@@ -316,7 +316,8 @@ Free memory early	Ранно освобождаване на паметта
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Избери от %1$d до %2$d видеа. Стойностите извън този диапазон използват най-близката валидна граница. Рестартирай TikTok, за да се приложи това.
 Choose a backup file. Your current settings are kept for Undo.	Избери файл с резервно копие. Текущите ти настройки се пазят, за да можеш да отмениш.
 Pick a folder on internal storage, not an SD card	Избери папка във вътрешната памет, а не на SD карта
-Choose a preset to fill the SIM details.	Избери готова настройка, за да попълниш данните за SIM.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	Отбележи една готова настройка, за да попълниш данните за SIM, или няколко, за да се ползва различна при всяко стартиране на TikTok.
+A different preset each time TikTok starts, in this order: %1$s	Различна готова настройка при всяко стартиране на TikTok, в този ред: %1$s
 Choose a subfolder under %1$s.	Избери подпапка в %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Избери действията, които да се премахнат от менюто за споделяне. Имената, които си въвел ръчно и TikTok още не е показал, остават в списъка по-горе.
 Choose what reaches your feed	Избери какво да стига до лентата ти

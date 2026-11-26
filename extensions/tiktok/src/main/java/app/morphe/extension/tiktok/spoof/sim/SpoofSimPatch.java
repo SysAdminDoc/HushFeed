@@ -13,6 +13,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 public class SpoofSimPatch {
     private static boolean isContextNotSet(String fieldSpoofed) {
         if (Utils.getContext() != null) {
+            // With several presets ticked, this start's turn comes before the first read.
+            SimRotation.ensure();
             return false;
         }
 

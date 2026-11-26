@@ -361,7 +361,8 @@ Free memory early	Освобождать память заранее
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Выберите значение от %1$d до %2$d видео. Значения вне этого диапазона округляются до ближайшей допустимой границы. Перезапустите TikTok, чтобы это применить.
 Choose a backup file. Your current settings are kept for Undo.	Выберите файл резервной копии. Текущие настройки сохраняются для отмены.
 Pick a folder on internal storage, not an SD card	Выберите папку во внутренней памяти, не на SD-карте
-Choose a preset to fill the SIM details.	Выберите пресет, чтобы заполнить данные SIM.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	Отметьте один пресет, чтобы заполнить данные SIM, или несколько, чтобы при каждом запуске TikTok использовался другой.
+A different preset each time TikTok starts, in this order: %1$s	Другой пресет при каждом запуске TikTok, в таком порядке: %1$s
 Choose a subfolder under %1$s.	Выберите подпапку в %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Выберите действия, которые нужно убрать из меню «Поделиться». Введённые вручную названия, которые TikTok ещё не показывал, остаются в списке выше.
 Choose what reaches your feed	Выберите, что попадает в вашу ленту

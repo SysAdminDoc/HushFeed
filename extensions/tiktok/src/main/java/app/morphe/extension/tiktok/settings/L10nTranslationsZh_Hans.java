@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6194);
+        Map<String, String> table = new HashMap<>(6196);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -396,6 +396,8 @@ final class L10nTranslationsZh_Hans {
                 "诊断报告已保存");
         table.put("A different account is signed in. Switch back to the one you set this up on, or enter who to message again.",
                 "已登录另一账号。切换回你设置的账号，或再次输入要向谁发送消息.");
+        table.put("A different preset each time TikTok starts, in this order: %1$s",
+                "每次 TikTok 启动时使用不同的预设，按此顺序：%1$s");
         table.put("A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.",
                 "双击消息不再为其添加爱心。单击并长按即可像以前一样工作.");
         table.put("A few seconds",
@@ -436,11 +438,11 @@ final class L10nTranslationsZh_Hans {
                 "端口是 1 到 65535 之间的整数");
         table.put("A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.",
                 "按视频下的“共享”会复制其链接，而不是打开共享表。之后再次按“共享”即可打开工作表.");
-        table.put("A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.",
-                "个人资料的分享面板会多一个“账号国家/地区”按钮。它会向 TikTok 询问该账号所在的位置，或其最新视频的发布地.");
     }
 
     private static void fill3(Map<String, String> table) {
+        table.put("A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.",
+                "个人资料的分享面板会多一个“账号国家/地区”按钮。它会向 TikTok 询问该账号所在的位置，或其最新视频的发布地.");
         table.put("A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.",
                 "个人资料的共享表有一个账号事实按钮。它显示 TikTok 已发送的有关该账号的内容：加入时间、地区和语言、送礼等级和 SecUID、帖子、喜欢的视频、收藏和转发的数量、用户名和显示名称上次更改时间、是否是私人的以及其喜欢的视频是否是公开的。没有获取任何额外的内容.");
         table.put("A removal is already running",
@@ -559,11 +561,11 @@ final class L10nTranslationsZh_Hans {
                 "添加了 1 个看过的视频");
         table.put("Added 1 seen video.",
                 "添加了 1 个看过的视频.");
-        table.put("Added one older seen video to this account",
-                "向此账号添加了一个较早看过的视频");
     }
 
     private static void fill4(Map<String, String> table) {
+        table.put("Added one older seen video to this account",
+                "向此账号添加了一个较早看过的视频");
         table.put("Added to this account.",
                 "添加到此账号.");
         table.put("Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.",
@@ -682,11 +684,11 @@ final class L10nTranslationsZh_Hans {
                 "始终显示发布日期");
         table.put("Always show the expand button in comments",
                 "始终显示评论中的展开按钮");
-        table.put("Always show the publish date in video author information. Restart TikTok to apply this.",
-                "始终在视频作者信息中显示发布日期。重新启动 TikTok 以应用此操作.");
     }
 
     private static void fill5(Map<String, String> table) {
+        table.put("Always show the publish date in video author information. Restart TikTok to apply this.",
+                "始终在视频作者信息中显示发布日期。重新启动 TikTok 以应用此操作.");
         table.put("Always upload in HD",
                 "始终以高清格式上传");
         table.put("Amazon Appstore",
@@ -805,11 +807,11 @@ final class L10nTranslationsZh_Hans {
                 "在首页按返回会立即离开 TikTok，不再显示“再按一次退出”。在其他标签页，按返回仍会先回到首页，或回到“打开 TikTok 于”所选的标签页.");
         table.put("Back up settings",
                 "备份设置");
-        table.put("Backdrop behind video text",
-                "视频文字背景");
     }
 
     private static void fill6(Map<String, String> table) {
+        table.put("Backdrop behind video text",
+                "视频文字背景");
         table.put("Background audio",
                 "后台播放音频");
         table.put("Background play in the long-press menu",
@@ -928,11 +930,11 @@ final class L10nTranslationsZh_Hans {
                 "构建细节");
         table.put("Build details copied to the clipboard",
                 "构建详细信息已复制到剪贴板");
-        table.put("Built-in fonts",
-                "内置字体");
     }
 
     private static void fill7(Map<String, String> table) {
+        table.put("Built-in fonts",
+                "内置字体");
         table.put("Bulletin board",
                 "公告板");
         table.put("Burn-in guard",
@@ -1007,8 +1009,6 @@ final class L10nTranslationsZh_Hans {
                 "选择 %1$d 到 %2$d 视频。超出此范围的值使用最接近的有效限值。重新启动 TikTok 以应用此操作.");
         table.put("Choose a backup file. Your current settings are kept for Undo.",
                 "选择一个备份文件。你当前的设置将保留以供撤消.");
-        table.put("Choose a preset to fill the SIM details.",
-                "选择一个预设来填充 SIM 卡详细信息.");
         table.put("Choose a subfolder under %1$s.",
                 "选择 %1$s 下的子文件夹.");
         table.put("Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.",
@@ -5675,6 +5675,8 @@ final class L10nTranslationsZh_Hans {
                 "同时三个");
         table.put("Thumbs down blocks the commenter",
                 "大拇指朝下屏蔽评论者");
+        table.put("Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.",
+                "勾选一个预设来填充 SIM 卡详细信息，或勾选多个，在每次 TikTok 启动时使用不同的预设.");
         table.put("TikTok Beta",
                 "TikTok Beta");
         table.put("TikTok Plus",
@@ -5725,11 +5727,11 @@ final class L10nTranslationsZh_Hans {
                 "TikTok 尚未准备好。请先打开收件箱，然后重试.");
         table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
                 "TikTok 允许你仅在某些房间中选择 LIVE 的品质。这会将视频质量添加到大多数其他房间的菜单中，并且下一个房间会以你上次选择的质量打开.");
-        table.put("TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.",
-                "TikTok 可能已收到此消息。交货尚未确认，因此今天不会重试.");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.",
+                "TikTok 可能已收到此消息。交货尚未确认，因此今天不会重试.");
         table.put("TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.",
                 "TikTok 需要麦克风权限才能使用语音识别。在 Android 的应用设置里允许，然后重新打开 LIVE.");
         table.put("TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.",
@@ -5848,11 +5850,11 @@ final class L10nTranslationsZh_Hans {
                 "左上角双击");
         table.put("Top right double tap",
                 "右上角双击");
-        table.put("Tracking",
-                "追踪");
     }
 
     private static void fill47(Map<String, String> table) {
+        table.put("Tracking",
+                "追踪");
         table.put("Tracking, device access and links",
                 "跟踪、设备访问和链接");
         table.put("Translate button in comments",
@@ -5971,11 +5973,11 @@ final class L10nTranslationsZh_Hans {
                 "在别人个人资料的@用户名下方显示该账号创建的年月。这是从账号 ID 中读出的，所以很老的账号不显示任何内容.");
         table.put("Undid an interrupted change. Restart TikTok to apply.",
                 "已撤销中断的更改。重启 TikTok 以生效.");
-        table.put("Undo",
-                "撤消");
     }
 
     private static void fill48(Map<String, String> table) {
+        table.put("Undo",
+                "撤消");
         table.put("Undo clearing seen videos",
                 "撤消清除已看过的视频");
         table.put("Undo didn't finish. Some settings may still be changed.",
@@ -6094,11 +6096,11 @@ final class L10nTranslationsZh_Hans {
                 "值：%1$s 至 %2$s");
         table.put("Verified accounts",
                 "已验证账号");
-        table.put("Version %1$s",
-                "版本%1$s");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("Version %1$s",
+                "版本%1$s");
         table.put("Version %1$s for TikTok %2$s",
                 "TikTok %2$s 的版本 %1$s");
         table.put("Version, changes and licenses",
@@ -6217,11 +6219,11 @@ final class L10nTranslationsZh_Hans {
                 "当 TikTok 启动并确定手机的语言已更改时，它会忘记你在设置中选择的语言并跟随手机。启用此功能后，你的选择就会保留。从 TikTok 的下一次开始算起.");
         table.put("When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.",
                 "如果正在 LIVE 的创作者也有故事，在其个人资料或收件箱的聊天中点按头像会打开故事。再次点按头像即可进入 LIVE.");
-        table.put("When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.",
-                "当视频以全屏方式结束时，请继续观看该视频，而不是转到下一个视频。滑动仍然继续.");
     }
 
     private static void fill50(Map<String, String> table) {
+        table.put("When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.",
+                "当视频以全屏方式结束时，请继续观看该视频，而不是转到下一个视频。滑动仍然继续.");
         table.put("When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.",
                 "当视频结束而 TikTok 在后台播放时，视频会重新开始，而不是等待你按通知中的“播放”。通话或其他应用程序的声音仍然会暂停它.");
         table.put("When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.",
@@ -6340,11 +6342,11 @@ final class L10nTranslationsZh_Hans {
                 "长按所选的操作只在视频的左侧和右侧三分之一生效。在中间长按仍会打开 TikTok 自带的菜单。需要把长按设为 TikTok 默认以外的选项.");
         table.put("Your TikTok account changed. Choose the file again for this account.",
                 "你的 TikTok 账号已更改。再次为此账号选择文件.");
-        table.put("Your account changed. Close this list and open it again.",
-                "你的账号已更改。关闭此列表并再次打开它.");
     }
 
     private static void fill51(Map<String, String> table) {
+        table.put("Your account changed. Close this list and open it again.",
+                "你的账号已更改。关闭此列表并再次打开它.");
         table.put("Your account changed. Open the count editor again.",
                 "你的账号已更改。再次打开计数编辑器.");
         table.put("Your downloader app isn't installed. Check Downloads.",

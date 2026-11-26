@@ -45,6 +45,9 @@ public class SimPresetPreference extends Preference {
 
     private final List<SimPreset> visiblePresets = new ArrayList<>();
 
+    /** The presets ticked in the open dialog, in the order they were ticked (#538). */
+    private final List<SimPreset> ticked = new ArrayList<>();
+
     /**
      * The status line and the explanation under an empty list, held for the length of one open
      * dialog. A no-match used to be a disabled row inside the list itself, which left the list
@@ -81,7 +84,18 @@ public class SimPresetPreference extends Preference {
 
     public void refreshSummary(String iso, String mccMnc, String operatorName) {
         SimPreset selectedPreset = SimPresets.findSelected(iso, mccMnc, operatorName);
-        if (selectedPreset != null) {
+        List<SimPreset> turns = SimPresets.listed(Settings.SIM_SPOOF_PRESETS.savedValue());
+        if (selectedPreset != null && turns.size() > 1 && turns.contains(selectedPreset)) {
+            // Per start, and the row says so: TikTok keeps the SIM it read as it started, so a
+            // country that changed with every feed page would reach some requests and not others.
+            StringBuilder order = new StringBuilder();
+            for (SimPreset preset : turns) {
+                if (order.length() > 0) order.append(", ");
+                order.append(preset.country);
+            }
+            setSummary(L10n.f(getContext(),
+                    "A different preset each time TikTok starts, in this order: %1$s", order));
+        } else if (selectedPreset != null) {
             setSummary(selectedPreset.country + ", " + selectedPreset.operatorName + " ("
                     + selectedPreset.mccMnc + ")");
         } else if (SimPresets.hasEmptyCurrentValues(iso, mccMnc, operatorName)) {
@@ -124,7 +138,7 @@ public class SimPresetPreference extends Preference {
         ));
 
         TextView helper = new TextView(context);
-        helper.setText(L10n.t(getContext(), "Choose a preset to fill the SIM details."));
+        helper.setText(L10n.t(getContext(), "Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts."));
         helper.setTextColor(getSummaryTextColor());
         LinearLayout.LayoutParams helperParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -162,9 +176,13 @@ public class SimPresetPreference extends Preference {
         listView.setDivider(new ColorDrawable(getDialogDividerColor()));
         listView.setDividerHeight(Math.max(1, SettingsUi.dp(getContext(), 1)));
         listView.setFooterDividersEnabled(true);
-        PresetAdapter adapter = new PresetAdapter(context, visiblePresets);
+        ticked.clear();
+        ticked.addAll(savedTicks());
+        PresetAdapter adapter = new PresetAdapter(context, visiblePresets, ticked);
         listView.setAdapter(adapter);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        // Several can be ticked (#538), and the list reports each ticked row as checked, which
+        // is what TalkBack reads out for it.
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         presetList = listView;
 
         FrameLayout listContainer = new FrameLayout(context);
@@ -209,13 +227,17 @@ public class SimPresetPreference extends Preference {
                 // nothing undid that short of retyping three fields.
                 .setNeutralButton(L10n.t(context, "Clear preset"), (ignored, which) -> clearPreset())
                 .setNegativeButton(L10n.t(context, "Cancel"), null)
+                .setPositiveButton(L10n.t(context, "Done"), (ignored, which) -> saveTicks())
                 .create();
 
+        // A tap ticks or unticks a row, and Done applies them. With several ticked a tap can't
+        // also be the choice, so picking one now takes the Done as well.
         listView.setOnItemClickListener((parent, view, position, id) -> {
             SimPreset preset = visiblePresets.get(position);
-            if (preset != null && savePreset(preset)) {
-                dialog.dismiss();
-            }
+            if (preset == null) return;
+            ticked.remove(preset);
+            if (listView.isItemChecked(position)) ticked.add(preset);
+            adapter.notifyDataSetChanged();
         });
 
         search.addTextChangedListener(new TextWatcher() {
@@ -238,6 +260,59 @@ public class SimPresetPreference extends Preference {
         SettingsUi.styleFramedDialog(dialog);
         View clearButton = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
         if (clearButton != null) clearButton.setTag("sim_preset_clear");
+        View doneButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (doneButton != null) doneButton.setTag("sim_preset_done");
+    }
+
+    /**
+     * The ticks the dialog opens with: the saved turns, or with none saved the preset the fields
+     * hold, so a single choice opens ticked as it always showed.
+     */
+    private static List<SimPreset> savedTicks() {
+        List<SimPreset> saved = SimPresets.listed(Settings.SIM_SPOOF_PRESETS.savedValue());
+        if (saved.size() > 1) return saved;
+        List<SimPreset> one = new ArrayList<>();
+        SimPreset selected = SimPresets.findSelected(Settings.SIM_SPOOF_ISO.savedValue(),
+                Settings.SIMSPOOF_MCCMNC.savedValue(), Settings.SIMSPOOF_OP_NAME.savedValue());
+        if (selected != null) one.add(selected);
+        return one;
+    }
+
+    /**
+     * Done. One tick fills the fields as a tap always did. Several are saved as the order the
+     * next starts take, with those already saved keeping their place so reopening the dialog
+     * doesn't start the turns over, and the fields take the first unless they already hold one
+     * of them. Nothing ticked leaves the fields as they are.
+     */
+    private void saveTicks() {
+        List<SimPreset> order = new ArrayList<>();
+        if (ticked.size() > 1) {
+            for (SimPreset preset : SimPresets.listed(Settings.SIM_SPOOF_PRESETS.savedValue())) {
+                if (ticked.contains(preset)) order.add(preset);
+            }
+            for (SimPreset preset : ticked) {
+                if (!order.contains(preset)) order.add(preset);
+            }
+        }
+        String saved = SimPresets.saved(order);
+        boolean changed = !saved.equals(Settings.SIM_SPOOF_PRESETS.savedValue());
+        Settings.SIM_SPOOF_PRESETS.save(saved);
+        if (ticked.isEmpty()) {
+            refreshSummary();
+            return;
+        }
+        SimPreset current = SimPresets.findSelected(Settings.SIM_SPOOF_ISO.savedValue(),
+                Settings.SIMSPOOF_MCCMNC.savedValue(), Settings.SIMSPOOF_OP_NAME.savedValue());
+        List<SimPreset> wanted = order.isEmpty() ? ticked : order;
+        if (current != null && wanted.contains(current)) {
+            refreshSummary();
+            if (changed && Settings.SIM_SPOOF.savedValue()) {
+                app.morphe.extension.shared.Utils.showToastLong(
+                        app.morphe.extension.tiktok.settings.L10n.t("Restart TikTok to apply this"));
+            }
+            return;
+        }
+        savePreset(wanted.get(0));
     }
 
     private boolean savePreset(SimPreset preset) {
@@ -250,6 +325,11 @@ public class SimPresetPreference extends Preference {
             return false;
         }
 
+        // Into the settings as well as the rows, as Clear preset does: a row persists only
+        // through its preference manager, and the turns at start read the settings.
+        Settings.SIM_SPOOF_ISO.save(preset.iso);
+        Settings.SIMSPOOF_MCCMNC.save(preset.mccMnc);
+        Settings.SIMSPOOF_OP_NAME.save(preset.operatorName);
         countryIsoPreference.setText(preset.iso);
         mccMncPreference.setText(preset.mccMnc);
         operatorNamePreference.setText(preset.operatorName);
@@ -289,32 +369,35 @@ public class SimPresetPreference extends Preference {
     }
 
     /**
-     * Marks the preset the three fields already hold and brings it into view.
+     * Marks the ticked presets among the rows showing and brings the first into view.
      *
      * <p>The list used to be sixty identical rows with no sign of which one was on, and the only
      * way to tell was to close the dialog and read the row summary.
      */
     private void markSelected(PresetAdapter adapter) {
-        SimPreset selected = SimPresets.findSelected(Settings.SIM_SPOOF_ISO.savedValue(),
-                Settings.SIMSPOOF_MCCMNC.savedValue(), Settings.SIMSPOOF_OP_NAME.savedValue());
-        adapter.selected = selected;
         adapter.notifyDataSetChanged();
         if (presetList == null) return;
-        int index = selected == null ? -1 : visiblePresets.indexOf(selected);
-        if (index < 0) {
-            presetList.clearChoices();
-            return;
+        // The checked positions are the list's, so a new filter moves them to where the ticked
+        // presets now sit.
+        presetList.clearChoices();
+        int first = -1;
+        for (int index = 0; index < visiblePresets.size(); index++) {
+            if (!ticked.contains(visiblePresets.get(index))) continue;
+            presetList.setItemChecked(index, true);
+            if (first < 0) first = index;
         }
-        presetList.setItemChecked(index, true);
-        presetList.setSelection(index);
+        if (first >= 0) presetList.setSelection(first);
     }
 
     /**
      * Back to no preset: the three settings blank, the three rows showing that, and the row
      * summary saying so. The settings are written here as well as through the rows, because
-     * a row persists through its preference manager and a row on its own has none.
+     * a row persists through its preference manager and a row on its own has none. The turns
+     * go too, so the next start doesn't fill the fields again.
      */
     private void clearPreset() {
+        ticked.clear();
+        Settings.SIM_SPOOF_PRESETS.save("");
         Settings.SIM_SPOOF_ISO.save("");
         Settings.SIMSPOOF_MCCMNC.save("");
         Settings.SIMSPOOF_OP_NAME.save("");
@@ -345,11 +428,12 @@ public class SimPresetPreference extends Preference {
     }
 
     private static class PresetAdapter extends ArrayAdapter<SimPreset> {
-        /** The preset the fields hold right now, marked on its row; null when they hold none. */
-        SimPreset selected;
+        /** The ticked presets, each marked on its row. */
+        private final List<SimPreset> ticked;
 
-        PresetAdapter(Context context, List<SimPreset> presets) {
+        PresetAdapter(Context context, List<SimPreset> presets, List<SimPreset> ticked) {
             super(context, android.R.layout.simple_list_item_2, android.R.id.text1, presets);
+            this.ticked = ticked;
         }
 
         @NonNull
@@ -366,16 +450,17 @@ public class SimPresetPreference extends Preference {
             summary.setText(preset.getSummary());
             view.setEnabled(true);
 
-            // The chosen row wears the radio the standard dialogs draw. TalkBack hears it from the
-            // list, which reports its checked row (markSelected) through the item delegate it
-            // gives every row that has none. A delegate of the row's own replaced that one, and
-            // with it the click action Switch Access and Voice Access pick a preset with. Nor is
-            // the row marked selected: the list uses that for the row a d-pad is on, and the
-            // row's drawable washes a selected row, so the chosen preset looked focused.
-            boolean chosen = selected != null && preset == selected;
+            // A ticked row wears the check mark the standard multiple-choice dialogs draw.
+            // TalkBack hears it from the list, which reports its checked rows (markSelected)
+            // through the item delegate it gives every row that has none. A delegate of the row's
+            // own replaced that one, and with it the click action Switch Access and Voice Access
+            // tick a preset with. Nor is the row marked selected: the list uses that for the row
+            // a d-pad is on, and the row's drawable washes a selected row, so the chosen preset
+            // looked focused.
+            boolean chosen = ticked.contains(preset);
             Context context = parent.getContext();
             int gap = SettingsUi.dp(context, 8);
-            Drawable ring = SettingsUi.radioMark(context);
+            Drawable ring = SettingsUi.checkMark(context);
             int column = ring.getIntrinsicWidth() + gap;
             title.setCompoundDrawablePadding(gap);
             Drawable mark = chosen ? ring : null;

@@ -158,6 +158,7 @@ A chat you've scrolled up in stays where you were when you come back from a vide
 A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.,A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.
 A diagnostic report is already being saved,A diagnostic report is already being saved
 "A different account is signed in. Switch back to the one you set this up on, or enter who to message again.","A different account is signed in. Switch back to the one you set this up on, or enter who to message again."
+"A different preset each time TikTok starts, in this order: %1$s","A different preset each time TikTok starts, in this order: %1$s"
 A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.,A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.
 A few seconds,A few seconds
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.,A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.
@@ -456,7 +457,6 @@ Checking your followers: %1$d,Checking your followers: %1$d
 "Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay.","Checks your followers first and says how many it found, then unfollows them one after another. Accounts that follow you back stay."
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.
 Choose a backup file. Your current settings are kept for Undo.,Choose a backup file. Your current settings are kept for Undo.
-Choose a preset to fill the SIM details.,Choose a preset to fill the SIM details.
 Choose a subfolder under %1$s.,Choose a subfolder under %1$s.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.
 Choose the file again after this run to save the other %1$s,Choose the file again after this run to save the other %1$s
@@ -2733,6 +2733,7 @@ This video is already saved,This video is already saved
 This video's sound has no title to look for,This video's sound has no title to look for
 Three at once,Three at once
 Thumbs down blocks the commenter,Thumbs down blocks the commenter
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.","Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts."
 TikTok Beta,TikTok Beta
 TikTok Plus,TikTok Plus
 TikTok account facts,TikTok account facts

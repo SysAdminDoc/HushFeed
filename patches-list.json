@@ -9923,6 +9923,15 @@
           "values": null
         },
         {
+          "key": "simspoof_presets",
+          "title": "Default: simspoof presets",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "simspoof_feed_real",
           "title": "Default: simspoof feed real",
           "description": null,
@@ -10717,6 +10726,15 @@
           "required": false,
           "type": "kotlin.String",
           "default": "T-Mobile",
+          "values": null
+        },
+        {
+          "key": "simspoof_presets",
+          "title": "Default: simspoof presets",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
           "values": null
         },
         {

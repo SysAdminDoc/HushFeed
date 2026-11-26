@@ -144,12 +144,14 @@ public final class NetworkStackSim {
     /** The preset country the SIM getters answer with, or null when they answer the phone's own. */
     private static String presetCountry() {
         if (Utils.getContext() == null || !Settings.SIM_SPOOF.get()) return null;
+        SimRotation.ensure();
         String iso = Settings.SIM_SPOOF_ISO.get();
         return RegionSpoof.validCountry(iso) ? iso.trim() : null;
     }
 
     private static String presetOperator() {
         if (Utils.getContext() == null || !Settings.SIM_SPOOF.get()) return null;
+        SimRotation.ensure();
         String code = Settings.SIMSPOOF_MCCMNC.get();
         return SpoofSimPatch.validMccMnc(code) ? code.trim() : null;
     }

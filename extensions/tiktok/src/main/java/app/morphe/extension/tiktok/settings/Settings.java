@@ -2079,6 +2079,9 @@ public class Settings extends BaseSettings {
     );
     public static final StringSetting SIMSPOOF_MCCMNC = new StringSetting("simspoof_mccmnc", "310260");
     public static final StringSetting SIMSPOOF_OP_NAME = new StringSetting("simspoof_op_name", "T-Mobile");
+    // The presets ticked in the preset dialog, as country codes in the order they were ticked
+    // (#538). With two or more, each start of TikTok takes the next one into the three fields above.
+    public static final StringSetting SIM_SPOOF_PRESETS = new StringSetting("simspoof_presets", "");
     // Read by the region patch's request hooks as each For You request is built, so no restart.
     public static final BooleanSetting SIM_SPOOF_FEED_REAL =
             new BooleanSetting("simspoof_feed_real", FALSE, false, Setting.parent(SIM_SPOOF));

@@ -340,7 +340,8 @@ Check for already-saved videos,检查已保存的视频
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,选择 %1$d 到 %2$d 视频。超出此范围的值使用最接近的有效限值。重新启动 TikTok 以应用此操作.
 Choose a backup file. Your current settings are kept for Undo.,选择一个备份文件。你当前的设置将保留以供撤消.
 "Pick a folder on internal storage, not an SD card",请选择内部存储中的文件夹，不要选 SD 卡
-Choose a preset to fill the SIM details.,选择一个预设来填充 SIM 卡详细信息.
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.",勾选一个预设来填充 SIM 卡详细信息，或勾选多个，在每次 TikTok 启动时使用不同的预设.
+"A different preset each time TikTok starts, in this order: %1$s",每次 TikTok 启动时使用不同的预设，按此顺序：%1$s
 Choose a subfolder under %1$s.,选择 %1$s 下的子文件夹.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,选择此登录账号的计数。将字段留空以使用 TikTok 的计数。零表示零。选择保留在这款手机上.
 Choose what reaches your feed,选择哪些内容进入你的信息流

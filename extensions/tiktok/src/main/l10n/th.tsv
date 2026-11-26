@@ -316,7 +316,8 @@ Free memory early	คืนหน่วยความจำล่วงหน�
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	เลือกวิดีโอ %1$d ถึง %2$d รายการ ค่าที่อยู่นอกช่วงนี้จะใช้ขีดจำกัดที่ถูกต้องที่ใกล้เคียงที่สุด เริ่มการทำงานของ TikTok ใหม่เพื่อนำการตั้งค่านี้ไปใช้
 Choose a backup file. Your current settings are kept for Undo.	เลือกไฟล์สำรองข้อมูล การตั้งค่าปัจจุบันของคุณจะถูกเก็บไว้สำหรับการเลิกทำ
 Pick a folder on internal storage, not an SD card	เลือกโฟลเดอร์ในที่จัดเก็บข้อมูลภายใน ไม่ใช่การ์ด SD
-Choose a preset to fill the SIM details.	เลือกพรีเซ็ตเพื่อกรอกรายละเอียด SIM
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	เลือกพรีเซ็ตหนึ่งรายการเพื่อกรอกรายละเอียด SIM หรือเลือกหลายรายการเพื่อใช้รายการที่ต่างกันทุกครั้งที่ TikTok เริ่มทำงาน
+A different preset each time TikTok starts, in this order: %1$s	พรีเซ็ตที่ต่างกันทุกครั้งที่ TikTok เริ่มทำงาน ตามลำดับนี้: %1$s
 Choose a subfolder under %1$s.	เลือกโฟลเดอร์ย่อยภายใต้ %1$s
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	เลือกการดำเนินการที่จะลบออกจากแผ่นเมนูแชร์ ชื่อที่คุณพิมพ์เองซึ่ง TikTok ยังไม่ได้แสดงจะยังคงอยู่ในรายการด้านบน
 Choose what reaches your feed	เลือกสิ่งที่จะปรากฏในฟีดของคุณ

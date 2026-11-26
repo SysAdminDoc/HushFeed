@@ -42,6 +42,12 @@ public class SimPresetRowTest {
         Settings.SIM_SPOOF_ISO.resetToDefault();
         Settings.SIMSPOOF_MCCMNC.resetToDefault();
         Settings.SIMSPOOF_OP_NAME.resetToDefault();
+        Settings.SIM_SPOOF_PRESETS.resetToDefault();
+    }
+
+    @org.junit.After
+    public void tearDown() {
+        Settings.SIM_SPOOF_PRESETS.resetToDefault();
     }
 
     @Test
@@ -102,7 +108,7 @@ public class SimPresetRowTest {
                     shown.contains("SIM-Landesvorlage") || shown.contains(germanFor(
                             "SIM country preset")));
             assertTrue("the helper sentence is still English: " + shown,
-                    shown.contains(germanFor("Choose a preset to fill the SIM details.")));
+                    shown.contains(germanFor("Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.")));
             assertTrue("the search box hint is still English: " + shown,
                     shown.contains(germanFor("Search countries or operators")));
         }
@@ -388,8 +394,9 @@ public class SimPresetRowTest {
                     dialog.getWindow().getDecorView(), android.widget.ListView.class);
             int index = java.util.Arrays.asList(
                     app.morphe.extension.tiktok.spoof.sim.SimPresets.PRESETS).indexOf(germany);
-            org.junit.Assert.assertEquals("the chosen preset is not marked",
-                    index, list.getCheckedItemPosition());
+            org.junit.Assert.assertEquals("the chosen preset is not the one marked",
+                    1, list.getCheckedItemCount());
+            org.junit.Assert.assertTrue("the chosen preset is not marked", list.isItemChecked(index));
             // A ListView in touch mode keeps a requested position for its next layout rather
             // than as a selection, so the row's place is read after one.
             list.measure(android.view.View.MeasureSpec.makeMeasureSpec(480, android.view.View.MeasureSpec.EXACTLY),
@@ -425,6 +432,121 @@ public class SimPresetRowTest {
             Settings.SIMSPOOF_MCCMNC.resetToDefault();
             Settings.SIMSPOOF_OP_NAME.resetToDefault();
         }
+    }
+
+    /**
+     * Several presets can be ticked, and Done saves them as the order the next starts take,
+     * with the row saying the turns are per start. One tick is a plain choice as before, and
+     * Clear preset drops the turns with the fields (#538).
+     */
+    @Test
+    public void severalTickedPresetsTakeTurnsAndOneIsAPlainChoice() throws Exception {
+        app.morphe.extension.tiktok.spoof.sim.SimPreset germany = preset("Germany");
+        app.morphe.extension.tiktok.spoof.sim.SimPreset france = preset("France");
+        app.morphe.extension.tiktok.spoof.sim.SimPreset japan = preset("Japan");
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            Settings.SIM_SPOOF_ISO.save(germany.iso);
+            Settings.SIMSPOOF_MCCMNC.save(germany.mccMnc);
+            Settings.SIMSPOOF_OP_NAME.save(germany.operatorName);
+            SimPresetPreference row = build(controller.get());
+
+            android.app.AlertDialog dialog = openPresetDialog(row);
+            android.widget.ListView list = findView(
+                    dialog.getWindow().getDecorView(), android.widget.ListView.class);
+            assertEquals(android.widget.ListView.CHOICE_MODE_MULTIPLE, list.getChoiceMode());
+            tap(list, france);
+            tap(list, japan);
+            assertEquals("a tap no longer only ticks", 3, list.getCheckedItemCount());
+            assertTrue("a tap closed the dialog before Done", dialog.isShowing());
+            android.view.View ticked = list.getAdapter().getView(indexOf(japan), null, list);
+            assertNotNull("a ticked row carries no mark", ((android.widget.TextView)
+                    ticked.findViewById(android.R.id.text1)).getCompoundDrawablesRelative()[0]);
+            pressDone(dialog);
+
+            assertEquals("de,fr,jp", Settings.SIM_SPOOF_PRESETS.get());
+            assertEquals("the fields left the preset they hold, one of the ticked",
+                    germany.iso, Settings.SIM_SPOOF_ISO.get());
+            assertEquals("A different preset each time TikTok starts, in this order: "
+                    + "Germany, France, Japan", String.valueOf(row.getSummary()));
+
+            // Unticking the one the fields hold keeps the others' order and fills the fields
+            // from the first of them, which the next start then keeps.
+            dialog = openPresetDialog(row);
+            list = findView(dialog.getWindow().getDecorView(), android.widget.ListView.class);
+            assertEquals("the saved turns did not open ticked", 3, list.getCheckedItemCount());
+            tap(list, germany);
+            pressDone(dialog);
+            assertEquals("fr,jp", Settings.SIM_SPOOF_PRESETS.get());
+            assertEquals(france.iso, Settings.SIM_SPOOF_ISO.get());
+            assertEquals(france.mccMnc, Settings.SIMSPOOF_MCCMNC.get());
+            assertEquals(france.operatorName, Settings.SIMSPOOF_OP_NAME.get());
+            assertEquals("A different preset each time TikTok starts, in this order: "
+                    + "France, Japan", String.valueOf(row.getSummary()));
+
+            // One left ticked is a plain choice: it fills the fields and nothing takes turns.
+            dialog = openPresetDialog(row);
+            list = findView(dialog.getWindow().getDecorView(), android.widget.ListView.class);
+            tap(list, france);
+            pressDone(dialog);
+            assertEquals("", Settings.SIM_SPOOF_PRESETS.get());
+            assertEquals(japan.iso, Settings.SIM_SPOOF_ISO.get());
+            assertEquals(japan.mccMnc, Settings.SIMSPOOF_MCCMNC.get());
+            String summary = String.valueOf(row.getSummary());
+            assertEquals("(" + japan.mccMnc + ")", summary.substring(summary.lastIndexOf('(')));
+
+            Settings.SIM_SPOOF_PRESETS.save("jp,de");
+            dialog = openPresetDialog(row);
+            dialog.getWindow().getDecorView().findViewWithTag("sim_preset_clear").performClick();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals("Clear preset left the turns", "", Settings.SIM_SPOOF_PRESETS.get());
+            assertEquals("", Settings.SIM_SPOOF_ISO.get());
+        } finally {
+            Settings.SIM_SPOOF_ISO.resetToDefault();
+            Settings.SIMSPOOF_MCCMNC.resetToDefault();
+            Settings.SIMSPOOF_OP_NAME.resetToDefault();
+        }
+    }
+
+    private static app.morphe.extension.tiktok.spoof.sim.SimPreset preset(String country) {
+        for (app.morphe.extension.tiktok.spoof.sim.SimPreset preset
+                : app.morphe.extension.tiktok.spoof.sim.SimPresets.PRESETS) {
+            if (country.equals(preset.country)) return preset;
+        }
+        throw new AssertionError("no preset for " + country);
+    }
+
+    private static int indexOf(app.morphe.extension.tiktok.spoof.sim.SimPreset preset) {
+        return java.util.Arrays.asList(
+                app.morphe.extension.tiktok.spoof.sim.SimPresets.PRESETS).indexOf(preset);
+    }
+
+    private static android.app.AlertDialog openPresetDialog(SimPresetPreference row) throws Exception {
+        java.lang.reflect.Method show =
+                SimPresetPreference.class.getDeclaredMethod("showPresetDialog");
+        show.setAccessible(true);
+        show.invoke(row);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        android.app.AlertDialog dialog = (android.app.AlertDialog)
+                org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertNotNull("the preset dialog never opened", dialog);
+        return dialog;
+    }
+
+    /** A tap on the preset's row, through the list as a finger's would go. */
+    private static void tap(android.widget.ListView list,
+                            app.morphe.extension.tiktok.spoof.sim.SimPreset preset) {
+        int position = indexOf(preset);
+        list.performItemClick(list.getAdapter().getView(position, null, list), position,
+                list.getAdapter().getItemId(position));
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+    }
+
+    private static void pressDone(android.app.AlertDialog dialog) {
+        android.view.View done = dialog.getWindow().getDecorView().findViewWithTag("sim_preset_done");
+        assertNotNull("the dialog has no Done", done);
+        done.performClick();
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertFalse(dialog.isShowing());
     }
 
     /**

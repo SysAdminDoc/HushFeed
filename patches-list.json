@@ -3054,6 +3054,15 @@
           "values": null
         },
         {
+          "key": "free_memory_early",
+          "title": "Default: free memory early",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
           "key": "morphe_debug_stacktrace",
           "title": "Default: morphe debug stacktrace",
           "description": null,
@@ -6952,6 +6961,15 @@
         {
           "key": "see_through_video_in_window",
           "title": "Default: see through video in window",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "pages_under_bottom_bar",
+          "title": "Default: pages under bottom bar",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -11565,6 +11583,15 @@
         {
           "key": "show_join_date",
           "title": "Default: show join date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_profile_video_count",
+          "title": "Default: show profile video count",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

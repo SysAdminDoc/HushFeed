@@ -32,7 +32,9 @@ import java.util.WeakHashMap;
  * followed up to the topmost view that still ends where it ends, through views that hold nothing
  * else beside it a move down could carry under the bar. That anchor takes a negative bottom margin
  * as tall as the room under it, and its parent stops clipping to its padding, so it reaches the
- * parent's bottom. Every list in it, the pages beside the one in front included, takes the part
+ * parent's bottom. A plain band that makes up that room (Community's column keeps the bar's room
+ * with one) goes while the anchor is down: it would draw over the page, and a column shared by
+ * weight gives the anchor its room only once it's gone. Every list in it, the pages beside the one in front included, takes the part
  * of it now under the bar and the pill's rise as bottom padding and stops clipping to it, so its
  * rows draw on under the bar and its last row still scrolls up clear of the tabs.
  *
@@ -64,6 +66,8 @@ final class PageUnderBar {
         /** Whether a layout has shown it reaching its parent's bottom. */
         boolean checked;
         int retakes;
+        /** The bands that made up the room under it, GONE while it's down. */
+        final List<WeakReference<View>> bands = new ArrayList<>();
 
         Grown(View anchor, ViewGroup parent, int grow) {
             this.parent = new WeakReference<>(parent);
@@ -204,27 +208,65 @@ final class PageUnderBar {
         GROWN.put(anchor, grown);
         setBottomMargin(anchor, grown.margin - grow);
         if (parent.getClipToPadding()) parent.setClipToPadding(false);
+        for (View band : bandsUnder(parent, anchor)) {
+            grown.bands.add(new WeakReference<>(band));
+            band.setVisibility(View.GONE);
+        }
         String name = anchor.getClass().getSimpleName();
-        Logger.printDebug(() -> "Pages under the bar: " + name + " goes " + grow + " px down under the bar");
+        int bands = grown.bands.size();
+        Logger.printDebug(() -> "Pages under the bar: " + name + " goes " + grow + " px down under the bar"
+                + (bands > 0 ? ", " + bands + " band(s) under it hidden" : ""));
         return anchor;
     }
 
     /**
      * Whether {@code group} holds nothing but {@code branch} where the branch is: a header above
      * it stays where it is when the group goes down, an overlay on it (a button, a pill, an empty
-     * page's note) would go down under the bar.
+     * page's note) would go down under the bar. A backdrop drawn behind the branch that fills the
+     * group (Community's white sheet behind its grid) goes down with the group and covers nothing.
      */
     private static boolean alone(ViewGroup group, View branch) {
+        int branchIndex = group.indexOfChild(branch);
         for (int i = 0; i < group.getChildCount(); i++) {
             View child = group.getChildAt(i);
             if (child == branch || child.getVisibility() != View.VISIBLE
                     || child.getWidth() == 0 || child.getHeight() == 0) {
                 continue;
             }
+            if (i < branchIndex && child.getZ() <= branch.getZ() && fills(group, child)) continue;
             boolean across = child.getLeft() < branch.getRight() && child.getRight() > branch.getLeft();
             if (across && child.getBottom() > branch.getTop()) return false;
         }
         return true;
+    }
+
+    private static boolean fills(ViewGroup group, View child) {
+        return child.getLeft() <= 0 && child.getTop() <= 0
+                && child.getRight() >= group.getWidth() && child.getBottom() >= group.getHeight();
+    }
+
+    /**
+     * The plain views that make up {@code parent}'s room under {@code anchor}: a band TikTok keeps
+     * the bar's room with (Community's column ends in one), which would draw over the page and,
+     * in a column shared by weight, keep its room from it. Only bare {@link View}s, which hold
+     * nothing a hidden band could take away, and none at all when anything else is in the room.
+     */
+    private static List<View> bandsUnder(ViewGroup parent, View anchor) {
+        List<View> bands = new ArrayList<>();
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child == anchor || child.getVisibility() != View.VISIBLE
+                    || child.getWidth() == 0 || child.getHeight() == 0) {
+                continue;
+            }
+            boolean across = child.getLeft() < anchor.getRight() && child.getRight() > anchor.getLeft();
+            if (!across || child.getBottom() <= anchor.getBottom()) continue;
+            if (child.getClass() != View.class || child.getTop() < anchor.getBottom() - 1) {
+                return new ArrayList<>();
+            }
+            bands.add(child);
+        }
+        return bands;
     }
 
     /** The view this class sent down that {@code list} is in, or is. */
@@ -281,6 +323,16 @@ final class PageUnderBar {
             grown.margin = margin;
             grown.checked = false;
             setBottomMargin(anchor, margin - grown.grow);
+        }
+        for (WeakReference<View> reference : grown.bands) {
+            View band = reference.get();
+            if (band == null || band.getVisibility() != View.VISIBLE) continue;
+            if (++grown.retakes > MAX_RETAKES) {
+                refuse(anchor, "TikTok keeps showing the band under it");
+                return false;
+            }
+            grown.checked = false;
+            band.setVisibility(View.GONE);
         }
         if (parent.getClipToPadding()) parent.setClipToPadding(false);
         if (anchor.isLayoutRequested()) return true;
@@ -339,6 +391,10 @@ final class PageUnderBar {
         }
         ViewGroup parent = grown.parent.get();
         if (parent != null && grown.parentClips && !parent.getClipToPadding()) parent.setClipToPadding(true);
+        for (WeakReference<View> reference : grown.bands) {
+            View band = reference.get();
+            if (band != null && band.getVisibility() == View.GONE) band.setVisibility(View.VISIBLE);
+        }
     }
 
     private static void unpad(ViewGroup list, Padded padded) {

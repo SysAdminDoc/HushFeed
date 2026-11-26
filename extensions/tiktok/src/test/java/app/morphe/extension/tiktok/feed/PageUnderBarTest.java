@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -25,6 +27,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 
 /**
  * Pages under the bar (#436): with See-through bottom bar, Home's Community grid and other pages
@@ -45,6 +48,8 @@ public class PageUnderBarTest {
     private static final int BAR_ID = 0x7f0a0c22;
     private static final int GESTURE_BAR = 48;
     private static final int BAR = 138;
+    /** The status bar and the top tabs over a Home page. */
+    private static final int TOP_TABS = 360;
 
     @Before
     public void setUp() {
@@ -312,6 +317,80 @@ public class PageUnderBarTest {
         }
     }
 
+    /**
+     * Home's Community grid on 48.0.2 (Login2, 2026-11-26): the page is a column of the top tabs'
+     * room, the body, and a plain band as tall as the bar, so the room under the body is that band
+     * and not a margin or a padding. In the body a white backdrop fills the holder behind the
+     * refresh layout, and the grid hangs under the refresh header's room, scrolled up over it.
+     * The switch changed nothing there: the backdrop read as something over the grid that would
+     * go down with it, the band stayed white under the bar, and the pill's strip was painted over
+     * the grid's last row.
+     */
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void communitysColumnRunsOnUnderTheBarPastTheBandUnderIt() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            Window window = new Window(activity);
+            LinearLayout page = new LinearLayout(activity);
+            page.setOrientation(LinearLayout.VERTICAL);
+            page.addView(new View(activity), new LinearLayout.LayoutParams(MATCH, TOP_TABS));
+            FrameLayout body = new FrameLayout(activity);
+            page.addView(body, new LinearLayout.LayoutParams(MATCH, 0, 1f));
+            View band = new View(activity);
+            band.setBackgroundColor(Color.WHITE);
+            page.addView(band, new LinearLayout.LayoutParams(MATCH, BAR));
+            window.frame.addView(page, new FrameLayout.LayoutParams(MATCH, MATCH));
+
+            FrameLayout holder = new FrameLayout(activity);
+            FrameLayout.LayoutParams under = new FrameLayout.LayoutParams(MATCH, MATCH);
+            under.topMargin = 8;
+            body.addView(holder, under);
+            View backdrop = new View(activity);
+            backdrop.setBackgroundColor(Color.WHITE);
+            holder.addView(backdrop, new FrameLayout.LayoutParams(MATCH, MATCH));
+            Refresh refresh = new Refresh(activity);
+            holder.addView(refresh, new FrameLayout.LayoutParams(MATCH, MATCH));
+            View header = new View(activity);
+            header.setVisibility(View.INVISIBLE);
+            refresh.addView(header);
+            View[] last = new View[1];
+            ScrollView grid = list(activity, last);
+            grid.getChildAt(0).setBackgroundColor(Color.RED);
+            refresh.addView(grid);
+            window.show(activity);
+
+            // The switch off: TikTok's page, the band white under the bar and the strip painted.
+            window.settle(activity);
+            int rise = window.rise();
+            int barTop = window.bar.getTop();
+            assertEquals(2181 - BAR, body.getBottom());
+            assertEquals(Color.WHITE, pixel(window, 20, 2181 - 10));
+            assertEquals(Color.BLACK, window.strip());
+
+            Settings.PAGES_UNDER_BOTTOM_BAR.save(true);
+            window.settle(activity);
+            assertEquals("the grid's page didn't go down under the bar", 2181, body.getBottom());
+            assertEquals("the band under the page still covers the grid", Color.RED,
+                    pixel(window, 20, 2181 - 10));
+            assertEquals("the strip still covers the grid", 0, window.strip());
+            assertEquals("the last row can't scroll up clear of the pill", barTop - rise,
+                    bottomOnScreen(window, grid, last[0]));
+
+            // Off again: TikTok's page as it was.
+            Settings.PAGES_UNDER_BOTTOM_BAR.save(false);
+            window.settle(activity);
+            assertEquals(2181 - BAR, body.getBottom());
+            assertEquals(0, ((ViewGroup.MarginLayoutParams) body.getLayoutParams()).bottomMargin);
+            assertEquals(View.VISIBLE, band.getVisibility());
+            assertEquals(0, grid.getPaddingBottom());
+            assertTrue(grid.getClipToPadding());
+            assertEquals(Color.WHITE, pixel(window, 20, 2181 - 10));
+            assertEquals(Color.BLACK, window.strip());
+        }
+    }
+
     /** A list that ends well above the bar has nothing under it, and stays as it is. */
     @Test
     public void aListThatStopsAboveTheBarIsLeftAlone() {
@@ -420,6 +499,25 @@ public class PageUnderBarTest {
         }
     }
 
+    /** Where {@code last} ends on screen with {@code list} scrolled all the way down, scrolls above it included. */
+    private static int bottomOnScreen(Window window, ScrollView list, View last) {
+        list.scrollTo(0, 1_000_000);
+        int[] at = new int[2];
+        int[] host = new int[2];
+        last.getLocationInWindow(at);
+        window.host.getLocationInWindow(host);
+        return at[1] - host[1] + last.getHeight();
+    }
+
+    /** The color the window draws at {@code x}, {@code y}. */
+    private static int pixel(Window window, int x, int y) {
+        Bitmap bitmap = Bitmap.createBitmap(1080, 2181, Bitmap.Config.ARGB_8888);
+        window.host.draw(new Canvas(bitmap));
+        int color = bitmap.getPixel(x, y);
+        bitmap.recycle();
+        return color;
+    }
+
     private static void layOut(View root) {
         root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(2181, View.MeasureSpec.EXACTLY));
@@ -448,6 +546,36 @@ public class PageUnderBarTest {
             for (int i = 0; i < getChildCount(); i++) {
                 getChildAt(i).layout(i * (r - l), 0, (i + 1) * (r - l), b - t);
             }
+        }
+    }
+
+    /**
+     * TikTok's pull to refresh on Community's grid: the header's room on top, the list under it as
+     * tall as the layout itself, scrolled up over the header.
+     */
+    private static final class Refresh extends ViewGroup {
+        static final int HEADER = 88;
+
+        Refresh(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int width = MeasureSpec.getSize(widthMeasureSpec);
+            int height = MeasureSpec.getSize(heightMeasureSpec);
+            getChildAt(0).measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(HEADER, MeasureSpec.EXACTLY));
+            getChildAt(1).measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+            setMeasuredDimension(width, height);
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int l, int t, int r, int b) {
+            getChildAt(0).layout(0, 0, r - l, HEADER);
+            getChildAt(1).layout(0, HEADER, r - l, HEADER + b - t);
+            scrollTo(0, HEADER);
         }
     }
 

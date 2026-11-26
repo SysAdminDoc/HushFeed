@@ -37,6 +37,7 @@ Every Hushfeed release, newest first.
 * On profile grids with dates or video lengths turned on, the little play icon stays next to the view count. It used to sit halfway between the count and the date, or next to the date when a long one wrapped (#519).
 * `Hold TikTok's save button to download` now works when you're signed out too. Signed out, TikTok gives the save button a tap and no long press at all, so holding it did nothing. A tap on it still does what it did before (#499).
 * `Show the room ID and your connection` can leave parts off the line now. Pick the room ID, ping, latency or download speed in the new `Hide parts of the room line` row right under it. In a LIVE, a tap on the line shrinks it to a small dot that stays out of the way from room to room, and a tap on the dot brings it back. Copying the room ID moved to a long press on the line (#534).
+* `Pages under the bar` now reaches Home's Community grid. The switch changed nothing there, so the grid still stopped above a white band and the floating pill drew a thin white line over its last row (#436).
 
 ## 0.85.0 (2026-11-24)
 

@@ -8,13 +8,16 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.PixelFormat;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.RenderNode;
@@ -31,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.TextView;
 
+import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import java.lang.ref.WeakReference;
@@ -262,20 +266,42 @@ final class SeeThroughBottomBar {
      * The middle of {@code tab}'s icon, from the tab's top: the largest shown view in it that
      * isn't text and draws something, so a count badge, a name or an empty container never
      * counts. NaN when it has none.
+     *
+     * <p>A picture whose view fills most of the tab's height says nothing by its box, so then the
+     * middle is where it draws. TikTok's Create tab (48.0.2, 144x98 on a 720px screen) holds two
+     * Fresco views as big as the cell, and the plate with the + draws in the cell's upper part,
+     * 10px above the view's middle, which left the + high in the pill (#474).
      */
     static float iconMiddle(View tab) {
-        float[] best = {0f, Float.NaN};
-        largestPicture(tab, 0f, best, 0);
-        return best[1];
+        List<View> pictures = new ArrayList<>();
+        List<PointF> at = new ArrayList<>();
+        pictures(tab, 0f, 0f, pictures, at, 0);
+        int best = -1;
+        float bestArea = 0f;
+        for (int i = 0; i < pictures.size(); i++) {
+            float area = (float) pictures.get(i).getWidth() * pictures.get(i).getHeight();
+            if (area > bestArea) {
+                bestArea = area;
+                best = i;
+            }
+        }
+        if (best < 0) return Float.NaN;
+        View icon = pictures.get(best);
+        float middle = at.get(best).y + icon.getHeight() / 2f;
+        if (icon.getHeight() * 4 < tab.getHeight() * 3) return middle;
+        float drawn = drawnMiddle(tab, pictures, at, bestArea);
+        return Float.isNaN(drawn) ? middle : drawn;
     }
 
-    private static void largestPicture(View view, float top, float[] best, int depth) {
+    /** Every shown view in {@code view} that isn't text and draws something, with where it sits in the tab. */
+    private static void pictures(View view, float left, float top, List<View> out, List<PointF> at, int depth) {
         if (view.getVisibility() != View.VISIBLE || depth > 8) return;
         if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
-                largestPicture(child, top + child.getTop() + child.getTranslationY(), best, depth + 1);
+                pictures(child, left + child.getLeft() + child.getTranslationX(),
+                        top + child.getTop() + child.getTranslationY(), out, at, depth + 1);
             }
             return;
         }
@@ -285,11 +311,84 @@ final class SeeThroughBottomBar {
         // for the icon puts the tab's middle in the pill's middle, leaving the + high (#474).
         // Android skips drawing such a view the same way: will-not-draw and nothing behind or over it.
         if (view.willNotDraw() && view.getBackground() == null && view.getForeground() == null) return;
-        float area = (float) view.getWidth() * view.getHeight();
-        if (area > best[0]) {
-            best[0] = area;
-            best[1] = top + view.getHeight() / 2f;
+        if (view.getWidth() <= 0 || view.getHeight() <= 0) return;
+        out.add(view);
+        at.add(new PointF(left, top));
+    }
+
+    /** The drawn middle each tab had at its size, and when an empty one may be tried again. */
+    private static final Map<View, float[]> DRAWN = new WeakHashMap<>();
+    /** How long a tab whose picture hadn't drawn yet (Fresco loads it late) waits for another look. */
+    static final long DRAWN_RETRY_MS = 500;
+    /** The alpha a pixel needs to count as part of the picture, so a soft shadow's fringe doesn't. */
+    static final int DRAWN_ALPHA = 0x40;
+
+    /**
+     * The middle of the rows {@code tab}'s big pictures draw on, from the tab's top: every picture
+     * at least 90% of {@code area}, since Create's two Fresco views overlap and only one shows its
+     * image. NaN when they draw nothing yet or can't be drawn here.
+     */
+    private static float drawnMiddle(View tab, List<View> pictures, List<PointF> at, float area) {
+        int width = tab.getWidth(), height = tab.getHeight();
+        if (width <= 0 || height <= 0) return Float.NaN;
+        long now = SystemClock.uptimeMillis();
+        float[] known = DRAWN.get(tab);
+        if (known != null && known[0] == width && known[1] == height
+                && (!Float.isNaN(known[2]) || now < known[3])) {
+            return known[2];
         }
+        float middle = Float.NaN;
+        Bitmap pixels = null;
+        try {
+            if (Build.VERSION.SDK_INT >= 28) {
+                // Through a Picture, so a hardware bitmap (which a software canvas refuses) is read
+                // back from the GPU instead of failing the draw.
+                Picture picture = new Picture();
+                drawPictures(picture.beginRecording(width, height), pictures, at, area);
+                picture.endRecording();
+                pixels = Bitmap.createBitmap(picture, width, height, Bitmap.Config.ARGB_8888);
+            } else {
+                pixels = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                drawPictures(new Canvas(pixels), pictures, at, area);
+            }
+            middle = opaqueMiddle(pixels);
+        } catch (IllegalArgumentException | IllegalStateException failed) {
+            // A view that refuses an off-screen canvas keeps its box's middle, as before.
+            Logger.printDebug(() -> "Bottom bar icon not measurable: " + failed);
+        } finally {
+            if (pixels != null) pixels.recycle();
+        }
+        DRAWN.put(tab, new float[]{width, height, middle, now + DRAWN_RETRY_MS});
+        return middle;
+    }
+
+    private static void drawPictures(Canvas canvas, List<View> pictures, List<PointF> at, float area) {
+        for (int i = 0; i < pictures.size(); i++) {
+            View picture = pictures.get(i);
+            if ((float) picture.getWidth() * picture.getHeight() < area * 0.9f) continue;
+            int save = canvas.save();
+            canvas.translate(at.get(i).x, at.get(i).y);
+            picture.draw(canvas);
+            canvas.restoreToCount(save);
+        }
+    }
+
+    /** The middle of the rows of {@code pixels} that hold a pixel at least {@link #DRAWN_ALPHA} opaque. NaN when none do. */
+    static float opaqueMiddle(Bitmap pixels) {
+        int width = pixels.getWidth(), height = pixels.getHeight();
+        int[] row = new int[width];
+        int first = -1, last = -1;
+        for (int y = 0; y < height; y++) {
+            pixels.getPixels(row, 0, width, 0, y, width, 1);
+            for (int pixel : row) {
+                if ((pixel >>> 24) >= DRAWN_ALPHA) {
+                    if (first < 0) first = y;
+                    last = y;
+                    break;
+                }
+            }
+        }
+        return first < 0 ? Float.NaN : (first + last + 1) / 2f;
     }
 
     /** Takes back the offsets {@link #placeTabs} gave the bar's tabs, where nothing changed them since. */

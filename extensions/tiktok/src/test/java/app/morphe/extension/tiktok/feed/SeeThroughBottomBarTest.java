@@ -607,6 +607,39 @@ public class SeeThroughBottomBarTest {
         assertEquals("a container that draws is still a picture", 75f, SeeThroughBottomBar.iconMiddle(tab), 0f);
     }
 
+    /**
+     * 48.0.2's Create tab, as Login2's dump has it (#474): two Fresco views as big as the 144x98
+     * cell, the first an empty holder, the second drawing the plate in the cell's upper part, rows
+     * 11 to 66. The + goes in the pill's middle by where it draws, 39 down, not by the views' middle
+     * at 49, which left it 10px high. Before Fresco has the image, the views' middle stands in,
+     * and the next look after the wait finds the plate.
+     */
+    @Test
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void theCreateTabsPlusGoesInThePillsMiddleByWhereItDraws() {
+        FrameLayout tab = new FrameLayout(context);
+        android.widget.ImageView holder = new android.widget.ImageView(context);
+        tab.addView(holder, new FrameLayout.LayoutParams(144, 98));
+        android.widget.ImageView plate = new android.widget.ImageView(context);
+        plate.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+        ColorDrawable notYet = new ColorDrawable(Color.TRANSPARENT);
+        plate.setImageDrawable(new android.graphics.drawable.InsetDrawable(notYet, 36, 11, 36, 31));
+        tab.addView(plate, new FrameLayout.LayoutParams(144, 98));
+        tab.measure(View.MeasureSpec.makeMeasureSpec(144, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(98, View.MeasureSpec.EXACTLY));
+        tab.layout(0, 0, 144, 98);
+
+        assertEquals("with nothing drawn yet the views' middle stands in", 49f,
+                SeeThroughBottomBar.iconMiddle(tab), 0f);
+
+        plate.setImageDrawable(new android.graphics.drawable.InsetDrawable(
+                new ColorDrawable(Color.WHITE), 36, 11, 36, 31));
+        // Well past the wait an empty look gets before the next one.
+        org.robolectric.shadows.ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS);
+        assertEquals("the + was placed by its views' middle, not where it draws", 39f,
+                SeeThroughBottomBar.iconMiddle(tab), 0f);
+    }
+
     /** HushGram's proportions: 5% of the width each side, at least 16dp, the pill no wider than 420dp. */
     @Test
     public void thePillKeepsHushGramsProportions() {

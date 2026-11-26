@@ -47,8 +47,8 @@ public class CommentControlOwnershipTest {
         ShadowToast.reset();
         Object cache = ReflectionHelpers.getStaticField(CommentTools.class, "RESOURCE_IDS");
         Map<String, Integer> ids = ReflectionHelpers.getField(cache, "ids");
-        ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":48.0.2:k7x", 0x7f000201);
-        ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":48.0.2:mty", 0x7f000202);
+        ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":48.0.2:k6l", 0x7f000201);
+        ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":48.0.2:moe", 0x7f000202);
         ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":jlk", 0x7f000101);
         ids.put(RuntimeEnvironment.getApplication().getPackageName() + ":m3b", 0x7f000102);
     }

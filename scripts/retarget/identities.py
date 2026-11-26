@@ -16,19 +16,22 @@ A = re.ASCII
 OBFUSCATED_TYPE = re.compile(r"L[XY]/[0-9A-Za-z_$]+;", A)
 JAVA_BINARY_TYPE = re.compile(r"(?<![0-9A-Za-z_$])X\.[0-9A-Za-z]{4}(?![0-9A-Za-z_$])", A)
 MEMBER_LITERAL = re.compile(r'"(L[IJLZF]{1,19})"', A)
+# A date format's pattern ("LLLL" is the stand-alone month name), which the test drops first.
+DATE_PATTERN = re.compile(r'SimpleDateFormat\(\s*"[^"]*"', A)
 PREFIX_LITERAL = re.compile(r'"(LX/|LY/|Lkotlin/jvm/internal/A[A-Za-z]{1,3}S)', A)
 SHORT_MEMBER_COMPARED = re.compile(r'name\s*==\s*"([A-Za-z][A-Za-z0-9]{0,2})"', A)
 SHORT_RESOURCE = re.compile(r'"(?:[0-9]+(?:\.[0-9]+)+:)?([a-z][0-9][a-z0-9]{1,2}|[a-z]{2}[0-9])"', A)
 RESOURCE_LOOKUP = re.compile(r"_IDS?\b|RESOURCE_NAME|getIdentifier\(|\.resolve\(|IDS\b|viewId\(|idOf\(", A)
 RESOURCE_NAME = re.compile(r'"(?:[0-9]+(?:\.[0-9]+)+:)?([a-z][a-z0-9_]{1,2})"', A)
-REAL_NAMES = {"get", "put", "run", "key", "id", "raw", "mp3", "mp4", "m4a", "m4v", "jpg", "png", "h264"}
+REAL_NAMES = {"get", "put", "run", "key", "id", "raw", "mp3", "mp4", "m4a", "m4v", "jpg", "png", "h264", "m10n"}
 
 
 def identities(line, extension_tree):
     names = set()
     names.update(m.group(0) for m in OBFUSCATED_TYPE.finditer(line))
     names.update(m.group(0) for m in JAVA_BINARY_TYPE.finditer(line))
-    for rx in (MEMBER_LITERAL, PREFIX_LITERAL, SHORT_MEMBER_COMPARED, SHORT_RESOURCE):
+    names.update(m.group(1) for m in MEMBER_LITERAL.finditer(DATE_PATTERN.sub("", line)))
+    for rx in (PREFIX_LITERAL, SHORT_MEMBER_COMPARED, SHORT_RESOURCE):
         names.update(m.group(1) for m in rx.finditer(line))
     if extension_tree and RESOURCE_LOOKUP.search(line):
         names.update(m.group(1) for m in RESOURCE_NAME.finditer(line))

@@ -95,7 +95,7 @@ public class SearchInsteadOfHomeTest {
         Utils.setContext(activity);
         PausedProcess.set(false);
         home = addHomeTab(activity);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "48.0.2:oxj", HOME_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "48.0.2:ose", HOME_ID);
         Settings.SEARCH_INSTEAD_OF_HOME.save(true);
     }
 
@@ -119,7 +119,7 @@ public class SearchInsteadOfHomeTest {
         PausedProcess.set(false);
         HomeTabSettingsShortcut.resetForTests();
         StartPage.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "48.0.2:oxj", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "48.0.2:ose", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.SEARCH_INSTEAD_OF_HOME.resetToDefault();
         Settings.HOME_TAB_OPENS_SETTINGS.resetToDefault();

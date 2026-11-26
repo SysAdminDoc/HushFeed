@@ -332,18 +332,18 @@ public class SwipeLeftTest {
         feed.getLocationInWindow(origin);
         int x = origin[0];
         int y = origin[1];
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:idf", 0x7f0a2c7c);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:id2", 0x7f0a2c7c);
         assertArrayEquals(new int[]{x + 950, y + 1460, x + 1080, y + 1590},
                 GestureActions.anchorOf(comments, 1080, 2340));
         GestureActions.ANCHOR_IDS.clear();
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:idf", 0);
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:iej", 0x7f0a2c7c);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:id2", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:ie6", 0x7f0a2c7c);
         assertArrayEquals("the Favorites button when its popup anchor is missing",
                 new int[]{x + 950, y + 1460, x + 1080, y + 1590},
                 GestureActions.anchorOf(comments, 1080, 2340));
         GestureActions.ANCHOR_IDS.clear();
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:idf", 0);
-        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:iej", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:id2", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "48.0.2:ie6", 0);
         assertArrayEquals("the comment button", new int[]{x + 950, y + 1300, x + 1080, y + 1430},
                 GestureActions.anchorOf(comments, 1080, 2340));
         assertArrayEquals("the right edge halfway down", new int[]{945, 1103, 1080, 1237},

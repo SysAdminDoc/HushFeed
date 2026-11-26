@@ -195,10 +195,10 @@ class RuntimeViewIdAnchorsTest {
     /** Each group handed another group's id on each declared build, by that build's name for it. */
     @Test
     fun `semantic owners reject an unrelated id for every group that needs one`() {
-        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|48.0.2:a9m"
-        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|48.0.2:k7x"
-        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|48.0.2:mty"
-        val captionText = "captions/CaptionStyle.java|TEXT_IDS|48.0.2:dtc"
+        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|48.0.2:aan"
+        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|48.0.2:k6l"
+        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|48.0.2:moe"
+        val captionText = "captions/CaptionStyle.java|TEXT_IDS|48.0.2:dui"
         val wrongNames = mapOf(
             "48.0.2" to mapOf(actions to "k2g", dislike to "a6b", dislikeIcon to "a6b", captionText to "k2g"),
         )
@@ -421,13 +421,63 @@ class RuntimeViewIdAnchorsTest {
                 candidates.size > 1 -> Coverage(anchor, State.BROKEN,
                     "$packageName gives $used ${candidates.size} ids, ${candidates.joinToString { hex(it) }}")
                 owner == null -> Coverage(anchor, State.UNOWNED, "resolves as $used")
-                else -> owned(facts, anchor, owner, used, candidates.single(), names)
+                else -> owned(facts, anchor, owner, used, candidates.single(), names, ids)
             }
         }
     }
 
-    /** The owner's verdict on one id: does it load the id, and does the tell pick that id alone. */
-    private fun owned(facts: Facts, anchor: Anchor, owner: Owner, used: String, wanted: Int, names: List<String>): Coverage {
+    /**
+     * The owner's verdict on one id: does it load the id, and does the tell pick that id alone. A
+     * broken line also says which id, by name, its owner and tell pick on this build, which after
+     * a retarget is the view's new name (or the place to start reading when the owner moved).
+     */
+    private fun owned(
+        facts: Facts, anchor: Anchor, owner: Owner, used: String, wanted: Int, names: List<String>,
+        ids: Map<String, List<Int>>,
+    ): Coverage {
+        val verdict = ownedVerdict(facts, anchor, owner, used, wanted, names)
+        if (verdict.state != State.BROKEN) return verdict
+        val picked = pick(anchor.tell, ownerUses(facts, owner)) ?: return verdict
+        if (picked == wanted) return verdict
+        val pickedNames = ids.filterValues { picked in it }.keys.sorted()
+        return Coverage(anchor, verdict.state, verdict.detail + "; its owner and tell pick ${hex(picked)}, " +
+            pickedNames.ifEmpty { listOf("a name this table lacks") }.joinToString("/") + ", on this build",
+            verdict.candidates)
+    }
+
+    /** Every id use {@code owner} makes on this build, as [ownedVerdict] reads them. */
+    private fun ownerUses(facts: Facts, owner: Owner): List<IdUse> = when (owner) {
+        is Owner.LayoutClass -> layoutPaths(facts.loaded, facts.layouts, owner).flatMap { facts.elements[it].orEmpty() }
+        is Owner.ClassLiteral -> facts.classUses[descriptor(owner.className)].orEmpty()
+        is Owner.LayoutMethodString -> layoutPaths(facts.semantic, facts.layouts, owner).flatMap { facts.elements[it].orEmpty() }
+        is Owner.MethodString -> facts.semantic.methodStringUses[owner.value].orEmpty()
+        is Owner.ClassMethod -> facts.semantic.classMethodUses[owner.name].orEmpty()
+        is Owner.ClassString -> facts.semantic.classStringUses[owner.value].orEmpty()
+    }
+
+    /** The id {@code tell} picks out of {@code uses}, or the one id they load when there's no tell. */
+    private fun pick(tell: Tell?, uses: List<IdUse>): Int? {
+        if (tell == null) return uses.map { it.id }.distinct().singleOrNull()
+        val matching = matching(tell, uses)
+        val ordinal = ordinal(tell)
+        return if (ordinal != null) matching.getOrNull(ordinal - 1) else matching.singleOrNull()
+    }
+
+    private fun matching(tell: Tell, uses: List<IdUse>): List<Int> = when (tell) {
+        is Tell.On -> uses.filter { it.type != null && typeMatches(it.type, tell.type) }.map { it.id }.distinct()
+        is Tell.Tag -> uses.filter { it.tag != null && typeMatches(it.tag, tell.tag) }.map { it.id }.distinct()
+        is Tell.To -> uses.filter { it.to != null && typeMatches(it.to, tell.className) }.map { it.id }.distinct()
+        is Tell.At -> uses.map { it.id }.distinct()
+    }
+
+    private fun ordinal(tell: Tell): Int? = when (tell) {
+        is Tell.On -> tell.ordinal
+        is Tell.Tag -> tell.ordinal
+        is Tell.At -> tell.ordinal
+        is Tell.To -> null
+    }
+
+    private fun ownedVerdict(facts: Facts, anchor: Anchor, owner: Owner, used: String, wanted: Int, names: List<String>): Coverage {
         val uses: List<IdUse>
         val loads: String
         when (owner) {
@@ -520,18 +570,8 @@ class RuntimeViewIdAnchorsTest {
                     },
                 candidates)
         }
-        val matching = when (tell) {
-            is Tell.On -> uses.filter { it.type != null && typeMatches(it.type, tell.type) }.map { it.id }.distinct()
-            is Tell.Tag -> uses.filter { it.tag != null && typeMatches(it.tag, tell.tag) }.map { it.id }.distinct()
-            is Tell.To -> uses.filter { it.to != null && typeMatches(it.to, tell.className) }.map { it.id }.distinct()
-            is Tell.At -> uses.map { it.id }.distinct()
-        }
-        val ordinal = when (tell) {
-            is Tell.On -> tell.ordinal
-            is Tell.Tag -> tell.ordinal
-            is Tell.At -> tell.ordinal
-            is Tell.To -> null
-        }
+        val matching = matching(tell, uses)
+        val ordinal = ordinal(tell)
         val picked = when {
             ordinal != null -> matching.getOrNull(ordinal - 1)
             matching.size == 1 -> matching.single()

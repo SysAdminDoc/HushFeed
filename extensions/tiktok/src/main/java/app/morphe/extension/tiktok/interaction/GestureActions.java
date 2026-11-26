@@ -1104,9 +1104,9 @@ public final class GestureActions {
     static final String FAVORITE_SERVICE = "com.ss.android.ugc.aweme.favorites.service.IFavoriteService";
     static final String ACCOUNT_SERVICE = "com.ss.android.ugc.aweme.IAccountUserService";
     /** The view TikTok's own long press on Favorites places its popup beside (i_0 on 47.9.3). */
-    static final String[] FAVORITE_POPUP_ANCHOR_IDS = {"48.0.2:idf"};
+    static final String[] FAVORITE_POPUP_ANCHOR_IDS = {"48.0.2:id2"};
     /** The Favorites button itself, for a cell where that view isn't laid out. */
-    static final String[] FAVORITE_BUTTON_IDS = {"48.0.2:iej"};
+    static final String[] FAVORITE_BUTTON_IDS = {"48.0.2:ie6"};
     static final ResourceIdCache ANCHOR_IDS = new ResourceIdCache();
     /** What TikTok's feed calls itself when it opens the popup with no cell to ask. */
     static final String FEED_ENTER_FROM = "homepage_hot";

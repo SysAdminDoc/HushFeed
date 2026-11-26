@@ -63,10 +63,10 @@ import java.util.WeakHashMap;
 public final class ShareSheetTools {
     /** One family for everything that touches the sheet, so an export reads as one surface. */
     private static final String FAMILY = ShareModelFilter.FAMILY;
-    private static final String[] CONTACTS_SECTION_IDS = {"48.0.2:ixc"};
-    private static final String[] CONTACTS_LIST_IDS = {"48.0.2:vfx"};
-    private static final String[] CHANNELS_LIST_IDS = {"48.0.2:e3m"};
-    private static final String[] ACTIONS_LIST_IDS = {"48.0.2:a9m"};
+    private static final String[] CONTACTS_SECTION_IDS = {"48.0.2:iwr"};
+    private static final String[] CONTACTS_LIST_IDS = {"48.0.2:va4"};
+    private static final String[] CHANNELS_LIST_IDS = {"48.0.2:e4q"};
+    private static final String[] ACTIONS_LIST_IDS = {"48.0.2:aan"};
 
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
 

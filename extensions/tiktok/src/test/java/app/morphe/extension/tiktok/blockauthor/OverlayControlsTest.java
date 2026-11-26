@@ -801,7 +801,7 @@ public class OverlayControlsTest {
         Method resolve = app.morphe.extension.tiktok.feed.VideoOverlayHider.class
                 .getDeclaredMethod("resolveForTests", String.class, int.class);
         resolve.setAccessible(true);
-        resolve.invoke(null, "48.0.2:lq1", columnId);
+        resolve.invoke(null, "48.0.2:lkv", columnId);
         try {
             FrameLayout column = new FrameLayout(root.getContext());
             column.setId(columnId);
@@ -853,7 +853,7 @@ public class OverlayControlsTest {
                     ShadowToast.getTextOfLatestToast());
             dragging.setBoolean(null, false);
         } finally {
-            resolve.invoke(null, "48.0.2:lq1", 0);
+            resolve.invoke(null, "48.0.2:lkv", 0);
         }
     }
 

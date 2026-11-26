@@ -4,7 +4,15 @@
  */
 package app.morphe.extension.tiktok.feed;
 
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
+import android.os.Build;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -59,9 +67,10 @@ public final class ProfileGridCount {
      * past one line gets a bar tall enough for it.
      */
     public static void show(TextView view, CharSequence text) {
-        view.setText(text);
         boolean hide = hidesViews();
-        if (hide || (text != null && TextUtils.indexOf(text, '\n') >= 0)) {
+        boolean lines = text != null && TextUtils.indexOf(text, '\n') >= 0;
+        view.setText(!hide && lines ? iconOnFirstLine(view, text) : text);
+        if (hide || lines) {
             fitBar(view);
         }
         if (!hide) {
@@ -71,6 +80,45 @@ public final class ProfileGridCount {
             view.setCompoundDrawablesRelative(null, null, null, null);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not take the play icon off a grid cell", ex);
+        }
+    }
+
+    /**
+     * Keeps the play icon beside the count when a date or length takes a line under it (#519).
+     * Android centers a start icon on the whole label, so with two lines it sat between them and
+     * with three by the date. The icon moves into the first line instead, at TikTok's size and
+     * with its gap, and the lines under it start at the cell's edge. TikTok puts the icon back on
+     * the next bind, so a recycled cell with one line shows it as before.
+     */
+    static CharSequence iconOnFirstLine(TextView view, CharSequence text) {
+        try {
+            Drawable[] icons = view.getCompoundDrawablesRelative();
+            Drawable icon = icons[0];
+            if (icon == null) {
+                return text;
+            }
+            Rect bounds = icon.getBounds();
+            int width = bounds.width() > 0 ? bounds.width() : icon.getIntrinsicWidth();
+            int height = bounds.height() > 0 ? bounds.height() : icon.getIntrinsicHeight();
+            if (width <= 0 || height <= 0) {
+                return text;
+            }
+            // Its own copy, as the cells may share the one TikTok hands out.
+            Drawable.ConstantState state = icon.getConstantState();
+            Drawable own = state != null ? state.newDrawable(view.getResources()).mutate() : icon;
+            int gap = Math.max(0, view.getCompoundDrawablePadding());
+            boolean rtl = view.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            Drawable placed = new InsetDrawable(own, rtl ? gap : 0, 0, rtl ? 0 : gap, 0);
+            placed.setBounds(0, 0, width + gap, height);
+            int align = Build.VERSION.SDK_INT >= 29 ? DynamicDrawableSpan.ALIGN_CENTER : DynamicDrawableSpan.ALIGN_BOTTOM;
+            SpannableStringBuilder label = new SpannableStringBuilder(" ");
+            label.setSpan(new ImageSpan(placed, align), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            label.append(text);
+            view.setCompoundDrawablesRelative(null, icons[1], icons[2], icons[3]);
+            return label;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not keep the play icon by a grid cell's count", ex);
+            return text;
         }
     }
 

@@ -11,8 +11,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -161,6 +164,32 @@ public class GridViewCountTest {
         ProfileGridCount.show(view, "");
         assertEquals("", view.getText().toString());
         assertArrayEquals(new Drawable[4], view.getCompoundDrawablesRelative());
+    }
+
+    /**
+     * #519: with a date or length on a line under the count, Android centered the play icon on
+     * the whole label, between the two lines. It stays on the count's line now.
+     */
+    @Test public void thePlayIconStaysOnTheCountsLineAboveADate() {
+        TextView view = countInBar();
+        Drawable icon = new ColorDrawable(0xFFFFFFFF);
+        icon.setBounds(0, 0, 24, 24);
+        view.setCompoundDrawablePadding(6);
+        view.setCompoundDrawablesRelative(icon, null, null, null);
+        ProfileGridCount.show(view, "1K\nOct 7, 2025");
+        assertNull("no longer centered on the whole label", view.getCompoundDrawablesRelative()[0]);
+        CharSequence shown = view.getText();
+        assertEquals(" 1K\nOct 7, 2025", shown.toString());
+        ImageSpan[] spans = ((Spanned) shown).getSpans(0, shown.length(), ImageSpan.class);
+        assertEquals(1, spans.length);
+        assertEquals("on the first line, before the count", 0, ((Spanned) shown).getSpanStart(spans[0]));
+        assertEquals("TikTok's size plus its gap", new Rect(0, 0, 30, 24), spans[0].getDrawable().getBounds());
+
+        // The next bind has one line: TikTok puts the icon back, and there it stays.
+        view.setCompoundDrawablesRelative(icon, null, null, null);
+        ProfileGridCount.show(view, "1K");
+        assertEquals(icon, view.getCompoundDrawablesRelative()[0]);
+        assertEquals("1K", view.getText().toString());
     }
 
     /** The count's view inside TikTok's cell: a weighted child of a bar with a fixed height. */

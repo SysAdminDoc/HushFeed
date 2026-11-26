@@ -68,8 +68,8 @@ public final class CommentHeaderButtons {
             WeakReference<Binding> existing = BINDINGS.get(bar);
             Binding binding = existing == null ? null : existing.get();
             if (binding == null) {
-                // Nothing to hide and nothing hidden yet: leave TikTok's panel without a listener.
-                if (!anyOn()) return;
+                // Bound with every switch off too: TikTok keeps a built panel and never binds it
+                // again, so a switch turned on later is only seen by this panel's next layout.
                 binding = new Binding(bar);
                 BINDINGS.put(bar, new WeakReference<>(binding));
                 bar.addOnAttachStateChangeListener(binding);
@@ -80,11 +80,6 @@ public final class CommentHeaderButtons {
         } catch (Exception error) {
             Logger.printException(() -> "Could not bind the comment header buttons", error);
         }
-    }
-
-    static boolean anyOn() {
-        return Settings.HIDE_COMMENT_CLOSE_BUTTON.get() || Settings.HIDE_COMMENT_EXPAND_BUTTON.get()
-                || Settings.COMMENT_TRANSLATE_BUTTON.get();
     }
 
     static void resolveForTests(String name, int id) {

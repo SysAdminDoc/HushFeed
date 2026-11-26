@@ -131,6 +131,34 @@ public class CommentHeaderButtonsTest {
         }
     }
 
+    /**
+     * A comment panel TikTok built while every switch was off keeps the switches it finds later:
+     * Login2 2026-11-26 turned the close switch on mid-session and the X stayed until TikTok
+     * restarted, since TikTok keeps that panel and the bind with nothing on had left it alone.
+     */
+    @Test public void aSwitchTurnedOnAfterThePanelWasBuiltTakesWithoutARestart() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Panel panel = new Panel(owner.get());
+            CompactCommentHeader.bindCountBar(panel.bar);
+            idle();
+            assertEquals(View.VISIBLE, panel.closeButton.getVisibility());
+
+            Settings.HIDE_COMMENT_CLOSE_BUTTON.save(true);
+            panel.bar.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("the panel's next layout didn't pick the switch up",
+                    View.GONE, panel.closeButton.getVisibility());
+
+            Settings.HIDE_COMMENT_CLOSE_BUTTON.save(false);
+            panel.bar.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals(View.VISIBLE, panel.closeButton.getVisibility());
+            Settings.HIDE_COMMENT_CLOSE_BUTTON.save(true);
+            CompactCommentHeader.bindCountBar(panel.bar);
+            idle();
+            assertEquals("the next comment load didn't pick the switch up",
+                    View.GONE, panel.closeButton.getVisibility());
+        }
+    }
+
     @Test public void detachingThePanelPutsTheButtonsBack() {
         Settings.HIDE_COMMENT_EXPAND_BUTTON.save(true);
         try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {

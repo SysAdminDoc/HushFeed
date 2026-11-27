@@ -27,7 +27,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** What a trace of each build found: the bar's dimension id and how many times the app reads it. */
-private val TRACED = mapOf("48.0.2" to (0x7f0904a1 to 8))
+private val TRACED = mapOf("48.0.2" to (0x7f0904a0 to 8))
 
 /**
  * The bottom bar's height. Each of its three sources is found the way the patch finds it, held

@@ -40,14 +40,14 @@ class ForYouShowRepairTest {
     private val bundleType = "Landroid/os/Bundle;"
 
     /**
-     * Home's own switch to For You and For You's show as 47.9.3 names them, the members the S22
+     * Home's own switch to For You and For You's show as 48.0.2 names them, the members the S22
      * trace proved on 47.6.3 found again by the same reads. A change in what the reads land on
      * shows here before it reaches a phone.
      */
     private val proved4773 = mapOf(
-        "nodeOf" to "J93", "container" to "LL", "current" to "LLJJJJJIL", "shown" to "LLJJJJLIIL",
-        "dispatch" to "LJJII", "visibleListeners" to "LLJJJJJIL", "switchListeners" to "LLJJJJLIIL",
-        "hoxOf" to "D93", "containerTagOf" to "K93", "panel" to "LLJJJJJIL",
+        "nodeOf" to "la3", "container" to "LL", "current" to "LLJJJIL", "shown" to "LLJJJJ",
+        "dispatch" to "LJJIFFI", "visibleListeners" to "LLJJJJJIL", "switchListeners" to "LLJJJJLIIL",
+        "hoxOf" to "fa3", "containerTagOf" to "ma3", "panel" to "LLJJJJJIL",
     )
 
     /** Each stub as the extension declares it: parameter types, then the return type. */

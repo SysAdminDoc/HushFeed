@@ -203,7 +203,7 @@ public class RuntimePatchListTest {
         }
         assertEquals(new TreeSet<>(Arrays.asList("enableCommentPublishDiagnostics", "enableCommentSendFix",
                 "enableFeatureGateLab", "enableFollowDiagnostics", "enableGoogleLoginFix",
-                "enableNetworkRequestReport", "enableNoLoginRequirement", "enableNoScreenCaptureDetection",
+                "enableLiteDarkMode", "enableNetworkRequestReport", "enableNoLoginRequirement", "enableNoScreenCaptureDetection",
                 "enableOppoPushFix", "enableRepostDiagnostics", "enableRiskControlCaptcha", "enableRunBesideStoreApp",
                 "enableSavedStickers", "enableSettings", "enableSpotifyLoginFix", "enableStickerCreator",
                 "enableStickerRecents", "enableTabletRotation")), registered);

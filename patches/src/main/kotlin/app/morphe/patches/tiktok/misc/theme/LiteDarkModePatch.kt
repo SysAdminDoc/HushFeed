@@ -69,7 +69,7 @@ val liteDarkModePatch = bytecodePatch(
 
     execute {
         val hooked = LiteDarkModeFingerprint.method.hookLiteDarkMode()
-        registerForBuildDetails("enableLiteDarkMode")
         println("[Dark mode] Hooked $hooked return(s) of TikTok Lite's saved dark mode.")
+        registerForBuildDetails("enableLiteDarkMode")
     }
 }

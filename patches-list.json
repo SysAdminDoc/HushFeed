@@ -3935,6 +3935,15 @@
           "values": null
         },
         {
+          "key": "kept_caption_words",
+          "title": "Default: kept caption words",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "blocked_creators",
           "title": "Default: blocked creators",
           "description": null,

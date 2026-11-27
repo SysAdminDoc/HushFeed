@@ -386,12 +386,21 @@ public final class LiveAutoTap {
      * which like the room the same as open space does. A seat covering half the room or more is
      * the host's own picture with guests along its edge, and taps on it like as in a solo room.
      *
-     * A battle is two seats side by side that split the room ({@link #splitHost}), and a tap on
-     * the host's pane, the left one, opens nothing. The rows above and below the panes are the
-     * battle's own bars there (the host's name, the score, the top supporters), so the taps stay
-     * in the host's pane or don't go out at all.
+     * A battle is two seats side by side that split the room ({@link #splitHost}), or any room
+     * showing a battle's countdown ({@link #BATTLE_ID}), and a tap on the host's pane, the left
+     * one, opens nothing. The rows above and below the panes are the battle's own bars there (the
+     * host's name, the score, the top supporters), drawn by a Lynx page whose parts take no tap
+     * TikTok lists, so in a battle the taps go to the middle of the host's pane as measured on
+     * screen ({@link #PANE_SPOTS}), clear of its edges, the other seats and every Lynx part, or
+     * don't go out at all.
      */
     private static final float[][] SPOTS = {{0.25f, 0.38f}, {0.25f, 0.30f}, {0.25f, 0.46f}, {0.15f, 0.38f}, {0.36f, 0.38f}};
+    /**
+     * Where the taps go in a battle, as fractions of the host's pane, tried in this order. Index
+     * for index they stand in for {@link #SPOTS}, so a spot skipped after opening a card stays
+     * skipped whichever layout the room shows next.
+     */
+    private static final float[][] PANE_SPOTS = {{0.5f, 0.5f}, {0.5f, 0.38f}, {0.5f, 0.62f}, {0.3f, 0.5f}, {0.7f, 0.5f}};
     /** The spot index for taps in the open row above a guest grid's seats. */
     static final int ABOVE_SEATS = SPOTS.length;
     /** The spot index for taps in the open row between a guest grid's seats and the chat. */
@@ -408,6 +417,15 @@ public final class LiveAutoTap {
     private static final String SEAT_ID = "ttlive_link_layout_layer_mic_window";
     /** The seat id once looked up, 0 when TikTok has none; -1 until then. */
     private static int seatId = -1;
+    /**
+     * A battle's countdown. It's attached to the room (though not always shown) only while a
+     * battle runs, whatever shape its panes take.
+     */
+    private static final String BATTLE_ID = "tv_pk_countdown_value";
+    /** The countdown id once looked up, 0 when TikTok has none; -1 until then. */
+    private static int battleId = -1;
+    /** The view TikTok draws its Lynx pages in, the battle's score bar and name tags among them. */
+    private static final String LYNX_VIEW = "com.lynx.tasm.LynxView";
 
     // A spot whose tap opened a card is skipped the next time tapping starts in that room.
     private static String skipRoom;
@@ -423,13 +441,25 @@ public final class LiveAutoTap {
      */
     static float[] tapPoint(int width, int height, List<Rect> taken, List<Rect> seats, int clear, int skip,
             Random random) {
+        return pickPoint(width, height, taken, seats, new ArrayList<>(), false, clear, skip, random);
+    }
+
+    /**
+     * {@link #tapPoint} for a room that may be in a battle: {@code drawn} holds the room's Lynx
+     * parts, and {@code battle} says the room shows a battle's countdown, so it's a battle whatever
+     * shape its seats take.
+     */
+    static float[] pickPoint(int width, int height, List<Rect> taken, List<Rect> seats, List<Rect> drawn,
+            boolean battle, int clear, int skip, Random random) {
         if (width <= 0 || height <= 0) return null;
-        Rect host = splitHost(width, seats, clear);
+        Rect pane = splitHost(width, height, seats, clear);
+        if (pane == null && battle) pane = battlePane(width, height, seats);
+        if (pane != null || battle) return inBattle(width, height, pane, taken, seats, drawn, clear, skip, random);
         List<Rect> small = new ArrayList<>();
         int top = height;
         int bottom = 0;
         for (Rect seat : seats) {
-            if (seat == host || (long) seat.width() * seat.height() * 2 >= (long) width * height) continue;
+            if (background(seat, width, height)) continue;
             small.add(seat);
             top = Math.min(top, seat.top);
             bottom = Math.max(bottom, seat.bottom);
@@ -440,8 +470,7 @@ public final class LiveAutoTap {
             float y = height * (SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
             if (free(x, y, small, clear) && free(x, y, taken, clear)) return new float[]{x, y, i};
         }
-        // By a battle's panes the rows are its bars, and a tap there opens a profile or the ranking.
-        if (small.isEmpty() || host != null) return null;
+        if (small.isEmpty()) return null;
         // Rows a half clear apart, nearest the seats first, each tried from the host's side out.
         // The first row moves by up to a step, but never out of a band that has room for one.
         int step = Math.max(1, clear / 2);
@@ -467,19 +496,98 @@ public final class LiveAutoTap {
     }
 
     /**
-     * The host's pane when {@code seats} are two pictures side by side splitting the room's width
-     * between them, each at least two fifths of it and level within {@code clear}, as in a battle;
+     * Taps in a battle: the middle of the host's {@code pane}, at least {@code clear} inside its
+     * edges, where the bars around it can't be, and clear of what takes a tap, every other seat
+     * and every Lynx part in {@code drawn}. With no pane measured, the host's side of the room as
+     * in a solo room, clear of the same. Never the rows by the seats: there they're the battle's
+     * bars, and a tap opens a profile or the ranking.
+     */
+    private static float[] inBattle(int width, int height, Rect pane, List<Rect> taken, List<Rect> seats,
+            List<Rect> drawn, int clear, int skip, Random random) {
+        List<Rect> blocked = new ArrayList<>(drawn);
+        for (Rect seat : seats) {
+            if (seat != pane && !background(seat, width, height)) blocked.add(seat);
+        }
+        for (int i = 0; i < SPOTS.length; i++) {
+            if ((skip & (1 << i)) != 0) continue;
+            float x;
+            float y;
+            if (pane != null) {
+                x = pane.left + pane.width() * (PANE_SPOTS[i][0] + (random.nextFloat() - 0.5f) * 0.06f);
+                y = pane.top + pane.height() * (PANE_SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
+                if (x < pane.left + clear || x > pane.right - clear || y < pane.top + clear || y > pane.bottom - clear) {
+                    continue;
+                }
+            } else {
+                x = width * (SPOTS[i][0] + (random.nextFloat() - 0.5f) * 0.06f);
+                y = height * (SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
+            }
+            if (free(x, y, blocked, clear) && free(x, y, taken, clear)) return new float[]{x, y, i};
+        }
+        return null;
+    }
+
+    /** A seat covering half the room or more: the host's own picture behind everything else. */
+    private static boolean background(Rect seat, int width, int height) {
+        return (long) seat.width() * seat.height() * 2 >= (long) width * height;
+    }
+
+    /**
+     * The host's pane when the room's two biggest seats are pictures side by side splitting its
+     * width between them, each at least two fifths of it and level within {@code clear}, as in a
+     * battle, with every other seat inside one of them (a guest on a team) or behind them both;
      * else null. The host's pane is the left one.
      */
-    private static Rect splitHost(int width, List<Rect> seats, int clear) {
-        if (seats.size() != 2) return null;
-        boolean firstLeft = seats.get(0).left <= seats.get(1).left;
-        Rect left = seats.get(firstLeft ? 0 : 1);
-        Rect right = seats.get(firstLeft ? 1 : 0);
+    private static Rect splitHost(int width, int height, List<Rect> seats, int clear) {
+        Rect first = null;
+        Rect second = null;
+        for (Rect seat : seats) {
+            if (background(seat, width, height)) continue;
+            if (first == null || area(seat) > area(first)) {
+                second = first;
+                first = seat;
+            } else if (second == null || area(seat) > area(second)) {
+                second = seat;
+            }
+        }
+        if (second == null) return null;
+        boolean firstLeft = first.left <= second.left;
+        Rect left = firstLeft ? first : second;
+        Rect right = firstLeft ? second : first;
         boolean spans = left.left <= clear && right.right >= width - clear && left.right <= right.left + clear;
         boolean level = Math.abs(left.top - right.top) <= clear && Math.abs(left.bottom - right.bottom) <= clear;
         boolean halves = left.width() * 5L >= width * 2L && right.width() * 5L >= width * 2L;
-        return spans && level && halves ? left : null;
+        if (!spans || !level || !halves) return null;
+        for (Rect seat : seats) {
+            if (seat == left || seat == right || background(seat, width, height)) continue;
+            if (!within(seat, left, clear) && !within(seat, right, clear)) return null;
+        }
+        return left;
+    }
+
+    /**
+     * The host's pane in a room showing a battle's countdown whose seats don't split it cleanly:
+     * the biggest seat on the left half, the top one of two about that size. Null with none there.
+     */
+    private static Rect battlePane(int width, int height, List<Rect> seats) {
+        Rect best = null;
+        for (Rect seat : seats) {
+            if (background(seat, width, height) || seat.centerX() * 2 >= width) continue;
+            if (best == null || area(seat) * 10 > area(best) * 11
+                    || (area(seat) * 11 >= area(best) * 10 && seat.top < best.top)) {
+                best = seat;
+            }
+        }
+        return best;
+    }
+
+    private static long area(Rect rect) {
+        return (long) rect.width() * rect.height();
+    }
+
+    private static boolean within(Rect inner, Rect outer, int clear) {
+        return inner.left >= outer.left - clear && inner.right <= outer.right + clear
+                && inner.top >= outer.top - clear && inner.bottom <= outer.bottom + clear;
     }
 
     /** The first free place across the row at {@code y}, moved up to 1.5% of the room each way, as {x, y, spot}. */
@@ -536,6 +644,75 @@ public final class LiveAutoTap {
         return seatId;
     }
 
+    static int battleId(Context context) {
+        if (battleId == -1) battleId = context.getResources().getIdentifier(BATTLE_ID, "id", context.getPackageName());
+        return battleId;
+    }
+
+    /**
+     * Whether the room on screen under {@code root} holds a battle's countdown. It's often hidden
+     * itself, so what counts is that the nearest shown view holding it is on screen: a room the
+     * pager keeps ready above or below this one holds its own, off screen.
+     */
+    static boolean battling(View root, int countdown) {
+        if (countdown == 0) return false;
+        if (root.getId() == countdown) {
+            View shown = root;
+            while (shown != null && !shown.isShown()) {
+                shown = shown.getParent() instanceof View ? (View) shown.getParent() : null;
+            }
+            return shown != null && shown.getGlobalVisibleRect(new Rect());
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                if (battling(group.getChildAt(i), countdown)) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * What TikTok's Lynx pages draw over the room, in {@code area}'s coordinates: a Lynx view no
+     * bigger than {@code largest} whole, and the visible parts of a bigger one, which often spans
+     * the room with nothing of its own to tap in most of it. Their parts take taps without being
+     * clickable views, so the tap target scan never sees them.
+     */
+    static void lynxParts(View root, Rect area, long largest, List<Rect> out) {
+        if (root.getVisibility() != View.VISIBLE) return;
+        if (isLynx(root)) {
+            Rect rect = new Rect();
+            if (!root.getGlobalVisibleRect(rect)) return;
+            rect.offset(-area.left, -area.top);
+            if (area(rect) <= largest) out.add(rect);
+            else if (root instanceof ViewGroup) parts((ViewGroup) root, area, largest, out);
+            return;
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) lynxParts(group.getChildAt(i), area, largest, out);
+        }
+    }
+
+    private static void parts(ViewGroup lynx, Rect area, long largest, List<Rect> out) {
+        for (int i = 0; i < lynx.getChildCount(); i++) {
+            View child = lynx.getChildAt(i);
+            if (child.getVisibility() != View.VISIBLE) continue;
+            Rect rect = new Rect();
+            if (!child.getGlobalVisibleRect(rect)) continue;
+            rect.offset(-area.left, -area.top);
+            if (area(rect) <= largest) out.add(rect);
+            else if (child instanceof ViewGroup) parts((ViewGroup) child, area, largest, out);
+        }
+    }
+
+    private static boolean isLynx(View view) {
+        for (Class<?> type = view.getClass(); type != null && type != View.class; type = type.getSuperclass()) {
+            if (LYNX_VIEW.equals(type.getName())) return true;
+        }
+        return false;
+    }
+
     /**
      * Sends one tap into {@code activity}'s room: a touch down now and the matching up 40 to 70 ms
      * later at the same point, both dispatched through the window like a finger's. A real touch in
@@ -548,11 +725,15 @@ public final class LiveAutoTap {
         View decor = window.getDecorView();
         Rect area = new Rect();
         if (!content.isShown() || !content.getGlobalVisibleRect(area)) return false;
+        long quarter = (long) area.width() * area.height() / 4;
         List<Rect> taken = new ArrayList<>();
-        LiveRecordChip.tapTargets(content, null, area, (long) area.width() * area.height() / 4, taken);
+        LiveRecordChip.tapTargets(content, null, area, quarter, taken);
         List<Rect> seats = new ArrayList<>();
         seats(content, seatId(activity), area, seats);
-        float[] point = tapPoint(area.width(), area.height(), taken, seats, dp(activity, CLEAR_DP), skipSpots, random);
+        List<Rect> drawn = new ArrayList<>();
+        lynxParts(content, area, quarter, drawn);
+        float[] point = pickPoint(area.width(), area.height(), taken, seats, drawn,
+                battling(content, battleId(activity)), dp(activity, CLEAR_DP), skipSpots, random);
         if (point == null) return false;
         lastSpot = (int) point[2];
         float x = area.left + point[0];
@@ -843,6 +1024,11 @@ public final class LiveAutoTap {
     /** Stands in for TikTok's seat id, which a test app doesn't have; -1 looks it up again. */
     static void seatIdForTests(int id) {
         seatId = id;
+    }
+
+    /** Stands in for TikTok's battle countdown id the same way; -1 looks it up again. */
+    static void battleIdForTests(int id) {
+        battleId = id;
     }
 
     /** Whether a real finger is holding the taps right now. */

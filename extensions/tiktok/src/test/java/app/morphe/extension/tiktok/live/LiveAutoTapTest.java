@@ -513,6 +513,7 @@ public class LiveAutoTapTest {
         SettingsStatus.liveControlsEnabled = false;
         LiveAutoTap.forgetSkippedSpotsForTests();
         LiveAutoTap.seatIdForTests(-1);
+        LiveAutoTap.battleIdForTests(-1);
     }
 
     private FakePage openRoom() {
@@ -617,6 +618,134 @@ public class LiveAutoTapTest {
                 assertFalse("on a seat at " + touch[1] + "," + touch[2], rect.contains(touch[1], touch[2]));
             }
             assertTrue("just above the seats at " + touch[2], touch[2] < top && touch[2] > height * 0.15f);
+        }
+    }
+
+    private View addAt(View view, Rect rect) {
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(rect.width(), rect.height());
+        params.leftMargin = rect.left;
+        params.topMargin = rect.top;
+        room.addView(view, params);
+        return view;
+    }
+
+    private void seatAt(int seat, Rect rect) {
+        View view = new View(activity);
+        view.setId(seat);
+        addAt(view, rect);
+    }
+
+    /** A battle's countdown, hidden inside a shown holder, the way a battle room carries it. */
+    private void countdownAt(int countdown, Rect rect) {
+        FrameLayout holder = new FrameLayout(activity);
+        TextView count = new TextView(activity);
+        count.setId(countdown);
+        count.setVisibility(View.GONE);
+        holder.addView(count);
+        addAt(holder, rect);
+    }
+
+    private void assertEveryTapIn(Rect pane, List<Rect> never) {
+        assertTrue("taps " + downs(), downs() >= 5);
+        for (int[] touch : touches) {
+            assertTrue("in the host's pane " + pane.toShortString() + " at " + touch[1] + "," + touch[2],
+                    pane.contains(touch[1], touch[2]));
+            for (Rect rect : never) {
+                assertFalse("on " + rect.toShortString() + " at " + touch[1] + "," + touch[2],
+                        rect.contains(touch[1], touch[2]));
+            }
+        }
+    }
+
+    @Test public void aBattleWithAGuestOnOneTeamStillTapsTheHostsPane() {
+        // A 1v1 battle where a third seat sits in the other creator's pane (#335). The panes no
+        // longer read as a clean pair of two seats, so the taps went to the rows by the seats: the
+        // host's name above (their profile) and the supporters under them (the ranking).
+        openRoom();
+        int width = room.getWidth();
+        int height = room.getHeight();
+        int seat = View.generateViewId();
+        int countdown = View.generateViewId();
+        LiveAutoTap.seatIdForTests(seat);
+        LiveAutoTap.battleIdForTests(countdown);
+        int top = height * 22 / 100;
+        int bottom = height * 62 / 100;
+        Rect host = new Rect(0, top, width / 2 - 2, bottom);
+        Rect other = new Rect(width / 2 + 2, top, width, bottom);
+        Rect guest = new Rect(width * 3 / 4, bottom - height / 8, width, bottom);
+        // The other creator's pane comes first in the tree, as on 47.9.3.
+        for (Rect rect : List.of(other, guest, host)) seatAt(seat, rect);
+        Rect names = new Rect(0, height * 15 / 100, width, top - 2);
+        Rect supporters = new Rect(0, bottom + 2, width, bottom + height / 10);
+        addAt(new com.lynx.tasm.LynxView(activity), names);
+        addAt(new com.lynx.tasm.LynxView(activity), supporters);
+        countdownAt(countdown, new Rect(width / 2 - 30, top + 4, width / 2 + 30, top + 30));
+        shadowOf(Looper.getMainLooper()).idle();
+
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+
+        assertEveryTapIn(host, List.of(other, guest, names, supporters));
+    }
+
+    @Test public void aBattleLowerDownTapsTheMiddleOfTheHostsPaneNotTheBarAboveIt() {
+        // A battle whose panes sit lower and don't line up (#335): the other creator's runs taller.
+        // The room's fixed spots then land on the bar above the host's pane, the host's name and
+        // the score, drawn by a Lynx page that no tap target scan lists. The countdown says it's a
+        // battle, and the taps go to the middle of the host's pane as measured.
+        openRoom();
+        int width = room.getWidth();
+        int height = room.getHeight();
+        int seat = View.generateViewId();
+        int countdown = View.generateViewId();
+        LiveAutoTap.seatIdForTests(seat);
+        LiveAutoTap.battleIdForTests(countdown);
+        Rect host = new Rect(0, height * 45 / 100, width / 2 - 2, height * 80 / 100);
+        Rect other = new Rect(width / 2 + 2, height * 40 / 100, width, height * 85 / 100);
+        seatAt(seat, other);
+        seatAt(seat, host);
+        Rect bar = new Rect(0, height * 33 / 100, width, height * 44 / 100);
+        addAt(new com.lynx.tasm.LynxView(activity), bar);
+        // The supporters row is one part of a Lynx page laid over the whole room.
+        com.lynx.tasm.LynxView page = new com.lynx.tasm.LynxView(activity);
+        Rect supporters = new Rect(0, height * 81 / 100, width, height * 88 / 100);
+        View row = new View(activity);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(supporters.width(), supporters.height());
+        params.topMargin = supporters.top;
+        page.addView(row, params);
+        addAt(page, new Rect(0, 0, width, height));
+        countdownAt(countdown, new Rect(width / 2 - 30, height * 40 / 100, width / 2 + 30, height * 43 / 100));
+        shadowOf(Looper.getMainLooper()).idle();
+
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+
+        assertEveryTapIn(host, List.of(other, bar, supporters));
+    }
+
+    @Test public void aRoomInABattleNeverTapsTheRowsWhateverShapeItsSeatsTake() {
+        // The seats of a guest grid, but the room shows a battle's countdown: the taps stay in the
+        // host's tile, the biggest seat on the left, and with every spot there used up none go out.
+        List<Rect> seats = List.of(new Rect(361, 428, 720, 752), new Rect(0, 428, 358, 1080),
+                new Rect(361, 755, 720, 1080));
+        Rect tile = seats.get(1);
+        List<Rect> drawn = List.of(new Rect(0, 300, 720, 420), new Rect(0, 1090, 720, 1160));
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.pickPoint(720, 1600, List.of(), seats, drawn, true, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertTrue("a pane spot " + point[2], point[2] < LiveAutoTap.ABOVE_SEATS);
+            assertTrue("in the host's tile " + point[0] + "," + point[1], point[0] > tile.left + 32
+                    && point[0] < tile.right - 32 && point[1] > tile.top + 32 && point[1] < tile.bottom - 32);
+        }
+        assertNull(LiveAutoTap.pickPoint(720, 1600, List.of(), seats, drawn, true, 32, 0b11111, new Random(1)));
+
+        // With no seats on screen at all, the host's side of the room, still off the Lynx parts.
+        List<Rect> bars = List.of(new Rect(0, 760, 720, 830));
+        for (int seed = 0; seed < 100; seed++) {
+            float[] point = LiveAutoTap.pickPoint(720, 1600, List.of(), List.of(), bars, true, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertTrue(point[0] < 720 * 0.45f);
+            assertClear(point, bars, List.of(), 32);
         }
     }
 

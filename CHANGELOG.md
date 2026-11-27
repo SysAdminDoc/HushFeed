@@ -50,6 +50,7 @@ Every Hushfeed release, newest first.
 * The patches are built with Morphe patcher 2.6.0, the one stable Morphe Manager 2.8.0, morphe-desktop 2.4.0 and morphe-cli 2.4.0 ship. Bundles from now on need Manager 2.8.0 or newer, and the README and the bug form say so.
 * When a picture fails to load, the diagnostic report's IMAGE LOADS section now adds the error code TikTok's image loader gave, so a "native error" or "task canceled" line shows what actually went wrong (#415).
 * New `Only show videos with these words` list under Feed filter. Fill it with words or hashtags, like #recipe, and For You keeps only the videos whose caption matches one. A batch with no match still keeps one video so the feed doesn't stall, and Creator exceptions get through too (#548).
+* `Auto tap` in a 1v1 battle taps the middle of the host's own video again, not the top of the screen (which opened their profile) or the row under the videos (which opened the supporters ranking). It now finds the host's video on screen and stays clear of the score bar and name tags drawn around it, even when a guest joins one side (#335).
 
 ## 0.85.0 (2026-11-24)
 

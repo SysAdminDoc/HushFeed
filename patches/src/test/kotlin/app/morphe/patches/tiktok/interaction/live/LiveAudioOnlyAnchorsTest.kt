@@ -115,7 +115,7 @@ class LiveAudioOnlyAnchorsTest {
             val flag = audioSwitchFlag(gates.single())
             assertEquals(VIDEO_LIVE_MANAGER, flag.definingClass)
             assertEquals("I", flag.type)
-            if ("48.0.2" in apk.name) assertEquals("${apk.name}: the flag", "G", flag.name)
+            if ("48.0.2" in apk.name) assertEquals("${apk.name}: the flag", "x", flag.name)
 
             // It's the server's EnableOnlyAudioInAoRes: the player's settings parse stores it there.
             val manager = classes[VIDEO_LIVE_MANAGER] ?: throw AssertionError("${apk.name}: $VIDEO_LIVE_MANAGER is gone")

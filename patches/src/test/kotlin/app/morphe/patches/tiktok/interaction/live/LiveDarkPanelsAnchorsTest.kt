@@ -475,11 +475,12 @@ class LiveDarkPanelsAnchorsTest {
             val bind = found.single()
             val calls = badgeTileCalls(bind)!!
             if ("48.0.2" in apk.name) {
-                // X.10ay.LJIJI(BadgeStruct)V: its tile is a lazy field cast to View, and each
-                // background it picks (a border around the server's art, a server color, or a
-                // border alone) goes on in a call of its own.
+                // X.10ay.LJJIIZI(User)Z, the user bind with the badge's tile inlined (47.9.3 had
+                // it in a method of its own, X.1A5t.LJIJI(BadgeStruct)V): its tile is a lazy field
+                // cast to View, and each background it picks (a border around the server's art, a
+                // server color, or a border alone) goes on in a call of its own.
                 assertEquals("${apk.name}: the badge module", "LX/10ay;", bind.definingClass)
-                assertEquals("${apk.name}: the badge bind", "LJIJI", bind.name)
+                assertEquals("${apk.name}: the badge bind", "LJJIIZI", bind.name)
                 assertEquals("${apk.name}: one background call per path", 3, calls.size)
             }
 
@@ -1011,10 +1012,11 @@ class LiveDarkPanelsAnchorsTest {
                 listOf(target.definingClass, target.name, target.parameterTypes.map(CharSequence::toString)))
             assertEquals(listOf(2, 0, 1), (back as FiveRegisterInstruction).let { listOf(it.registerCount, it.registerC, it.registerD) })
             if ("48.0.2" in apk.name) {
-                // X.0Kip.LIZ: style/v_ sets attr/f7j, the DM tip's text, to #fff6f6f6 and style/vb
-                // to #ff000000 (aapt2 dump, 2026-11-13).
+                // X.0Kip.LIZ applies style/uw or style/uy (47.9.3's v_ and vb), which set
+                // attr/f7t, the DM tip's text (47.9.3's f7j), to #ff000000 and #fff5f5f5
+                // (aapt2 dump, 2026-11-26).
                 val literals = colorTheme.implementation!!.instructions.mapNotNull { (it as? NarrowLiteralInstruction)?.narrowLiteral }
-                assertTrue("${apk.name}: v_ and vb", literals.containsAll(listOf(0x7f120304, 0x7f120306)))
+                assertTrue("${apk.name}: uw and uy", literals.containsAll(listOf(0x7f1202f6, 0x7f1202f8)))
             }
         }
         assertThrows(PatchException::class.java) {

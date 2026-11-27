@@ -21,7 +21,7 @@ class NativePlaybackFixturesTest {
     fun `the hold's current video, pause and resume resolve on every fixture`() {
         val expected = mapOf(
             // version to (current-video getter, player manager, pause, resume)
-            "48.0.2" to listOf("LLJJLIIIJLLLLLLLZ", "LX/05Eh;", "LIZIZ", "LJIJ"),
+            "48.0.2" to listOf("LLJJIJI", "LX/05Eh;", "LJJLIIIJJI", "LJIIZILJ"),
         )
         assertEquals("a row for each declared build", Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->

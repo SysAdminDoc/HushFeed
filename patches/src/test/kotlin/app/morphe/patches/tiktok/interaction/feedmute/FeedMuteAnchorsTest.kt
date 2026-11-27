@@ -52,8 +52,8 @@ class FeedMuteAnchorsTest {
             assertEquals("$TT_VIDEO_ENGINE->play()V", (first as ReferenceInstruction).reference.toString())
 
             val members = resolveFeedMuteMembers(play, setIsMute, abandon, request) { classes[it] }
-            // 47.9.3's TTVideoEngine reaches the impl through the engine interface it implements.
-            assertEquals("$version: the mute forwarder", "$TT_VIDEO_ENGINE->LJIIL(Z)V",
+            // 48.0.2's TTVideoEngine reaches the impl (LX/032C) through the engine interface it implements.
+            assertEquals("$version: the mute forwarder", "$TT_VIDEO_ENGINE->LJIILL(Z)V",
                 "${members.setMute.definingClass}->${members.setMute.name}(${members.setMute.parameterTypes.joinToString("")})${members.setMute.returnType}")
             val session = classes.getValue(members.session)
             val sessionRequest = session.methods.single { it.name == members.sessionRequest && it.parameterTypes.isEmpty() }

@@ -36,7 +36,7 @@ internal class ReactionFiles(
 
 /**
  * The liked heart per build. On 48.0.2 the feed's like button (X.08uG) builds its liked state from
- * one of the raw icons or `c07`, and plays one of the animations when tapped; the animations' red
+ * one of the raw icons or `bzu`, and plays one of the animations when tapped; the animations' red
  * parts are the pictures and their own color arrays. ReactionColorsFixtureTest holds each declared
  * build's fixture to its entry here.
  */
@@ -50,7 +50,7 @@ internal val LIKE_FILES: Map<String, ReactionFiles> = linkedMapOf(
             "icon_exp_exp_01_icon_media_like_active",
             "icon_exp_exp_02_icon_media_like_active",
         ),
-        drawables = listOf("c07"),
+        drawables = listOf("bzu"),
         pictures = listOf("images/ic_home_like_after.png", "images/ic_like_fill_2_new.png", "images/icon_like_shadow_alt.png"),
         animations = listOf(
             "icon_home_like_new.json",
@@ -65,7 +65,7 @@ internal val LIKE_FILES: Map<String, ReactionFiles> = linkedMapOf(
 
 /**
  * The saved bookmark per build. On 48.0.2 the feed's save button (X.091u) shows the yellow raw icon
- * or `bxg` through its helper (X.097G), TikTok's icon table swaps in the `favoriate` raws for some
+ * or `bx6` through its helper (X.097G), TikTok's icon table swaps in the `favoriate` raws for some
  * experiment groups, and the fill animation draws `ic_bookmark_2.png`. The older button plays the
  * favorite animation.
  */
@@ -78,7 +78,7 @@ internal val SAVE_FILES: Map<String, ReactionFiles> = linkedMapOf(
             "icon_exp_exp_01_icon_media_favoriate_active",
             "icon_exp_exp_02_icon_media_favoriate_active",
         ),
-        drawables = listOf("bxg"),
+        drawables = listOf("bx6"),
         pictures = listOf("images/ic_bookmark_2.png"),
         animations = listOf(
             "tt_feed_favorite_old_tux_lottie.json",

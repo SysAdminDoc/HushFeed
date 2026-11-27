@@ -37,11 +37,11 @@ class AccentColorPaletteTest {
                 val attr = table.attrNames[named[token] ?: error("$version: the token table has no $token")]
                     ?: error("$version: $token's attr isn't in the resource table")
                 accentAttrs += attr
-                // A few themes send UIShapePrimary and UITextPrimaryDisplay to e7, their own green.
+                // A few themes send UIShapePrimary and UITextPrimaryDisplay to ea (47.9.3's e7), their own green.
                 assertEquals(
                     "$version: what the themes point $token ($attr) at",
                     setOf("?attr/${palette.first}", "?attr/${palette.second}"),
-                    table.styleValues(attr).toSet() - "?attr/e7",
+                    table.styleValues(attr).toSet() - "?attr/ea",
                 )
             }
 
@@ -62,12 +62,12 @@ class AccentColorPaletteTest {
             }.toSet()
             assertEquals("$version: attrs that point at an accent token", accentAttrs, pointing)
 
-            // Warnings keep their red, and e7 keeps its green.
+            // Warnings keep their red, and ea keeps its green.
             val danger = table.attrNames.getValue(named.getValue("UIShapeDanger"))
             val dangerTokens = table.styleValues(danger).map { it.removePrefix("?attr/") }.toSet()
             assertTrue("$version: UIShapeDanger points at $dangerTokens", dangerTokens.isNotEmpty())
             assertTrue("$version: a danger token is recolored", dangerTokens.none { it in recolored })
-            assertTrue("$version: e7 is recolored", "e7" !in recolored)
+            assertTrue("$version: ea is recolored", "ea" !in recolored)
         }
     }
 

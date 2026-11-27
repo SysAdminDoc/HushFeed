@@ -11416,6 +11416,15 @@
           "values": null
         },
         {
+          "key": "region_flag_with_code",
+          "title": "Default: region flag with code",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "country_date_under_caption",
           "title": "Default: country date under caption",
           "description": null,
@@ -11503,6 +11512,15 @@
         {
           "key": "region_as_flag",
           "title": "Default: region as flag",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "region_flag_with_code",
+          "title": "Default: region flag with code",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

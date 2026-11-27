@@ -1567,6 +1567,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_AUTHOR_REGION = new BooleanSetting("show_author_region", FALSE);
     /** The country as its flag in place of its two letters, by the creator's name and a comment's time (#157). */
     public static final BooleanSetting REGION_AS_FLAG = new BooleanSetting("region_as_flag", FALSE);
+    /** The two letters kept after the flag, so a flag nobody knows still names its country (#547). */
+    public static final BooleanSetting REGION_FLAG_WITH_CODE = new BooleanSetting("region_flag_with_code", FALSE,
+            false, Setting.parent(REGION_AS_FLAG));
     /** The country and the post time on a line of their own under the caption, off the creator's row (#410). */
     public static final BooleanSetting COUNTRY_DATE_UNDER_CAPTION = new BooleanSetting("country_date_under_caption", FALSE);
     /** That line's own text size in points; 0 keeps the size of the post time it carries (#500). */

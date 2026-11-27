@@ -3340,3 +3340,5 @@ That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Esse 
 Badge picture removed. Your profile shows the blue check again.	Imagem do selo removida. Seu perfil volta a mostrar o selo azul.
 # context: Banner when deleting the badge picture failed
 Couldn't remove the badge picture. Try again.	Não foi possível remover a imagem do selo. Tente de novo.
+Keep the letters after the flag	Manter as letras depois da bandeira
+Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Mostra as duas letras do país ao lado da bandeira, assim uma bandeira que você não reconhece ainda diz de onde é.

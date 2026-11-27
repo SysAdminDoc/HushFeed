@@ -821,6 +821,7 @@
     "Show author region": [
       "SHOW_AUTHOR_REGION",
       "REGION_AS_FLAG",
+      "REGION_FLAG_WITH_CODE",
       "COUNTRY_DATE_UNDER_CAPTION",
       "COUNTRY_DATE_TEXT_SIZE",
       "COUNTRY_DATE_OPACITY",
@@ -829,6 +830,7 @@
     ],
     "Show commenter handle and region": [
       "REGION_AS_FLAG",
+      "REGION_FLAG_WITH_CODE",
       "SHOW_COMMENTER_HANDLE",
       "SHOW_COMMENTER_REGION",
       "COLOR_COMMENTER_NAMES"

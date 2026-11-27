@@ -3340,3 +3340,5 @@ That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Bu fa
 Badge picture removed. Your profile shows the blue check again.	Nişan şəkli silindi. Profiliniz yenidən mavi işarəni göstərir.
 # context: Banner when deleting the badge picture failed
 Couldn't remove the badge picture. Try again.	Nişan şəklini silmək mümkün olmadı. Yenidən cəhd edin.
+Keep the letters after the flag	Bayraqdan sonra hərfləri saxla
+Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Ölkənin iki hərfini bayrağının yanında göstərir, belə ki tanımadığın bayraq da haradan olduğunu bildirir.

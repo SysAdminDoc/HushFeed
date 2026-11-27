@@ -188,7 +188,8 @@ public final class CaptionLine {
 
     /**
      * The country for the line, by its name in the phone's language, after its flag with Show
-     * the country as a flag on. A code with no name stays as it is.
+     * the country as a flag on. A code with no name stays as it is. The name already says which
+     * country it is, so the two letters the creator's row keeps after a flag (#547) aren't added.
      */
     static String countryLabel(String code) {
         if (code == null) {
@@ -198,8 +199,8 @@ public final class CaptionLine {
         if (name == null || name.isEmpty() || name.equalsIgnoreCase(code)) {
             name = code;
         }
-        String flag = AuthorRegion.shown(code);
-        return flag == null || flag.equals(code) ? name : flag + " " + name;
+        String flag = Settings.REGION_AS_FLAG.get() ? AuthorRegion.flag(code) : null;
+        return flag == null ? name : flag + " " + name;
     }
 
     /**

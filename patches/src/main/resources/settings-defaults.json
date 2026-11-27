@@ -838,6 +838,7 @@
     "Show author region": [
       "show_author_region",
       "region_as_flag",
+      "region_flag_with_code",
       "country_date_under_caption",
       "country_date_text_size",
       "country_date_opacity",
@@ -846,6 +847,7 @@
     ],
     "Show commenter handle and region": [
       "region_as_flag",
+      "region_flag_with_code",
       "show_commenter_handle",
       "show_commenter_region",
       "color_commenter_names"
@@ -4354,6 +4356,12 @@
     "region_as_flag": {
       "field": "REGION_AS_FLAG",
       "key": "region_as_flag",
+      "type": "boolean",
+      "default": false
+    },
+    "region_flag_with_code": {
+      "field": "REGION_FLAG_WITH_CODE",
+      "key": "region_flag_with_code",
       "type": "boolean",
       "default": false
     },

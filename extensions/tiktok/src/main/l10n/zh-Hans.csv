@@ -3135,3 +3135,5 @@ That picture is larger than %1$s MB. Choose a smaller one.,这张图片超过 %1
 "That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.",这个文件不是这部手机能打开的图片。请选择 PNG、JPEG 或 WebP.
 Badge picture removed. Your profile shows the blue check again.,徽章图片已移除。你的个人主页会重新显示蓝色对勾.
 Couldn't remove the badge picture. Try again.,无法移除徽章图片。请再试一次.
+Keep the letters after the flag,在国旗后保留字母
+"Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.",在国旗旁显示国家的两个字母，即使不认识这面国旗，也能知道它来自哪里.

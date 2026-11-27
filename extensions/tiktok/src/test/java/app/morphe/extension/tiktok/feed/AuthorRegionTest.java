@@ -307,6 +307,34 @@ public class AuthorRegionTest {
         }
     }
 
+    /** #547: the flag and its two letters together, so a small country's flag still says where it is. */
+    @Test
+    public void theFlagCanKeepItsTwoLetters() {
+        Settings.SHOW_AUTHOR_REGION.save(true);
+        Settings.REGION_AS_FLAG.save(true);
+        Settings.REGION_FLAG_WITH_CODE.save(true);
+        try {
+            assertArrayEquals(new String[]{null, "🇹🇷 TR"},
+                    AuthorRegion.decoration(playing("both", "ayse", "Ayşe", "tr")));
+            assertEquals("🇪🇪 EE", AuthorRegion.shown("EE"));
+            assertEquals("a code that isn't two letters stays as it is", "419", AuthorRegion.shown("419"));
+            assertEquals("X1", AuthorRegion.shown("X1"));
+            assertNull(AuthorRegion.shown(null));
+
+            // The letters only ever come after a flag: with the flag off it's the code alone, once.
+            Settings.REGION_AS_FLAG.save(false);
+            assertEquals("TR", AuthorRegion.shown("TR"));
+
+            Settings.REGION_AS_FLAG.save(true);
+            Settings.REGION_FLAG_WITH_CODE.save(false);
+            assertEquals("🇹🇷", AuthorRegion.shown("TR"));
+        } finally {
+            Settings.REGION_FLAG_WITH_CODE.resetToDefault();
+            Settings.REGION_AS_FLAG.resetToDefault();
+            Settings.SHOW_AUTHOR_REGION.resetToDefault();
+        }
+    }
+
     /** #410: an ad's made up region never shows as a country or teaches the comment caches. */
     @Test
     public void anAdsFakeRegionShowsNoCountry() {

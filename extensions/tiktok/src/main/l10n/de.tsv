@@ -3343,3 +3343,5 @@ That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Diese
 Badge picture removed. Your profile shows the blue check again.	Abzeichenbild entfernt. Dein Profil zeigt wieder den blauen Haken.
 # context: Banner when deleting the badge picture failed
 Couldn't remove the badge picture. Try again.	Das Abzeichenbild konnte nicht entfernt werden. Versuch es noch einmal.
+Keep the letters after the flag	Buchstaben nach der Flagge behalten
+Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Zeigt die zwei Buchstaben des Landes neben seiner Flagge, damit dir auch eine unbekannte Flagge sagt, woher sie ist.

@@ -498,7 +498,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
         if (!applySettingToPreference && (setting == Settings.SHOW_COMMENTER_HANDLE
                 || setting == Settings.SHOW_COMMENTER_REGION || setting == Settings.COLOR_COMMENTER_NAMES
-                || setting == Settings.REGION_AS_FLAG || setting == BaseSettings.PAUSED
+                || setting == Settings.REGION_AS_FLAG || setting == Settings.REGION_FLAG_WITH_CODE
+                || setting == BaseSettings.PAUSED
                 || setting == Settings.PUBLISH_DATE_EVERYWHERE || setting == Settings.PUBLISH_DATE_DAY_FIRST
                 || setting == Settings.PUBLISH_DATE_MONTH_NAME || setting == Settings.PUBLISH_DATE_INSTEAD_OF_AGE)) {
             app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();

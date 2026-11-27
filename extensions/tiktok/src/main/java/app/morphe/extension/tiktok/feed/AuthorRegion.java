@@ -697,17 +697,31 @@ public final class AuthorRegion {
     /**
      * A country code the way the reader asked to see it: its flag with Show the country as a
      * flag on (#157), made of the two regional indicator letters every flag emoji is, or else the
-     * code. Anything that isn't two letters A to Z stays as it is.
+     * code. With Keep the letters after the flag on too (#547) it's both, the flag and then the
+     * code, since a small country's flag is hard to tell apart. Anything that isn't two letters
+     * A to Z stays as it is.
      */
     public static String shown(String code) {
-        if (code == null || code.length() != 2 || !Settings.REGION_AS_FLAG.get()) {
+        if (!Settings.REGION_AS_FLAG.get()) {
             return code;
+        }
+        String flag = flag(code);
+        if (flag == null) {
+            return code;
+        }
+        return Settings.REGION_FLAG_WITH_CODE.get() ? flag + " " + code : flag;
+    }
+
+    /** The flag emoji for two letters A to Z, whatever the switches say, or null for anything else. */
+    static String flag(String code) {
+        if (code == null || code.length() != 2) {
+            return null;
         }
         StringBuilder flag = new StringBuilder(4);
         for (int i = 0; i < 2; i++) {
             char letter = code.charAt(i);
             if (letter < 'A' || letter > 'Z') {
-                return code;
+                return null;
             }
             flag.appendCodePoint(0x1F1E6 + (letter - 'A'));
         }

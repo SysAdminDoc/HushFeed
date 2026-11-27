@@ -3541,3 +3541,5 @@ That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Эт�
 Badge picture removed. Your profile shows the blue check again.	Картинка значка удалена. В профиле снова синяя галочка.
 # context: Banner when deleting the badge picture failed
 Couldn't remove the badge picture. Try again.	Не удалось удалить картинку значка. Попробуйте ещё раз.
+Keep the letters after the flag	Оставлять буквы после флага
+Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Показывает две буквы страны рядом с её флагом, чтобы даже незнакомый флаг подсказывал, откуда он.

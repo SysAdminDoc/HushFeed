@@ -3340,3 +3340,5 @@ That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Quel 
 Badge picture removed. Your profile shows the blue check again.	Immagine del badge rimossa. Il tuo profilo mostra di nuovo la spunta blu.
 # context: Banner when deleting the badge picture failed
 Couldn't remove the badge picture. Try again.	Impossibile rimuovere l’immagine del badge. Riprova.
+Keep the letters after the flag	Tieni le lettere dopo la bandiera
+Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Mostra le due lettere del paese accanto alla sua bandiera, così anche una bandiera che non riconosci ti dice da dove viene.

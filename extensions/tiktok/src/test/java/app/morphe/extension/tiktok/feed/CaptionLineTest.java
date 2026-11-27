@@ -199,6 +199,7 @@ public class CaptionLineTest {
         Settings.COUNTRY_DATE_SHADOW.resetToDefault();
         Settings.SHOW_AUTHOR_REGION.resetToDefault();
         Settings.REGION_AS_FLAG.resetToDefault();
+        Settings.REGION_FLAG_WITH_CODE.resetToDefault();
         Settings.SHOW_AUTHOR_HANDLE.resetToDefault();
         SettingsStatus.authorRegionEnabled = regionPatched;
         Locale.setDefault(locale);
@@ -532,6 +533,12 @@ public class CaptionLineTest {
         String flag = new StringBuilder().appendCodePoint(0x1F1E6)
                 .appendCodePoint(0x1F1E6 + 25).toString();
         assertEquals(flag + " Azerbaijan", CaptionLine.countryLabel("AZ"));
+
+        // The name already spells the country out, so the row's letters after the flag (#547)
+        // don't come along onto the line.
+        Settings.REGION_FLAG_WITH_CODE.save(true);
+        assertEquals(flag + " Azerbaijan", CaptionLine.countryLabel("AZ"));
+        assertEquals("Mars", CaptionLine.countryLabel("Mars"));
     }
 
     @Test

@@ -6,8 +6,15 @@ package app.morphe.extension.tiktok.interaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.net.Uri;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -46,11 +53,24 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * profile's model lacks the join date, region or language, the same account's author model on
  * one of the videos behind the sheet gives it. A join date no model holds comes from the
  * account's ID, whose top 32 bits are the time TikTok made it.
+ *
+ * The links to the profile picture at each size and to the profile cover come last, read from the
+ * same model's avatar and cover_url addresses, and the gifter points beside the level come from
+ * pay_grade's now_diamond, next_diamond and total_diamond_count. TikTok's app reads none of those
+ * three itself on 48.0.2, so they're shown as sent, and only when above zero. The model has no
+ * device or OS field. A tap on any value copies just that value (#549).
  */
 public final class AccountFacts {
     static final String SHOW_FACTS = "Account facts";
     static final String FACTS_COPIED = "Account facts copied";
+    static final String VALUE_COPIED = "Copied to the clipboard";
     static final String UNKNOWN = "Unknown (TikTok didn't send it)";
+    /** Each size of the profile picture: its line, then the model's getter and field. */
+    private static final String[][] PICTURES = {
+            {"Profile picture (small)", "getAvatarThumb", "avatarThumb"},
+            {"Profile picture (medium)", "getAvatarMedium", "avatarMedium"},
+            {"Profile picture (large)", "getAvatarLarger", "avatarLarger"},
+    };
     /** A seconds value past this is really milliseconds; it's the year 5138 in seconds. */
     private static final long LARGEST_SECONDS = 100_000_000_000L;
     static final String AWEME = "com.ss.android.ugc.aweme.feed.model.Aweme";
@@ -100,7 +120,18 @@ public final class AccountFacts {
             facts.add(new Fact("Account region", country(accountRegion, locale)));
         }
         facts.add(new Fact("Language", language(text(sources, "language"), locale)));
-        facts.add(new Fact("Gifter level", level(gifterLevel(sources), locale)));
+        Object honor = honor(sources);
+        facts.add(new Fact("Gifter level", level(honor == null ? null
+                : ((Number) Reflect.readField(honor, "level")).intValue(), locale)));
+        // now_diamond, next_diamond and total_diamond_count: plain longs, so one left out reads 0.
+        Object points = Reflect.readField(honor, "currentDiamond");
+        addCount(facts, "Gifter points", points, locale);
+        addCount(facts, "Gifter points for the next level", Reflect.readField(honor, "nextDiamond"), locale);
+        Object total = Reflect.readField(honor, "totalDiamond");
+        if (!(total instanceof Number && points instanceof Number
+                && ((Number) total).longValue() == ((Number) points).longValue())) {
+            addCount(facts, "Gifter points in total", total, locale);
+        }
         // The counts are plain ints on the model, so one the server left out reads 0 and gets no
         // line. They come from the profile's own model only: a video's author model carries the
         // counts of whenever that video was served, or none (#487).
@@ -134,6 +165,13 @@ public final class AccountFacts {
         // Last, as it's long and only useful copied.
         String secUid = text(sources, "secUid");
         facts.add(new Fact("SecUID", secUid == null ? L10n.t(UNKNOWN) : secUid));
+        for (String[] picture : PICTURES) {
+            String link = link(sources, picture[1], picture[2]);
+            facts.add(new Fact(picture[0], link == null ? L10n.t(UNKNOWN) : link));
+        }
+        // Not every account has a cover, so a missing one gets no line.
+        String cover = coverLink(sources);
+        if (cover != null) facts.add(new Fact("Profile cover", cover));
         return facts;
     }
 
@@ -147,18 +185,58 @@ public final class AccountFacts {
         return text.toString();
     }
 
+    /**
+     * The sheet as shown: the same lines as {@link #format}, with each value drawn as a link that
+     * copies just that value when tapped.
+     */
+    static CharSequence sheet(List<Fact> facts) {
+        SpannableStringBuilder text = new SpannableStringBuilder();
+        for (Fact fact : facts) {
+            if (text.length() > 0) text.append('\n');
+            text.append(L10n.t(fact.label)).append(": ");
+            int start = text.length();
+            text.append(fact.value);
+            text.setSpan(new CopyValue(fact.value), start, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return text;
+    }
+
+    /** One line's value, copied on its own when tapped. */
+    static final class CopyValue extends ClickableSpan {
+        final String value;
+
+        CopyValue(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public void onClick(View widget) {
+            if (GestureActions.copyToClipboard(L10n.t("TikTok account facts"), value)) {
+                Utils.showToastShort(L10n.t(VALUE_COPIED));
+            }
+        }
+
+        @Override
+        public void updateDrawState(TextPaint paint) {
+            // A text view with no link color would draw the value invisible.
+            if (paint.linkColor != 0) paint.setColor(paint.linkColor);
+            paint.setUnderlineText(false);
+        }
+    }
+
     /** From the facts button: the sheet over whatever screen is showing. */
     static void show(Object user) {
         try {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
             List<Object> copies = copiesOnScreen(activity.getWindow().getDecorView(), user);
-            String text = format(of(user, copies, Locale.getDefault(), TimeZone.getDefault()));
+            List<Fact> facts = of(user, copies, Locale.getDefault(), TimeZone.getDefault());
+            String text = format(facts);
             String handle = Reflect.string(user, "getUniqueId", "uniqueId");
             SettingsUi.syncDarkMode(activity);
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(handle == null ? L10n.t(SHOW_FACTS) : "@" + handle)
-                    .setMessage(text)
+                    .setMessage(sheet(facts))
                     .setPositiveButton(L10n.t("Close"), null)
                     .setNeutralButton(L10n.t("Copy"), (ignored, which) -> {
                         if (GestureActions.copyToClipboard(L10n.t("TikTok account facts"), text)) {
@@ -166,10 +244,20 @@ public final class AccountFacts {
                         }
                     })
                     .create();
-            dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
+            dialog.setOnShowListener(ignored -> {
+                SettingsUi.styleStandardAlertDialog(dialog);
+                linkValues(dialog.findViewById(android.R.id.message));
+            });
             dialog.show();
         } catch (Throwable error) {
             Logger.printException(() -> "Could not show the account facts", error);
+        }
+    }
+
+    /** Lets taps on the sheet's message reach the value under them. */
+    static void linkValues(@Nullable View message) {
+        if (message instanceof TextView) {
+            ((TextView) message).setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
@@ -190,14 +278,51 @@ public final class AccountFacts {
     }
 
     /**
-     * The gifter level in the first model holding pay_grade, or null when none does. A level of 0
+     * pay_grade in the first model holding it with a level, or null when none does. A level of 0
      * is what the server sent and is shown as it came.
      */
     @Nullable
-    static Integer gifterLevel(List<Object> sources) {
+    static Object honor(List<Object> sources) {
         for (Object source : sources) {
-            Object level = Reflect.readField(Reflect.readField(source, "userHonor"), "level");
-            if (level instanceof Number) return ((Number) level).intValue();
+            Object honor = Reflect.readField(source, "userHonor");
+            if (Reflect.readField(honor, "level") instanceof Number) return honor;
+        }
+        return null;
+    }
+
+    /** The first web address any source holds under the getter or field, or null. */
+    @Nullable
+    private static String link(List<Object> sources, String getter, String field) {
+        for (Object source : sources) {
+            String link = link(Reflect.property(source, getter, field));
+            if (link != null) return link;
+        }
+        return null;
+    }
+
+    /** The first address in cover_url's first picture that has one, from the first source holding it. */
+    @Nullable
+    private static String coverLink(List<Object> sources) {
+        for (Object source : sources) {
+            Object covers = Reflect.property(source, "getCoverUrls", "coverUrls");
+            if (!(covers instanceof List)) continue;
+            for (Object cover : new ArrayList<>((List<?>) covers)) {
+                String link = link(cover);
+                if (link != null) return link;
+            }
+        }
+        return null;
+    }
+
+    /** The first https address in an address model's url list, or null. */
+    @Nullable
+    static String link(@Nullable Object address) {
+        Object urls = Reflect.property(address, "getUrlList", "urlList");
+        if (!(urls instanceof List)) return null;
+        for (Object url : new ArrayList<>((List<?>) urls)) {
+            if (url instanceof String && "https".equalsIgnoreCase(Uri.parse((String) url).getScheme())) {
+                return (String) url;
+            }
         }
         return null;
     }

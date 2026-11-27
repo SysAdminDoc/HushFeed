@@ -3376,7 +3376,6 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Уровень дарителя
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, сколько у него публикаций, понравившихся видео, избранного и репостов, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Показывать ID комнаты и ваше соединение
 Show the room line	Показать строку комнаты
@@ -3490,3 +3489,21 @@ How round the corners are, in dp. TikTok's own cards use about 8.	Насколь
 Gap between videos on profile grids	Отступ между видео в сетке профиля
 # context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
 Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	Добавляет отступ между видео в сетке профиля поверх тонкой линии самого TikTok. Укажите 0, чтобы оставить отступы TikTok.
+# context: Account facts line: the gifter points TikTok sent for the account (pay_grade now_diamond), shown beside Gifter level
+Gifter points	Очки дарителя
+# context: Account facts line: the points figure TikTok sent for the next gifter level (pay_grade next_diamond)
+Gifter points for the next level	Очки дарителя для следующего уровня
+# context: Account facts line: all the gifter points TikTok counted for the account (pay_grade total_diamond_count)
+Gifter points in total	Всего очков дарителя
+# context: Account facts line: web link to the account's profile picture at its smallest size
+Profile picture (small)	Фото профиля (маленькое)
+# context: Account facts line: web link to the account's profile picture at its middle size
+Profile picture (medium)	Фото профиля (среднее)
+# context: Account facts line: web link to the account's profile picture at its largest size
+Profile picture (large)	Фото профиля (большое)
+# context: Account facts line: web link to the cover picture TikTok keeps for the profile (cover_url)
+Profile cover	Обложка профиля
+# context: Toast after tapping one value in the Account facts sheet, which copies just that value
+Copied to the clipboard	Скопировано в буфер обмена
+# context: Summary of Account facts on profiles; the sheet lists what TikTok sent, and a tap on one value copies only that value
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Links to its profile picture and cover come last. Tap a value to copy just that one. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, сколько у него публикаций, понравившихся видео, избранного и репостов, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ссылки на фото профиля и обложку идут в конце. Нажмите на значение, чтобы скопировать только его. Ничего дополнительно не загружается.

@@ -3011,7 +3011,6 @@ Round the corners on profile grids,Bo tròn góc trên lưới trang cá nhân
 Gifter level,Cấp độ người tặng quà
 SecUID,SecUID
 Unknown (TikTok didn't send it),Không rõ (TikTok không gửi)
-"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, số bài đăng, video đã thích, mục yêu thích và bài đăng lại, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Không có dữ liệu bổ sung nào được tải thêm."
 Show the room ID and your connection,Hiện ID phòng và kết nối của bạn
 Show the room line,Hiện dòng phòng
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.","Thêm một dòng nhỏ vào phòng LIVE với ID phòng và tình trạng kết nối của chính bạn tới luồng phát, theo đo đạc của trình phát TikTok: ping, độ trễ và tốc độ tải xuống. Nhấn vào dòng để thu nhỏ thành một chấm, và nhấn vào chấm để hiện lại. Nhấn giữ dòng để sao chép ID phòng."
@@ -3110,3 +3109,12 @@ Corner size on profile grids,Độ bo góc trên lưới trang cá nhân
 "How round the corners are, in dp. TikTok's own cards use about 8.","Độ bo tròn của góc, tính bằng dp. Thẻ của chính TikTok dùng khoảng 8."
 Gap between videos on profile grids,Khoảng cách giữa các video trên lưới trang cá nhân
 "Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.","Thêm khoảng cách giữa các video trên lưới trang cá nhân, ngoài đường mảnh của chính TikTok. Dùng 0 để giữ khoảng cách của TikTok."
+Gifter points,Điểm người tặng quà
+Gifter points for the next level,Điểm người tặng quà cho cấp độ tiếp theo
+Gifter points in total,Tổng điểm người tặng quà
+Profile picture (small),Ảnh đại diện (nhỏ)
+Profile picture (medium),Ảnh đại diện (vừa)
+Profile picture (large),Ảnh đại diện (lớn)
+Profile cover,Ảnh bìa trang cá nhân
+Copied to the clipboard,Đã sao chép vào bộ nhớ tạm
+"A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Links to its profile picture and cover come last. Tap a value to copy just that one. Nothing extra is fetched.","Bảng chia sẻ của trang cá nhân có thêm nút Thông tin tài khoản. Nút này hiển thị những gì TikTok đã cung cấp về tài khoản đó: thời gian tham gia, khu vực và ngôn ngữ, cấp độ người tặng quà và SecUID, số bài đăng, video đã thích, mục yêu thích và bài đăng lại, lần thay đổi tên người dùng và tên hiển thị gần nhất, tài khoản có phải riêng tư hay không và danh sách video đã thích có công khai hay không. Liên kết ảnh đại diện và ảnh bìa nằm ở cuối. Chạm vào một giá trị để chỉ sao chép giá trị đó. Không có dữ liệu bổ sung nào được tải thêm."

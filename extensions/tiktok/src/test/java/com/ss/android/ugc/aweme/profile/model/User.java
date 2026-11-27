@@ -27,6 +27,12 @@ public class User {
     public UserHonor userHonor;
     /** A UrlModel in TikTok; here anything with a urlList, which is all the avatar saver reads. */
     public Object avatar300;
+    /** The other picture sizes, UrlModels in TikTok, as account facts reads them. */
+    public Object avatarThumb;
+    public Object avatarMedium;
+    public Object avatarLarger;
+    /** cover_url: a list of UrlModels. */
+    public java.util.List<Object> coverUrls;
 
     public String getUid() { return uid; }
     public String getUniqueId() { return uniqueId; }

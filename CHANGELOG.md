@@ -52,6 +52,7 @@ Every Hushfeed release, newest first.
 * New `Only show videos with these words` list under Feed filter. Fill it with words or hashtags, like #recipe, and For You keeps only the videos whose caption matches one. A batch with no match still keeps one video so the feed doesn't stall, and Creator exceptions get through too (#548).
 * `Auto tap` in a 1v1 battle taps the middle of the host's own video again, not the top of the screen (which opened their profile) or the row under the videos (which opened the supporters ranking). It now finds the host's video on screen and stays clear of the score bar and name tags drawn around it, even when a guest joins one side (#335).
 * Two new rows in Interface for profile grids. `Corner size on profile grids` sets how round `Round the corners on profile grids` makes them, from 1 to 48 dp (8 is what you had before). `Gap between videos on profile grids` adds up to 24 dp of space between the videos, and 0 keeps TikTok's own thin line (#549).
+* `Account facts` now ends with links to the profile picture in its three sizes and to the profile cover, and shows the gifter points TikTok sends next to the gifter level. Tap any value on the sheet to copy just that one. TikTok's account model has no device or phone system field, so there's nothing to show for that (#549).
 
 ## 0.85.0 (2026-11-24)
 

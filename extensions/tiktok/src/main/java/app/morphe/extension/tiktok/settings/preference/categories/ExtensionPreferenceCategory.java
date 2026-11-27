@@ -353,7 +353,8 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "sent about the account: when it joined, its region and language, its gifter "
                             + "level and SecUID, how many posts, liked videos, favorites and reposts it has, "
                             + "when its username and display name last changed, whether it's private and "
-                            + "whether its liked videos are public. Nothing extra is fetched.",
+                            + "whether its liked videos are public. Links to its profile picture and cover "
+                            + "come last. Tap a value to copy just that one. Nothing extra is fetched.",
                     Settings.ACCOUNT_FACTS
             ));
             addPreference(new TogglePreference(

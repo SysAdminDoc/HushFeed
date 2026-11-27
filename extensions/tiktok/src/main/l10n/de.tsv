@@ -3178,7 +3178,6 @@ Gives each video on profile grids rounded corners, on your own profile and on Li
 Gifter level	Gifter-Level
 SecUID	SecUID
 Unknown (TikTok didn't send it)	Unbekannt (TikTok hat es nicht geschickt)
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche Kontofakten. Sie zeigt, was TikTok über das Konto ohnehin geschickt hat: wann es beigetreten ist, Region und Sprache, Gifter-Level und SecUID, wie viele Beiträge, gelikte Videos, Favoriten und Reposts es hat, wann Nutzername und Anzeigename zuletzt geändert wurden, ob es privat ist und ob die gelikten Videos öffentlich sind. Es wird nichts zusätzlich abgerufen.
 # context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
 Show the room ID and your connection	Raum-ID und deine Verbindung zeigen
 Show the room line	Raumzeile zeigen
@@ -3292,3 +3291,21 @@ How round the corners are, in dp. TikTok's own cards use about 8.	Wie rund die E
 Gap between videos on profile grids	Abstand zwischen Videos im Profilraster
 # context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
 Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	Fügt im Profilraster Abstand zwischen den Videos hinzu, zusätzlich zu TikToks eigener dünner Linie. Nutze 0 für TikToks Abstand.
+# context: Account facts line: the gifter points TikTok sent for the account (pay_grade now_diamond), shown beside Gifter level
+Gifter points	Gifter-Punkte
+# context: Account facts line: the points figure TikTok sent for the next gifter level (pay_grade next_diamond)
+Gifter points for the next level	Gifter-Punkte für das nächste Level
+# context: Account facts line: all the gifter points TikTok counted for the account (pay_grade total_diamond_count)
+Gifter points in total	Gifter-Punkte insgesamt
+# context: Account facts line: web link to the account's profile picture at its smallest size
+Profile picture (small)	Profilbild (klein)
+# context: Account facts line: web link to the account's profile picture at its middle size
+Profile picture (medium)	Profilbild (mittel)
+# context: Account facts line: web link to the account's profile picture at its largest size
+Profile picture (large)	Profilbild (groß)
+# context: Account facts line: web link to the cover picture TikTok keeps for the profile (cover_url)
+Profile cover	Profil-Titelbild
+# context: Toast after tapping one value in the Account facts sheet, which copies just that value
+Copied to the clipboard	In die Zwischenablage kopiert
+# context: Summary of Account facts on profiles; the sheet lists what TikTok sent, and a tap on one value copies only that value
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, how many posts, liked videos, favorites and reposts it has, when its username and display name last changed, whether it's private and whether its liked videos are public. Links to its profile picture and cover come last. Tap a value to copy just that one. Nothing extra is fetched.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche Kontofakten. Sie zeigt, was TikTok über das Konto ohnehin geschickt hat: wann es beigetreten ist, Region und Sprache, Gifter-Level und SecUID, wie viele Beiträge, gelikte Videos, Favoriten und Reposts es hat, wann Nutzername und Anzeigename zuletzt geändert wurden, ob es privat ist und ob die gelikten Videos öffentlich sind. Links zu Profilbild und Titelbild stehen ganz unten. Tippe auf einen Wert, um nur ihn zu kopieren. Es wird nichts zusätzlich abgerufen.

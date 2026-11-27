@@ -6,10 +6,21 @@ package app.morphe.extension.tiktok.interaction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.Looper;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import com.ss.android.ugc.aweme.profile.model.User;
@@ -18,15 +29,21 @@ import com.ss.android.ugc.aweme.profile.model.UserHonor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowToast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import app.morphe.extension.shared.Utils;
@@ -44,6 +61,15 @@ public class AccountFactsTest {
         UserHonor honor = new UserHonor();
         honor.level = level;
         return honor;
+    }
+
+    /** A picture's address the way TikTok's UrlModel holds it: a list of web addresses. */
+    public static final class Address {
+        public final List<String> urlList;
+
+        Address(String... urls) {
+            urlList = List.of(urls);
+        }
     }
 
     @Before public void setUp() {
@@ -76,17 +102,28 @@ public class AccountFactsTest {
         user.isSecret = true;
         user.hasOpenFavorite = true;
         user.userHonor = honor(12);
+        user.userHonor.currentDiamond = 1_500;
+        user.userHonor.nextDiamond = 2_000;
+        user.userHonor.totalDiamond = 4_321;
         user.secUid = SEC_UID;
         user.awemeCount = 1_234;
         user.favoritingCount = 56_789;
         user.collectCount = 12;
         user.repostCount = 3;
+        // An address that isn't https is passed over for the next one.
+        user.avatarThumb = new Address("http://example.com/100.jpeg", "https://example.com/100.jpeg");
+        user.avatarMedium = new Address("https://example.com/720.jpeg");
+        user.avatarLarger = new Address("https://example.com/1080.jpeg", "https://example.com/1080.webp");
+        user.coverUrls = List.of(new Address(), new Address("https://example.com/cover.jpeg"));
 
         assertEquals(List.of(
                 "Joined=" + when(1_615_819_200L),
                 "Region=Germany (DE)",
                 "Language=German (de)",
                 "Gifter level=12",
+                "Gifter points=1,500",
+                "Gifter points for the next level=2,000",
+                "Gifter points in total=4,321",
                 "Posts=1,234",
                 "Liked videos=56,789 (Public)",
                 "Favorites=12",
@@ -94,8 +131,79 @@ public class AccountFactsTest {
                 "Username last changed=" + when(1_700_000_000L),
                 "Display name last changed=" + when(1_690_000_000L),
                 "Private account=Yes",
-                "SecUID=" + SEC_UID
+                "SecUID=" + SEC_UID,
+                "Profile picture (small)=https://example.com/100.jpeg",
+                "Profile picture (medium)=https://example.com/720.jpeg",
+                "Profile picture (large)=https://example.com/1080.jpeg",
+                "Profile cover=https://example.com/cover.jpeg"
         ), lines(user));
+    }
+
+    @Test public void gifterPointsShowOnlyWhenTheServerSentThem() {
+        User user = new User();
+        user.userHonor = honor(3);
+        List<String> lines = lines(user);
+        assertTrue(lines.toString(), lines.contains("Gifter level=3"));
+        assertFalse("plain longs left out read 0 and say nothing",
+                lines.stream().anyMatch(line -> line.startsWith("Gifter points")));
+
+        user.userHonor.currentDiamond = 700;
+        user.userHonor.totalDiamond = 700;
+        lines = lines(user);
+        assertTrue(lines.toString(), lines.contains("Gifter points=700"));
+        assertFalse("a total the same as the points says nothing new",
+                lines.stream().anyMatch(line -> line.startsWith("Gifter points in total=")));
+    }
+
+    @Test public void aPictureWithNoSecureAddressIsUnknownAndNoCoverGetsNoLine() {
+        User user = new User();
+        user.avatarThumb = new Address("http://example.com/100.jpeg");
+        user.avatarMedium = new Address();
+        user.coverUrls = List.of(new Address("http://example.com/cover.jpeg"));
+        List<String> lines = lines(user);
+        assertTrue(lines.toString(), lines.contains("Profile picture (small)=" + UNKNOWN));
+        assertTrue(lines.toString(), lines.contains("Profile picture (medium)=" + UNKNOWN));
+        assertTrue(lines.toString(), lines.contains("Profile picture (large)=" + UNKNOWN));
+        assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Profile cover=")));
+    }
+
+    @Test public void tappingAValueOnTheSheetCopiesJustThatValue() {
+        User user = account("6784563164518679557");
+        user.uniqueId = "someone";
+        user.secUid = SEC_UID;
+        user.avatarLarger = new Address("https://example.com/1080.jpeg");
+        ShadowToast.reset();
+        try (ActivityController<Activity> controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Utils.setActivity(controller.get());
+            AccountFacts.show(user);
+            // The dialog's show listener is posted.
+            shadowOf(Looper.getMainLooper()).idle();
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull("the sheet opened", dialog);
+            TextView message = dialog.findViewById(android.R.id.message);
+            assertTrue("taps on the message reach its values",
+                    message.getMovementMethod() instanceof LinkMovementMethod);
+            assertTrue(message.getText() instanceof Spanned);
+            Spanned text = (Spanned) message.getText();
+            Map<String, ClickableSpan> byValue = new HashMap<>();
+            for (ClickableSpan span : text.getSpans(0, text.length(), ClickableSpan.class)) {
+                byValue.put(text.subSequence(text.getSpanStart(span), text.getSpanEnd(span)).toString(), span);
+            }
+            assertTrue(byValue.keySet().toString(), byValue.containsKey(SEC_UID));
+            assertTrue(byValue.keySet().toString(), byValue.containsKey("https://example.com/1080.jpeg"));
+            assertFalse("the label isn't part of what's copied", byValue.containsKey("SecUID: " + SEC_UID));
+
+            byValue.get("https://example.com/1080.jpeg").onClick(message);
+            shadowOf(Looper.getMainLooper()).idle();
+            ClipboardManager clipboard = (ClipboardManager) RuntimeEnvironment.getApplication()
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            assertEquals("https://example.com/1080.jpeg",
+                    clipboard.getPrimaryClip().getItemAt(0).getText().toString());
+            assertEquals("Copied to the clipboard", ShadowToast.getTextOfLatestToast());
+            dialog.dismiss();
+        } finally {
+            Utils.setActivity(null);
+        }
     }
 
     @Test public void aCountGetsALineOnlyWhenTheServerSentOne() {
@@ -146,7 +254,10 @@ public class AccountFactsTest {
                 "Gifter level=" + UNKNOWN,
                 "Username last changed=" + UNKNOWN,
                 "Display name last changed=" + UNKNOWN,
-                "SecUID=" + UNKNOWN
+                "SecUID=" + UNKNOWN,
+                "Profile picture (small)=" + UNKNOWN,
+                "Profile picture (medium)=" + UNKNOWN,
+                "Profile picture (large)=" + UNKNOWN
         ), lines(new User()));
     }
 
@@ -265,6 +376,7 @@ public class AccountFactsTest {
         author.secUid = SEC_UID;
         // A video's author carries the response's own time here, not a real change date.
         author.uniqueIdModifyTime = 1_792_501_129L;
+        author.avatarLarger = new Address("https://example.com/author-1080.jpeg");
         GridAdapter adapter = new GridAdapter();
         adapter.mmItems.add(video(someoneElse));
         adapter.mmItems.add("not a video");
@@ -288,7 +400,10 @@ public class AccountFactsTest {
                 "Username last changed=" + UNKNOWN,
                 "Display name last changed=" + UNKNOWN,
                 "Private account=Yes",
-                "SecUID=" + SEC_UID
+                "SecUID=" + SEC_UID,
+                "Profile picture (small)=" + UNKNOWN,
+                "Profile picture (medium)=" + UNKNOWN,
+                "Profile picture (large)=https://example.com/author-1080.jpeg"
         ), lines);
     }
 

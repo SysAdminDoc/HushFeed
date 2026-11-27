@@ -11,6 +11,7 @@ import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.util.addInstructions
 import app.morphe.util.getFreeRegisterProvider
 import app.morphe.util.getReference
+import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -75,15 +76,7 @@ internal fun chatEventNames(patch: String, eventType: String, events: Map<String
 internal fun chatEventNameMethod(event: ChatEventName): MutableMethod =
     MutableMethod(ImmutableMethod(event.type, CHAT_EVENT_NAME, emptyList(), "Ljava/lang/String;",
         AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
-        ImmutableMethodImplementation(2, emptyList(), null, null))).apply {
-        addInstructions(
-            0,
-            """
-                const-string v0, "${event.name}"
-                return-object v0
-            """,
-        )
-    }
+        ImmutableMethodImplementation(2, emptyList(), null, null))).apply { returnEarly(event.name) }
 
 /** The chat's message list ability. It keeps its name on 47.9.3. */
 internal const val SUBMIT_LIST_ABILITY = "Lcom/ss/android/ugc/aweme/im/messagelist/ui/MessageListSubmitListAbilityImpl;"

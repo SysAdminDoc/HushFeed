@@ -299,6 +299,8 @@ Blocked account,Tài khoản bị chặn
 Blocked accounts,Tài khoản bị chặn
 Blocked and hidden creators,Nhà sáng tạo bị chặn và ẩn
 Blocked caption words,Từ khóa tiêu đề bị chặn
+Only show videos with these words,Chỉ hiện video có những từ này
+"For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.","Chỉ trong Dành cho bạn. Ngăn cách từ hoặc cụm từ bằng dấu phẩy, như #recipe, cooking. Video chỉ ở lại khi tiêu đề hoặc hashtag khớp với một mục, theo cùng quy tắc như Từ khóa tiêu đề bị chặn. Một đợt không có video nào khớp sẽ giữ lại một video để bảng tin tiếp tục chạy. Để trống để hiện mọi thứ."
 Blocked comment words,Từ khóa bình luận bị chặn
 Blocked creators,Nhà sáng tạo bị chặn
 Blocked sound ids,ID âm thanh bị chặn

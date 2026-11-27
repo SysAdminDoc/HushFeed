@@ -338,6 +338,7 @@ final class FeedFilterFeedback {
         if ("PromotionalMusicFilter".equals(reason)) return "Promotional music";
         if ("LiveReplayFilter".equals(reason)) return "LIVE replays";
         if ("UnpersonalizedForYouFilter".equals(reason)) return "Unpersonalized For You videos";
+        if ("KeptWordsFilter".equals(reason)) return "Only show videos with these words";
         if ("RegionFilter".equals(reason)) return "Country filters";
         if ("CaptionLanguageFilter".equals(reason)) return "Caption languages";
         if ("PublicationAgeFilter".equals(reason)) return "Post age";

@@ -291,6 +291,16 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 .withSamplePreview(app.morphe.extension.tiktok.settings.L10n.t("Sample caption to test"),
                         app.morphe.extension.tiktok.feedfilter.KeywordRulePreview.MAX_SAMPLE_CHARS,
                         app.morphe.extension.tiktok.feedfilter.KeywordRulePreview::result));
+        addPreference(new InputTextPreference(context, "Only show videos with these words",
+                "For You only. Separate words or phrases with commas, like #recipe, cooking. A "
+                        + "video stays only when its caption or hashtags match one, with the same "
+                        + "rules as Blocked caption words. A batch with no match keeps one video so "
+                        + "the feed keeps moving. Leave it empty to show everything.",
+                Settings.KEPT_CAPTION_WORDS)
+                .withCheck(app.morphe.extension.tiktok.feedfilter.KeywordRules::problem)
+                .withSamplePreview(app.morphe.extension.tiktok.settings.L10n.t("Sample caption to test"),
+                        app.morphe.extension.tiktok.feedfilter.KeywordRulePreview.MAX_SAMPLE_CHARS,
+                        app.morphe.extension.tiktok.feedfilter.KeywordRulePreview::result));
         addPreference(new TogglePreference(context, "Match text stickers too",
                 "Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.",
                 Settings.BLOCKED_WORDS_IN_STICKERS));

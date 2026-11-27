@@ -292,6 +292,8 @@ Blocked %1$s	Блокирано: %1$s
 Blocked %1$s. Unblock	Блокирано: %1$s. Отблокирай
 Couldn't confirm blocking %1$s. Check their profile.	Блокирането на %1$s е неясно. Провери профила.
 Blocked caption words	Блокирани думи в описанията
+Only show videos with these words	Показвай само видеа с тези думи
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Само в За вас. Разделяй думите или фразите със запетаи, например #recipe, cooking. Видеото остава само ако описанието или хаштаговете му съвпадат с някоя от тях, със същите правила като Блокирани думи в описанията. Партида без съвпадение запазва едно видео, за да продължи емисията. Остави празно, за да виждаш всичко.
 Blocked comment words	Блокирани думи в коментарите
 Blocked creators	Блокирани създатели
 Blocked sound ids	Блокирани ID на звуци

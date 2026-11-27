@@ -292,6 +292,8 @@ Blocked %1$s	%1$s bloccato
 Blocked %1$s. Unblock	%1$s bloccato. Sblocca
 Couldn't confirm blocking %1$s. Check their profile.	Blocco non confermato per %1$s. Controlla il profilo.
 Blocked caption words	Parole bloccate nelle descrizioni
+Only show videos with these words	Mostra solo i video con queste parole
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Solo Per te. Separa parole o frasi con virgole, come #recipe, cooking. Un video resta solo se la didascalia o gli hashtag corrispondono a una di esse, con le stesse regole di Parole bloccate nelle descrizioni. Un gruppo senza corrispondenze tiene un video, così il feed continua a scorrere. Lascia vuoto per mostrare tutto.
 Blocked comment words	Parole bloccate nei commenti
 Blocked creators	Creator bloccati
 Blocked sound ids	ID audio bloccati

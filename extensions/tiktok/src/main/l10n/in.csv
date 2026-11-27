@@ -275,6 +275,8 @@ Blocked %1$s,%1$s diblokir
 Blocked %1$s. Unblock,%1$s diblokir. Buka blokir
 Couldn't confirm blocking %1$s. Check their profile.,Tak bisa memastikan blokir %1$s. Cek profilnya.
 Blocked caption words,Kata yang diblokir di keterangan
+Only show videos with these words,Hanya tampilkan video dengan kata-kata ini
+"For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.","Hanya Untuk Kamu. Pisahkan kata atau frasa dengan koma, seperti #recipe, cooking. Video tetap ada hanya jika keterangan atau tagarnya cocok dengan salah satunya, dengan aturan yang sama seperti Kata yang diblokir di keterangan. Kelompok tanpa yang cocok menyisakan satu video agar feed terus berjalan. Biarkan kosong untuk menampilkan semuanya."
 Blocked comment words,Kata komentar yang diblokir
 Blocked creators,Kreator yang diblokir
 Blocked sound ids,Id suara yang diblokir

@@ -53,6 +53,7 @@ public final class CreatorExceptions {
             AdvancedFeedRules.PublicationAgeFilter.class,
             AdvancedFeedRules.QualityFilter.class,
             AdvancedFeedRules.UnpersonalizedForYouFilter.class,
+            AdvancedFeedRules.KeptWordsFilter.class,
             ViewCountFilter.class,
             LikeCountFilter.class,
             CommentCountFilter.class,

@@ -292,6 +292,8 @@ Blocked %1$s	%1$s blockiert
 Blocked %1$s. Unblock	%1$s blockiert. Entblocken
 Couldn't confirm blocking %1$s. Check their profile.	Blockierung von %1$s nicht bestätigt. Prüfe das Profil.
 Blocked caption words	Gesperrte Wörter in Beschreibungen
+Only show videos with these words	Nur Videos mit diesen Wörtern zeigen
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Nur Für dich. Trenne Wörter oder Ausdrücke mit Kommas, etwa #recipe, cooking. Ein Video bleibt nur, wenn seine Beschreibung oder Hashtags auf einen davon passen, mit denselben Regeln wie bei Gesperrte Wörter in Beschreibungen. Ein Stapel ohne Treffer behält ein Video, damit der Feed weiterläuft. Leer lassen, um alles zu zeigen.
 Blocked comment words	Gesperrte Wörter in Kommentaren
 Blocked creators	Gesperrte Creator
 Blocked sound ids	Gesperrte Sound-IDs

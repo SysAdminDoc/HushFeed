@@ -588,6 +588,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting BLOCKED_CAPTION_WORDS =
             new FeedRuleStringSetting("blocked_caption_words", false);
     public static final BooleanSetting BLOCKED_WORDS_IN_STICKERS = new BooleanSetting("blocked_words_in_stickers", FALSE);
+    /** Only show videos with these words (D#548): For You keeps a video only when its caption matches. */
+    public static final StringSetting KEPT_CAPTION_WORDS =
+            new FeedRuleStringSetting("kept_caption_words", false);
     /** Skip promo lines (#493): seek past caption lines holding a word from the list below. */
     public static final BooleanSetting SKIP_PROMO_LINES = new BooleanSetting("skip_promo_lines", FALSE);
     public static final StringSetting SKIP_PROMO_WORDS =

@@ -285,6 +285,8 @@ Blocked	Bloklanıb
 Blocked %1$s	%1$s bloklandı
 Blocked %1$s. Unblock	%1$s bloklandı. Blokdan çıxarın
 Blocked caption words	Bloklanmış başlıq sözləri
+Only show videos with these words	Yalnız bu sözlər olan videoları göstər
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Yalnız Sənin üçün. Söz və ya ifadələri vergüllə ayırın, məsələn #recipe, cooking. Video yalnız başlığı və ya heşteqləri onlardan birinə uyğun gəldikdə qalır, qaydalar Bloklanmış başlıq sözləri ilə eynidir. Uyğunluq olmayan dəst lentin davam etməsi üçün bir video saxlayır. Hamısını göstərmək üçün boş qoyun.
 Blocked comment words	Bloklanmış şərh sözləri
 Blocked creators	Bloklanmış yaradıcılar
 Blocked sound ids	Bloklanmış səs ID-ləri

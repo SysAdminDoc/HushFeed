@@ -285,6 +285,8 @@ Blocked	Engellendi
 Blocked %1$s	%1$s engellendi
 Blocked %1$s. Unblock	%1$s engellendi. Engeli kaldır
 Blocked caption words	Engellenen açıklama kelimeleri
+Only show videos with these words	Yalnızca bu kelimeleri içeren videoları göster
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Yalnızca Senin İçin. Kelimeleri veya ifadeleri virgülle ayır, örneğin #recipe, cooking. Bir video yalnızca açıklaması veya etiketleri bunlardan biriyle eşleşirse kalır, kurallar Engellenen açıklama kelimeleri ile aynıdır. Hiç eşleşme olmayan bir grup, akış devam etsin diye bir video tutar. Her şeyi göstermek için boş bırak.
 Blocked comment words	Engellenen yorum kelimeleri
 Blocked creators	Engellenen içerik üreticileri
 Blocked sound ids	Engellenen ses kimlikleri

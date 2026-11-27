@@ -47,6 +47,42 @@ public final class AdvancedFeedRules {
     }
 
     /**
+     * Only show videos with these words (D#548), on For You alone: a video whose caption, its
+     * hashtags included, matches none of the entries leaves the batch. The entries take the same
+     * rules as Blocked caption words. A batch with no match at all keeps its first video
+     * ({@link FeedItemsFilter}), so the feed has something to move to and asks for the next one.
+     */
+    public static final class KeptWordsFilter implements IFilter {
+        /** Its own snapshot. KeywordRules.cached holds one list, and Blocked caption words is it. */
+        private static volatile KeptRules kept;
+
+        private static final class KeptRules {
+            final String source;
+            final List<KeywordRules.Rule> rules;
+
+            KeptRules(String source, List<KeywordRules.Rule> rules) {
+                this.source = source;
+                this.rules = rules;
+            }
+        }
+
+        public boolean getEnabled() { return !Settings.KEPT_CAPTION_WORDS.get().trim().isEmpty(); }
+        public boolean getFiltered(Aweme item) {
+            String caption = Reflect.string(item, "getDesc", "desc");
+            return caption == null || !KeywordRules.anyMatches(rules(Settings.KEPT_CAPTION_WORDS.get()), caption);
+        }
+
+        private static List<KeywordRules.Rule> rules(String source) {
+            KeptRules found = kept;
+            if (found == null || !found.source.equals(source)) {
+                found = new KeptRules(source, Collections.unmodifiableList(KeywordRules.parse(source)));
+                kept = found;
+            }
+            return found.rules;
+        }
+    }
+
+    /**
      * Blocked caption words matched against the words of the post's text stickers, the text a
      * creator types over the video in TikTok's editor. Text burned into the video's pictures
      * isn't in the post and can't be read.

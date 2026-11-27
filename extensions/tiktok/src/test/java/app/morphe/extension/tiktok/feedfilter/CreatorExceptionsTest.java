@@ -899,7 +899,7 @@ public class CreatorExceptionsTest {
         Set<String> subjective = new TreeSet<>();
         for (Class<?> type : CreatorExceptions.SUBJECTIVE) subjective.add(type.getSimpleName());
         assertEquals(new TreeSet<>(List.of("AiGeneratedFilter", "CommentCountFilter", "FavouriteCountFilter",
-                "ImageVideoFilter", "LikeCountFilter", "LocationBadgeFilter", "PlayableGameFilter", "PlaylistFilter",
+                "ImageVideoFilter", "KeptWordsFilter", "LikeCountFilter", "LocationBadgeFilter", "PlayableGameFilter", "PlaylistFilter",
                 "PublicationAgeFilter", "QualityFilter", "ShareCountFilter", "StoryFilter", "SubscriberOnlyFilter",
                 "UnpersonalizedForYouFilter", "VerifiedFilter", "ViewCountFilter")), subjective);
     }

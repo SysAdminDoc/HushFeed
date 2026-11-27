@@ -301,6 +301,8 @@ Blocked account,账号被冻结
 Blocked accounts,账号被冻结
 Blocked and hidden creators,被屏蔽和隐藏的创作者
 Blocked caption words,屏蔽的标题文字
+Only show videos with these words,只显示含有这些词的视频
+"For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.","仅限为你。用逗号分隔词语或短语，例如 #recipe, cooking。只有标题或话题标签匹配其中之一的视频才会保留，规则与屏蔽的标题文字相同。没有任何匹配的一批视频会保留一个，让推荐流继续加载。留空则显示全部."
 Blocked comment words,被屏蔽的评论词
 Blocked creators,被屏蔽的创作者
 Blocked sound ids,被阻止的声音 ID

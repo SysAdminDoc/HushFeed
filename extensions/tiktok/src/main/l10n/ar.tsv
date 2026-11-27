@@ -352,6 +352,8 @@ Blocked %1$s	تم حظر %1$s
 Blocked %1$s. Unblock	تم حظر %1$s. إلغاء الحظر
 Couldn't confirm blocking %1$s. Check their profile.	تعذر تأكيد حظر %1$s. تحقق من ملفه الشخصي.
 Blocked caption words	كلمات الوصف المحظورة
+Only show videos with these words	إظهار الفيديوهات التي تحتوي على هذه الكلمات فقط
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	في «لك» فقط. افصل الكلمات أو العبارات بفواصل، مثل #recipe, cooking. يبقى الفيديو فقط إذا طابق وصفه أو وسومه إحداها، بنفس قواعد كلمات الوصف المحظورة. الدفعة التي لا يطابق فيها شيء تُبقي فيديو واحدًا كي يستمر الموجز. اتركه فارغًا لإظهار كل شيء.
 Blocked comment words	كلمات التعليقات المحظورة
 Blocked creators	صناع المحتوى المحظورون
 Blocked sound ids	معرفات الأصوات المحظورة

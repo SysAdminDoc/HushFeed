@@ -289,6 +289,8 @@ Blocked %1$s	%1$s bloqueado
 Blocked %1$s. Unblock	%1$s bloqueado. Desbloquear
 Couldn't confirm blocking %1$s. Check their profile.	Bloqueio de %1$s não confirmado. Veja o perfil.
 Blocked caption words	Palavras bloqueadas nas legendas
+Only show videos with these words	Mostrar só vídeos com estas palavras
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Só no Para você. Separe palavras ou frases com vírgulas, como #recipe, cooking. Um vídeo fica só quando a legenda ou as hashtags combinam com uma delas, com as mesmas regras de Palavras bloqueadas nas legendas. Um lote sem nenhuma correspondência mantém um vídeo para o feed continuar andando. Deixe vazio para mostrar tudo.
 Blocked comment words	Palavras bloqueadas nos comentários
 Blocked creators	Criadores bloqueados
 Blocked sound ids	Ids de sons bloqueados

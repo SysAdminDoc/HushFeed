@@ -79,6 +79,9 @@ public final class FeedItemsFilter {
     private static final AdvancedFeedRules.UnpersonalizedForYouFilter UNPERSONALIZED_FILTER =
         new AdvancedFeedRules.UnpersonalizedForYouFilter();
     static final String UNPERSONALIZED_REASON = "UnpersonalizedForYouFilter";
+    /** Only show videos with these words, For You's other rule no other route runs (D#548). */
+    private static final AdvancedFeedRules.KeptWordsFilter KEPT_WORDS_FILTER = new AdvancedFeedRules.KeptWordsFilter();
+    static final String KEPT_WORDS_REASON = "KeptWordsFilter";
     /** The AI filter's reason; the item log names the signal that caught it next to this. */
     static final String AI_REASON = "AiGeneratedFilter";
     /** The For You batch's distribute sources, counted while the unpersonalized rule is on. */
@@ -169,6 +172,7 @@ public final class FeedItemsFilter {
     private static List<IFilter> forYouFilters() {
         List<IFilter> filters = new ArrayList<>(CONTENT_FILTERS);
         filters.add(UNPERSONALIZED_FILTER);
+        filters.add(KEPT_WORDS_FILTER);
         return Collections.unmodifiableList(filters);
     }
 
@@ -1642,6 +1646,7 @@ public final class FeedItemsFilter {
         Object qualityFallback = null;
         double closestDistance = Double.POSITIVE_INFINITY;
         List unpersonalized = new ArrayList();
+        List unmatched = new ArrayList();
         OwnPosts own = new OwnPosts();
         if (countDistribution) FeedFilterCounters.sawList(FOR_YOU_DISTRIBUTION_SOURCE, initialSize);
         for (Object container : snapshot) {
@@ -1687,6 +1692,9 @@ public final class FeedItemsFilter {
                 if (contentReason.equals(UNPERSONALIZED_REASON) && getFilterReason(activeRangeFilters, item) == null) {
                     unpersonalized.add(container);
                 }
+                if (contentReason.equals(KEPT_WORDS_REASON) && getFilterReason(activeRangeFilters, item) == null) {
+                    unmatched.add(container);
+                }
                 contentRemoved++;
                 incrementReason(reasonCounts, contentReason);
                 logItem(item, contentReason, verbose);
@@ -1725,6 +1733,24 @@ public final class FeedItemsFilter {
             if (verbose) {
                 Logger.printInfo(() -> "[Morphe TikTok FeedFilter] " + source + " kept 1 of " + fillIn
                     + " unpersonalized For You videos, since hiding them all would have left nothing");
+            }
+        }
+        // The same for Only show videos with these words: most batches hold no match at all, and
+        // emptying each one stalls the feed. The first one goes back, having passed every other rule.
+        if (rangeKept.isEmpty() && !unmatched.isEmpty()) {
+            Object first = unmatched.get(0);
+            if (capture != null) {
+                capture.putBack(extractor.extract(first), KEPT_WORDS_REASON, "batch-without-a-match");
+            }
+            rangeKept.add(first);
+            contentRemoved--;
+            int left = reasonCounts.get(KEPT_WORDS_REASON) - 1;
+            if (left > 0) reasonCounts.put(KEPT_WORDS_REASON, left);
+            else reasonCounts.remove(KEPT_WORDS_REASON);
+            int misses = unmatched.size();
+            if (verbose) {
+                Logger.printInfo(() -> "[Morphe TikTok FeedFilter] " + source + " kept 1 of " + misses
+                    + " For You videos without a kept word, since hiding them all would have left nothing");
             }
         }
         if (countDistribution) {

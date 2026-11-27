@@ -553,6 +553,7 @@ public final class SettingsBackup {
     /** The settings row each feed rule list is edited on. */
     private static String ruleListTitle(Setting<?> setting) {
         if (setting == Settings.BLOCKED_CAPTION_WORDS) return "Blocked caption words";
+        if (setting == Settings.KEPT_CAPTION_WORDS) return "Only show videos with these words";
         if (setting == Settings.LIVE_HIDDEN_CATEGORIES) return "Hidden LIVE categories";
         if (setting == Settings.BLOCKED_CREATORS) return "Blocked creators";
         if (setting == Settings.LOCAL_HIDDEN_CREATORS) return "Creators hidden on this phone";
@@ -784,7 +785,8 @@ public final class SettingsBackup {
     private static String feedRuleProblem(Setting<?> setting, Object value) {
         if (!(value instanceof String)) return null;
         String text = (String) value;
-        if (setting == Settings.BLOCKED_CAPTION_WORDS || setting == Settings.LIVE_HIDDEN_CATEGORIES) {
+        if (setting == Settings.BLOCKED_CAPTION_WORDS || setting == Settings.KEPT_CAPTION_WORDS
+                || setting == Settings.LIVE_HIDDEN_CATEGORIES) {
             return FeedRuleLimits.captionProblem(text);
         }
         if (setting == Settings.BLOCKED_CREATORS || setting == Settings.LOCAL_HIDDEN_CREATORS

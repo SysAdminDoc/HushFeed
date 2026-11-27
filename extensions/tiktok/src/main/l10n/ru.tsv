@@ -337,6 +337,8 @@ Blocked %1$s	Заблокировано: %1$s
 Blocked %1$s. Unblock	Заблокировано: %1$s. Разблокировать
 Couldn't confirm blocking %1$s. Check their profile.	Не подтверждена блокировка %1$s. Проверьте профиль.
 Blocked caption words	Заблокированные слова в подписях
+Only show videos with these words	Показывать только видео с этими словами
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	Только в Рекомендациях. Разделяйте слова или фразы запятыми, например #recipe, cooking. Видео остаётся, только если его подпись или хэштеги совпадают с одним из них, по тем же правилам, что и Заблокированные слова в подписях. В подборке без совпадений остаётся одно видео, чтобы лента не останавливалась. Оставьте пустым, чтобы показывать всё.
 Blocked comment words	Заблокированные слова в комментариях
 Blocked creators	Заблокированные авторы
 Blocked sound ids	ID заблокированных звуков

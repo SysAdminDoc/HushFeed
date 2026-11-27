@@ -292,6 +292,8 @@ Blocked %1$s	บล็อก %1$s แล้ว
 Blocked %1$s. Unblock	บล็อก %1$s แล้ว เลิกบล็อก
 Couldn't confirm blocking %1$s. Check their profile.	ไม่สามารถยืนยันการบล็อก %1$s ได้ โปรดตรวจสอบโปรไฟล์ของพวกเขา
 Blocked caption words	คำที่ถูกบล็อกในคำบรรยาย
+Only show videos with these words	แสดงเฉพาะวิดีโอที่มีคำเหล่านี้
+For You only. Separate words or phrases with commas, like #recipe, cooking. A video stays only when its caption or hashtags match one, with the same rules as Blocked caption words. A batch with no match keeps one video so the feed keeps moving. Leave it empty to show everything.	เฉพาะสำหรับคุณ คั่นคำหรือวลีด้วยจุลภาค เช่น #recipe, cooking วิดีโอจะยังอยู่ก็ต่อเมื่อคำบรรยายหรือแฮชแท็กตรงกับคำใดคำหนึ่ง โดยใช้กฎเดียวกับคำที่ถูกบล็อกในคำบรรยาย ชุดที่ไม่มีวิดีโอตรงเลยจะเก็บไว้หนึ่งวิดีโอเพื่อให้ฟีดเลื่อนต่อได้ เว้นว่างไว้เพื่อแสดงทุกอย่าง
 Blocked comment words	คำที่ถูกบล็อกในความคิดเห็น
 Blocked creators	ครีเอเตอร์ที่ถูกบล็อก
 Blocked sound ids	ID เสียงที่ถูกบล็อก

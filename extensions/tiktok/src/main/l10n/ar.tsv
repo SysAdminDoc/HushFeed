@@ -3585,3 +3585,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	روابط التطبيقات الأخرى في السير الذاتية
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	يتحوّل اسم المستخدم المكتوب بعد IG أو Snap أو YT أو X أو Twitch أو Threads أو FB في السيرة الذاتية إلى شارة بلون ذلك التطبيق. النقر عليها يفتح الصفحة العامة لذلك الحساب في التطبيق أو في متصفحك. لا يُبحث عن شيء قبل أن تنقر.
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	صورة الشارة
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	إزالة صورة الشارة
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	اختر صورة تظهر مكان علامة التوثيق الزرقاء عندما يكون خيار شارة توثيق محلية مفعّلًا. تُحفظ على هذا الهاتف فقط ولا يراها أحد غيرك.
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	جارٍ قراءة الصورة
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	يحذف الصورة وتعود علامة التوثيق الزرقاء.
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	لا توجد صورة شارة محفوظة
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	تم حفظ صورة الشارة. افتح ملفك الشخصي لتراها.
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	تم حفظ صورة الشارة. فعّل شارة توثيق محلية لتراها.
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	تعذّر حفظ الصورة في مساحة تخزين TikTok. أفرغ بعض المساحة وحاول مرة أخرى.
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	هذه الصورة أكبر من %1$s ميغابايت. اختر صورة أصغر.
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	هذا الملف ليس صورة يستطيع هذا الهاتف فتحها. اختر ملف PNG أو JPEG أو WebP.
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	تمت إزالة صورة الشارة. يعرض ملفك الشخصي علامة التوثيق الزرقاء من جديد.
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	تعذّرت إزالة صورة الشارة. حاول مرة أخرى.

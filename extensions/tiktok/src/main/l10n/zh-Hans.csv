@@ -3122,3 +3122,16 @@ Yellow counts for private lists,私密列表的数字显示为黄色
 "On a profile that keeps its followers or following list private, that count shows in yellow, so you can tell it's private before you tap it. Yours too.",如果某个主页把粉丝或关注列表设为私密，对应的数字会显示为黄色，点开之前你就能知道它是私密的。你自己的主页也一样.
 Links to other apps in bios,简介中指向其他应用的链接
 "A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.",简介里写在 IG、Snap、YT、X、Twitch、Threads 或 FB 后面的用户名会变成该应用颜色的胶囊按钮。点按后会在该应用或浏览器中打开这个账号的公开页面。点按之前不会查询任何内容.
+Badge picture,徽章图片
+Remove the badge picture,移除徽章图片
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.,选择一张图片，在开启本地验证徽章时代替蓝色对勾显示。图片只保存在这部手机上，别人看不到.
+Reading the picture,正在读取图片
+"Deletes the picture, and the blue check comes back.",删除图片后，蓝色对勾会恢复.
+No badge picture is kept,没有保存徽章图片
+Badge picture saved. Open your profile to see it.,徽章图片已保存。打开你的个人主页即可看到.
+Badge picture saved. Turn on Local verified badge to see it.,徽章图片已保存。开启本地验证徽章即可看到.
+Couldn't save the picture in TikTok's storage. Free up some space and try again.,无法把图片保存到 TikTok 的存储空间。请腾出一些空间后再试.
+That picture is larger than %1$s MB. Choose a smaller one.,这张图片超过 %1$s MB。请选一张更小的.
+"That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.",这个文件不是这部手机能打开的图片。请选择 PNG、JPEG 或 WebP.
+Badge picture removed. Your profile shows the blue check again.,徽章图片已移除。你的个人主页会重新显示蓝色对勾.
+Couldn't remove the badge picture. Try again.,无法移除徽章图片。请再试一次.

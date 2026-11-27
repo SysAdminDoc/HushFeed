@@ -3317,3 +3317,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	ลิงก์ไปยังแอปอื่นในประวัติ
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	ชื่อผู้ใช้ที่เขียนต่อจาก IG, Snap, YT, X, Twitch, Threads หรือ FB ในประวัติจะกลายเป็นป้ายสีของแอปนั้น แตะแล้วหน้าสาธารณะของบัญชีนั้นจะเปิดในแอปหรือเบราว์เซอร์ของคุณ ไม่มีการค้นหาอะไรก่อนที่คุณจะแตะ
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	รูปตราสัญลักษณ์
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	ลบรูปตราสัญลักษณ์
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	เลือกรูปที่จะแสดงแทนเครื่องหมายถูกสีน้ำเงินขณะที่ตราสัญลักษณ์ยืนยันตัวตนในเครื่องเปิดอยู่ รูปนี้เก็บไว้ในโทรศัพท์เครื่องนี้เท่านั้นและไม่มีใครเห็น
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	กำลังอ่านรูป
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	ลบรูปออกและเครื่องหมายถูกสีน้ำเงินจะกลับมา
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	ไม่มีรูปตราสัญลักษณ์ที่เก็บไว้
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	บันทึกรูปตราสัญลักษณ์แล้ว เปิดโปรไฟล์ของคุณเพื่อดู
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	บันทึกรูปตราสัญลักษณ์แล้ว เปิดตราสัญลักษณ์ยืนยันตัวตนในเครื่องเพื่อดู
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	บันทึกรูปลงในพื้นที่เก็บข้อมูลของ TikTok ไม่ได้ ลองเพิ่มพื้นที่ว่างแล้วลองอีกครั้ง
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	รูปนี้ใหญ่กว่า %1$s MB เลือกรูปที่เล็กกว่านี้
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	ไฟล์นี้ไม่ใช่รูปที่โทรศัพท์เครื่องนี้เปิดได้ เลือกไฟล์ PNG, JPEG หรือ WebP
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	ลบรูปตราสัญลักษณ์แล้ว โปรไฟล์ของคุณจะแสดงเครื่องหมายถูกสีน้ำเงินอีกครั้ง
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	ลบรูปตราสัญลักษณ์ไม่ได้ ลองอีกครั้ง

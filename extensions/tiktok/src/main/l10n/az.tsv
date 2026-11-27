@@ -3314,3 +3314,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	Bioqrafiyalarda digər tətbiqlərə keçidlər
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	Bioqrafiyada IG, Snap, YT, X, Twitch, Threads və ya FB sözündən sonra yazılan istifadəçi adı həmin tətbiqin rəngində düyməyə çevrilir. Ona toxunduqda həmin hesabın ictimai səhifəsi tətbiqdə və ya brauzerinizdə açılır. Toxunmadan öncə heç nə axtarılmır.
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	Nişan şəkli
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	Nişan şəklini sil
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	Yerli təsdiq nişanı açıq olanda mavi işarənin yerində göstəriləcək şəkli seçin. Şəkil yalnız bu telefonda saxlanılır və onu başqa heç kim görmür.
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	Şəkil oxunur
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	Şəkli silir və mavi işarə geri qayıdır.
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	Saxlanılmış nişan şəkli yoxdur
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	Nişan şəkli saxlanıldı. Görmək üçün profilinizi açın.
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	Nişan şəkli saxlanıldı. Görmək üçün Yerli təsdiq nişanı seçimini açın.
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	Şəkli TikTok yaddaşında saxlamaq mümkün olmadı. Bir az yer boşaldın və yenidən cəhd edin.
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	Bu şəkil %1$s MB-dan böyükdür. Daha kiçik birini seçin.
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Bu fayl bu telefonun aça bildiyi şəkil deyil. PNG, JPEG və ya WebP seçin.
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	Nişan şəkli silindi. Profiliniz yenidən mavi işarəni göstərir.
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	Nişan şəklini silmək mümkün olmadı. Yenidən cəhd edin.

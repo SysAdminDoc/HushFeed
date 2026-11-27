@@ -3317,3 +3317,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	Връзки към други приложения в биографиите
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	Потребителско име след IG, Snap, YT, X, Twitch, Threads или FB в биографията става на бутон в цвета на това приложение. Докосването му отваря публичната страница на профила в приложението или в браузъра ти. Нищо не се проверява, преди да докоснеш.
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	Снимка за значката
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	Премахни снимката за значката
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	Избери снимка, която да се показва вместо синята отметка, докато Локална значка за потвърден акаунт е включена. Пази се само на този телефон и никой друг не я вижда.
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	Снимката се чете
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	Изтрива снимката и синята отметка се връща.
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	Няма запазена снимка за значката
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	Снимката за значката е запазена. Отвори профила си, за да я видиш.
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	Снимката за значката е запазена. Включи Локална значка за потвърден акаунт, за да я видиш.
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	Снимката не можа да се запази в хранилището на TikTok. Освободи малко място и опитай отново.
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	Тази снимка е по-голяма от %1$s MB. Избери по-малка.
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Този файл не е снимка, която телефонът може да отвори. Избери PNG, JPEG или WebP.
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	Снимката за значката е премахната. Профилът ти отново показва синята отметка.
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	Снимката за значката не можа да се премахне. Опитай отново.

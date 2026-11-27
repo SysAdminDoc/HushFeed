@@ -11,6 +11,7 @@ import android.text.style.ReplacementSpan;
 
 import androidx.annotation.Nullable;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -87,7 +88,10 @@ public final class LocalProfileAppearance {
         }
         SpannableStringBuilder local = new SpannableStringBuilder(nativeText);
         local.append('\u00a0').append('\ufffc');
-        local.setSpan(nativeBadgeSpan, local.length() - 1, local.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // A badge picture you picked (#549) takes the blue check's place, in the check's own space.
+        ReplacementSpan picture = CustomBadge.span(Utils.getContext(), (ReplacementSpan) nativeBadgeSpan);
+        local.setSpan(picture != null ? picture : nativeBadgeSpan, local.length() - 1, local.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         // A native factory or span copy can run application code. Revalidate before publication.
         if (!ownProfile(viewedUid, Settings.LOCAL_PROFILE_VERIFIED_BADGE)) {
             clearLocalNicknameText(owner);

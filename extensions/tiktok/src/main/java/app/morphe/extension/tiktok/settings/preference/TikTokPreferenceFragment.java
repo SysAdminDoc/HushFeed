@@ -334,6 +334,16 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
     }
 
+    /** Pick a badge picture (#549), whose picker answers the page that asked. */
+    public static void openBadgePicturePicker() {
+        if (activeFragment != null && activeFragment.isAdded()) {
+            CustomBadgePreference.pickFile(activeFragment);
+        } else {
+            SettingsActionBanner.showNotice(Utils.getContext(), L10n.t(
+                    "Reopen Hushfeed settings, then choose the file"));
+        }
+    }
+
     /** Save your likes from a TikTok data export, whose picker answers the page that asked. */
     public static void openLikesExportPicker() {
         if (activeFragment != null && activeFragment.isAdded()) {
@@ -2513,6 +2523,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (SettingsBackupPreference.onResult(this, requestCode, resultCode, data)) return;
         if (ImportedFontPreference.onResult(this, requestCode, resultCode, data)) return;
         if (LikesExportPreference.onResult(this, requestCode, resultCode, data)) return;
+        if (CustomBadgePreference.onResult(this, requestCode, resultCode, data)) return;
         if (requestCode != REQUEST_DOWNLOAD_PATH_FOLDER) {
             return;
         }

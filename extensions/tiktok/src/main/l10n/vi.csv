@@ -3122,3 +3122,16 @@ Yellow counts for private lists,Số màu vàng cho danh sách riêng tư
 "On a profile that keeps its followers or following list private, that count shows in yellow, so you can tell it's private before you tap it. Yours too.","Trên hồ sơ để danh sách người theo dõi hoặc đang theo dõi ở chế độ riêng tư, con số đó hiện màu vàng để bạn biết trước khi chạm vào. Cả hồ sơ của bạn."
 Links to other apps in bios,Liên kết đến ứng dụng khác trong tiểu sử
 "A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.","Tên người dùng viết sau IG, Snap, YT, X, Twitch, Threads hoặc FB trong tiểu sử sẽ thành một nút mang màu của ứng dụng đó. Chạm vào sẽ mở trang công khai của tài khoản trong ứng dụng hoặc trình duyệt. Không có gì được tra cứu trước khi bạn chạm."
+Badge picture,Ảnh huy hiệu
+Remove the badge picture,Xóa ảnh huy hiệu
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.,Chọn một ảnh để hiện thay cho dấu tích xanh khi Huy hiệu xác minh cục bộ (tích xanh) đang bật. Ảnh chỉ được giữ trên điện thoại này và không ai khác thấy.
+Reading the picture,Đang đọc ảnh
+"Deletes the picture, and the blue check comes back.",Xóa ảnh và dấu tích xanh sẽ quay lại.
+No badge picture is kept,Chưa có ảnh huy hiệu nào được lưu
+Badge picture saved. Open your profile to see it.,Đã lưu ảnh huy hiệu. Mở hồ sơ của bạn để xem.
+Badge picture saved. Turn on Local verified badge to see it.,Đã lưu ảnh huy hiệu. Bật Huy hiệu xác minh cục bộ (tích xanh) để xem.
+Couldn't save the picture in TikTok's storage. Free up some space and try again.,Không thể lưu ảnh vào bộ nhớ của TikTok. Hãy giải phóng bớt dung lượng rồi thử lại.
+That picture is larger than %1$s MB. Choose a smaller one.,Ảnh đó lớn hơn %1$s MB. Hãy chọn ảnh nhỏ hơn.
+"That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.","Tệp đó không phải ảnh mà điện thoại này mở được. Hãy chọn PNG, JPEG hoặc WebP."
+Badge picture removed. Your profile shows the blue check again.,Đã xóa ảnh huy hiệu. Hồ sơ của bạn hiện lại dấu tích xanh.
+Couldn't remove the badge picture. Try again.,Không thể xóa ảnh huy hiệu. Hãy thử lại.

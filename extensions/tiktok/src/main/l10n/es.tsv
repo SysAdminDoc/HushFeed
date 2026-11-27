@@ -3314,3 +3314,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	Enlaces a otras apps en las biografías
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	Un nombre de usuario escrito después de IG, Snap, YT, X, Twitch, Threads o FB en una biografía se convierte en una píldora del color de esa app. Al tocarla se abre la página pública de esa cuenta en la app o en tu navegador. No se busca nada antes de que toques.
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	Imagen de la insignia
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	Quitar la imagen de la insignia
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	Elige una imagen para mostrar en lugar de la marca azul mientras Insignia de verificación local esté activada. Se guarda solo en este teléfono y nadie más la ve.
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	Leyendo la imagen
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	Borra la imagen y vuelve la marca azul.
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	No hay ninguna imagen de insignia guardada
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	Imagen de la insignia guardada. Abre tu perfil para verla.
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	Imagen de la insignia guardada. Activa Insignia de verificación local para verla.
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	No se pudo guardar la imagen en el almacenamiento de TikTok. Libera algo de espacio y vuelve a intentarlo.
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	Esa imagen pesa más de %1$s MB. Elige una más pequeña.
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Ese archivo no es una imagen que este teléfono pueda abrir. Elige un PNG, JPEG o WebP.
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	Imagen de la insignia quitada. Tu perfil vuelve a mostrar la marca azul.
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	No se pudo quitar la imagen de la insignia. Vuelve a intentarlo.

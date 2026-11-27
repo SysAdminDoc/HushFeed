@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p>Public for the Feature Gate Lab, whose loaded-value files go the same way.
  */
 public final class DocumentOperation {
-    public enum Kind { SETTINGS_FILE, WATCH_HISTORY_FILE, LAB_FILE, COMMENT_FILE, SEEN_HISTORY_FILE, FONT_FILE, LIKES_EXPORT_FILE }
+    public enum Kind { SETTINGS_FILE, WATCH_HISTORY_FILE, LAB_FILE, COMMENT_FILE, SEEN_HISTORY_FILE, FONT_FILE, LIKES_EXPORT_FILE, BADGE_PICTURE }
 
     public enum Stage {
         /** Opening or reading the file, or getting a backup ready. Stopping here changes nothing. */

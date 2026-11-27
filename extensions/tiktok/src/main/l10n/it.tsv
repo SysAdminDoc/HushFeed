@@ -3314,3 +3314,29 @@ On a profile that keeps its followers or following list private, that count show
 Links to other apps in bios	Link ad altre app nelle bio
 # context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
 A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	Un nome utente scritto dopo IG, Snap, YT, X, Twitch, Threads o FB in una bio diventa una pillola del colore di quell’app. Toccandola si apre la pagina pubblica dell’account nell’app o nel browser. Non viene cercato nulla prima del tocco.
+# context: Settings row title: pick a picture that stands in for the blue verified check beside your own name on your own profile, on this phone only
+Badge picture	Immagine del badge
+# context: Settings row title: deletes the picked badge picture so the blue check comes back
+Remove the badge picture	Rimuovi l’immagine del badge
+# context: Summary of the Badge picture row; Local verified badge is the name of the switch just above it
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.	Scegli un’immagine da mostrare al posto della spunta blu mentre Badge di verifica locale è attivo. Resta solo su questo telefono e nessun altro la vede.
+# context: Summary of the Badge picture row while the picked file is being read
+Reading the picture	Lettura dell’immagine
+# context: Summary of the Remove the badge picture row
+Deletes the picture, and the blue check comes back.	Elimina l’immagine e torna la spunta blu.
+# context: Summary of the Remove the badge picture row when there is none
+No badge picture is kept	Nessuna immagine del badge salvata
+# context: Banner after a badge picture was picked while Local verified badge is on
+Badge picture saved. Open your profile to see it.	Immagine del badge salvata. Apri il tuo profilo per vederla.
+# context: Banner after a badge picture was picked while Local verified badge is off; Local verified badge is the switch's name
+Badge picture saved. Turn on Local verified badge to see it.	Immagine del badge salvata. Attiva Badge di verifica locale per vederla.
+# context: Banner when the picked badge picture could not be written to TikTok's private storage
+Couldn't save the picture in TikTok's storage. Free up some space and try again.	Impossibile salvare l’immagine nella memoria di TikTok. Libera un po’ di spazio e riprova.
+# context: Banner when the picked badge picture file is too big; %1$s is the size limit in megabytes
+That picture is larger than %1$s MB. Choose a smaller one.	Quell’immagine supera i %1$s MB. Scegline una più piccola.
+# context: Banner when the picked badge file is not an image; PNG, JPEG and WebP are file formats and stay as written
+That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.	Quel file non è un’immagine che questo telefono può aprire. Scegli un PNG, JPEG o WebP.
+# context: Banner after the badge picture was deleted
+Badge picture removed. Your profile shows the blue check again.	Immagine del badge rimossa. Il tuo profilo mostra di nuovo la spunta blu.
+# context: Banner when deleting the badge picture failed
+Couldn't remove the badge picture. Try again.	Impossibile rimuovere l’immagine del badge. Riprova.

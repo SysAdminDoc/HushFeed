@@ -366,6 +366,10 @@ Background audio,Background audio
 Background play in the long-press menu,Background play in the long-press menu
 "Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.","Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off."
 Backup and restore,Backup and restore
+Badge picture,Badge picture
+Badge picture removed. Your profile shows the blue check again.,Badge picture removed. Your profile shows the blue check again.
+Badge picture saved. Open your profile to see it.,Badge picture saved. Open your profile to see it.
+Badge picture saved. Turn on Local verified badge to see it.,Badge picture saved. Turn on Local verified badge to see it.
 Bahasa Indonesia,Bahasa Indonesia
 Balance,Balance
 Bend the video at the edges,Bend the video at the edges
@@ -591,6 +595,7 @@ Couldn't read this list. Close it and try again.,Couldn't read this list. Close 
 Couldn't rebuild search. Try again.,Couldn't rebuild search. Try again.
 Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
 Couldn't remove that video. Try again.,Couldn't remove that video. Try again.
+Couldn't remove the badge picture. Try again.,Couldn't remove the badge picture. Try again.
 Couldn't remove the imported font. Try again.,Couldn't remove the imported font. Try again.
 Couldn't reset the settings. Try again.,Couldn't reset the settings. Try again.
 Couldn't reset this override. Try again.,Couldn't reset this override. Try again.
@@ -601,6 +606,7 @@ Couldn't save the change. Try again.,Couldn't save the change. Try again.
 Couldn't save the feed capture. Try again.,Couldn't save the feed capture. Try again.
 Couldn't save the font in TikTok's storage. Free up some space and try again.,Couldn't save the font in TikTok's storage. Free up some space and try again.
 Couldn't save the live photo's clip. Try again.,Couldn't save the live photo's clip. Try again.
+Couldn't save the picture in TikTok's storage. Free up some space and try again.,Couldn't save the picture in TikTok's storage. Free up some space and try again.
 Couldn't save the seen-history file. Try again.,Couldn't save the seen-history file. Try again.
 Couldn't save the settings backup. Try again.,Couldn't save the settings backup. Try again.
 Couldn't save these choices. Try again.,Couldn't save these choices. Try again.
@@ -677,6 +683,7 @@ Delete watched offline videos,Delete watched offline videos
 Delete your picked posts,Delete your picked posts
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
 Deletes every comment you've posted one after another.,Deletes every comment you've posted one after another.
+"Deletes the picture, and the blue check comes back.","Deletes the picture, and the blue check comes back."
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
 Description text size,Description text size
@@ -1544,6 +1551,7 @@ No Wi-Fi for 30 minutes. Save again on Wi-Fi.,No Wi-Fi for 30 minutes. Save agai
 No app on this phone opens that file,No app on this phone opens that file
 No app on this phone opens web links,No app on this phone opens web links
 No apps match this search,No apps match this search
+No badge picture is kept,No badge picture is kept
 No changes since %1$s,No changes since %1$s
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","No chat with @%1$s turned up on this account. Open your chat with them once, then try again."
 No clean copy yet. Saved the watermarked one to %1$s,No clean copy yet. Saved the watermarked one to %1$s
@@ -1764,6 +1772,7 @@ Photos and stickers,Photos and stickers
 Pick a .ttf or .otf file of up to %1$s MB.,Pick a .ttf or .otf file of up to %1$s MB.
 Pick a built-in font,Pick a built-in font
 "Pick a folder on internal storage, not an SD card","Pick a folder on internal storage, not an SD card"
+Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.,Pick a picture to show in place of the blue check while Local verified badge is on. It's kept on this phone only and nobody else sees it.
 Pick a video quality to record the screen,Pick a video quality to record the screen
 Pick all,Pick all
 "Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pick apps to add to the Share via row, before More. Each gets the same link the other apps get."
@@ -1912,6 +1921,7 @@ Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts 
 Reading,Reading
 Reading the data export,Reading the data export
 Reading the font file,Reading the font file
+Reading the picture,Reading the picture
 Reading the seen-history file,Reading the seen-history file
 Reading watch history,Reading watch history
 Reading who you follow (%1$s),Reading who you follow (%1$s)
@@ -1959,6 +1969,7 @@ Remove rings on the feed,Remove rings on the feed
 Remove selected comments,Remove selected comments
 Remove story rings,Remove story rings
 Remove the LIVE ring,Remove the LIVE ring
+Remove the badge picture,Remove the badge picture
 Remove the imported emoji font,Remove the imported emoji font
 Remove the imported font,Remove the imported font
 Remove watermark,Remove watermark
@@ -2586,6 +2597,7 @@ That file is larger than %1$s MB. Choose the JSON file from the export.,That fil
 That file is too large to be a settings backup. Nothing was altered.,That file is too large to be a settings backup. Nothing was altered.
 That file isn't a font Android can use. Choose a .ttf or .otf file.,That file isn't a font Android can use. Choose a .ttf or .otf file.
 "That file isn't a loaded-values export, or it's larger than the Lab accepts","That file isn't a loaded-values export, or it's larger than the Lab accepts"
+"That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP.","That file isn't a picture this phone can open. Choose a PNG, JPEG or WebP."
 "That file isn't readable text, so it may have been damaged in transit. Nothing was altered.","That file isn't readable text, so it may have been damaged in transit. Nothing was altered."
 That file lists more than %1$s videos. Nothing was restored.,That file lists more than %1$s videos. Nothing was restored.
 "That file was saved by a newer Hushfeed. Update Hushfeed, then try again.","That file was saved by a newer Hushfeed. Update Hushfeed, then try again."
@@ -2603,6 +2615,7 @@ That list is full,That list is full
 That list is too large. Keep it to %1$s KB or less.,That list is too large. Keep it to %1$s KB or less.
 That loosens the budget. It waits until %1$s.,That loosens the budget. It waits until %1$s.
 That loosens the lock. It waits until %1$s.,That loosens the lock. It waits until %1$s.
+That picture is larger than %1$s MB. Choose a smaller one.,That picture is larger than %1$s MB. Choose a smaller one.
 That preset isn't recognized. Choose another.,That preset isn't recognized. Choose another.
 That seen-history file is damaged or was edited. Nothing was restored.,That seen-history file is damaged or was edited. Nothing was restored.
 That settings backup contains a feed rule list larger than Hushfeed accepts. Nothing was altered.,That settings backup contains a feed rule list larger than Hushfeed accepts. Nothing was altered.

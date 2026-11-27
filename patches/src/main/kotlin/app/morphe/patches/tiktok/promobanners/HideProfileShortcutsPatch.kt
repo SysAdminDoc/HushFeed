@@ -97,8 +97,9 @@ val hideProfileShortcutsPatch = bytecodePatch(
         // Balance in your profile's menu (#194), held the same way by ProfileMenuCellsAnchorsTest.
         val menuCells = try {
             val cells = ProfileMenuCellFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
-            // The menu's sections, so one left empty by a hidden cell collapses too.
-            cells to ProfileMenuSectionViewFingerprint.method
+            // The menu's sections and the lists that fill them, so a section whose list a hidden
+            // cell left empty collapses too.
+            Triple(cells, ProfileMenuSectionViewFingerprint.method, ProfileMenuListFillFingerprint.method)
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Hide Balance in the profile menu on ${packageMetadata.versionName}: ${problem.message}")
@@ -143,7 +144,8 @@ val hideProfileShortcutsPatch = bytecodePatch(
             )
         }
         if (menuCells != null) {
-            val (cells, sections) = menuCells
+            val (cells, sections, lists) = menuCells
+            lists.reportProfileMenuListFill(PATCH_NAME, cells)
             cells.hideProfileMenuCells(PATCH_NAME)
             sections.watchProfileMenuSections()
             SettingsStatusLoadFingerprint.method.addInstruction(

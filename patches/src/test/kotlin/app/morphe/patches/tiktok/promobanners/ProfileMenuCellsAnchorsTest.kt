@@ -133,6 +133,69 @@ class ProfileMenuCellsAnchorsTest {
         }
     }
 
+    /**
+     * #194, the black menu on 48.0.2: a section collapses only when its own list was filled with
+     * nothing because a cell was hidden. The list class keeps its real name. It asks the cell
+     * question once, in its loop over the cells, and the hook hands the answer it read to the
+     * extension, then the list's view (p1) before every return. TikTok's code runs as it was.
+     */
+    @Test
+    fun `each menu list reports what it kept and when it is filled`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val lists = mutableListOf<Method>()
+            val questions = mutableListOf<Method>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    for (method in classDef.methods) {
+                        if (ProfileMenuListFillFingerprint.takes(method, classDef)) lists += method
+                        if (ProfileMenuCellFingerprint.takes(method, classDef)) questions += method
+                    }
+                }
+            }
+            assertEquals("$version: list fills ${lists.map { it.definingClass + "->" + it.name }}", 1, lists.size)
+            val native = lists.single()
+            assertEquals(PROFILE_SIDEBAR_LIST, native.definingClass)
+            assertFalse("$version: the fill is static", AccessFlags.STATIC.isSet(native.accessFlags))
+            val registers = native.implementation!!.registerCount
+            val before = native.implementation!!.instructions.toList()
+            val patched = MutableMethod(native)
+            patched.reportProfileMenuListFill(PATCH, questions.single())
+            val after = patched.implementation!!.instructions.toList()
+
+            val asked = after.indices.single { index ->
+                after[index].getReference<MethodReference>()?.let {
+                    it.definingClass == questions.single().definingClass && it.name == questions.single().name
+                } == true
+            }
+            assertEquals("$version: the answer is read", Opcode.MOVE_RESULT, after[asked + 1].opcode)
+            val answer = (after[asked + 1] as OneRegisterInstruction).registerA
+            val report = after[asked + 2]
+            val reportCall = report.getReference<MethodReference>()!!
+            assertEquals("Lapp/morphe/extension/tiktok/profile/ProfileMenuCells;", reportCall.definingClass)
+            assertEquals("cellAnswered", reportCall.name)
+            assertEquals(listOf("Z"), reportCall.parameterTypes.map { it.toString() })
+            assertEquals("$version: the answer it read", answer,
+                (report as? RegisterRangeInstruction)?.startRegister
+                    ?: (report as com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction).registerC)
+
+            val returns = after.indices.filter { after[it].opcode == Opcode.RETURN_VOID }
+            assertTrue("$version: no return", returns.isNotEmpty())
+            for (index in returns) {
+                val filled = after[index - 1]
+                assertEquals("$version: before the return at $index", Opcode.INVOKE_STATIC_RANGE, filled.opcode)
+                val call = filled.getReference<MethodReference>()!!
+                assertEquals("listFilled", call.name)
+                assertEquals(listOf("Landroid/view/View;"), call.parameterTypes.map { it.toString() })
+                assertEquals("$version: the view is p1", registers - 2, (filled as RegisterRangeInstruction).startRegister)
+                assertEquals(1, filled.registerCount)
+            }
+            val added = setOf(asked + 2) + returns.map { it - 1 }
+            assertEquals(before.map { it.opcode }, after.indices.filter { it !in added }.map { after[it].opcode })
+        }
+    }
+
     @Test
     fun `only a static question that asks a cell provider is taken`() {
         assertTrue("the question", isProfileMenuCellQuestion(question(static = true, asks = PROFILE_SIDEBAR_CELL_PROVIDER)))

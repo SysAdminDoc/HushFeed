@@ -6,13 +6,17 @@ package app.morphe.patches.tiktok.promobanners
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.misc.popups.writes
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 /** What each cell of your profile's menu is asked through. The interface keeps its real name. */
@@ -71,6 +75,64 @@ internal fun MutableMethod.watchProfileMenuSections() = addInstruction(
     0,
     "invoke-static/range { p1 .. p1 }, $PROFILE_MENU_CELLS->section(Landroid/view/View;)V",
 )
+
+/** Each cell list in your profile's menu is one of these. The class keeps its real name. */
+internal const val PROFILE_SIDEBAR_LIST = "Lcom/ss/android/ugc/aweme/sidebar/components/list/SideBarListComponent;"
+private const val PROFILE_SIDEBAR_COMPONENT_CONFIG = "Lcom/ss/android/ugc/aweme/sidebar/model/SideBarComponentConfig;"
+
+/**
+ * A cell list of your profile's menu being filled (#194), with its view (p1) and its config. It
+ * asks the cell question about each cell in turn and keeps the ones answered true.
+ */
+internal object ProfileMenuListFillFingerprint : Fingerprint(
+    definingClass = PROFILE_SIDEBAR_LIST,
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;", PROFILE_SIDEBAR_COMPONENT_CONFIG),
+    custom = { method, classDef -> classDef.type == PROFILE_SIDEBAR_LIST && asksCellQuestion(method) },
+)
+
+/** Whether [method] asks a static (cell data, id) yes or no question, the shape of the cell question. */
+internal fun asksCellQuestion(method: Method): Boolean = method.implementation?.instructions?.any {
+    (it.opcode == Opcode.INVOKE_STATIC || it.opcode == Opcode.INVOKE_STATIC_RANGE) &&
+        it.getReference<MethodReference>()?.let { called ->
+            called.returnType == "Z" && called.parameterTypes.size == 2 && called.parameterTypes[1].toString() == "Ljava/lang/String;"
+        } == true
+} == true
+
+/**
+ * Tells the extension how a list of the menu was filled (#194): right after the list reads the
+ * [question]'s answer for a cell, the answer, and before every return the list's view (p1). A list
+ * left with nothing because its only cell was hidden then collapses its section, and every other
+ * section is left alone. TikTok's own code runs as it was.
+ */
+internal fun MutableMethod.reportProfileMenuListFill(patch: String, question: MethodReference) {
+    val code = implementation ?: throw PatchException("$patch: $definingClass->$name has no implementation")
+    val view = code.registerCount - 2
+    if (code.instructions.any { it.writes(view) }) {
+        throw PatchException("$patch: $definingClass->$name writes over its view parameter")
+    }
+    val asks = code.instructions.withIndex().filter { (_, instruction) ->
+        instruction.getReference<MethodReference>()?.let {
+            it.definingClass == question.definingClass && it.name == question.name &&
+                it.parameterTypes.map { type -> type.toString() } == question.parameterTypes.map { type -> type.toString() } && it.returnType == question.returnType
+        } == true
+    }.map { it.index }
+    if (asks.size != 1) throw PatchException("$patch: $definingClass->$name asks the cell question ${asks.size} times")
+    val read = code.instructions.elementAtOrNull(asks.single() + 1)
+    if (read?.opcode != Opcode.MOVE_RESULT) throw PatchException("$patch: $definingClass->$name doesn't read the cell's answer")
+    val answer = (read as OneRegisterInstruction).registerA
+    val report = if (answer < 16) "invoke-static { v$answer }" else "invoke-static/range { v$answer .. v$answer }"
+    addInstruction(asks.single() + 2, "$report, $PROFILE_MENU_CELLS->cellAnswered(Z)V")
+
+    val returns = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }
+    if (returns.isEmpty()) throw PatchException("$patch: $definingClass->$name has no return to hook")
+    returns.asReversed().forEach { index ->
+        addInstructionsAtControlFlowLabel(
+            index,
+            "invoke-static/range { p1 .. p1 }, $PROFILE_MENU_CELLS->listFilled(Landroid/view/View;)V",
+        )
+    }
+}
 
 /**
  * Asks the extension about the cell's id (p1) before TikTok does. A hidden cell is answered false,

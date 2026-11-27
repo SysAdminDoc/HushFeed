@@ -927,6 +927,24 @@
           "values": null
         },
         {
+          "key": "grid_corner_radius_dp",
+          "title": "Default: grid corner radius dp",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 8,
+          "values": null
+        },
+        {
+          "key": "grid_gap_dp",
+          "title": "Default: grid gap dp",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
           "key": "profile_grid_sort",
           "title": "Default: profile grid sort",
           "description": null,
@@ -2627,6 +2645,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
+          "values": null
+        },
+        {
+          "key": "bio_social_links",
+          "title": "Default: bio social links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]
@@ -11677,6 +11704,15 @@
         {
           "key": "show_profile_changes",
           "title": "Default: show profile changes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "yellow_private_lists",
+          "title": "Default: yellow private lists",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

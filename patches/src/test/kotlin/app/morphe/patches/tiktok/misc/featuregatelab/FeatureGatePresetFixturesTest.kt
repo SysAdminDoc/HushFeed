@@ -23,7 +23,7 @@ import org.junit.Test
 class FeatureGatePresetFixturesTest {
     private val app by lazy {
         val container = Fixtures.dexContainer(Fixtures.apkOf("48.0.2"), Opcodes.getDefault())
-        val owners = setOf("Lrkj/e;", "LX/0Dvh;", "LX/0Dr5;", "LX/0H3o;", "LX/17q9;")
+        val owners = setOf("Lzlj/e;", "LX/0Hhl;", "LX/0HhD;", "LX/0H3o;", "LX/17q9;")
         container.dexEntryNames.flatMap { entry ->
             container.getEntry(entry)!!.dexFile.classes.filter { it.type in owners }
         }.associateBy { it.type }.also { assertEquals(owners, it.keys) }
@@ -31,8 +31,8 @@ class FeatureGatePresetFixturesTest {
 
     @Test
     fun `the hashtag switch and maximum use separate typed reads`() {
-        val switch = method("Lrkj/e;", "LIZJ")
-        val maximum = method("Lrkj/e;", "LIZ")
+        val switch = method("Lzlj/e;", "LIZLLL")
+        val maximum = method("Lzlj/e;", "LIZ")
         assertEquals(listOf("studio_publish_limit_hashtag_switch"), switch.strings())
         assertEquals(listOf("studio_publish_hashtag_max_limit"), maximum.strings())
         val booleanRead = switch.calls().single { it.returnType == "Z" }
@@ -44,7 +44,7 @@ class FeatureGatePresetFixturesTest {
 
     @Test
     fun `the lazy UI reader and independent catalog reader share the same INT boundary`() {
-        val lazyRead = method("LX/0Dvh;", "invoke")
+        val lazyRead = method("LX/0Hhl;", "invoke")
         assertEquals(listOf("tt_cmt_new_emoji"), lazyRead.strings())
         val intRead = lazyRead.calls().single { it.returnType == "I" }
         assertEquals(listOf("I", "I", "Ljava/lang/String;", "Z"), intRead.parameterTypes)
@@ -52,8 +52,8 @@ class FeatureGatePresetFixturesTest {
         assertEquals(intRead.toString(), catalogRead.calls().single {
             it.returnType == "I" && it.parameterTypes == intRead.parameterTypes
         }.toString())
-        assertTrue(method("LX/0Dr5;", "<clinit>").implementation!!.instructions.any {
-            it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == "LX/0Dvh;"
+        assertTrue(method("LX/0HhD;", "<clinit>").implementation!!.instructions.any {
+            it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == "LX/0Hhl;"
         })
         assertEquals(listOf("tt_im_new_emoji", "tt_cmt_new_emoji", "tt_repost_new_emoji"),
             method("LX/0H3o;", "LIZIZ").strings())
@@ -69,14 +69,14 @@ class FeatureGatePresetFixturesTest {
     fun `group two permits sending and viewing while native availability and downgrade still win`() {
         for (group in 0..3) {
             assertEquals("send group $group", group == 2 || group == 3,
-                gate("LX/0Dr5;", "LIZIZ", group, available = true, downgraded = false))
+                gate("LX/0HhD;", "LIZIZ", group, available = true, downgraded = false))
             assertEquals("view group $group", group != 1,
-                gate("LX/0Dr5;", "LIZJ", group, available = true, downgraded = false))
+                gate("LX/0HhD;", "LIZJ", group, available = true, downgraded = false))
         }
         for (available in listOf(false, true)) for (downgraded in listOf(false, true)) {
             for (reader in listOf("LIZIZ", "LIZJ")) {
                 assertEquals("$reader availability=$available downgrade=$downgraded", available && !downgraded,
-                    gate("LX/0Dr5;", reader, 2, available, downgraded))
+                    gate("LX/0HhD;", reader, 2, available, downgraded))
             }
         }
         // Other experiments stay in their disabled group. The comment override alone must be
@@ -120,7 +120,7 @@ class FeatureGatePresetFixturesTest {
                 Opcode.INVOKE_STATIC -> {
                     val call = instruction.getReference<MethodReference>()!!
                     result = when ("${call.definingClass}->${call.name}") {
-                        "LX/0Dr5;->LIZ" -> group
+                        "LX/0HhD;->LIZ" -> group
                         "LX/0H3o;->LIZJ" -> if (available) 1 else 0
                         "LX/0H3o;->LIZLLL" -> if (gate("LX/0H3o;", "LIZLLL", group, available, downgraded)) 1 else 0
                         "LX/0H3o;->LIZ" -> if (registers[(instruction as FiveRegisterInstruction).registerC] == "tt_cmt_new_emoji") group else 1

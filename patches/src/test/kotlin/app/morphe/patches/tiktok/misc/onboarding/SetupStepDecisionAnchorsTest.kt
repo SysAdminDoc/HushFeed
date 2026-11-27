@@ -36,10 +36,11 @@ internal val SKIPPED = setOf(
 /**
  * Every step id the declared builds set up, by build. A build that adds one fails here, so
  * somebody reads what the new step is (consent or taste) before it's left showing by default.
+ * 48.0.2 dropped 47.9.3's ad_subscription and free_trial providers; neither string is in its dex.
  */
 private val STEP_IDS = setOf(
-    "ad_choice", "ad_subscription", "age_gate", "consent_box_page", "consent_box_page_hu",
-    "content_language", "deep_link", "feed_refresh", "follow_trending_creators", "free_trial",
+    "ad_choice", "age_gate", "consent_box_page", "consent_box_page_hu",
+    "content_language", "deep_link", "feed_refresh", "follow_trending_creators",
     "gender_selection", "interest_list", "interest_sub_tag", "login", "login_routing", "m2_one_tap_login",
     "privacy_for_teens", "private_account", "push_auth_preposition_page", "push_page_advance",
     "push_popup_background", "server_delay", "skippable_login", "slogan_consent_box_page",

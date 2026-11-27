@@ -50,27 +50,58 @@ public final class OriginalSoundDownloads {
     static List<String> sourceUrls(Object aweme) {
         Object music = Reflect.property(aweme, "getMusic", "music");
         if (music == null) return List.of();
-        Object playUrl = Reflect.property(music, "getPlayUrl", "playUrl");
-        if (playUrl == null) return List.of();
 
-        Object urls = Reflect.property(playUrl, "getUrlList", "urlList");
         List<String> mirrors = new ArrayList<>();
-        if (urls instanceof List<?>) {
-            for (Object url : (List<?>) urls) {
-                if (url == null) continue;
-                // Over TLS only, the way every other saver here reads its addresses. These come
-                // out of a server response, and a cleartext one hands the fetch to whoever is
-                // on the network between the phone and the host.
-                String text = url.toString().trim();
-                if (MediaTransport.hasAllowedShape(text)) mirrors.add(text);
+        Object playUrl = Reflect.property(music, "getPlayUrl", "playUrl");
+        addAddresses(mirrors, playUrl);
+        Object bitrates = null;
+        if (mirrors.isEmpty()) {
+            // Some posts arrive with an empty play list and the sound only in its bitrates, which
+            // is where TikTok's own sound page gets its address from.
+            bitrates = Reflect.property(music, "getMultiBitRatePlayInfo", "multiBitRatePlayInfo");
+            if (bitrates instanceof List<?>) {
+                for (Object bitrate : (List<?>) bitrates) {
+                    if (bitrate == null) continue;
+                    int before = mirrors.size();
+                    addTls(mirrors, Reflect.property(bitrate, "urlList", "urlList"));
+                    if (mirrors.size() == before) addAddresses(mirrors, Reflect.property(bitrate, "getPlayAddr", "playAddr"));
+                }
             }
         }
+        Object reuse = null;
         if (mirrors.isEmpty()) {
-            // Some builds carry only the single uri and no list at all.
-            String single = Reflect.string(playUrl, "getUri", "uri");
-            if (MediaTransport.hasAllowedShape(single)) mirrors.add(single);
+            reuse = Reflect.property(music, "getReuseAudioPlayUrl", "reuseAudioPlayUrl");
+            addAddresses(mirrors, reuse);
+        }
+        if (mirrors.isEmpty()) {
+            boolean hasPlay = playUrl != null, hasBitrates = bitrates instanceof List<?> && !((List<?>) bitrates).isEmpty(), hasReuse = reuse != null;
+            Logger.printDebug(() -> "Sound lists no address: play " + hasPlay + ", bitrates " + hasBitrates + ", reuse " + hasReuse);
         }
         return List.copyOf(mirrors);
+    }
+
+    /** Adds a sound address model's mirrors, its list or else its single uri. */
+    private static void addAddresses(List<String> mirrors, Object model) {
+        if (model == null) return;
+        int before = mirrors.size();
+        addTls(mirrors, Reflect.property(model, "getUrlList", "urlList"));
+        if (mirrors.size() == before) {
+            // Some builds carry only the single uri and no list at all.
+            addTls(mirrors, Collections.singletonList(Reflect.string(model, "getUri", "uri")));
+        }
+    }
+
+    /** Adds each address of [urls] not already listed, over TLS only. */
+    private static void addTls(List<String> mirrors, Object urls) {
+        if (!(urls instanceof List<?>)) return;
+        for (Object url : (List<?>) urls) {
+            if (url == null) continue;
+            // Over TLS only, the way every other saver here reads its addresses. These come out of
+            // a server response, and a cleartext one hands the fetch to whoever is on the network
+            // between the phone and the host.
+            String text = url.toString().trim();
+            if (MediaTransport.hasAllowedShape(text) && !mirrors.contains(text)) mirrors.add(text);
+        }
     }
 
     /**

@@ -65,6 +65,47 @@ public class OriginalSoundDownloadsTest {
         public String getAid() { return "7712345"; }
     }
 
+    /**
+     * A sound as 48.0.2 can send it: an empty play list, with its addresses in the bitrate list
+     * TikTok's own sound page plays from, or in the address it keeps for reusing the sound.
+     */
+    @SuppressWarnings("unused")
+    public static final class BitrateMusic {
+        private final Object playUrl;
+        private final List<Object> multiBitRatePlayInfo;
+        private final Object reuseAudioPlayUrl;
+
+        BitrateMusic(Object playUrl, List<Object> bitrates, Object reuse) {
+            this.playUrl = playUrl;
+            this.multiBitRatePlayInfo = bitrates;
+            this.reuseAudioPlayUrl = reuse;
+        }
+
+        public Object getPlayUrl() { return playUrl; }
+        public List<Object> getMultiBitRatePlayInfo() { return multiBitRatePlayInfo; }
+        public Object getReuseAudioPlayUrl() { return reuseAudioPlayUrl; }
+    }
+
+    /** One bitrate of a sound, which hands out its addresses through urlList(). */
+    @SuppressWarnings("unused")
+    public static final class Bitrate {
+        private final List<String> addresses;
+
+        Bitrate(List<String> addresses) { this.addresses = addresses; }
+
+        public List<String> urlList() { return addresses; }
+    }
+
+    /** One bitrate of a sound with its addresses only on its play address. */
+    @SuppressWarnings("unused")
+    public static final class BitrateWithPlayAddr {
+        private final Object playAddr;
+
+        BitrateWithPlayAddr(List<String> addresses) { this.playAddr = new PlayUrl(addresses, null); }
+
+        public Object getPlayAddr() { return playAddr; }
+    }
+
     /** A post from a build that never had the model at all. */
     @SuppressWarnings("unused")
     public static final class BarePost {
@@ -103,6 +144,35 @@ public class OriginalSoundDownloadsTest {
 
         assertEquals(List.of("https://one.example/sound.m4a"),
                 OriginalSoundDownloads.sourceUrls(single));
+    }
+
+    /**
+     * A photo post saved as a video came out silent: its sound's play list was empty. TikTok's
+     * own sound page fills that list from the sound's bitrates, so those stand in for it.
+     */
+    @Test public void aSoundWithAnEmptyPlayListIsFetchedFromItsBitrates() {
+        Post post = new Post(new BitrateMusic(new PlayUrl(List.of(), null), List.of(
+                new Bitrate(List.of("https://one.example/128.m4a", "http://cleartext.example/128.m4a")),
+                new BitrateWithPlayAddr(List.of("https://two.example/64.m4a")),
+                new Bitrate(List.of("https://one.example/128.m4a"))),
+                new PlayUrl(List.of("https://reuse.example/sound.m4a"), null)));
+
+        assertEquals(List.of("https://one.example/128.m4a", "https://two.example/64.m4a"),
+                OriginalSoundDownloads.sourceUrls(post));
+    }
+
+    @Test public void aSoundWithOnlyItsReuseAddressIsFetchedFromIt() {
+        Post post = new Post(new BitrateMusic(null, List.of(),
+                new PlayUrl(List.of("https://reuse.example/sound.m4a"), null)));
+
+        assertEquals(List.of("https://reuse.example/sound.m4a"), OriginalSoundDownloads.sourceUrls(post));
+    }
+
+    @Test public void theBitratesStandInOnlyForAnEmptyPlayList() {
+        Post post = new Post(new BitrateMusic(new PlayUrl(List.of("https://play.example/sound.m4a"), null),
+                List.of(new Bitrate(List.of("https://one.example/128.m4a"))), null));
+
+        assertEquals(List.of("https://play.example/sound.m4a"), OriginalSoundDownloads.sourceUrls(post));
     }
 
     @Test public void aCleartextMirrorIsNotFetchedFrom() {

@@ -67,7 +67,8 @@ class PhotoSaveJobFixturesTest {
             assertEquals("conversion entries ${matches.map { "${it.definingClass}->${it.name}" }}", 1, matches.size)
             val native = matches.single()
             assertEquals(owners.getValue(Fixtures.versionOf(apk)), native.definingClass)
-            assertEquals("LIZJ", native.name)
+            // 48.0.2 dropped the owner's (int, Aweme) helper, so the entry is LIZIZ, not 47.9.3's LIZJ.
+            assertEquals("LIZIZ", native.name)
             assertTrue(AccessFlags.PUBLIC.isSet(native.accessFlags) && AccessFlags.STATIC.isSet(native.accessFlags))
             assertEquals(listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", "Ljava/lang/String;",
                 "Lkotlin/jvm/functions/Function1;"), native.parameterTypes.map(CharSequence::toString))

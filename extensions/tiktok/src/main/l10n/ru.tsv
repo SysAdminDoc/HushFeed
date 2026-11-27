@@ -3357,8 +3357,8 @@ Sort pinned videos with the rest	Сортировать закреплённые
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Закреплённые видео встают на своё место в порядке, а не остаются наверху, поэтому «Сначала новые» ставит их по дате публикации.
 Hide or reorder profile tabs	Скрыть или упорядочить вкладки профиля
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Выберите вкладки, которые нужно скрыть над видео профиля, например Репосты или Понравившиеся видео, а стрелками расставьте остальные в нужном порядке. Одна вкладка остаётся всегда. Перезапустите TikTok, чтобы это применить.
-Hide Add bio	Скрыть «Добавить описание»
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Скрывает подсказку «Добавить описание», которую TikTok показывает в вашем профиле, пока в нём нет описания. Добавить его по-прежнему можно в разделе «Изменить профиль».
+Hide tips on your profile	Скрыть подсказки в вашем профиле
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Скрывает подсказку «Добавить описание» и всплывающие подсказки, которыми TikTok указывает на элементы вашего профиля. Добавить описание по-прежнему можно в разделе «Изменить профиль».
 Show the picture before saving	Показывать фото перед сохранением
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Когда сохранение долгим нажатием включено, удержание фото профиля открывает его во весь экран в полном размере, с кнопкой Сохранить под ним.
 The profile picture couldn't be loaded. Try again.	Не удалось загрузить фото профиля. Повторите попытку.
@@ -3543,3 +3543,10 @@ Badge picture removed. Your profile shows the blue check again.	Картинка
 Couldn't remove the badge picture. Try again.	Не удалось удалить картинку значка. Попробуйте ещё раз.
 Keep the letters after the flag	Оставлять буквы после флага
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Показывает две буквы страны рядом с её флагом, чтобы даже незнакомый флаг подсказывал, откуда он.
+Write grid dates the way TikTok does	Писать даты в сетке как TikTok
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Сетки профилей показывают дату так, как TikTok пишет её рядом с именем автора, например 2 дн. назад или 10-12, вместо Oct 12. День перед месяцем, Писать месяц словом и Дата вместо возраста меняют её так же.
+Where the date goes on grids	Место даты в сетке
+Under the view count	Под числом просмотров
+After the view count	После числа просмотров
+Above the view count	Над числом просмотров
+Above the view count takes the video length along with the date.	«Над числом просмотров» переносит вместе с датой и длительность видео.

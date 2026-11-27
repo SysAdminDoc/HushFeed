@@ -995,6 +995,13 @@ public class SettingsStatus {
         addBioEnabled = true;
     }
 
+    /** Hide profile shortcuts hooked TikTok's tip bubbles, so Hide tips on your profile covers them too (#546). */
+    public static boolean profileTipsEnabled = false;
+
+    public static void enableProfileTips() {
+        profileTipsEnabled = true;
+    }
+
     /** Hide profile shortcuts found TikTok's two Thoughts gates on this build and put the switch in front. */
     public static boolean thoughtsSwitchEnabled = false;
 

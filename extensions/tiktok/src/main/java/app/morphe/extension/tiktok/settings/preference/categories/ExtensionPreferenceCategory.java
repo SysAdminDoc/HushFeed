@@ -432,12 +432,12 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                         Settings.HIDE_PROFILE_THOUGHTS
                 ));
             }
-            if (SettingsStatus.addBioEnabled) {
+            if (SettingsStatus.addBioEnabled || SettingsStatus.profileTipsEnabled) {
                 addPreference(new TogglePreference(
                         context,
-                        "Hide Add bio",
-                        "Hide the Add bio prompt TikTok shows on your own profile while it has no bio. "
-                                + "You can still add one from Edit profile.",
+                        "Hide tips on your profile",
+                        "Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. "
+                                + "You can still add a bio from Edit profile.",
                         Settings.HIDE_ADD_BIO
                 ));
             }

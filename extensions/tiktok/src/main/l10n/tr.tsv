@@ -3156,8 +3156,8 @@ Sort pinned videos with the rest	Sabitlenen videoları diğerleriyle sırala
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Sabitlenen videolar en üstte kalmak yerine sıradaki yerini alır, böylece Önce en yeni onları paylaşıldıkları tarihe koyar.
 Hide or reorder profile tabs	Profil sekmelerini gizle veya yeniden sırala
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Bir profilin videolarının üstündeki şeritte gizlenecek sekmeleri seç, örneğin Yeniden gönderilenler veya Beğenilen videolar, kalanları da oklarla istediğin sıraya koy. Bir sekme her zaman kalır. Bunu uygulamak için TikTok'u yeniden başlat.
-Hide Add bio	Biyografi ekle'yi gizle
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Profilinde biyografi yokken TikTok'un gösterdiği Biyografi ekle istemini gizle. Biyografiyi yine Profili düzenle bölümünden ekleyebilirsin.
+Hide tips on your profile	Profilindeki ipuçlarını gizle
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Profilindeki Biyografi ekle istemini ve TikTok'un öğeleri gösterdiği ipucu balonlarını gizle. Biyografiyi yine Profili düzenle bölümünden ekleyebilirsin.
 Show the picture before saving	Kaydetmeden önce resmi göster
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Uzun basarak kaydetme açıkken bir profil fotoğrafına basılı tutmak onu tam ekranda, tam boyutta açar ve altında bir Kaydet düğmesi olur.
 The profile picture couldn't be loaded. Try again.	Profil fotoğrafı yüklenemedi. Yeniden dene.
@@ -3342,3 +3342,10 @@ Badge picture removed. Your profile shows the blue check again.	Rozet resmi kald
 Couldn't remove the badge picture. Try again.	Rozet resmi kaldırılamadı. Tekrar dene.
 Keep the letters after the flag	Bayraktan sonra harfleri göster
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Ülkenin iki harfini bayrağının yanında gösterir, böylece tanımadığın bir bayrak da nereden olduğunu söyler.
+Write grid dates the way TikTok does	Izgara tarihlerini TikTok gibi yaz
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Profil ızgaraları tarihi, TikTok'un içerik üreticisinin adının yanında yazdığı gibi gösterir, 2 g önce ya da 10-12 gibi, Oct 12 yerine. Gün aydan önce, Ayı yazıyla göster ve Süre yerine tarih bunu da aynı şekilde değiştirir.
+Where the date goes on grids	Izgarada tarihin yeri
+Under the view count	Görüntülenme sayısının altında
+After the view count	Görüntülenme sayısından sonra
+Above the view count	Görüntülenme sayısının üstünde
+Above the view count takes the video length along with the date.	Görüntülenme sayısının üstünde, videonun süresini de tarihle birlikte taşır.

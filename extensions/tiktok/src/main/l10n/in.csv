@@ -2997,8 +2997,8 @@ Sort pinned videos with the rest,Urutkan video yang disematkan bersama lainnya
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.","Video yang disematkan menempati tempatnya dalam urutan, tidak tetap di atas, jadi Terbaru dulu menaruhnya sesuai tanggal diunggah."
 Hide or reorder profile tabs,Sembunyikan atau urutkan ulang tab profil
 "Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.","Pilih tab yang disembunyikan dari strip di atas video profil, misalnya Postingan ulang atau Video yang disukai, lalu pakai tanda panah untuk mengatur urutan tab lainnya. Satu tab selalu tetap ada. Mulai ulang TikTok agar berlaku."
-Hide Add bio,Sembunyikan Tambahkan bio
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,Sembunyikan ajakan Tambahkan bio yang ditampilkan TikTok di profil Anda sendiri selama belum ada bio. Anda tetap bisa menambahkannya dari Edit profil.
+Hide tips on your profile,Sembunyikan tips di profil Anda
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.,Sembunyikan ajakan Tambahkan bio dan gelembung tips yang ditunjukkan TikTok ke berbagai hal di profil Anda sendiri. Anda tetap bisa menambahkan bio dari Edit profil.
 Show the picture before saving,Tampilkan foto sebelum menyimpan
 "With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.","Saat simpan dengan tekan lama aktif, menahan foto profil membukanya di layar penuh dalam ukuran penuh, dengan tombol Simpan di bawahnya."
 The profile picture couldn't be loaded. Try again.,Foto profilnya tidak bisa dimuat. Coba lagi.
@@ -3139,3 +3139,10 @@ Badge picture removed. Your profile shows the blue check again.,Gambar lencana d
 Couldn't remove the badge picture. Try again.,Tidak bisa menghapus gambar lencana. Coba lagi.
 Keep the letters after the flag,Pertahankan huruf setelah bendera
 "Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.","Menampilkan dua huruf negara di sebelah benderanya, jadi bendera yang tidak kamu kenali tetap memberi tahu asalnya."
+Write grid dates the way TikTok does,Tulis tanggal kisi seperti TikTok
+"Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.","Kisi profil menampilkan tanggal seperti yang ditulis TikTok di samping nama kreator, seperti 2 hr lalu atau 10-12, alih-alih Oct 12. Hari sebelum bulan, Tulis bulan sebagai kata, dan Tanggal alih-alih usia mengubahnya dengan cara yang sama."
+Where the date goes on grids,Letak tanggal di kisi
+Under the view count,Di bawah jumlah tayangan
+After the view count,Setelah jumlah tayangan
+Above the view count,Di atas jumlah tayangan
+Above the view count takes the video length along with the date.,Di atas jumlah tayangan juga membawa durasi video bersama tanggal.

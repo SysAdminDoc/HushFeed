@@ -14,6 +14,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patches.tiktok.interaction.downloads.CollectionGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
@@ -83,6 +84,9 @@ val alwaysShowPublishDatePatch = bytecodePatch(
             // The empty check's result is false on this path, so it holds the video while the
             // hook runs and gets its false back after.
             val site = postTimeSite()
+            // Write grid dates the way TikTok does (#546): the extension's stub gets the call
+            // this row makes for its own date text. Read before the hook below adds a call.
+            fillTikTokDateStub(tikTokDateWriter())
             addInstructions(
                 site.insertAt,
                 """
@@ -122,6 +126,47 @@ val alwaysShowPublishDatePatch = bytecodePatch(
 
 private fun Instruction.calls(owner: String, name: String) =
     getReference<MethodReference>()?.let { it.definingClass == owner && it.name == name } == true
+
+private val DATE_WRITER_PARAMETERS = listOf("J", "Landroid/content/Context;")
+
+/**
+ * The static writer the creator's row hands its post time in milliseconds and the app to, for
+ * TikTok's date text: "2d ago" for a recent video, "10-07" or "2024-10-07" for an older one
+ * (#546). It's the row's one static call of that shape, and its name is obfuscated.
+ */
+internal fun Method.tikTokDateWriter(): MethodReference {
+    val instructions = implementation?.instructions?.toList()
+        ?: throw PatchException("$WHAT: the author row has no code.")
+    val writers = instructions.filter {
+        it.opcode == Opcode.INVOKE_STATIC || it.opcode == Opcode.INVOKE_STATIC_RANGE
+    }.mapNotNull { call ->
+        call.getReference<MethodReference>()?.takeIf {
+            it.returnType == "Ljava/lang/String;" &&
+                it.parameterTypes.map(CharSequence::toString) == DATE_WRITER_PARAMETERS
+        }
+    }.distinctBy { "${it.definingClass}->${it.name}" }
+    return writers.singleOrNull()
+        ?: throw PatchException("$WHAT: expected one (long, Context) date writer in the author row, found ${writers.size}.")
+}
+
+/**
+ * Writes the extension's tiktokDate stub as a straight call to TikTok's [writer]. What the stub
+ * did before is left behind as unreachable code.
+ */
+private fun fillTikTokDateStub(writer: MethodReference) {
+    val stub = mutableClassDefBy(EXTENSION_CLASS_DESCRIPTOR).methods.singleOrNull {
+        it.name == "tiktokDate" && it.returnType == "Ljava/lang/String;" &&
+            it.parameterTypes.map(CharSequence::toString) == DATE_WRITER_PARAMETERS
+    } ?: throw PatchException("$WHAT: the extension has no tiktokDate to fill in.")
+    stub.addInstructions(
+        0,
+        """
+            invoke-static { p0, p1, p2 }, ${writer.definingClass}->${writer.name}(JLandroid/content/Context;)Ljava/lang/String;
+            move-result-object p0
+            return-object p0
+        """,
+    )
+}
 
 private fun Instruction.writes(register: Int): Boolean {
     if (!opcode.setsRegister()) return false

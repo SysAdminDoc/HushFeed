@@ -3159,8 +3159,8 @@ Sort pinned videos with the rest	Angeheftete Videos mit einsortieren
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Angeheftete Videos bekommen ihren Platz in der Reihenfolge, statt oben zu bleiben, sodass Neueste zuerst sie beim Datum ihrer Veröffentlichung einordnet.
 Hide or reorder profile tabs	Profil-Tabs ausblenden oder umsortieren
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Wähle die Tabs, die über den Videos eines Profils ausgeblendet werden, etwa Reposts oder Gelikte Videos, und bring die übrigen mit den Pfeilen in deine Reihenfolge. Ein Tab bleibt immer. TikTok neu starten, damit das gilt.
-Hide Add bio	Bio hinzufügen ausblenden
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Blende den Hinweis Bio hinzufügen aus, den TikTok auf deinem eigenen Profil zeigt, solange es keine Bio hat. Unter Profil bearbeiten kannst du weiterhin eine hinzufügen.
+Hide tips on your profile	Tipps auf deinem Profil ausblenden
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Blende den Hinweis Bio hinzufügen und die Tipp-Blasen aus, mit denen TikTok auf deinem eigenen Profil auf Dinge zeigt. Unter Profil bearbeiten kannst du weiterhin eine Bio hinzufügen.
 Show the picture before saving	Bild vor dem Speichern zeigen
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Mit dem Speichern per langem Druck öffnet ein langer Druck auf ein Profilbild es im Vollbild in voller Größe, mit einer Speichern-Schaltfläche darunter.
 The profile picture couldn't be loaded. Try again.	Profilbild nicht geladen. Versuch es noch mal.
@@ -3345,3 +3345,10 @@ Badge picture removed. Your profile shows the blue check again.	Abzeichenbild en
 Couldn't remove the badge picture. Try again.	Das Abzeichenbild konnte nicht entfernt werden. Versuch es noch einmal.
 Keep the letters after the flag	Buchstaben nach der Flagge behalten
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Zeigt die zwei Buchstaben des Landes neben seiner Flagge, damit dir auch eine unbekannte Flagge sagt, woher sie ist.
+Write grid dates the way TikTok does	Datum im Raster wie TikTok schreiben
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Profilraster zeigen das Datum so, wie TikTok es neben dem Namen des Creators schreibt, etwa vor 2 T. oder 10-12, statt Oct 12. Tag vor Monat, Monat als Wort schreiben und Datum statt Alter ändern es genauso.
+Where the date goes on grids	Position des Datums im Raster
+Under the view count	Unter der Aufrufzahl
+After the view count	Nach der Aufrufzahl
+Above the view count	Über der Aufrufzahl
+Above the view count takes the video length along with the date.	Über der Aufrufzahl nimmt die Videolänge mit dem Datum mit.

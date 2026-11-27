@@ -28,7 +28,8 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * own bind both ask here right after TikTok formats the count, and Show engagement rate,
  * Always show publish date and Advanced downloads each add their part while their switch is on:
  * the rate after the count ("12.3K · 4.2%"), the date and the video's length on a line of their
- * own under it ("Oct 7 · 0:42"), and a check mark before the count for a video saved here. The
+ * own under it ("Oct 7 · 0:42"; Where the date goes on grids can put the date after the count or
+ * that line above it, #546), and a check mark before the count for a video saved here. The
  * count's view takes the cell's width less its icons, so the date and length get their own line
  * rather than pushing the count and the rate over it. TikTok's bar is a fixed 50dp and a long date
  * wraps to a third line, which it cut in half (#449, #462), so {@link #show} lets the bar grow.
@@ -39,6 +40,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  */
 public final class ProfileGridCount {
     private static final String SEPARATOR = " · ";
+    /** Where the date goes on grids (#546): after the count on its line, or on a line above it. */
+    static final String SPOT_BESIDE = "beside";
+    static final String SPOT_ABOVE = "above";
 
     private ProfileGridCount() {
     }
@@ -51,7 +55,16 @@ public final class ProfileGridCount {
         String top = hide ? EngagementRate.gridRate(item) : EngagementRate.gridCount(count, item);
         String date = AlwaysShowPublishDatePatch.gridDate(item);
         String length = GridVideoLength.gridLength(item);
+        String spot = dateSpot();
+        if (top != null && date != null && SPOT_BESIDE.equals(spot)) {
+            top = top + SEPARATOR + date;
+            date = null;
+        }
         String under = date == null ? length : length == null ? date : date + SEPARATOR + length;
+        if (top != null && under != null && SPOT_ABOVE.equals(spot)) {
+            // The count's line goes last, with a saved video's mark still in front of the count.
+            return under + "\n" + SavedVideoMark.gridText(top, item);
+        }
         String text = top == null ? under : under == null ? top : top + "\n" + under;
         if (text == null) {
             // Nothing left but a saved video's mark, if it has one.
@@ -69,7 +82,7 @@ public final class ProfileGridCount {
     public static void show(TextView view, CharSequence text) {
         boolean hide = hidesViews();
         boolean lines = text != null && TextUtils.indexOf(text, '\n') >= 0;
-        view.setText(!hide && lines ? iconOnFirstLine(view, text) : text);
+        view.setText(!hide && lines ? iconOnCountLine(view, text) : text);
         if (hide || lines) {
             fitBar(view);
         }
@@ -86,11 +99,12 @@ public final class ProfileGridCount {
     /**
      * Keeps the play icon beside the count when a date or length takes a line under it (#519).
      * Android centers a start icon on the whole label, so with two lines it sat between them and
-     * with three by the date. The icon moves into the first line instead, at TikTok's size and
-     * with its gap, and the lines under it start at the cell's edge. TikTok puts the icon back on
-     * the next bind, so a recycled cell with one line shows it as before.
+     * with three by the date. The icon moves into the count's line instead, at TikTok's size and
+     * with its gap, and the other lines start at the cell's edge. That's the first line, or the
+     * last with the date above the count (#546). TikTok puts the icon back on the next bind, so a
+     * recycled cell with one line shows it as before.
      */
-    static CharSequence iconOnFirstLine(TextView view, CharSequence text) {
+    static CharSequence iconOnCountLine(TextView view, CharSequence text) {
         try {
             Drawable[] icons = view.getCompoundDrawablesRelative();
             Drawable icon = icons[0];
@@ -111,9 +125,10 @@ public final class ProfileGridCount {
             Drawable placed = new InsetDrawable(own, rtl ? gap : 0, 0, rtl ? 0 : gap, 0);
             placed.setBounds(0, 0, width + gap, height);
             int align = Build.VERSION.SDK_INT >= 29 ? DynamicDrawableSpan.ALIGN_CENTER : DynamicDrawableSpan.ALIGN_BOTTOM;
-            SpannableStringBuilder label = new SpannableStringBuilder(" ");
-            label.setSpan(new ImageSpan(placed, align), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            label.append(text);
+            int at = SPOT_ABOVE.equals(dateSpot()) ? TextUtils.lastIndexOf(text, '\n') + 1 : 0;
+            SpannableStringBuilder label = new SpannableStringBuilder(text);
+            label.insert(at, " ");
+            label.setSpan(new ImageSpan(placed, align), at, at + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             view.setCompoundDrawablesRelative(null, icons[1], icons[2], icons[3]);
             return label;
         } catch (Throwable ex) {
@@ -147,5 +162,14 @@ public final class ProfileGridCount {
 
     static boolean hidesViews() {
         return SettingsStatus.alwaysShowPublishDateEnabled && Settings.HIDE_GRID_VIEW_COUNT.get();
+    }
+
+    /**
+     * Where the date's line goes (#546): "under" the count as before, "beside" it after the
+     * count, or "above" it, which takes the length along. Under while grid dates are off.
+     */
+    private static String dateSpot() {
+        if (!SettingsStatus.alwaysShowPublishDateEnabled || !Settings.PUBLISH_DATE_ON_GRID.get()) return "under";
+        return Settings.PUBLISH_DATE_GRID_SPOT.get();
     }
 }

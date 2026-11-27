@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.profile;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -111,6 +112,29 @@ public final class ProfileTopBar {
             found = child;
         }
         return found;
+    }
+
+    /**
+     * Whether {@code view} sits on your own profile while it shows (#546). Going up from the view,
+     * the first parent that holds a page's top bar decides: your Profile tab's bar is the one with
+     * the profile views entrance, and it has to be on screen. Another profile, a page with a bar
+     * of its own and a view on no page with a bar all answer false.
+     */
+    static boolean onOwnProfile(View view) {
+        if (view == null) return false;
+        int rowId = identifier(view, END_ROW_IDS);
+        int capsuleId = identifier(view, VIEWS_CAPSULE_IDS);
+        if (rowId == 0 || capsuleId == 0) return false;
+        List<ViewGroup> rows = new ArrayList<>();
+        for (ViewParent parent = view.getParent(); parent instanceof ViewGroup; parent = parent.getParent()) {
+            collect((ViewGroup) parent, rowId, rows);
+            if (rows.isEmpty()) continue;
+            for (ViewGroup row : rows) {
+                if (row.isShown() && entrance(row, capsuleId) != null) return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     /** Hides a view, noting the visibility it had; a view TikTok showed again is noted again. */

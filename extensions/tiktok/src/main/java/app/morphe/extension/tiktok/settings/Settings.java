@@ -1093,6 +1093,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PUBLISH_DATE_EVERYWHERE = new BooleanSetting("publish_date_everywhere", FALSE,
             false, Setting.parentsAny(PUBLISH_DATE_DAY_FIRST, PUBLISH_DATE_MONTH_NAME, PUBLISH_DATE_INSTEAD_OF_AGE));
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
+    /** The grid's date in TikTok's own words, 2d ago or 10-12, with the three date rows above on it (#546). */
+    public static final BooleanSetting PUBLISH_DATE_GRID_LIKE_TIKTOK = new BooleanSetting("publish_date_grid_like_tiktok",
+            FALSE, false, Setting.parent(PUBLISH_DATE_ON_GRID));
+    /** Where the grid's date goes against the view count: under, beside or above (#546). */
+    public static final StringSetting PUBLISH_DATE_GRID_SPOT = new StringSetting("publish_date_grid_spot", "under",
+            false, Setting.parent(PUBLISH_DATE_ON_GRID));
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
     /** Rounded corners on every profile grid cell (#487). */
@@ -2035,7 +2041,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting PROFILE_TAB_ORDER = new StringSetting("profile_tab_order", "");
     /** The Thoughts bubble above a profile picture (#122). Read when a profile's picture is built. */
     public static final BooleanSetting HIDE_PROFILE_THOUGHTS = new BooleanSetting("hide_profile_thoughts", FALSE, true);
-    /** The "+ Add bio" prompt on your own profile when it has no bio (#466). Read whenever the header binds. */
+    /**
+     * The "+ Add bio" prompt on your own profile when it has no bio (#466), and the tip bubbles
+     * TikTok points at things there (#546). Read whenever the header binds or a tip opens.
+     */
     public static final BooleanSetting HIDE_ADD_BIO = new BooleanSetting("hide_add_bio", FALSE);
     /** TikTok's two Thoughts gates answer yes (#186). A restart, since TikTok keeps what it built. */
     public static final BooleanSetting ENABLE_THOUGHTS = new BooleanSetting("enable_thoughts", FALSE, true);

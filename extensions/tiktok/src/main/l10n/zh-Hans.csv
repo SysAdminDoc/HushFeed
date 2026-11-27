@@ -2995,8 +2995,8 @@ Sort pinned videos with the rest,置顶视频与其他视频一起排序
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.",置顶视频按所选顺序排在相应位置，而不是留在最前面，所以「最新的在前」会按发布日期放置它们.
 Hide or reorder profile tabs,隐藏或重新排列个人资料标签页
 "Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.",选择要在个人资料视频上方的标签栏中隐藏的标签页，例如转发或喜欢的视频，并用箭头把其余标签页排成你想要的顺序。始终保留一个标签页。重新启动 TikTok 以应用此操作.
-Hide Add bio,隐藏添加简介
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,隐藏 TikTok 在你自己的主页还没有简介时显示的添加简介提示。你仍然可以在编辑主页中添加简介.
+Hide tips on your profile,隐藏你主页上的提示
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.,隐藏你自己主页上的添加简介提示，以及 TikTok 指向各处的提示气泡。你仍然可以在编辑主页中添加简介.
 Show the picture before saving,保存前先查看图片
 "With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.",开启长按保存后，按住个人资料图片会以原尺寸全屏打开它，下方有一个保存按钮.
 The profile picture couldn't be loaded. Try again.,无法加载个人资料图片。再试一次.
@@ -3137,3 +3137,10 @@ Badge picture removed. Your profile shows the blue check again.,徽章图片已�
 Couldn't remove the badge picture. Try again.,无法移除徽章图片。请再试一次.
 Keep the letters after the flag,在国旗后保留字母
 "Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.",在国旗旁显示国家的两个字母，即使不认识这面国旗，也能知道它来自哪里.
+Write grid dates the way TikTok does,按 TikTok 的方式写网格日期
+"Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.",个人资料网格按 TikTok 在创作者名字旁的写法显示日期，如 2天前 或 10-12，而不是 Oct 12。日在月前、用文字写月份 和 显示日期而非时长 也会以同样方式改变它.
+Where the date goes on grids,网格上日期的位置
+Under the view count,在观看次数下方
+After the view count,在观看次数后面
+Above the view count,在观看次数上方
+Above the view count takes the video length along with the date.,选择在观看次数上方时，视频时长会和日期一起移过去.

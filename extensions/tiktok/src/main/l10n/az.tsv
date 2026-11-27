@@ -3156,8 +3156,8 @@ Sort pinned videos with the rest	Sancılmış videoları qalanları ilə sırala
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Sancılmış videolar yuxarıda qalmaq əvəzinə sıradakı yerini tutur, beləliklə Əvvəlcə ən yenilər onları paylaşıldıqları tarixə qoyur.
 Hide or reorder profile tabs	Profil tablarını gizlədin və ya yenidən sıralayın
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Profilin videolarının üstündəki zolaqda gizlədiləcək tabları seçin, məsələn Repostlar və ya Bəyənilən videolar, qalanlarını isə oxlarla istədiyiniz sıraya qoyun. Bir tab həmişə qalır. Tətbiq etmək üçün TikTok-u yenidən başladın.
-Hide Add bio	Bio əlavə et təklifini gizlədin
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Profilinizdə bio olmayanda TikTok-un göstərdiyi Bio əlavə et təklifini gizlədin. Bio-nu yenə də Profili redaktə edin bölməsindən əlavə edə bilərsiniz.
+Hide tips on your profile	Profilinizdəki ipuclarını gizlədin
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Profilinizdə Bio əlavə et təklifini və TikTok-un elementlərə göstərdiyi ipucu balonlarını gizlədin. Bio-nu yenə də Profili redaktə edin bölməsindən əlavə edə bilərsiniz.
 Show the picture before saving	Saxlamadan əvvəl şəkli göstər
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Uzun basmaqla saxlama açıq olanda profil şəklini basıb saxlamaq onu tam ekranda, tam ölçüdə açır, altında Saxla düyməsi olur.
 The profile picture couldn't be loaded. Try again.	Profil şəkli yüklənə bilmədi. Yenidən cəhd edin.
@@ -3342,3 +3342,10 @@ Badge picture removed. Your profile shows the blue check again.	Nişan şəkli s
 Couldn't remove the badge picture. Try again.	Nişan şəklini silmək mümkün olmadı. Yenidən cəhd edin.
 Keep the letters after the flag	Bayraqdan sonra hərfləri saxla
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Ölkənin iki hərfini bayrağının yanında göstərir, belə ki tanımadığın bayraq da haradan olduğunu bildirir.
+Write grid dates the way TikTok does	Şəbəkə tarixlərini TikTok kimi yaz
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Profil şəbəkələri tarixi TikTok-un yaradıcının adı yanında yazdığı kimi göstərir, məsələn 2 gün əvvəl və ya 10-12, Oct 12 əvəzinə. Gün aydan əvvəl, Ayı sözlə yaz və Yaş əvəzinə tarix onu da eyni cür dəyişir.
+Where the date goes on grids	Şəbəkədə tarixin yeri
+Under the view count	Baxış sayının altında
+After the view count	Baxış sayından sonra
+Above the view count	Baxış sayının üstündə
+Above the view count takes the video length along with the date.	Baxış sayının üstündə seçimi videonun uzunluğunu da tarixlə birlikdə aparır.

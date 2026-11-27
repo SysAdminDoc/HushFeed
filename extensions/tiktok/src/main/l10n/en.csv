@@ -205,6 +205,8 @@ About Hushfeed,About Hushfeed
 About overrides,About overrides
 "Above moves the caption and the buttons up a little so the time fits over the right end of the bar. When something else is in the way, the time goes beside the bar.","Above moves the caption and the buttons up a little so the time fits over the right end of the bar. When something else is in the way, the time goes beside the bar."
 Above the bar,Above the bar
+Above the view count,Above the view count
+Above the view count takes the video length along with the date.,Above the view count takes the video length along with the date.
 Accessibility,Accessibility
 Account,Account
 Account based in %1$s,Account based in %1$s
@@ -269,6 +271,7 @@ After 1 minute,After 1 minute
 After 15 minutes,After 15 minutes
 After 5 minutes,After 5 minutes
 "After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.","After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them."
+After the view count,After the view count
 "After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on.","After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on."
 All,All
 All available languages,All available languages
@@ -937,7 +940,6 @@ Hidden commenters,Hidden commenters
 Hidden: %1$s,Hidden: %1$s
 Hide,Hide
 Hide AI-generated videos,Hide AI-generated videos
-Hide Add bio,Hide Add bio
 Hide Add friends,Hide Add friends
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.,Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.
 Hide Balance in the profile menu,Hide Balance in the profile menu
@@ -1054,7 +1056,7 @@ Hide surveys,Hide surveys
 Hide tabs TikTok adds later unless you allow them.,Hide tabs TikTok adds later unless you allow them.
 "Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings.","Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings."
 Hide the AI Cast button,Hide the AI Cast button
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.,Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.
 Hide the Add friends button at the top of your profile. The menu button stays where it is.,Hide the Add friends button at the top of your profile. The menu button stays where it is.
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,Hide the All button at the end of the story row on the Following feed. The row and its stories stay.
 Hide the All button on Following,Hide the All button on Following
@@ -1150,6 +1152,7 @@ Hide the track name beside the caption.,Hide the track name beside the caption.
 Hide the unread badges on the bottom tabs,Hide the unread badges on the bottom tabs
 "Hide the whole column on the right, from the avatar down to the music disc.","Hide the whole column on the right, from the avatar down to the music disc."
 Hide this creator on this phone,Hide this creator on this phone
+Hide tips on your profile,Hide tips on your profile
 Hide typing,Hide typing
 Hide unpersonalized For You videos,Hide unpersonalized For You videos
 Hide unverified content notices,Hide unverified content notices
@@ -1875,6 +1878,7 @@ Profile background,Profile background
 Profile banner,Profile banner
 Profile banner and new profile layout,Profile banner and new profile layout
 Profile cover,Profile cover
+"Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.","Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way."
 Profile picture,Profile picture
 Profile picture (large),Profile picture (large)
 Profile picture (medium),Profile picture (medium)
@@ -2917,6 +2921,7 @@ Unblocked %1$s,Unblocked %1$s
 "Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only.","Under the @username on a profile, show how its followers, following, likes and videos changed since you last opened it. The counts are kept on this phone only."
 "Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them.","Under the @username on a profile, yours included, show how many videos it has, as TikTok counts them."
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing."
+Under the view count,Under the view count
 Undid an interrupted change. Restart TikTok to apply.,Undid an interrupted change. Restart TikTok to apply.
 Undo,Undo
 Undo clearing seen videos,Undo clearing seen videos
@@ -3048,6 +3053,7 @@ When to send,When to send
 "When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.","When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later."
 "When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.","When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual."
 Where TikTok shows it,Where TikTok shows it
+Where the date goes on grids,Where the date goes on grids
 Where the time goes,Where the time goes
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
@@ -3072,6 +3078,7 @@ Window width needed to enable the layout. Restart TikTok to apply this.,Window w
 "Words, countries and languages","Words, countries and languages"
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.,Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.,Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.
+Write grid dates the way TikTok does,Write grid dates the way TikTok does
 Write the month as a word,Write the month as a word
 Write the username and caption on the video,Write the username and caption on the video
 "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.","Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos."

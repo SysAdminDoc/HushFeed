@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.promobanners
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -15,6 +17,7 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstruction
+import app.morphe.util.findMutableMethodOf
 import com.android.tools.smali.dexlib2.AccessFlags
 
 private const val PROFILE_SHORTCUTS_CLASS_DESCRIPTOR =
@@ -57,8 +60,9 @@ val hideProfileShortcutsPatch = bytecodePatch(
     name = "Hide profile shortcuts",
     description = "Hides the shortcuts you pick from the row under a profile's bio, like " +
         "TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked " +
-        "videos, with the tabs that stay in your order. It can hide the Thoughts bubble and the " +
-        "Add bio prompt, plus Balance and the TikTok Minis icons in your profile's menu. It can " +
+        "videos, with the tabs that stay in your order. It can hide the Thoughts bubble, the " +
+        "Add bio prompt and the tip bubbles on your own profile, plus Balance and the TikTok " +
+        "Minis icons in your profile's menu. It can " +
         "also turn Thoughts on for accounts " +
         "TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
     default = true,
@@ -91,7 +95,16 @@ val hideProfileShortcutsPatch = bytecodePatch(
             ProfileAddBioBindFingerprint.method.let { it to it.addBioShow(PATCH_NAME) }
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
-            println("[$PATCH_NAME] Left out Hide Add bio on ${packageMetadata.versionName}: ${problem.message}")
+            println("[$PATCH_NAME] Left out the Add bio half of Hide tips on your profile on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // TikTok's message tips on your own profile (#546), behind the same switch. Held by
+        // ProfileAddBioAnchorsTest too.
+        val tips = try {
+            TooltipMessageBuilderFingerprint.classDef.messageTips(PATCH_NAME) { classDefByOrNull(it) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the tip half of Hide tips on your profile on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         // Balance in your profile's menu (#194), held the same way by ProfileMenuCellsAnchorsTest.
@@ -141,6 +154,15 @@ val hideProfileShortcutsPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAddBio()V",
+            )
+        }
+        if (tips != null) {
+            for (window in tips.windows) {
+                mutableClassDefBy(window.type).findMutableMethodOf(window.show).keepProfileTipsClosed(tips, window.anchor)
+            }
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileTips()V",
             )
         }
         if (menuCells != null) {

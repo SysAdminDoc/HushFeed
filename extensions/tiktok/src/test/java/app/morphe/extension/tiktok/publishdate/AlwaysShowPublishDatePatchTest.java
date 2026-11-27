@@ -126,9 +126,11 @@ public class AlwaysShowPublishDatePatchTest {
     private TimeZone zone;
     private boolean publishDateEnabled;
     private boolean engagementEnabled;
+    private AlwaysShowPublishDatePatch.DateWriter dates;
 
     @Before
     public void setUp() {
+        dates = AlwaysShowPublishDatePatch.tiktokDates;
         Utils.setContext(RuntimeEnvironment.getApplication());
         locale = Locale.getDefault();
         zone = TimeZone.getDefault();
@@ -156,7 +158,10 @@ public class AlwaysShowPublishDatePatchTest {
         Settings.PUBLISH_DATE_MONTH_NAME.resetToDefault();
         Settings.PUBLISH_DATE_INSTEAD_OF_AGE.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
+        Settings.PUBLISH_DATE_GRID_LIKE_TIKTOK.resetToDefault();
+        Settings.PUBLISH_DATE_GRID_SPOT.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
+        AlwaysShowPublishDatePatch.tiktokDates = dates;
     }
 
     private static long utcSeconds(int year, int month, int day, int hour, int minute) {
@@ -650,6 +655,81 @@ public class AlwaysShowPublishDatePatchTest {
         post.statistics = new Views();
         String date = AlwaysShowPublishDatePatch.shortDate(context(), POSTED, System.currentTimeMillis());
         assertEquals("12.3K · 4.2%\n" + date, ProfileGridCount.text("12.3K", post));
+        Settings.PUBLISH_DATE_ON_GRID.save(false);
+        assertEquals("12.3K · 4.2%", ProfileGridCount.text("12.3K", post));
+    }
+
+    /**
+     * Issue #546: the grid's date in TikTok's own words, from the writer the creator's row uses,
+     * with the date rows on it the way they're on the row. Without that writer, or with nothing
+     * from it, the short date stays.
+     */
+    @Test
+    public void theGridDateCanBeWrittenTheWayTikTokDoes() {
+        assertEquals(Boolean.FALSE, Settings.PUBLISH_DATE_GRID_LIKE_TIKTOK.defaultValue);
+        Settings.PUBLISH_DATE_ON_GRID.save(true);
+        Post post = new Post(POSTED, POSTED_ID);
+        long[] asked = new long[1];
+        AlwaysShowPublishDatePatch.tiktokDates = (millis, context) -> {
+            asked[0] = millis;
+            return " 2025-10-07 ";
+        };
+        String shortDate = AlwaysShowPublishDatePatch.shortDate(context(), POSTED, System.currentTimeMillis());
+        assertEquals("the switch off keeps the short date", shortDate, AlwaysShowPublishDatePatch.gridDate(post));
+        assertEquals(0L, asked[0]);
+
+        Settings.PUBLISH_DATE_GRID_LIKE_TIKTOK.save(true);
+        assertEquals("2025-10-07", AlwaysShowPublishDatePatch.gridDate(post));
+        assertEquals("TikTok's writer takes milliseconds", POSTED * 1000L, asked[0]);
+        assertEquals("12.3K\n2025-10-07", ProfileGridCount.text("12.3K", post));
+        Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+        assertEquals("07.10.25", AlwaysShowPublishDatePatch.gridDate(post));
+        Settings.PUBLISH_DATE_MONTH_NAME.save(true);
+        assertEquals("7 Oct 2025", AlwaysShowPublishDatePatch.gridDate(post));
+        Settings.PUBLISH_DATE_DAY_FIRST.save(false);
+        assertEquals("Oct 7, 2025", AlwaysShowPublishDatePatch.gridDate(post));
+        Settings.PUBLISH_DATE_MONTH_NAME.save(false);
+
+        // A recent video's age, and the day it was posted with Date instead of age on.
+        long nowSeconds = System.currentTimeMillis() / 1000L;
+        Post twoDays = new Post(nowSeconds - 2 * 86_400L, POSTED_ID);
+        AlwaysShowPublishDatePatch.tiktokDates = (millis, context) -> "2d ago";
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.gridDate(twoDays));
+        Settings.PUBLISH_DATE_INSTEAD_OF_AGE.save(true);
+        assertEquals(written(twoDays.createTime, false, false), AlwaysShowPublishDatePatch.gridDate(twoDays));
+
+        // No writer (a build the patch couldn't read) or an empty answer keeps the short date.
+        AlwaysShowPublishDatePatch.tiktokDates = (millis, context) -> null;
+        assertEquals(shortDate, AlwaysShowPublishDatePatch.gridDate(post));
+        AlwaysShowPublishDatePatch.tiktokDates = (millis, context) -> " ";
+        assertEquals(shortDate, AlwaysShowPublishDatePatch.gridDate(post));
+        assertNull("an unpatched stub has nothing to say", AlwaysShowPublishDatePatch.tiktokDate(POSTED * 1000L, context()));
+    }
+
+    /** Issue #546: the grid's date can sit after the view count, or on the line above it. */
+    @Test
+    public void theGridDateCanSitBesideOrAboveTheCount() {
+        assertEquals("under", Settings.PUBLISH_DATE_GRID_SPOT.defaultValue);
+        Settings.PUBLISH_DATE_ON_GRID.save(true);
+        Post post = new Post(POSTED, POSTED_ID);
+        String date = AlwaysShowPublishDatePatch.shortDate(context(), POSTED, System.currentTimeMillis());
+        Settings.PUBLISH_DATE_GRID_SPOT.save("beside");
+        assertEquals("12.3K · " + date, ProfileGridCount.text("12.3K", post));
+        Settings.PUBLISH_DATE_GRID_SPOT.save("above");
+        assertEquals(date + "\n12.3K", ProfileGridCount.text("12.3K", post));
+
+        // The engagement rate stays with the count, wherever the date goes.
+        SettingsStatus.engagementRateEnabled = true;
+        Settings.SHOW_ENGAGEMENT_RATE.save(true);
+        post.statistics = new Views();
+        assertEquals(date + "\n12.3K · 4.2%", ProfileGridCount.text("12.3K", post));
+        Settings.PUBLISH_DATE_GRID_SPOT.save("beside");
+        assertEquals("12.3K · 4.2% · " + date, ProfileGridCount.text("12.3K", post));
+
+        // A value this build doesn't know puts it back under the count.
+        Settings.PUBLISH_DATE_GRID_SPOT.save("sideways");
+        assertEquals("12.3K · 4.2%\n" + date, ProfileGridCount.text("12.3K", post));
+        Settings.PUBLISH_DATE_GRID_SPOT.save("above");
         Settings.PUBLISH_DATE_ON_GRID.save(false);
         assertEquals("12.3K · 4.2%", ProfileGridCount.text("12.3K", post));
     }

@@ -432,8 +432,13 @@ public final class AlwaysShowPublishDatePatch {
     }
 
     /**
-     * The date a profile grid cell shows under its view count ("Oct 7", or "Oct 7, 2025" from
+     * The date a profile grid cell shows by its view count ("Oct 7", or "Oct 7, 2025" from
      * another year), or null when the switch is off or the video has no time.
+     *
+     * <p>Write grid dates the way TikTok does (#546) takes TikTok's own text for the time instead,
+     * the one the creator's row gets ("2d ago", "10-07"), and puts Day before month, Write the
+     * month as a word and Date instead of age on it the way they change the row. Where TikTok's
+     * writer isn't there, or writes nothing, the short date stays.
      */
     public static String gridDate(Object item) {
         if (!SettingsStatus.alwaysShowPublishDateEnabled || !Settings.PUBLISH_DATE_ON_GRID.get()) {
@@ -442,11 +447,39 @@ public final class AlwaysShowPublishDatePatch {
         try {
             long now = System.currentTimeMillis();
             long seconds = postedAt(item, now);
-            return seconds > 0 ? shortDate(Utils.getContext(), seconds, now) : null;
+            if (seconds <= 0) return null;
+            Context context = Utils.getContext();
+            if (Settings.PUBLISH_DATE_GRID_LIKE_TIKTOK.get()) {
+                String tiktok = tiktokDates.write(seconds * 1000L, context);
+                if (tiktok != null && !tiktok.trim().isEmpty()) return dateRowsAt(tiktok.trim(), seconds);
+            }
+            return shortDate(context, seconds, now);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not write a grid cell's date", ex);
             return null;
         }
+    }
+
+    /** TikTok's date writer for a time in milliseconds, which tests stand in for. */
+    interface DateWriter {
+        String write(long millis, Context context);
+    }
+
+    static DateWriter tiktokDates = new DateWriter() {
+        @Override
+        public String write(long millis, Context context) {
+            return tiktokDate(millis, context);
+        }
+    };
+
+    /**
+     * A stub. Always show publish date writes its body with the call the creator's row makes to
+     * turn a post time into TikTok's text ("2d ago", "10-07", "2024-10-07"), found in the row's
+     * bind, since that writer's name is obfuscated. Without the patch it stays null.
+     */
+    @SuppressWarnings("unused")
+    static String tiktokDate(long millis, Context context) {
+        return null;
     }
 
     /** When the item was posted, in Unix seconds: its createTime, else what its ID says, else 0. */

@@ -900,6 +900,24 @@
           "values": null
         },
         {
+          "key": "publish_date_grid_like_tiktok",
+          "title": "Default: publish date grid like tiktok",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "publish_date_grid_spot",
+          "title": "Default: publish date grid spot",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "under",
+          "values": null
+        },
+        {
           "key": "video_length_on_grid",
           "title": "Default: video length on grid",
           "description": null,
@@ -6341,7 +6359,7 @@
     },
     {
       "name": "Hide profile shortcuts",
-      "description": "Hides the shortcuts you pick from the row under a profile's bio, like TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked videos, with the tabs that stay in your order. It can hide the Thoughts bubble and the Add bio prompt, plus Balance and the TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
+      "description": "Hides the shortcuts you pick from the row under a profile's bio, like TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked videos, with the tabs that stay in your order. It can hide the Thoughts bubble, the Add bio prompt and the tip bubbles on your own profile, plus Balance and the TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
       "category": "Feed",
       "use": true,
       "dependencies": [

@@ -3159,8 +3159,8 @@ Sort pinned videos with the rest	Сортиране на закачените в
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Закачените видеа заемат мястото си в подредбата, вместо да стоят най-горе, така че „Първо най-новите“ ги поставя според датата на публикуване.
 Hide or reorder profile tabs	Скриване или пренареждане на разделите в профила
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Избери разделите, които да скриеш от лентата над видеата на профила, например „Повторни публикации“ или „Харесани видеа“, и със стрелките подреди останалите както искаш. Един раздел винаги остава. Рестартирай TikTok, за да се приложи това.
-Hide Add bio	Скриване на „Добави биография“
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Скрива подканата „Добави биография“, която TikTok показва в твоя профил, докато няма биография. Пак можеш да добавиш такава от „Редактирай профила“.
+Hide tips on your profile	Скриване на подсказките в твоя профил
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Скрива подканата „Добави биография“ и балончетата с подсказки, които TikTok насочва към неща в твоя профил. Пак можеш да добавиш биография от „Редактирай профила“.
 Show the picture before saving	Показване на снимката преди запазване
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Когато запазването с дълго натискане е включено, задържането на профилна снимка я отваря на цял екран в пълен размер, с бутон „Запази“ под нея.
 The profile picture couldn't be loaded. Try again.	Профилната снимка не можа да се зареди. Опитай пак.
@@ -3345,3 +3345,10 @@ Badge picture removed. Your profile shows the blue check again.	Снимката
 Couldn't remove the badge picture. Try again.	Снимката за значката не можа да се премахне. Опитай отново.
 Keep the letters after the flag	Буквите след знамето
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Показва двете букви на държавата до знамето ѝ, така че и непознато знаме казва откъде е.
+Write grid dates the way TikTok does	Изписване на датите в мрежата като TikTok
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Мрежите на профилите показват датата така, както TikTok я пише до името на създателя, например преди 2 д. или 10-12, вместо Oct 12. „Ден преди месеца“, „Изписване на месеца с дума“ и „Дата вместо изминало време“ я променят по същия начин.
+Where the date goes on grids	Място на датата в мрежите
+Under the view count	Под броя гледания
+After the view count	След броя гледания
+Above the view count	Над броя гледания
+Above the view count takes the video length along with the date.	„Над броя гледания“ премества и дължината на видеото заедно с датата.

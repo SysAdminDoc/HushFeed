@@ -405,6 +405,16 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Write grid dates the way TikTok does",
+                    "Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.",
+                    Settings.PUBLISH_DATE_GRID_LIKE_TIKTOK
+            ));
+            addPreference(new ChoicePreference(context, "Where the date goes on grids", Settings.PUBLISH_DATE_GRID_SPOT,
+                    new String[]{"Under the view count", "After the view count", "Above the view count"},
+                    new String[]{"under", "beside", "above"})
+                    .withNote("Above the view count takes the video length along with the date."));
+            addPreference(new TogglePreference(
+                    context,
                     "Show video length on profile grids",
                     "Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.",
                     Settings.VIDEO_LENGTH_ON_GRID

@@ -2995,8 +2995,8 @@ Sort pinned videos with the rest,Sắp xếp video đã ghim cùng các video kh
 "Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.","Video đã ghim nằm đúng chỗ của nó trong thứ tự thay vì ở trên cùng, nên Mới nhất trước đặt chúng theo ngày đăng."
 Hide or reorder profile tabs,Ẩn hoặc sắp xếp lại thẻ trang cá nhân
 "Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.","Chọn các thẻ cần ẩn khỏi dải phía trên video của trang cá nhân, chẳng hạn Đăng lại hoặc Video đã thích, và dùng các mũi tên để xếp các thẻ còn lại theo thứ tự của bạn. Luôn giữ lại một thẻ. Khởi động lại TikTok để áp dụng."
-Hide Add bio,Ẩn Thêm tiểu sử
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.,Ẩn lời nhắc Thêm tiểu sử mà TikTok hiển thị trên trang cá nhân của bạn khi chưa có tiểu sử. Bạn vẫn có thể thêm tiểu sử trong Sửa hồ sơ.
+Hide tips on your profile,Ẩn mẹo trên trang cá nhân của bạn
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.,Ẩn lời nhắc Thêm tiểu sử và các bong bóng mẹo TikTok chỉ vào những mục trên trang cá nhân của bạn. Bạn vẫn có thể thêm tiểu sử trong Sửa hồ sơ.
 Show the picture before saving,Hiện ảnh trước khi lưu
 "With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.","Khi bật lưu bằng nhấn giữ, nhấn giữ ảnh đại diện sẽ mở ảnh toàn màn hình ở kích thước đầy đủ, có nút Lưu bên dưới."
 The profile picture couldn't be loaded. Try again.,Không thể tải ảnh đại diện. Vui lòng thử lại.
@@ -3137,3 +3137,10 @@ Badge picture removed. Your profile shows the blue check again.,Đã xóa ảnh 
 Couldn't remove the badge picture. Try again.,Không thể xóa ảnh huy hiệu. Hãy thử lại.
 Keep the letters after the flag,Giữ chữ cái sau lá cờ
 "Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.","Hiển thị hai chữ cái của quốc gia cạnh lá cờ, để lá cờ bạn không nhận ra vẫn cho biết nó đến từ đâu."
+Write grid dates the way TikTok does,Viết ngày trên lưới như TikTok
+"Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.","Lưới trang cá nhân hiện ngày theo cách TikTok viết cạnh tên nhà sáng tạo, như 2 ngày trước hoặc 10-12, thay cho Oct 12. Ngày trước tháng, Viết tháng bằng chữ và Ngày thay cho thời gian cũng đổi nó theo cùng cách."
+Where the date goes on grids,Vị trí ngày trên lưới
+Under the view count,Bên dưới số lượt xem
+After the view count,Sau số lượt xem
+Above the view count,Phía trên số lượt xem
+Above the view count takes the video length along with the date.,Phía trên số lượt xem sẽ đưa cả độ dài video đi cùng ngày.

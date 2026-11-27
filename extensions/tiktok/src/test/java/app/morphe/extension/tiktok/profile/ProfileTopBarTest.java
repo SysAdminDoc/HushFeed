@@ -1,9 +1,12 @@
 package app.morphe.extension.tiktok.profile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -46,6 +50,7 @@ public class ProfileTopBarTest {
     public void tearDown() {
         Settings.HIDE_PROFILE_VIEWS_BUTTON.resetToDefault();
         Settings.HIDE_PROFILE_ADD_FRIENDS.resetToDefault();
+        Settings.HIDE_ADD_BIO.resetToDefault();
         ProfileTopBar.resetForTests();
     }
 
@@ -227,5 +232,65 @@ public class ProfileTopBarTest {
         ProfileTopBar.apply(bar.root);
         assertEquals(View.VISIBLE, bar.entrance.getVisibility());
         assertEquals(View.VISIBLE, bar.addFriends.getVisibility());
+    }
+
+    /** A profile page on screen: its top bar, then a view under it that a tip can point at. */
+    private View pageWith(Bar bar, LinearLayout page) {
+        page.setOrientation(LinearLayout.VERTICAL);
+        page.addView(bar.root);
+        ImageView tab = new ImageView(context);
+        page.addView(tab);
+        return tab;
+    }
+
+    /** #546: Hide tips on your profile keeps a message tip closed when it points at your own profile. */
+    @Test
+    public void aTipOnYourOwnProfileStaysClosedOnlyWithTheSwitchOn() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        Bar own = ownProfile();
+        LinearLayout page = new LinearLayout(context);
+        View tab = pageWith(own, page);
+        activity.setContentView(page);
+
+        assertFalse("the switch starts off", ProfileAddBio.skipTip(tab));
+        Settings.HIDE_ADD_BIO.save(true);
+        assertTrue(ProfileAddBio.skipTip(tab));
+        assertTrue("the bar's own buttons too", ProfileAddBio.skipTip(own.edit));
+        // Hide profile views takes the entrance off, and the bar is still yours.
+        Settings.HIDE_PROFILE_VIEWS_BUTTON.save(true);
+        ProfileTopBar.apply(own.root);
+        assertEquals(View.GONE, own.entrance.getVisibility());
+        assertTrue(ProfileAddBio.skipTip(tab));
+        assertFalse("a tip pointing at nothing", ProfileAddBio.skipTip(null));
+    }
+
+    /** #546: tips on someone else's profile, or anywhere with your profile hidden, stay TikTok's. */
+    @Test
+    public void tipsAwayFromYourOwnProfileStayTikToks() {
+        Settings.HIDE_ADD_BIO.save(true);
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout screen = new FrameLayout(context);
+
+        // Your profile, kept behind the page on top the way a tab keeps it.
+        LinearLayout ownPage = new LinearLayout(context);
+        View ownTab = pageWith(ownProfile(), ownPage);
+        ownPage.setVisibility(View.GONE);
+        screen.addView(ownPage);
+        // Someone else's profile: its end row has no profile views entrance.
+        LinearLayout theirPage = new LinearLayout(context);
+        View theirTab = pageWith(bar(new ImageView(context), new ImageView(context)), theirPage);
+        screen.addView(theirPage);
+        // A page with no top bar at all, like the feed.
+        FrameLayout feed = new FrameLayout(context);
+        ImageView feedButton = new ImageView(context);
+        feed.addView(feedButton);
+        activity.setContentView(screen);
+
+        assertFalse("someone else's profile", ProfileAddBio.skipTip(theirTab));
+        assertFalse("your profile, hidden", ProfileAddBio.skipTip(ownTab));
+        assertFalse("a view on no page", ProfileAddBio.skipTip(feedButton));
+        screen.removeView(theirPage);
+        screen.addView(feed);
+        assertFalse("the feed over your hidden profile", ProfileAddBio.skipTip(feedButton));
     }
 }

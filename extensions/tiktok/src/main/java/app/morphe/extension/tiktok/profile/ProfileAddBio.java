@@ -29,9 +29,15 @@ import app.morphe.extension.tiktok.settings.Settings;
  * (S22, 2026-11-18), so every layout pass while the switch is on puts it back to gone too. The
  * view is only ever the prompt, so nothing else is hidden by that, and the switch turned off
  * leaves it to TikTok.
+ *
+ * <p>The same switch, Hide tips on your profile, keeps TikTok's tip bubbles closed there (#546):
+ * both Tux tip windows ask {@link #skipTip} before they open a message tip (the plain bubble with
+ * a line of text), and one pointing at a view on your own profile never shows. Popovers and
+ * action menus, like the comment sort menu, are built the same way but never asked about.
  */
 public final class ProfileAddBio {
     private static final String FAMILY = "profile add bio";
+    private static final String TIPS = "profile tips";
     private static final WeakHashMap<View, Keeper> KEEPERS = new WeakHashMap<>();
 
     private ProfileAddBio() {
@@ -51,6 +57,23 @@ public final class ProfileAddBio {
             if (prompt.isAttachedToWindow()) keeper.onViewAttachedToWindow(prompt);
         } catch (RuntimeException error) {
             Logger.printException(() -> "Could not keep the Add bio prompt hidden", error);
+        }
+    }
+
+    /**
+     * Called as one of TikTok's message tips is about to open, with the view it points at (#546).
+     * True, so the bubble never opens, while the switch is on and that view is on your own
+     * profile; tips anywhere else, and every tip with the switch off, are TikTok's.
+     */
+    public static boolean skipTip(View anchor) {
+        try {
+            if (!Settings.HIDE_ADD_BIO.get() || !ProfileTopBar.onOwnProfile(anchor)) return false;
+            HookStatus.bound(TIPS, "tip hidden");
+            Logger.printDebug(() -> "Profile add bio: a tip on your profile kept closed");
+            return true;
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Could not check a tip on your profile", error);
+            return false;
         }
     }
 

@@ -68,6 +68,8 @@
       "publish_date_instead_of_age",
       "publish_date_everywhere",
       "publish_date_on_grid",
+      "publish_date_grid_like_tiktok",
+      "publish_date_grid_spot",
       "video_length_on_grid",
       "hide_grid_view_count",
       "rounded_grid_corners",
@@ -4292,6 +4294,18 @@
       "key": "publish_date_exact_time",
       "type": "boolean",
       "default": false
+    },
+    "publish_date_grid_like_tiktok": {
+      "field": "PUBLISH_DATE_GRID_LIKE_TIKTOK",
+      "key": "publish_date_grid_like_tiktok",
+      "type": "boolean",
+      "default": false
+    },
+    "publish_date_grid_spot": {
+      "field": "PUBLISH_DATE_GRID_SPOT",
+      "key": "publish_date_grid_spot",
+      "type": "string",
+      "default": "under"
     },
     "publish_date_instead_of_age": {
       "field": "PUBLISH_DATE_INSTEAD_OF_AGE",

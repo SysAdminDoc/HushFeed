@@ -111,6 +111,7 @@ public class GridViewCountTest {
         Settings.HIDE_GRID_VIEW_COUNT.resetToDefault();
         Settings.VIDEO_LENGTH_ON_GRID.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
+        Settings.PUBLISH_DATE_GRID_SPOT.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
     }
 
@@ -190,6 +191,47 @@ public class GridViewCountTest {
         ProfileGridCount.show(view, "1K");
         assertEquals(icon, view.getCompoundDrawablesRelative()[0]);
         assertEquals("1K", view.getText().toString());
+    }
+
+    /** Issue #546: above the count, the date takes the length along, and after it the length stays under. */
+    @Test public void theDateCanSitBesideOrAboveTheCountWithTheLength() {
+        Settings.SHOW_ENGAGEMENT_RATE.save(true);
+        Settings.VIDEO_LENGTH_ON_GRID.save(true);
+        Settings.PUBLISH_DATE_ON_GRID.save(true);
+        String date = AlwaysShowPublishDatePatch.gridDate(new Cell());
+        assertNotNull(date);
+        assertEquals("1K · 4.2%\n" + date + " · 0:42", ProfileGridCount.text("1K", new Cell()));
+        Settings.PUBLISH_DATE_GRID_SPOT.save("beside");
+        assertEquals("1K · 4.2% · " + date + "\n0:42", ProfileGridCount.text("1K", new Cell()));
+        Settings.PUBLISH_DATE_GRID_SPOT.save("above");
+        assertEquals(date + " · 0:42\n1K · 4.2%", ProfileGridCount.text("1K", new Cell()));
+
+        // With nothing on the count's line, the date and length lead as before.
+        Settings.SHOW_ENGAGEMENT_RATE.save(false);
+        Settings.HIDE_GRID_VIEW_COUNT.save(true);
+        assertEquals(date + " · 0:42", ProfileGridCount.text("1K", new Cell()));
+        // The spot follows the grid date only: with it off, the length stays under the count.
+        Settings.HIDE_GRID_VIEW_COUNT.save(false);
+        Settings.PUBLISH_DATE_ON_GRID.save(false);
+        assertEquals("1K\n0:42", ProfileGridCount.text("1K", new Cell()));
+    }
+
+    /** Issue #546: with the date above the count, the play icon goes on the count's line, the last one. */
+    @Test public void thePlayIconFollowsTheCountUnderADateAbove() {
+        Settings.PUBLISH_DATE_ON_GRID.save(true);
+        Settings.PUBLISH_DATE_GRID_SPOT.save("above");
+        TextView view = countInBar();
+        Drawable icon = new ColorDrawable(0xFFFFFFFF);
+        icon.setBounds(0, 0, 24, 24);
+        view.setCompoundDrawablePadding(6);
+        view.setCompoundDrawablesRelative(icon, null, null, null);
+        ProfileGridCount.show(view, "Oct 7, 2025\n1K");
+        assertNull(view.getCompoundDrawablesRelative()[0]);
+        CharSequence shown = view.getText();
+        assertEquals("Oct 7, 2025\n 1K", shown.toString());
+        ImageSpan[] spans = ((Spanned) shown).getSpans(0, shown.length(), ImageSpan.class);
+        assertEquals(1, spans.length);
+        assertEquals("before the count", "Oct 7, 2025\n".length(), ((Spanned) shown).getSpanStart(spans[0]));
     }
 
     /** The count's view inside TikTok's cell: a weighted child of a bar with a fixed height. */

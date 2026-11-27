@@ -3427,8 +3427,8 @@ Sort pinned videos with the rest	رتّب الفيديوهات المثبتة م
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	تأخذ الفيديوهات المثبتة مكانها في الترتيب بدلًا من البقاء في الأعلى، فيضعها خيار الأحدث أولا في تاريخ نشرها.
 Hide or reorder profile tabs	إخفاء علامات تبويب الملف الشخصي أو إعادة ترتيبها
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	اختر علامات التبويب التي تريد إخفاءها من الشريط فوق فيديوهات الملف الشخصي، مثل إعادات النشر أو الفيديوهات التي أعجبتك، واستخدم الأسهم لترتيب البقية كما تريد. تبقى علامة تبويب واحدة دائمًا. أعد تشغيل TikTok لتطبيق هذا.
-Hide Add bio	إخفاء إضافة نبذة
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	إخفاء مطالبة إضافة نبذة التي يعرضها TikTok في ملفك الشخصي ما دام بلا نبذة. يمكنك إضافة نبذة من تعديل الملف الشخصي.
+Hide tips on your profile	إخفاء التلميحات في ملفك الشخصي
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	إخفاء مطالبة إضافة نبذة وفقاعات التلميحات التي يوجّهها TikTok إلى عناصر في ملفك الشخصي. يمكنك إضافة نبذة من تعديل الملف الشخصي.
 Show the picture before saving	عرض الصورة قبل حفظها
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	مع تشغيل الحفظ بالضغط المطوّل، يفتح الضغط المطوّل على صورة الملف الشخصي الصورة بملء الشاشة وبحجمها الكامل، وتحتها زر حفظ.
 The profile picture couldn't be loaded. Try again.	تعذر تحميل صورة الملف الشخصي. حاول مرة أخرى.
@@ -3613,3 +3613,10 @@ Badge picture removed. Your profile shows the blue check again.	تمت إزال�
 Couldn't remove the badge picture. Try again.	تعذّرت إزالة صورة الشارة. حاول مرة أخرى.
 Keep the letters after the flag	إبقاء الحرفين بعد العلم
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	يعرض حرفي الدولة بجانب علمها، فيبقى العلم الذي لا تعرفه دالا على مكانه.
+Write grid dates the way TikTok does	اكتب تواريخ الشبكة كما يكتبها TikTok
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	تعرض شبكات الملف الشخصي التاريخ كما يكتبه TikTok بجانب اسم صانع المحتوى، مثل منذ يومين أو 10-12، بدلًا من Oct 12. يغيّر «اليوم قبل الشهر» و«اكتب الشهر بالاسم» و«التاريخ بدل العمر» شكله بالطريقة نفسها.
+Where the date goes on grids	مكان التاريخ في الشبكات
+Under the view count	تحت عدد المشاهدات
+After the view count	بعد عدد المشاهدات
+Above the view count	فوق عدد المشاهدات
+Above the view count takes the video length along with the date.	مع «فوق عدد المشاهدات» تنتقل مدة الفيديو مع التاريخ.

@@ -4,9 +4,11 @@ import app.morphe.Fixtures
 import app.morphe.takes
 import app.morphe.util.getReference
 import app.morphe.util.namedRegisters
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -53,6 +55,33 @@ class PublishDateAnchorsTest {
                     site.textRegister in instructions[index].namedRegisters()
             }
             assertNotNull("$version: nothing puts the post time text on the row after the hook", next)
+        }
+    }
+
+    @Test
+    fun `the row's own date writer resolves to TikTok's relative date text on every declared build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .associateBy { it.type }
+            val row = classes.getValue("Lcom/ss/android/ugc/aweme/feed/assem/videoauthorinfo/VideoAuthorInfoVM;")
+            val method = row.methods.single { VideoAuthorInfoStateFingerprint.takes(it, row) }
+
+            val writer = runCatching { method.tikTokDateWriter() }.getOrElse { throw AssertionError("$version: ${it.message}", it) }
+            val body = classes.getValue(writer.definingClass).methods.single {
+                it.name == writer.name && it.parameterTypes.map(CharSequence::toString) == listOf("J", "Landroid/content/Context;")
+            }
+            assertTrue("$version: ${writer.definingClass}->${writer.name} is static", AccessFlags.STATIC.isSet(body.accessFlags))
+            val instructions = body.implementation!!.instructions.toList()
+            // It counts minutes and days, and writes its words through the app's strings.
+            val literals = instructions.mapNotNull { (it as? WideLiteralInstruction)?.wideLiteral }.toSet()
+            assertTrue("$version: a minute in milliseconds", 60_000L in literals)
+            assertTrue("$version: a day in milliseconds", 86_400_000L in literals)
+            assertTrue("$version: reads the app's strings", instructions.any { instruction ->
+                instruction.getReference<MethodReference>()?.let { it.definingClass == "Landroid/content/Context;" && it.name == "getString" } == true
+            })
         }
     }
 }

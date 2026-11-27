@@ -3156,8 +3156,8 @@ Sort pinned videos with the rest	Ordenar los vídeos fijados con el resto
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	Los vídeos fijados ocupan su lugar en el orden en vez de quedarse arriba, así que Más recientes primero los pone en la fecha en que se publicaron.
 Hide or reorder profile tabs	Ocultar o reordenar las pestañas del perfil
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Elige las pestañas que quieres ocultar en la franja sobre los vídeos de un perfil, como Republicaciones o Vídeos que le gustaron, y usa las flechas para poner las demás en tu orden. Siempre se queda una pestaña. Reinicia TikTok para que se aplique.
-Hide Add bio	Ocultar Añadir biografía
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Oculta el aviso Añadir biografía que TikTok muestra en tu propio perfil mientras no tiene biografía. Puedes seguir añadiendo una desde Editar perfil.
+Hide tips on your profile	Ocultar consejos en tu perfil
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Oculta el aviso Añadir biografía y las burbujas de consejos con las que TikTok señala cosas en tu propio perfil. Puedes seguir añadiendo una biografía desde Editar perfil.
 Show the picture before saving	Mostrar la foto antes de guardarla
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Con el guardado por pulsación larga activado, mantener pulsada una foto de perfil la abre a pantalla completa y a tamaño completo, con un botón Guardar debajo.
 The profile picture couldn't be loaded. Try again.	La foto de perfil no cargó. Inténtalo de nuevo.
@@ -3342,3 +3342,10 @@ Badge picture removed. Your profile shows the blue check again.	Imagen de la ins
 Couldn't remove the badge picture. Try again.	No se pudo quitar la imagen de la insignia. Vuelve a intentarlo.
 Keep the letters after the flag	Mantener las letras tras la bandera
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Muestra las dos letras del país junto a su bandera, así una bandera que no reconoces sigue diciendo de dónde es.
+Write grid dates the way TikTok does	Escribir las fechas de la cuadrícula como TikTok
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Las cuadrículas del perfil muestran la fecha como TikTok la escribe junto al nombre del creador, como hace 2 d o 10-12, en lugar de Oct 12. Día antes del mes, Escribir el mes con letras y Fecha en lugar de edad la cambian de la misma forma.
+Where the date goes on grids	Dónde va la fecha en la cuadrícula
+Under the view count	Bajo el número de visualizaciones
+After the view count	Después del número de visualizaciones
+Above the view count	Encima del número de visualizaciones
+Above the view count takes the video length along with the date.	Encima del número de visualizaciones lleva también la duración del video junto con la fecha.

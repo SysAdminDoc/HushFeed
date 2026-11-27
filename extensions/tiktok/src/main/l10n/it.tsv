@@ -3156,8 +3156,8 @@ Sort pinned videos with the rest	Ordina i video in evidenza con gli altri
 Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.	I video in evidenza prendono il loro posto nell'ordine invece di restare in cima, così Prima i più recenti li mette alla data in cui sono stati pubblicati.
 Hide or reorder profile tabs	Nascondi o riordina le schede del profilo
 Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos, and use the arrows to put the rest in your order. One tab always stays. Restart TikTok to apply this.	Scegli le schede da nascondere nella fascia sopra i video di un profilo, come Repost o Video con Mi piace, e usa le frecce per mettere le altre nel tuo ordine. Una scheda resta sempre. Riavvia TikTok per applicare la modifica.
-Hide Add bio	Nascondi Aggiungi bio
-Hide the Add bio prompt TikTok shows on your own profile while it has no bio. You can still add one from Edit profile.	Nascondi l'invito Aggiungi bio che TikTok mostra sul tuo profilo finché non ha una bio. Puoi comunque aggiungerne una da Modifica profilo.
+Hide tips on your profile	Nascondi i suggerimenti sul tuo profilo
+Hide the Add bio prompt and the tip bubbles TikTok points at things on your own profile. You can still add a bio from Edit profile.	Nascondi l'invito Aggiungi bio e i fumetti dei suggerimenti con cui TikTok indica le cose sul tuo profilo. Puoi comunque aggiungere una bio da Modifica profilo.
 Show the picture before saving	Mostra la foto prima di salvarla
 With the long press save on, holding a profile picture opens it full screen at full size, with a Save button under it.	Con il salvataggio a pressione prolungata attivo, tenere premuta una foto profilo la apre a schermo intero e a piena dimensione, con un pulsante Salva sotto.
 The profile picture couldn't be loaded. Try again.	Impossibile caricare la foto del profilo. Riprova.
@@ -3342,3 +3342,10 @@ Badge picture removed. Your profile shows the blue check again.	Immagine del bad
 Couldn't remove the badge picture. Try again.	Impossibile rimuovere l’immagine del badge. Riprova.
 Keep the letters after the flag	Tieni le lettere dopo la bandiera
 Shows the country's two letters next to its flag, so a flag you don't recognize still tells you where it is.	Mostra le due lettere del paese accanto alla sua bandiera, così anche una bandiera che non riconosci ti dice da dove viene.
+Write grid dates the way TikTok does	Scrivi le date della griglia come TikTok
+Profile grids show the date the way TikTok writes it by the creator's name, like 2d ago or 10-12, in place of Oct 12. Day before month, Write the month as a word and Date instead of age change it the same way.	Le griglie del profilo mostrano la data come la scrive TikTok accanto al nome del creator, come 2 g fa o 10-12, invece di Oct 12. Giorno prima del mese, Scrivi il mese in lettere e Data invece dell'età la cambiano allo stesso modo.
+Where the date goes on grids	Dove va la data nella griglia
+Under the view count	Sotto il numero di visualizzazioni
+After the view count	Dopo il numero di visualizzazioni
+Above the view count	Sopra il numero di visualizzazioni
+Above the view count takes the video length along with the date.	Sopra il numero di visualizzazioni sposta anche la durata del video insieme alla data.

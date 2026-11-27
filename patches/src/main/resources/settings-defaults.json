@@ -860,6 +860,7 @@
       "show_join_date",
       "show_profile_video_count",
       "show_profile_changes",
+      "yellow_private_lists",
       "local_profile_counts",
       "local_profile_verified_badge",
       "hide_own_profile_restriction_notice",
@@ -5208,6 +5209,12 @@
     "video_length_on_grid": {
       "field": "VIDEO_LENGTH_ON_GRID",
       "key": "video_length_on_grid",
+      "type": "boolean",
+      "default": false
+    },
+    "yellow_private_lists": {
+      "field": "YELLOW_PRIVATE_LISTS",
+      "key": "yellow_private_lists",
       "type": "boolean",
       "default": false
     },

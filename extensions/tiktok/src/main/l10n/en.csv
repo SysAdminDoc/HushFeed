@@ -1643,6 +1643,7 @@ Offline videos,Offline videos
 Offline videos limit,Offline videos limit
 Oldest first,Oldest first
 "On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too."
+"On a profile that keeps its followers or following list private, that count shows in yellow, so you can tell it's private before you tap it. Yours too.","On a profile that keeps its followers or following list private, that count shows in yellow, so you can tell it's private before you tap it. Yours too."
 "On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were.","On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were."
 On mobile data,On mobile data
 On or off,On or off
@@ -3067,6 +3068,7 @@ Writing the caption on the video: %1$s,Writing the caption on the video: %1$s
 YTDLnis background mode,YTDLnis background mode
 YTDLnis download type,YTDLnis download type
 Yellow,Yellow
+Yellow counts for private lists,Yellow counts for private lists
 Yes,Yes
 You can continue now.,You can continue now.
 You can pick up to %1$s at a time,You can pick up to %1$s at a time

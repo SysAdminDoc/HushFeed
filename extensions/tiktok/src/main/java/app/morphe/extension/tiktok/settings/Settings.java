@@ -2052,6 +2052,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_PROFILE_VIDEO_COUNT = new BooleanSetting("show_profile_video_count", FALSE);
     // "Since Nov 18: +12 followers" under it, from the counts each profile showed on this phone last time.
     public static final BooleanSetting SHOW_PROFILE_CHANGES = new BooleanSetting("show_profile_changes", FALSE);
+    // Followers and Following counts in yellow on a profile that keeps that list private (#549).
+    public static final BooleanSetting YELLOW_PRIVATE_LISTS = new BooleanSetting("yellow_private_lists", FALSE);
     public static final BooleanSetting LOCAL_PROFILE_COUNTS = new BooleanSetting("local_profile_counts", FALSE, true);
     public static final BooleanSetting LOCAL_PROFILE_VERIFIED_BADGE = new BooleanSetting("local_profile_verified_badge", FALSE, true);
     public static final BooleanSetting HIDE_OWN_PROFILE_RESTRICTION_NOTICE = new BooleanSetting("hide_own_profile_restriction_notice", FALSE, true);

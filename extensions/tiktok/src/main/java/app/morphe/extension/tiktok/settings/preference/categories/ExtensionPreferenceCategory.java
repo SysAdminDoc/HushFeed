@@ -324,6 +324,10 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "and videos changed since you last opened it. The counts are kept on "
                             + "this phone only.",
                     Settings.SHOW_PROFILE_CHANGES));
+            addPreference(new TogglePreference(context, "Yellow counts for private lists",
+                    "On a profile that keeps its followers or following list private, that count "
+                            + "shows in yellow, so you can tell it's private before you tap it. Yours too.",
+                    Settings.YELLOW_PRIVATE_LISTS));
             addPreference(new TogglePreference(context, "Local profile counts",
                     "Show chosen counts on your own profile on this phone. Other people see the real counts.",
                     Settings.LOCAL_PROFILE_COUNTS));

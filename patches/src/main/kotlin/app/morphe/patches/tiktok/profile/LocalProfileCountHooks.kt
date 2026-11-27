@@ -26,6 +26,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 
 internal const val LOCAL_COUNTS = "Lapp/morphe/extension/tiktok/profile/LocalProfileCounts;"
 internal const val PROFILE_CHANGES = "Lapp/morphe/extension/tiktok/profile/ProfileChanges;"
+internal const val PRIVATE_LISTS = "Lapp/morphe/extension/tiktok/profile/PrivateLists;"
 internal const val RELATION_COMPONENT = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/relationinfo/base/RelationInfoBaseUIComponent;"
 internal const val RELATION_DATA = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/relationinfo/data/RelationData;"
 internal const val PROFILE_PROTOCOL = "Lcom/ss/android/ugc/profile/platform/standard/protocol/ProfilePlatformProtocol;"
@@ -149,7 +150,13 @@ internal fun profileCountBridge(owner: String, getter: Method, formatter: Method
         invoke-static { p1, v2, p3 }, ${formatter.descriptor()}
         move-result-object v1
     """
-    val finish = if (legacy) "invoke-virtual { p1, v0 }, $TEXT_VIEW->setText($TEXT)V\nreturn-void" else "return-object v0"
+    // Every path, native or local, ends here with the text in v0: Yellow counts for private lists
+    // colors it when the count's own RelationData says its list is private (#549).
+    val tint = """
+        invoke-static { p0, v0 }, $PRIVATE_LISTS->tint(Ljava/lang/Object;$TEXT)$TEXT
+        move-result-object v0
+    """
+    val finish = tint + if (legacy) "invoke-virtual { p1, v0 }, $TEXT_VIEW->setText($TEXT)V\nreturn-void" else "return-object v0"
     // The newer layout hands over the real number, so Show what changed since your last visit
     // keeps it first; only Local profile counts goes on to swap the text.
     val gate = if (legacy) """

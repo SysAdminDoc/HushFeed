@@ -168,9 +168,33 @@ class LocalProfileCountAnchorsTest {
                     val branch = code[at] as OffsetInstruction
                     return code.single { it.location.codeAddress == code[at].location.codeAddress + branch.codeOffset }
                 }
+                // The native text and the local one both reach the private list tint, which hands
+                // back the text in v0 for the return or the setText (#549).
                 val fallBack = target(branchIndex)
-                assertEquals(if (legacy) Opcode.INVOKE_VIRTUAL else Opcode.RETURN_OBJECT, fallBack.opcode)
-                if (legacy) assertEquals("setText", fallBack.getReference<MethodReference>()!!.name)
+                val tintAt = code.indexOfFirst { it === fallBack }
+                assertEquals(Opcode.INVOKE_STATIC, fallBack.opcode)
+                val tint = fallBack.getReference<MethodReference>()!!
+                assertEquals("$PRIVATE_LISTS->tint(Ljava/lang/Object;$TEXT)$TEXT", tint.toString())
+                val sentToTint = fallBack as FiveRegisterInstruction
+                assertEquals(2, sentToTint.registerCount)
+                assertEquals(bridge.implementation!!.registerCount - bridge.numberOfParameterRegisters, sentToTint.registerC)
+                assertEquals(0, sentToTint.registerD)
+                assertEquals(Opcode.MOVE_RESULT_OBJECT, code[tintAt + 1].opcode)
+                assertEquals(0, (code[tintAt + 1] as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA)
+                val shown = code[tintAt + 2]
+                assertEquals(if (legacy) Opcode.INVOKE_VIRTUAL else Opcode.RETURN_OBJECT, shown.opcode)
+                if (legacy) {
+                    assertEquals("setText", shown.getReference<MethodReference>()!!.name)
+                    assertEquals(0, (shown as FiveRegisterInstruction).registerD)
+                    assertEquals(Opcode.RETURN_VOID, code[tintAt + 3].opcode)
+                } else {
+                    assertEquals(0, (shown as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA)
+                }
+                // The local text, when chosen, runs straight on into the same tint.
+                val chosen = code.indexOfFirst { it.getReference<MethodReference>()?.name == "choose" }
+                assertEquals(tintAt, chosen + 2)
+                assertEquals(1, code.count { it.getReference<MethodReference>()?.definingClass == PRIVATE_LISTS })
+                assertEquals(emptyList<app.morphe.BridgeTypeFlow.Problem>(), app.morphe.BridgeTypeFlow.check(bridge))
                 val calls = code.mapNotNull { it.getReference<MethodReference>() }
                 val records = code.withIndex().filter { (_, it) -> it.getReference<MethodReference>()?.definingClass == PROFILE_CHANGES &&
                     it.getReference<MethodReference>()?.name == "count" }
@@ -185,7 +209,7 @@ class LocalProfileCountAnchorsTest {
                     val sent = record as FiveRegisterInstruction
                     assertEquals(bridge.implementation!!.registerCount - bridge.numberOfParameterRegisters + 2, sent.registerE)
                     // Local profile counts still decides alone whether the text is swapped.
-                    assertEquals(Opcode.RETURN_OBJECT, target(at + 1).opcode)
+                    assertSame(fallBack, target(at + 1))
                     assertEquals((code[enabled + 1] as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA,
                         (code[at + 1] as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA)
                     assertTrue(at < code.indexOfFirst { it.getReference<MethodReference>()?.name == "override" })

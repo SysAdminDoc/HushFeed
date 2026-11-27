@@ -17,7 +17,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * PR #475: the home top bar's Tako icon. TakoTopIconAssem.onCreate (47.9.3: four registers,
+ * PR #475: the home top bar's Tako icon. TakoTopIconAssem.onCreate (48.0.2: four registers,
  * `this` in v3) calls the assem's own onCreate, then adds its config callback to TikTok's A/B
  * config manager. The guard goes right after that super call, and the builds it refuses go without
  * it, loudly where the build is declared and quietly otherwise.
@@ -31,6 +31,7 @@ class TakoTopIconHookTest {
         invoke-interface {v0}, LX/02pq;->getValue()Ljava/lang/Object;
         move-result-object v1
         if-nez v1, :add
+        invoke-virtual {v2}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
         return-void
         :add
         iget-object v0, v2, LX/07N8;->LJFF:Ljava/util/concurrent/ConcurrentLinkedDeque;
@@ -62,7 +63,7 @@ class TakoTopIconHookTest {
         val target = offsets.indexOf(offsets[3] + branch.codeOffset)
         assertEquals("false lands on the stock second instruction", 5, target)
         assertEquals(Opcode.INVOKE_STATIC, code[target].opcode)
-        assertEquals("LIZJ", ((code[target] as ReferenceInstruction).reference as MethodReference).name)
+        assertEquals("LIZLLL", ((code[target] as ReferenceInstruction).reference as MethodReference).name)
         // Everything after the guard is the stock body, in order.
         assertEquals(before.drop(1), code.drop(5).map { it.opcode })
     }

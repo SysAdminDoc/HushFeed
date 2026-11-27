@@ -159,6 +159,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting SETTINGS_THEME = new StringSetting("settings_theme", "tiktok");
     /** The language of Hushfeed's settings and messages: TikTok's, or one picked under Hushfeed language (#431). */
     public static final StringSetting HUSHFEED_LANGUAGE = new StringSetting(L10n.PICK_KEY, "tiktok");
+    /** Hushfeed's notices (a finished save, a block's Undo) under the status bar, not above the tab bar (#545). */
+    public static final BooleanSetting NOTICES_AT_TOP = new BooleanSetting("notices_at_top", FALSE);
+    /** The video behind Hushfeed's notices blurred into them, on Android 12 and up (#545). */
+    public static final BooleanSetting NOTICE_BLUR = new BooleanSetting("notice_blur", FALSE);
     // Off by default: both patches are in the default selection, so the switch is the ask.
     public static final BooleanSetting TURN_OFF_HAPTICS = new BooleanSetting("turn_off_haptics", FALSE);
     public static final BooleanSetting TURN_OFF_SCREEN_TRANSITIONS =

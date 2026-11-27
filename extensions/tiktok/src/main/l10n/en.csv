@@ -411,8 +411,10 @@ Blocked sound ids,Blocked sound ids
 Blocked sound names,Blocked sound names
 Blocked sounds,Blocked sounds
 Blocking,Blocking
+Blur behind notices,Blur behind notices
 Blur strength,Blur strength
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.","Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up."
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.,Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.
 Blur the video behind the bar,Blur the video behind the bar
 Bold,Bold
 Bottom bar height,Bottom bar height
@@ -1902,6 +1904,7 @@ Public,Public
 Pull down on the grid to load them,Pull down on the grid to load them
 Pulling down at the top of For You no longer reloads it.,Pulling down at the top of For You no longer reloads it.
 Put %1$s in %2$s first.,Put %1$s in %2$s first.
+"Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.","Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it."
 Put back the settings saved before the last restore or reset.,Put back the settings saved before the last restore or reset.
 Put every setting back to its default straight away. Your current settings are kept for Undo.,Put every setting back to its default straight away. Your current settings are kept for Undo.
 Put the comment search away,Put the comment search away
@@ -2306,6 +2309,7 @@ Show last report,Show last report
 Show likes,Show likes
 "Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids.","Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids."
 Show message times,Show message times
+Show notices at the top,Show notices at the top
 "Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.","Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads."
 Show only LIVEs from creators with this many followers.,Show only LIVEs from creators with this many followers.
 Show only LIVEs with this many people watching.,Show only LIVEs with this many people watching.

@@ -3352,3 +3352,7 @@ Under the view count	Под броя гледания
 After the view count	След броя гледания
 Above the view count	Над броя гледания
 Above the view count takes the video length along with the date.	„Над броя гледания“ премества и дължината на видеото заедно с датата.
+Show notices at the top	Показване на известията горе
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	Поставя известията на Hushfeed, например за завършено запазване или „Отмени“ след блокиране, точно под лентата на състоянието вместо над лентата с раздели. Плъзнете известие наляво или надясно, за да го затворите.
+Blur behind notices	Размазване зад известията
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	Размазва видеото зад известията на Hushfeed, така че да приличат на матово стъкло. Изисква Android 12 или по-нов. Извън видео запазват обичайния тъмен вид.

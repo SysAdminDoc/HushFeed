@@ -3349,3 +3349,7 @@ Under the view count	Görüntülenme sayısının altında
 After the view count	Görüntülenme sayısından sonra
 Above the view count	Görüntülenme sayısının üstünde
 Above the view count takes the video length along with the date.	Görüntülenme sayısının üstünde, videonun süresini de tarihle birlikte taşır.
+Show notices at the top	Bildirimleri üstte göster
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	Hushfeed bildirimlerini, örneğin biten bir kaydetmeyi veya engellemeden sonraki Geri al düğmesini, sekme çubuğunun üstü yerine durum çubuğunun hemen altına koyar. Kapatmak için bildirimi sola veya sağa kaydırın.
+Blur behind notices	Bildirimlerin arkasını bulanıklaştır
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	Hushfeed bildirimlerinin arkasındaki videoyu bulanıklaştırır, böylece buzlu cam gibi görünürler. Android 12 veya üstü gerekir. Video dışında normal koyu görünümlerini korurlar.

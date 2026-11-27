@@ -3144,3 +3144,7 @@ Under the view count,在观看次数下方
 After the view count,在观看次数后面
 Above the view count,在观看次数上方
 Above the view count takes the video length along with the date.,选择在观看次数上方时，视频时长会和日期一起移过去.
+Show notices at the top,在顶部显示通知
+"Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.",把 Hushfeed 的通知（比如保存完成或屏蔽作者后的“撤消”）放在状态栏正下方，而不是标签栏上方。向左或向右滑动通知即可关闭.
+Blur behind notices,模糊通知后面的视频
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.,模糊 Hushfeed 通知后面的视频，让它们看起来像磨砂玻璃。需要 Android 12 及以上版本。不在视频上时，它们保持普通的深色外观.

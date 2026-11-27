@@ -3146,3 +3146,7 @@ Under the view count,Di bawah jumlah tayangan
 After the view count,Setelah jumlah tayangan
 Above the view count,Di atas jumlah tayangan
 Above the view count takes the video length along with the date.,Di atas jumlah tayangan juga membawa durasi video bersama tanggal.
+Show notices at the top,Tampilkan pemberitahuan di atas
+"Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.","Taruh pemberitahuan Hushfeed, seperti simpanan yang selesai atau Urungkan setelah memblokir, tepat di bawah bilah status, bukan di atas bilah tab. Geser pemberitahuan ke kiri atau kanan untuk menutupnya."
+Blur behind notices,Buramkan di belakang pemberitahuan
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.,"Buramkan video di belakang pemberitahuan Hushfeed sehingga terlihat seperti kaca buram. Perlu Android 12 ke atas. Jauh dari video, pemberitahuan tetap berwarna gelap biasa."

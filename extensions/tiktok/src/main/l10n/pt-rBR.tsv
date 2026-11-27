@@ -3349,3 +3349,7 @@ Under the view count	Abaixo do número de visualizações
 After the view count	Depois do número de visualizações
 Above the view count	Acima do número de visualizações
 Above the view count takes the video length along with the date.	Acima do número de visualizações leva a duração do vídeo junto com a data.
+Show notices at the top	Mostrar os avisos no topo
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	Coloca os avisos do Hushfeed, como um salvamento concluído ou o Desfazer de um bloqueio, logo abaixo da barra de status em vez de acima da barra de abas. Deslize um aviso para a esquerda ou para a direita para fechá-lo.
+Blur behind notices	Desfocar atrás dos avisos
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	Desfoca o vídeo atrás dos avisos do Hushfeed para parecerem vidro fosco. Precisa do Android 12 ou mais recente. Longe de um vídeo, eles mantêm o visual escuro normal.

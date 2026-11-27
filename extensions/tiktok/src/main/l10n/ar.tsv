@@ -3620,3 +3620,7 @@ Under the view count	تحت عدد المشاهدات
 After the view count	بعد عدد المشاهدات
 Above the view count	فوق عدد المشاهدات
 Above the view count takes the video length along with the date.	مع «فوق عدد المشاهدات» تنتقل مدة الفيديو مع التاريخ.
+Show notices at the top	إظهار الإشعارات في الأعلى
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	يضع إشعارات Hushfeed، مثل اكتمال الحفظ أو «تراجع» بعد الحظر، أسفل شريط الحالة مباشرة بدلا من فوق شريط التبويبات. اسحب الإشعار يسارا أو يمينا لإغلاقه.
+Blur behind notices	ضبابية خلف الإشعارات
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	يجعل الفيديو خلف إشعارات Hushfeed ضبابيا لتبدو كزجاج مصنفر. يتطلب Android 12 أو أحدث. بعيدا عن الفيديو تحتفظ بمظهرها الداكن العادي.

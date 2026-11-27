@@ -18,6 +18,7 @@ import android.content.res.ColorStateList;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay;
+import app.morphe.extension.tiktok.feed.Notices;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
@@ -45,7 +46,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 final class SaveProgress {
     /** The default count row starts here; optional stream progress also covers smaller saves. */
     static final int MIN_FILES = 3;
-    /** Room under the row for a banner (a block's Undo, a finished save) to appear beneath it. */
+    /**
+     * Room between the row and the edge for a banner (a block's Undo, a finished save) to appear
+     * nearer the edge than it: beneath it, or above it with notices at the top (#545).
+     */
     private static final int ABOVE_BANNER_DP = 56;
     /** Space between simultaneous saves, in addition to each measured row height. */
     private static final int ROW_GAP_DP = 8;
@@ -424,12 +428,12 @@ final class SaveProgress {
                 if (root == null) root = activity.findViewById(android.R.id.content);
                 if (root == null) return;
 
-                LinearLayout banner = new LinearLayout(activity);
+                Notices.SwipeRow banner = new Notices.SwipeRow(activity);
                 banner.setOrientation(LinearLayout.HORIZONTAL);
                 banner.setGravity(Gravity.CENTER_VERTICAL);
                 banner.setPadding(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12),
                         SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12));
-                banner.setBackground(SettingsUi.overlayBanner(activity));
+                Notices.dress(banner);
                 banner.setTag("hushfeed_save_progress");
 
                 shownWaiting = !started;
@@ -468,10 +472,13 @@ final class SaveProgress {
                 stopButton = stop;
 
                 // Above where a banner goes, so a finished save or a block's Undo can show
-                // beneath a save still running, and above any row already up.
-                FrameLayout.LayoutParams params = BlockAuthorOverlay.bannerParams(activity, root);
-                params.bottomMargin += SettingsUi.dp(activity, ABOVE_BANNER_DP);
+                // beneath a save still running, and above any row already up. With notices at
+                // the top it all hangs the other way.
+                FrameLayout.LayoutParams params = BlockAuthorOverlay.noticeParams(activity, root);
+                if (fromTop(params)) params.topMargin += SettingsUi.dp(activity, ABOVE_BANNER_DP);
+                else params.bottomMargin += SettingsUi.dp(activity, ABOVE_BANNER_DP);
                 banner.setLayoutParams(params);
+                banner.setOnSwipedAway(() -> swipedAway(banner));
                 // Should the window it sits on go away with the save still running (a sheet
                 // closing late), the row moves to the activity's own content.
                 banner.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -503,6 +510,21 @@ final class SaveProgress {
         }, SaveNotice.SHEET_SETTLE_MS);
     }
 
+    /**
+     * The reader swiped the row away (#545): it goes, and the save goes on without it. What the
+     * save came to still shows at its end, and the Downloads page still lists it.
+     */
+    private void swipedAway(View view) {
+        if (row != view) return;
+        row = null;
+        count = null;
+        transferBar = null;
+        stopButton = null;
+        LIVE_ROWS.remove(view);
+        if (view.getParent() instanceof ViewGroup) ((ViewGroup) view.getParent()).removeView(view);
+        placeRows();
+    }
+
     private void rehome(Activity activity, View view) {
         if (row != view || activity.isFinishing() || activity.isDestroyed()) return;
         ViewGroup content = activity.findViewById(android.R.id.content);
@@ -523,6 +545,7 @@ final class SaveProgress {
         int hidden = 0;
         View highest = null;
         int aboveHighest = 0;
+        boolean top = false;
         for (View view : LIVE_ROWS) {
             // A row left on a screen that has closed (rehome gives up on a finishing activity)
             // can't be seen, so it takes no place: counted, it kept a new save's row out of sight
@@ -542,19 +565,27 @@ final class SaveProgress {
             ViewGroup root = (ViewGroup) view.getParent();
             Activity activity = (Activity) view.getContext();
             int gap = SettingsUi.dp(activity, ROW_GAP_DP);
-            int bottom = BlockAuthorOverlay.bannerParams(activity, root).bottomMargin
+            FrameLayout.LayoutParams notice = BlockAuthorOverlay.noticeParams(activity, root);
+            top = fromTop(notice);
+            // From the edge the notices keep to: up from the bottom, or down from the top.
+            int edge = (top ? notice.topMargin : notice.bottomMargin)
                     + SettingsUi.dp(activity, ABOVE_BANNER_DP);
             for (View previous : LIVE_ROWS) {
                 if (previous == view) break;
                 if (previous.getParent() == root && previous.getVisibility() == View.VISIBLE) {
-                    bottom += previous.getHeight() + gap;
+                    edge += previous.getHeight() + gap;
                 }
             }
-            setBottomMargin(view, bottom);
+            setEdgeMargin(view, edge, top);
             highest = view;
-            aboveHighest = bottom + view.getHeight() + gap;
+            aboveHighest = edge + view.getHeight() + gap;
         }
-        placeOverflow(highest, aboveHighest, hidden);
+        placeOverflow(highest, aboveHighest, top, hidden);
+    }
+
+    /** True when notices hang from the top of the screen, under Show notices at the top. */
+    private static boolean fromTop(FrameLayout.LayoutParams params) {
+        return (params.gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.TOP;
     }
 
     /**
@@ -565,7 +596,7 @@ final class SaveProgress {
      * on a phone a fourth save could never be taken out of line. This Cancel takes the last
      * save in line out; pressed again, the one before it.
      */
-    private static void placeOverflow(View highest, int bottom, int hidden) {
+    private static void placeOverflow(View highest, int edge, boolean top, int hidden) {
         TextView line = overflow;
         LinearLayout box = overflowRow;
         if (hidden == 0 || highest == null) {
@@ -584,7 +615,7 @@ final class SaveProgress {
             box.setGravity(Gravity.CENTER_VERTICAL);
             box.setTag("hushfeed_save_waiting_row");
             box.setPadding(SettingsUi.dp(activity, 16), 0, SettingsUi.dp(activity, 16), 0);
-            box.setBackground(SettingsUi.overlayBanner(activity));
+            Notices.dress(box);
             line = new TextView(activity);
             line.setTag("hushfeed_save_waiting");
             line.setTextColor(SettingsUi.OVERLAY_TEXT);
@@ -599,11 +630,11 @@ final class SaveProgress {
         }
         if (box.getParent() != root) {
             if (box.getParent() instanceof ViewGroup) ((ViewGroup) box.getParent()).removeView(box);
-            root.addView(box, BlockAuthorOverlay.bannerParams(activity, root));
+            root.addView(box, BlockAuthorOverlay.noticeParams(activity, root));
         }
         String text = L10n.quantity(activity, hidden, "One more save waiting", "%1$s more saves waiting");
         line.setText(text);
-        setBottomMargin(box, bottom);
+        setEdgeMargin(box, edge, top);
         if (hidden > overflowCount) announce(line, text);
         overflowCount = hidden;
     }
@@ -643,16 +674,27 @@ final class SaveProgress {
     }
 
     /**
-     * Lifts a row to {@code bottom}. The top window can have any ViewGroup at its root, and one
-     * that isn't a FrameLayout swaps the banner's params for its own kind as the row goes in, so
-     * a cast back to FrameLayout's threw on the next pass here, which a row's end runs outside
-     * any catch. A row whose params carry no margin stays where that layout puts it.
+     * Puts a row {@code edge} from the bottom, or from the top with notices at the top, so a
+     * switch flipped while rows are up moves them all to the new edge. The top window can have
+     * any ViewGroup at its root, and one that isn't a FrameLayout swaps the banner's params for
+     * its own kind as the row goes in, so a cast back to FrameLayout's threw on the next pass
+     * here, which a row's end runs outside any catch. A row whose params carry no margin stays
+     * where that layout puts it.
      */
-    private static void setBottomMargin(View view, int bottom) {
+    private static void setEdgeMargin(View view, int edge, boolean top) {
         if (!(view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        if (params.bottomMargin == bottom) return;
-        params.bottomMargin = bottom;
+        int topMargin = top ? edge : 0;
+        int bottomMargin = top ? 0 : edge;
+        int gravity = (top ? Gravity.TOP : Gravity.BOTTOM) | Gravity.CENTER_HORIZONTAL;
+        boolean frame = params instanceof FrameLayout.LayoutParams;
+        if (params.topMargin == topMargin && params.bottomMargin == bottomMargin
+                && (!frame || ((FrameLayout.LayoutParams) params).gravity == gravity)) {
+            return;
+        }
+        params.topMargin = topMargin;
+        params.bottomMargin = bottomMargin;
+        if (frame) ((FrameLayout.LayoutParams) params).gravity = gravity;
         view.setLayoutParams(params);
     }
 

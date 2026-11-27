@@ -3144,3 +3144,7 @@ Under the view count,Bên dưới số lượt xem
 After the view count,Sau số lượt xem
 Above the view count,Phía trên số lượt xem
 Above the view count takes the video length along with the date.,Phía trên số lượt xem sẽ đưa cả độ dài video đi cùng ngày.
+Show notices at the top,Hiện thông báo ở phía trên
+"Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.","Đặt các thông báo của Hushfeed, như khi lưu xong hoặc nút Hoàn tác sau khi chặn, ngay dưới thanh trạng thái thay vì phía trên thanh thẻ. Vuốt thông báo sang trái hoặc phải để đóng."
+Blur behind notices,Làm mờ phía sau thông báo
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.,"Làm mờ video phía sau các thông báo của Hushfeed để chúng trông như kính mờ. Yêu cầu Android 12 trở lên. Khi không nằm trên video, thông báo vẫn giữ giao diện tối thông thường."

@@ -604,6 +604,19 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 Settings.HIDE_SETTINGS_ROW
         ));
         addPreference(new SettingsRowChecklistPreference(context));
+        // Every bundle shows notices of its own (a save, a block's Undo, a reminder), so these stay.
+        addPreference(new TogglePreference(
+                context,
+                "Show notices at the top",
+                "Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.",
+                Settings.NOTICES_AT_TOP
+        ));
+        addPreference(new TogglePreference(
+                context,
+                "Blur behind notices",
+                "Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.",
+                Settings.NOTICE_BLUR
+        ));
         // Shown from the same start of TikTok's main screen as the settings row, so every bundle has it.
         addPreference(new TogglePreference(
                 context,

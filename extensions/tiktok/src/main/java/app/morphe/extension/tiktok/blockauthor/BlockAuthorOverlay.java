@@ -29,6 +29,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.download.OriginalPhotos;
+import app.morphe.extension.tiktok.feed.Notices;
 import app.morphe.extension.tiktok.feed.VideoOverlayHider;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.interaction.GestureActions;
@@ -1284,10 +1285,10 @@ public final class BlockAuthorOverlay {
      * The notice banner, telling the caller when it was read out in full.
      *
      * <p>{@code ranItsTime} runs on the main thread once the banner has been up for its whole
-     * time and is still on the screen, or at once when there was only a toast to show. Another
-     * banner replacing it, the controls going away, or the reader leaving the screen cuts it
-     * short, and then it never runs: a caller that only forgets what it said once it was seen
-     * can say it again later.
+     * time and is still on the screen, or at once when there was only a toast to show. The reader
+     * swiping it away (#545) read it too, so it runs then. Another banner replacing it, the
+     * controls going away, or the reader leaving the screen cuts it short, and then it never
+     * runs: a caller that only forgets what it said once it was seen can say it again later.
      */
     public static void showNoticeBanner(ViewGroup root, String message, Runnable ranItsTime) {
         showBanner(root, message, null, null, ranItsTime);
@@ -1344,12 +1345,12 @@ public final class BlockAuthorOverlay {
 
                 dismissUndo();
 
-                LinearLayout banner = new LinearLayout(activity);
+                Notices.SwipeRow banner = new Notices.SwipeRow(activity);
                 banner.setOrientation(LinearLayout.HORIZONTAL);
                 banner.setGravity(Gravity.CENTER_VERTICAL);
                 banner.setPadding(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12), SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12));
 
-                banner.setBackground(SettingsUi.overlayBanner(activity));
+                Notices.dress(banner);
 
                 TextView label = new TextView(activity);
                 label.setText(message);
@@ -1366,10 +1367,17 @@ public final class BlockAuthorOverlay {
                 // was a way back at all.
                 banner.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
 
-                banner.setLayoutParams(bannerParams(activity, root));
+                banner.setLayoutParams(noticeParams(activity, root));
 
                 root.addView(banner);
                 undoReference = new WeakReference<>(banner);
+                // Swiped off (#545), it was read: the reader put it away. Gone some other way
+                // first, it's someone else's to end.
+                banner.setOnSwipedAway(() -> {
+                    if (undoReference.get() != banner) return;
+                    dismissUndo();
+                    if (ranItsTime != null) ranItsTime.run();
+                });
 
                 // A second banner inside the six seconds replaced the first, and the first
                 // banner's dismiss was still queued: it took the new banner away early, with
@@ -1455,6 +1463,25 @@ public final class BlockAuthorOverlay {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -2,
                 Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
         params.setMargins(side, 0, side, SettingsUi.dp(activity, BANNER_FALLBACK_BOTTOM_DP));
+        return params;
+    }
+
+    /**
+     * Where a notice goes: the banner and a running save's rows (#545). With Show notices at the
+     * top on, a gap under the status bar where the root reaches up under it, or under the root's
+     * top where it starts lower, the way the unblock chip clears the bar; else where
+     * {@link #bannerParams} puts the banner. The bars a run of picks or deletes shows aren't
+     * notices and stay at the bottom.
+     */
+    public static FrameLayout.LayoutParams noticeParams(Activity activity, ViewGroup root) {
+        if (!Settings.NOTICES_AT_TOP.get()) return bannerParams(activity, root);
+        int side = SettingsUi.dp(activity, BANNER_GAP_DP);
+        Rect bars = SystemBarInsets.current(root);
+        int[] origin = new int[2];
+        root.getLocationOnScreen(origin);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -2,
+                Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+        params.setMargins(side, Math.max(0, bars.top - origin[1]) + side, side, 0);
         return params;
     }
 

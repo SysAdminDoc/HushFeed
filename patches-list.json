@@ -11172,6 +11172,24 @@
           "type": "kotlin.Boolean",
           "default": false,
           "values": null
+        },
+        {
+          "key": "notices_at_top",
+          "title": "Default: notices at top",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "notice_blur",
+          "title": "Default: notice blur",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
         }
       ]
     },

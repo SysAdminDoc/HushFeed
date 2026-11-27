@@ -3352,3 +3352,7 @@ Under the view count	ใต้จำนวนการดู
 After the view count	ต่อจากจำนวนการดู
 Above the view count	เหนือจำนวนการดู
 Above the view count takes the video length along with the date.	เหนือจำนวนการดู จะย้ายความยาววิดีโอไปพร้อมกับวันที่ด้วย
+Show notices at the top	แสดงการแจ้งเตือนด้านบน
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	วางการแจ้งเตือนของ Hushfeed เช่น การบันทึกที่เสร็จแล้วหรือปุ่มเลิกทำหลังการบล็อก ไว้ใต้แถบสถานะแทนที่จะอยู่เหนือแถบแท็บ ปัดการแจ้งเตือนไปทางซ้ายหรือขวาเพื่อปิด
+Blur behind notices	เบลอด้านหลังการแจ้งเตือน
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	เบลอวิดีโอด้านหลังการแจ้งเตือนของ Hushfeed ให้ดูเหมือนกระจกฝ้า ต้องใช้ Android 12 ขึ้นไป เมื่อไม่ได้อยู่บนวิดีโอจะยังคงเป็นสีเข้มแบบปกติ

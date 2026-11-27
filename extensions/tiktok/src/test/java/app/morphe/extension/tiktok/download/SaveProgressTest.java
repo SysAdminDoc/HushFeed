@@ -259,6 +259,72 @@ public class SaveProgressTest {
         }
     }
 
+    /**
+     * Show notices at the top (#545): the rows hang down from under the status bar, the first
+     * a banner's room below where the banner goes and each next one under the one before.
+     */
+    @Test public void withNoticesAtTheTopRowsHangDownFromUnderTheStatusBar() {
+        Settings.NOTICES_AT_TOP.save(true);
+        try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            SaveProgress first = SaveProgress.begin(3);
+            SaveProgress second = SaveProgress.begin(4);
+            settle();
+            FrameLayout.LayoutParams upper = (FrameLayout.LayoutParams)
+                    rowOf(find(root, "Saving 1 of 3")).getLayoutParams();
+            FrameLayout.LayoutParams lower = (FrameLayout.LayoutParams)
+                    rowOf(find(root, "Saving 1 of 4")).getLayoutParams();
+            FrameLayout.LayoutParams notice = BlockAuthorOverlay.noticeParams(activity, root);
+            assertEquals(android.view.Gravity.TOP, notice.gravity & android.view.Gravity.VERTICAL_GRAVITY_MASK);
+            assertEquals(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, upper.gravity);
+            assertEquals("the first row leaves the banner its place above it",
+                    notice.topMargin + app.morphe.extension.tiktok.settings.preference.SettingsUi.dp(activity, 56),
+                    upper.topMargin);
+            assertEquals(0, upper.bottomMargin);
+            assertEquals(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, lower.gravity);
+            assertTrue("the second row hangs under the first", lower.topMargin > upper.topMargin);
+            first.run(index -> { });
+            second.run(index -> { });
+            idle();
+            assertNull("the rows came down with their saves", find(root, "Cancel"));
+        } finally {
+            Settings.NOTICES_AT_TOP.save(false);
+        }
+    }
+
+    /** A swiped row goes (#545) and its save carries on to the end, saying nothing more. */
+    @Test public void aSwipedRowGoesAndItsSaveCarriesOn() {
+        try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            SaveProgress swiped = SaveProgress.begin(4);
+            SaveProgress kept = SaveProgress.begin(3);
+            settle();
+            app.morphe.extension.tiktok.feed.NoticesTest.layOut(root, 1080, 2400);
+            View row = rowOf(find(root, "Saving 1 of 4"));
+            View other = rowOf(find(root, "Saving 1 of 3"));
+            int base = ((FrameLayout.LayoutParams) row.getLayoutParams()).bottomMargin;
+            assertTrue(((FrameLayout.LayoutParams) other.getLayoutParams()).bottomMargin > base);
+
+            app.morphe.extension.tiktok.feed.NoticesTest.swipe(row, row.getWidth() / 4f, row.getWidth() / 2f, 10, 16);
+            app.morphe.extension.tiktok.feed.NoticesTest.settleSlide();
+            assertNull("the swiped row stayed", row.getParent());
+            assertEquals("the row left takes the lowest place", base,
+                    ((FrameLayout.LayoutParams) other.getLayoutParams()).bottomMargin);
+
+            SaveProgress.Outcome outcome = swiped.run(index -> idle());
+            idle();
+            assertEquals("the save went on without its row", 4, outcome.saved);
+            assertNull("no row came back for it", find(root, "Saving 4 of 4"));
+            kept.run(index -> { });
+            idle();
+            assertEquals("a swipe says nothing", List.of("Saving 1 of 4", "Saving 1 of 3"), said);
+        }
+    }
+
     @Test public void fiveFilesCountAndCancelStopsAfterTheFileUnderWay() {
         try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
             Activity activity = owner.get();

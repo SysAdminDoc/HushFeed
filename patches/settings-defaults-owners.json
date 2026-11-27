@@ -806,7 +806,9 @@
       "STARTUP_MESSAGE_TITLE",
       "STARTUP_MESSAGE_TEXT",
       "STARTUP_MESSAGE_DISMISSIBLE",
-      "CHECK_FOR_UPDATES"
+      "CHECK_FOR_UPDATES",
+      "NOTICES_AT_TOP",
+      "NOTICE_BLUR"
     ],
     "Share sheet tools": [
       "HIDE_SHARE_CHANNELS",

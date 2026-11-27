@@ -3349,3 +3349,7 @@ Under the view count	Baxış sayının altında
 After the view count	Baxış sayından sonra
 Above the view count	Baxış sayının üstündə
 Above the view count takes the video length along with the date.	Baxış sayının üstündə seçimi videonun uzunluğunu da tarixlə birlikdə aparır.
+Show notices at the top	Bildirişləri yuxarıda göstər
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	Hushfeed bildirişlərini, məsələn, bitmiş yadda saxlamanı və ya bloklamadan sonrakı «Geri qaytarın» düyməsini, nişanlar panelinin üstündə deyil, status sətrinin düz altında göstərir. Bağlamaq üçün bildirişi sola və ya sağa sürüşdürün.
+Blur behind notices	Bildirişlərin arxasını bulanıqlaşdır
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	Hushfeed bildirişlərinin arxasındakı videonu bulanıqlaşdırır ki, buzlu şüşə kimi görünsünlər. Android 12 və yuxarı tələb olunur. Video olmayan yerdə adi tünd görünüşdə qalırlar.

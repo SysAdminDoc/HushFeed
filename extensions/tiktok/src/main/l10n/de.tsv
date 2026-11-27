@@ -3352,3 +3352,7 @@ Under the view count	Unter der Aufrufzahl
 After the view count	Nach der Aufrufzahl
 Above the view count	Über der Aufrufzahl
 Above the view count takes the video length along with the date.	Über der Aufrufzahl nimmt die Videolänge mit dem Datum mit.
+Show notices at the top	Hinweise oben anzeigen
+Put Hushfeed's notices, like a finished save or a block's Undo, just under the status bar instead of above the tab bar. Swipe a notice left or right to close it.	Zeigt Hushfeeds Hinweise, etwa ein fertiges Speichern oder „Rückgängig“ nach einer Blockierung, direkt unter der Statusleiste statt über der Tab-Leiste. Wische einen Hinweis nach links oder rechts, um ihn zu schließen.
+Blur behind notices	Hinter Hinweisen unscharf machen
+Blur the video behind Hushfeed's notices so they look like frosted glass. Needs Android 12 and up. Away from a video they keep the plain dark look.	Macht das Video hinter Hushfeeds Hinweisen unscharf, sodass sie wie Milchglas aussehen. Braucht Android 12 oder neuer. Ohne Video dahinter behalten sie den schlichten dunklen Look.

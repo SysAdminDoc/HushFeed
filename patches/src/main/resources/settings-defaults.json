@@ -820,7 +820,9 @@
       "startup_message_title",
       "startup_message_text",
       "startup_message_dismissible",
-      "check_for_updates"
+      "check_for_updates",
+      "notices_at_top",
+      "notice_blur"
     ],
     "Share sheet tools": [
       "hide_share_channels",
@@ -4092,6 +4094,18 @@
       "key": "not_interested_button_position",
       "type": "string",
       "default": ""
+    },
+    "notice_blur": {
+      "field": "NOTICE_BLUR",
+      "key": "notice_blur",
+      "type": "boolean",
+      "default": false
+    },
+    "notices_at_top": {
+      "field": "NOTICES_AT_TOP",
+      "key": "notices_at_top",
+      "type": "boolean",
+      "default": false
     },
     "offer_live_clear_screen": {
       "field": "OFFER_LIVE_CLEAR_SCREEN",

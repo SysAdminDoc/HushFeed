@@ -257,6 +257,30 @@ final class GlassVideoBlur {
         return running;
     }
 
+    /** True while a window's focus listener is held, for the tests. */
+    boolean watchingWindow() {
+        return watched != null;
+    }
+
+    /**
+     * Lets go of the window and the picture, for an owner that comes and goes, a notice (#545):
+     * the focus listener comes off the window it was put on, which outlives the notice, and the
+     * strip is dropped. A loop still scheduled ends on its next pass, and a later draw starts it
+     * all again.
+     */
+    void release() {
+        if (watched != null && watched.isAlive()) watched.removeOnWindowFocusChangeListener(focus);
+        watched = null;
+        source = null;
+        hasFrame = false;
+        drawn = null;
+        // A read in flight still writes into the strip, so only one at rest is freed.
+        if (sample != null && !copying) {
+            sample.recycle();
+            sample = null;
+        }
+    }
+
     /**
      * Called from the glass background's draw, with the pill's bounds in the bar. Starts the
      * sampling when it isn't running, and draws the blurred strip into the pill's shape once

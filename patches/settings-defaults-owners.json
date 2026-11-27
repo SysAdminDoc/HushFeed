@@ -195,7 +195,8 @@
       "COPY_IDS",
       "ACCOUNT_FACTS",
       "COUNTRY_ON_PROFILES",
-      "BIO_MENTION_LINKS"
+      "BIO_MENTION_LINKS",
+      "BIO_SOCIAL_LINKS"
     ],
     "Copy comments without username": [
       "COPY_COMMENTS_WITHOUT_USERNAME"

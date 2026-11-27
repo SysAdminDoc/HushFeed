@@ -103,6 +103,9 @@ class ExtensionHostsTest {
             "github.com", "api.github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com",
             "music.youtube.com", "git.iem.at", "central.sonatype.com", "www.apache.org",
             "accounts.spotify.com", "amp.shazam.com", "localhost", "openfontlicense.org",
+            // Links to other apps in bios: public pages a tap opens in that app or the browser (#549).
+            "www.instagram.com", "www.snapchat.com", "www.youtube.com", "x.com", "www.twitch.tv",
+            "www.threads.com", "www.facebook.com",
         )
         /**
          * The media transport (the client, and the connection it pins to a checked address), and

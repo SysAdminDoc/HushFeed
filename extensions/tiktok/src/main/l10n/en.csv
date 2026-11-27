@@ -189,6 +189,7 @@ A removal is already running,A removal is already running
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
 "A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter.","A tap shows the hidden controls again instead of pausing the video. They hide again after the delay, or after %1$d seconds if the delay is shorter."
 "A tap still pauses and plays the video, but the big play icon doesn't show over it.","A tap still pauses and plays the video, but the big play icon doesn't show over it."
+"A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.","A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap."
 "A video heavier than this plays a lighter version. If none fits, it plays its lightest one.","A video heavier than this plays a lighter version. If none fits, it plays its lightest one."
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
@@ -1397,6 +1398,7 @@ Line them up over the right column,Line them up over the right column
 Link copied,Link copied
 Links,Links
 Links in comments open,Links in comments open
+Links to other apps in bios,Links to other apps in bios
 Liquid glass look,Liquid glass look
 Liquid glass when held,Liquid glass when held
 Listen for your name,Listen for your name

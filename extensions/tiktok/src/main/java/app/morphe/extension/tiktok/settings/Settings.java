@@ -2068,6 +2068,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COUNTRY_ON_PROFILES = new BooleanSetting("country_on_profiles", FALSE);
     // @usernames in a profile's bio open those profiles on a tap (#247).
     public static final BooleanSetting BIO_MENTION_LINKS = new BooleanSetting("bio_mention_links", TRUE);
+    // Another app's username in a bio ("IG: name") becomes a pill opening its public page (#549).
+    public static final BooleanSetting BIO_SOCIAL_LINKS = new BooleanSetting("bio_social_links", FALSE);
     // Package names of the apps added to the Share via row, comma separated, in the order picked.
     public static final StringSetting SHARE_ADDED_APPS = new StringSetting("share_added_apps", "");
     public static final BooleanSetting DISABLE_LONG_PRESS_QUICK_SHARE =

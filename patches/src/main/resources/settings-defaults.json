@@ -198,7 +198,8 @@
       "copy_ids",
       "account_facts",
       "country_on_profiles",
-      "bio_mention_links"
+      "bio_mention_links",
+      "bio_social_links"
     ],
     "Copy comments without username": [
       "copy_comments_without_username"
@@ -1135,6 +1136,12 @@
       "key": "bio_mention_links",
       "type": "boolean",
       "default": true
+    },
+    "bio_social_links": {
+      "field": "BIO_SOCIAL_LINKS",
+      "key": "bio_social_links",
+      "type": "boolean",
+      "default": false
     },
     "blend_video_to_screen": {
       "field": "BLEND_VIDEO_TO_SCREEN",

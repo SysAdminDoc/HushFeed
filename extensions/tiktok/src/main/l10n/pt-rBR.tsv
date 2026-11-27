@@ -3310,3 +3310,7 @@ A profile's share sheet gets an Account facts button. It shows what TikTok alrea
 Yellow counts for private lists	Contagens amarelas para listas privadas
 # context: Settings toggle summary for Yellow counts for private lists; it also applies to your own profile
 On a profile that keeps its followers or following list private, that count shows in yellow, so you can tell it's private before you tap it. Yours too.	Num perfil que mantém privada a lista de seguidores ou de seguindo, essa contagem aparece em amarelo, para você saber que é privada antes de tocar. O seu também.
+# context: Settings toggle title: another app's username in a profile bio (IG, Snap, YT, X, Twitch, Threads, FB) becomes a tappable pill that opens its public page
+Links to other apps in bios	Links para outros apps nas bios
+# context: Settings toggle summary for Links to other apps in bios; IG, Snap, YT, X, Twitch, Threads and FB are the short names people type in bios and stay as written
+A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns into a pill in that app's color. Tapping it opens that account's public page in the app or your browser. Nothing is looked up before you tap.	Um nome de usuário escrito depois de IG, Snap, YT, X, Twitch, Threads ou FB numa bio vira uma pílula na cor desse app. Tocar nela abre a página pública da conta no app ou no seu navegador. Nada é consultado antes do toque.

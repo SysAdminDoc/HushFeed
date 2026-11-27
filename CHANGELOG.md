@@ -54,6 +54,7 @@ Every Hushfeed release, newest first.
 * Two new rows in Interface for profile grids. `Corner size on profile grids` sets how round `Round the corners on profile grids` makes them, from 1 to 48 dp (8 is what you had before). `Gap between videos on profile grids` adds up to 24 dp of space between the videos, and 0 keeps TikTok's own thin line (#549).
 * `Account facts` now ends with links to the profile picture in its three sizes and to the profile cover, and shows the gifter points TikTok sends next to the gifter level. Tap any value on the sheet to copy just that one. TikTok's account model has no device or phone system field, so there's nothing to show for that (#549).
 * New `Yellow counts for private lists` switch in App, under `Show what changed since your last visit`. On a profile whose followers or following list is private, that count turns yellow, so you know before you tap it and get TikTok's "this list is private" notice. It reads the same privacy value TikTok checks for that notice, and it's off until you turn it on (#549).
+* New `Links to other apps in bios` switch in App, under `Tap @names in bios`. When a bio names another app before a username, like "IG: nasa", "snap @nasa" or "X: @nasa", that name becomes a pill in the app's color. Tap it and the account's public page opens in that app or your browser. It knows Instagram, Snapchat, YouTube, X, Twitch, Threads and Facebook, checks the name against that app's own username rules, and looks nothing up before you tap. It's off until you turn it on (#549).
 
 ## 0.85.0 (2026-11-24)
 

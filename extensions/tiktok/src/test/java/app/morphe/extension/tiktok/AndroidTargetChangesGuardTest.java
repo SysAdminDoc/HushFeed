@@ -226,6 +226,15 @@ public class AndroidTargetChangesGuardTest {
                         + "link it finds is the one TikTok put on the clipboard, and it is opened "
                         + "only when isShort takes its host (vm.tiktok.com, vt.tiktok.com or "
                         + "tiktok.com/t/), over https with the platform's own checks");
+        // Links to other apps in bios (#549): each is the start of an account's public page,
+        // finished with a username the bio already shows and handed to Android as a web link on a
+        // tap, so that app or the reader's browser opens it. Nothing here fetches any of them.
+        for (String page : new String[]{"https://www.instagram.com/", "https://www.snapchat.com/add/",
+                "https://www.youtube.com/@", "https://x.com/", "https://www.twitch.tv/",
+                "https://www.threads.com/@", "https://www.facebook.com/"}) {
+            REVIEWED_ADDRESSES.put(page, "not fetched: built for an ACTION_VIEW intent a tap on a "
+                    + "bio's pill hands to that app or the reader's browser");
+        }
     }
 
     /** Where a java.lang.reflect.Field lands in a local, a field or a parameter. */

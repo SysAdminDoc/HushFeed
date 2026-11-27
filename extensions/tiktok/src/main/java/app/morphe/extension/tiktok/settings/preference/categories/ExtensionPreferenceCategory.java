@@ -376,6 +376,14 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "The rest of the bio still translates on a tap.",
                     Settings.BIO_MENTION_LINKS
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Links to other apps in bios",
+                    "A username named after IG, Snap, YT, X, Twitch, Threads or FB in a bio turns "
+                            + "into a pill in that app's color. Tapping it opens that account's public "
+                            + "page in the app or your browser. Nothing is looked up before you tap.",
+                    Settings.BIO_SOCIAL_LINKS
+            ));
         }
         if (SettingsStatus.promotionalBannersEnabled) {
             addPreference(new TogglePreference(

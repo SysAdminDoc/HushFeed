@@ -5342,6 +5342,15 @@
           "values": null
         },
         {
+          "key": "ghost_live_double_tap",
+          "title": "Default: ghost live double tap",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "ghost_local_likes",
           "title": "Default: ghost local likes",
           "description": null,

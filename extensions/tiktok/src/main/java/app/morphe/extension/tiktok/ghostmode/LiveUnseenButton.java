@@ -6,14 +6,18 @@ package app.morphe.extension.tiktok.ghostmode;
 
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -23,11 +27,16 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.OverlayGlyphDrawable;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.live.LiveAutoTap;
 import app.morphe.extension.tiktok.live.LiveRecordChip;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -37,7 +46,8 @@ import java.util.WeakHashMap;
  * you: the room's enter was held back. A tap lets this host see you, by sending the enter that
  * was held when the room opened, and the eye opens. It stays open for the rest of that visit.
  * Leaving the room, or tapping the open eye, crosses it out again, so the next visit is hidden
- * (#491).
+ * (#491). With `Double tap to let the host see you` on, no eye is drawn and a double tap in the
+ * room does what its tap did (D#359).
  *
  * <p>The room's page tells this class it is resuming, the hook the Record chip and the block
  * button use. The pager resumes the next room right after the one being watched, so the room is
@@ -62,6 +72,8 @@ public final class LiveUnseenButton {
     private static WeakReference<Activity> host = new WeakReference<>(null);
     private static WeakReference<TextView> buttonReference = new WeakReference<>(null);
     private static WeakReference<Application> followed = new WeakReference<>(null);
+    /** The last window whose touches the double tap reads (D#359); an older one only passes them on. */
+    private static WeakReference<Window> watchedWindow = new WeakReference<>(null);
     private static boolean ticking;
     private static boolean revealing;
     /** Whether the button on screen draws the open eye, so a tick redraws it only on a change. */
@@ -192,14 +204,21 @@ public final class LiveUnseenButton {
         onTapped(activity);
     }
 
+    /** True while a double tap in a LIVE lets its host see you and no eye covers the video (D#359). */
+    static boolean doubleTapInstead() {
+        return enabled() && Settings.GHOST_LIVE_DOUBLE_TAP.get();
+    }
+
     /** Shows, hides or redraws the eye for the room open in {@code activity}. */
     static void refresh(Activity activity) {
         if (activity == null) return;
+        boolean room = !activity.isFinishing() && !activity.isDestroyed() && !FeedVisibility.isFeedWindow(activity);
+        if (room && doubleTapInstead()) watchTaps(activity);
         // In the long-press menu, the eye is a row there and nothing covers the stream (D#359).
-        // A held room has no such menu, so there the eye stays: it's the only way out of the hold.
-        boolean wanted = enabled() && !LiveRecordChip.buttonsInMenu()
-                && !activity.isFinishing() && !activity.isDestroyed()
-                && !FeedVisibility.isFeedWindow(activity) && !inPictureInPicture(activity);
+        // A held room has no such menu, so there the eye stays: it's the only way out of the hold,
+        // unless a double tap is.
+        boolean wanted = enabled() && !doubleTapInstead() && !LiveRecordChip.buttonsInMenu()
+                && room && !inPictureInPicture(activity);
         if (!wanted) {
             removeButton();
             return;
@@ -267,6 +286,84 @@ public final class LiveUnseenButton {
         if (button != null && button.getParent() instanceof ViewGroup) {
             ((ViewGroup) button.getParent()).removeView(button);
         }
+    }
+
+    /**
+     * Wraps the window's callback once so its touches reach {@link #touched} first (D#359). It
+     * takes nothing, and once the switch is off or the window belongs to another room's activity
+     * it only passes touches on.
+     */
+    private static void watchTaps(Activity activity) {
+        Window window = activity.getWindow();
+        if (window == null || watchedWindow.get() == window) return;
+        Window.Callback inner = window.getCallback();
+        if (inner == null) return;
+        ViewConfiguration config = ViewConfiguration.get(activity);
+        DoubleTapWatch taps = new DoubleTapWatch(config.getScaledTouchSlop(), config.getScaledDoubleTapSlop());
+        WeakReference<Activity> owner = new WeakReference<>(activity);
+        InvocationHandler watcher = (proxy, method, args) -> {
+            if (args != null && args.length == 1 && args[0] instanceof MotionEvent
+                    && "dispatchTouchEvent".equals(method.getName())) {
+                touched(owner.get(), taps, (MotionEvent) args[0]);
+            }
+            try {
+                return method.invoke(inner, args);
+            } catch (InvocationTargetException wrapped) {
+                throw wrapped.getCause() != null ? wrapped.getCause() : wrapped;
+            }
+        };
+        window.setCallback((Window.Callback) Proxy.newProxyInstance(
+                Window.Callback.class.getClassLoader(), new Class<?>[]{Window.Callback.class}, watcher));
+        watchedWindow = new WeakReference<>(window);
+    }
+
+    /** One touch in a watched window: a double tap there lets the host see you. */
+    static void touched(Activity activity, DoubleTapWatch taps, MotionEvent event) {
+        try {
+            // Auto tap's own taps go through this window too, and a run of them isn't you.
+            if (activity == null || activity != host.get() || LiveAutoTap.isInjecting() || !doubleTapInstead()) {
+                taps.skipGesture();
+                return;
+            }
+            int action = event.getActionMasked();
+            boolean doubled = taps.feed(action, event.getX(), event.getY(), event.getEventTime());
+            // A tap on Record, Auto tap or the block button is a tap on that button.
+            if (action == MotionEvent.ACTION_DOWN && onOwnButton(activity, event.getX(), event.getY())) {
+                taps.skipGesture();
+                return;
+            }
+            if (doubled) HANDLER.post(() -> doubleTapped(activity));
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not read a tap for Ghost mode's LIVE double tap", failure);
+        }
+    }
+
+    /**
+     * A double tap in a LIVE: the host of the room in front sees you, as the eye's tap did. Once
+     * they can, a double tap is TikTok's own again (its likes), so it changes nothing here, and
+     * leaving the room hides the next visit as always (#491).
+     */
+    static void doubleTapped(Activity activity) {
+        if (activity == null || activity != host.get() || revealing || !doubleTapInstead()) return;
+        String room = roomInFront(activity);
+        if (room == null || LiveUnseen.revealed(room)) return;
+        activity.getWindow().getDecorView().performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        onTapped(activity);
+    }
+
+    /** Whether ({@code x}, {@code y}) in the window lands on one of Hushfeed's buttons in the room. */
+    private static boolean onOwnButton(Activity activity, float x, float y) {
+        ViewGroup content = activity.findViewById(android.R.id.content);
+        if (content == null) return false;
+        Rect area = new Rect();
+        for (int i = 0; i < content.getChildCount(); i++) {
+            View child = content.getChildAt(i);
+            if (LiveRecordChip.isStacked(child) && child.isShown() && child.getGlobalVisibleRect(area)
+                    && area.contains((int) x, (int) y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static void onTapped(Activity activity) {
@@ -345,6 +442,7 @@ public final class LiveUnseenButton {
         PAGES.clear();
         removeButton();
         host = new WeakReference<>(null);
+        watchedWindow = new WeakReference<>(null);
         revealing = false;
     }
 }

@@ -390,6 +390,7 @@
       "ghost_hide_profile_visits",
       "ghost_hide_typing",
       "ghost_hide_live_views",
+      "ghost_live_double_tap",
       "ghost_local_likes"
     ],
     "Group likes per comment": [
@@ -2270,6 +2271,12 @@
       "key": "ghost_hide_typing",
       "type": "boolean",
       "default": true
+    },
+    "ghost_live_double_tap": {
+      "field": "GHOST_LIVE_DOUBLE_TAP",
+      "key": "ghost_live_double_tap",
+      "type": "boolean",
+      "default": false
     },
     "ghost_local_likes": {
       "field": "GHOST_LOCAL_LIKES",

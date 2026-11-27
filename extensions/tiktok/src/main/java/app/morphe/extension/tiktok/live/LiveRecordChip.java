@@ -479,6 +479,11 @@ public final class LiveRecordChip {
         view.setTag(new StackSlot(rank, wantedTop, gap));
     }
 
+    /** Whether {@code view} is one of Hushfeed's own buttons in a room's stack. */
+    public static boolean isStacked(View view) {
+        return stackRank(view) > 0;
+    }
+
     private static int stackRank(View view) {
         Object tag = view == null ? null : view.getTag();
         return tag instanceof StackSlot ? ((StackSlot) tag).rank : 0;

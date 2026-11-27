@@ -509,6 +509,92 @@ public class LiveUnseenTest {
         assertTrue(LiveUnseen.unbuilt(ROOM));
     }
 
+    /** Sends a tap at ({@code x}, {@code y}) through the window's callback, as a finger's would arrive. */
+    private static void tapWindow(android.app.Activity activity, float x, float y, long at) {
+        android.view.Window.Callback callback = activity.getWindow().getCallback();
+        android.view.MotionEvent down = android.view.MotionEvent.obtain(at, at, android.view.MotionEvent.ACTION_DOWN, x, y, 0);
+        android.view.MotionEvent up = android.view.MotionEvent.obtain(at, at + 50, android.view.MotionEvent.ACTION_UP, x, y, 0);
+        callback.dispatchTouchEvent(down);
+        callback.dispatchTouchEvent(up);
+        down.recycle();
+        up.recycle();
+    }
+
+    /** Idles the main thread until a reveal has reported back, which it does with a toast. */
+    private static void waitForRevealToast() throws InterruptedException {
+        for (int i = 0; i < 200 && ShadowToast.getTextOfLatestToast() == null; i++) {
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            if (ShadowToast.getTextOfLatestToast() == null) Thread.sleep(10);
+        }
+    }
+
+    /**
+     * D#359: with `Double tap to let the host see you` on, no eye covers the LIVE, and a double tap
+     * in the room lets its host see you, as the eye's tap did. Once they can, a double tap is
+     * TikTok's own like again. A double tap on one of Hushfeed's buttons is a tap on that button,
+     * and with the switch off the eye is back.
+     */
+    @Test public void aDoubleTapLetsTheHostSeeYouWithNoEyeOnTheVideo() throws Exception {
+        on();
+        Settings.GHOST_LIVE_DOUBLE_TAP.save(true);
+        android.app.Activity activity = org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        android.view.ViewGroup content = activity.findViewById(android.R.id.content);
+        RoomPage page = new RoomPage(activity, ROOM);
+        try {
+            int before = content.getChildCount();
+            assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+            LiveUnseenButton.noteRoomFragment(page);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the room is held", LiveUnseenButton.roomUnbuilt());
+            assertEquals("no eye on the video", before, content.getChildCount());
+
+            // A tap on Hushfeed's own button in the room, twice, is that button's.
+            android.view.View record = new android.view.View(activity);
+            app.morphe.extension.tiktok.live.LiveRecordChip.markStacked(record, 1, 0, 0);
+            content.addView(record, new android.widget.FrameLayout.LayoutParams(200, 200, android.view.Gravity.TOP | android.view.Gravity.START));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.graphics.Rect area = new android.graphics.Rect();
+            assertTrue("the stand-in button is on screen", record.getGlobalVisibleRect(area));
+            long at = SystemClock.uptimeMillis();
+            tapWindow(activity, area.centerX(), area.centerY(), at);
+            tapWindow(activity, area.centerX(), area.centerY(), at + 150);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse("a double tap on a button lets no one see you", LiveUnseen.revealed(ROOM));
+            content.removeView(record);
+
+            // One tap is a tap.
+            float x = content.getWidth() / 2f;
+            float y = content.getHeight() / 2f;
+            tapWindow(activity, x, y, at + 2000);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse("one tap lets no one see you", LiveUnseen.revealed(ROOM));
+
+            // Two are the eye's tap.
+            ShadowToast.reset();
+            tapWindow(activity, x, y, at + 2150);
+            waitForRevealToast();
+            assertTrue("a double tap lets the host see you", LiveUnseen.revealed(ROOM));
+            assertEquals("The host can see you now", ShadowToast.getTextOfLatestToast());
+
+            // Now it's TikTok's double tap, a like, and the host still sees you.
+            ShadowToast.reset();
+            tapWindow(activity, x, y, at + 4000);
+            tapWindow(activity, x, y, at + 4150);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(LiveUnseen.revealed(ROOM));
+            assertNull("nothing to say about a like", ShadowToast.getTextOfLatestToast());
+
+            Settings.GHOST_LIVE_DOUBLE_TAP.save(false);
+            LiveUnseenButton.refresh(activity);
+            assertEquals("the switch off puts the eye back", before + 1, content.getChildCount());
+        } finally {
+            Settings.GHOST_LIVE_DOUBLE_TAP.resetToDefault();
+            LiveUnseen.hideAgain(ROOM);
+            LiveUnseenButton.resetForTests();
+            activity.finish();
+        }
+    }
+
     @Test public void noRoomReadsAsNoRoom() {
         assertNull(app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(null));
         assertEquals(ROOM, app.morphe.extension.tiktok.follow.FollowDiagnostics.liveRoomIdOf(new Request(ENTER)));

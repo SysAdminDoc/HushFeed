@@ -1759,6 +1759,10 @@ public class Settings extends BaseSettings {
     // (#420). Off by default, like Hide online status, and read at each request, so no restart.
     public static final BooleanSetting GHOST_HIDE_LIVE_VIEWS =
             new BooleanSetting("ghost_hide_live_views", FALSE, false, Setting.parent(GHOST_MODE));
+    // Swaps the LIVE eye for a double tap in the room (D#359). Off by default, and read at each
+    // touch and each tick of the eye, so no restart.
+    public static final BooleanSetting GHOST_LIVE_DOUBLE_TAP =
+            new BooleanSetting("ghost_live_double_tap", FALSE, false, Setting.parent(GHOST_HIDE_LIVE_VIEWS));
     // Answers a video like on the phone and keeps it there, so TikTok never gets it. Off by
     // default, and read at each like, so no restart.
     public static final BooleanSetting GHOST_LOCAL_LIKES =

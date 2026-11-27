@@ -147,6 +147,13 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                                 + "that host see you. Needs Ghost mode on.",
                         Settings.GHOST_HIDE_LIVE_VIEWS
                 ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Double tap to let the host see you",
+                        "No eye on the video. Double tap a LIVE to let that host see you, and the "
+                                + "next LIVE you open hides you again. Needs Watch LIVEs unseen on.",
+                        Settings.GHOST_LIVE_DOUBLE_TAP
+                ));
             }
             if (SettingsStatus.ghostModeLocalLikesEnabled) {
                 addPreference(new TogglePreference(

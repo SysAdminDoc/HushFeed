@@ -387,6 +387,7 @@
       "GHOST_HIDE_PROFILE_VISITS",
       "GHOST_HIDE_TYPING",
       "GHOST_HIDE_LIVE_VIEWS",
+      "GHOST_LIVE_DOUBLE_TAP",
       "GHOST_LOCAL_LIKES"
     ],
     "Group likes per comment": [

@@ -117,6 +117,11 @@ public final class LiveAutoTap {
         return SettingsStatus.liveControlsEnabled && Settings.LIVE_AUTO_TAP.get() && !Setting.isPaused();
     }
 
+    /** True while a tap Auto tap made is going through the window, so a touch watcher can skip it. */
+    public static boolean isInjecting() {
+        return injecting;
+    }
+
     /** True while Auto tap is offered in the menu from holding the middle of a LIVE (#359). */
     public static boolean inMenu() {
         return enabled() && LiveRecordChip.buttonsInMenu();

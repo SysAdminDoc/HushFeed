@@ -270,10 +270,10 @@ public class VideoMusicLineTest {
         VideoOverlayHider.resolveForTests("desc", CAPTION);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER);
         VideoOverlayHider.resolveForTests("o7a", OLD_TITLE);
-        VideoOverlayHider.resolveForTests("ofs", NEW_TITLE);
+        VideoOverlayHider.resolveForTests("oan", NEW_TITLE);
         for (String candidate : BUILDS) {
-            String title = candidate + ":ofs";
-            String disc = candidate + ":pyj";
+            String title = candidate + ":oan";
+            String disc = candidate + ":pss";
             // The cache's test override is literal. Another build resolves to zero in the app.
             VideoOverlayHider.resolveForTests(title, BuildNames.entryName(title) == null ? 0 : titleId(candidate));
             VideoOverlayHider.resolveForTests(disc, BuildNames.entryName(disc) == null ? 0 : discId(candidate));

@@ -50,6 +50,15 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
     private static final ImageLoads INSTANCE = new ImageLoads();
     private static final Object NO_URI_METHOD = new Object();
     private static final Map<Class<?>, Object> URI_METHODS = new ConcurrentHashMap<>();
+    private static final Object NO_CODE_METHOD = new Object();
+    private static final Map<Class<?>, Object> CODE_METHODS = new ConcurrentHashMap<>();
+    /**
+     * TikTok's image loader (com.ss.mediakit's MIO client) fails a fetch with an exception that
+     * keeps these two names in every build: the loader's own error code, and a general code that
+     * is always 9999 for the loader's failures. The message is only "native error" or "task
+     * canceled", so without the code a report can't tell a lookup that failed from a timeout (#415).
+     */
+    private static final String[] CODE_GETTERS = {"getMIOErrorCode", "getErrorCode"};
     // Compiled where a refusal can't throw out of the class's initializer into Fresco's call.
     private static final Pattern URL = compiled(
         "(?i)\\b[a-z][a-z0-9+.-]*://([^/\\s?#:,;)\\}\\]\"']+)[^\\s,;)\\}\\]\"']*");
@@ -185,10 +194,44 @@ public final class ImageLoads implements LogBufferManager.ServerNamingSection {
         String message = failure.getMessage();
         // A message that can't be cut down to its hosts stays out, since it may hold a signed URL.
         if (message == null || URL == null || SPACES == null || PATH == null || ROUTE == null
-                || HEADER_NAME == null) return name;
+                || HEADER_NAME == null) return withCode(name, failure);
         message = paths(headerNames(URL.matcher(message).replaceAll("$1")));
         message = SPACES.matcher(message).replaceAll(" ").trim();
-        return message.isEmpty() ? name : name + ": " + message;
+        return withCode(message.isEmpty() ? name : name + ": " + message, failure);
+    }
+
+    private static String withCode(String described, Throwable failure) {
+        Integer code = code(failure);
+        return code == null ? described : described + " (code " + code + ")";
+    }
+
+    /** The failure's own error code, through the first of {@link #CODE_GETTERS} its class has. */
+    static Integer code(Throwable failure) {
+        Class<?> type = failure.getClass();
+        Object getter = CODE_METHODS.get(type);
+        if (getter == null) {
+            getter = codeGetter(type);
+            CODE_METHODS.put(type, getter);
+        }
+        if (getter == NO_CODE_METHOD) return null;
+        try {
+            Object value = ((Method) getter).invoke(failure);
+            return value instanceof Integer ? (Integer) value : null;
+        } catch (ReflectiveOperationException | RuntimeException unreadable) {
+            return null;
+        }
+    }
+
+    private static Object codeGetter(Class<?> type) {
+        for (String wanted : CODE_GETTERS) {
+            try {
+                Method method = type.getMethod(wanted);
+                if (method.getReturnType() == int.class && !Modifier.isStatic(method.getModifiers())) return method;
+            } catch (NoSuchMethodException | SecurityException missing) {
+                // Try the next name.
+            }
+        }
+        return NO_CODE_METHOD;
     }
 
     private static String headerNames(String message) {

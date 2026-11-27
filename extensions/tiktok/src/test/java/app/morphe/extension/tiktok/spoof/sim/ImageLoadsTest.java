@@ -140,6 +140,47 @@ public class ImageLoadsTest {
         assertEquals("no reason given", ImageLoads.kind(null));
     }
 
+    @Test public void theImageLoadersOwnErrorCodeSplitsItsNativeErrors() {
+        assertEquals("LoaderFailure: native error (code -2001)",
+            ImageLoads.kind(new LoaderFailure("native error", -2001)));
+        assertEquals("LoaderFailure: task canceled (code -1)",
+            ImageLoads.kind(new LoaderFailure("task canceled", -1)));
+        assertEquals("GeneralFailure: refused (code 7)", ImageLoads.kind(new GeneralFailure("refused", 7)));
+        assertEquals("GeneralFailure (code 7)", ImageLoads.kind(new GeneralFailure(null, 7)));
+        assertEquals("IOException: native error", ImageLoads.kind(new IOException("native error")));
+    }
+
+    /**
+     * Stands in for 48.0.2's `0Hws` (47.9.3's parent of `0ETf`): an IllegalStateException whose
+     * `getErrorCode()` TikTok keeps by name.
+     */
+    public static class GeneralFailure extends IllegalStateException {
+        private final int code;
+
+        GeneralFailure(String message, int code) {
+            super(message);
+            this.code = code;
+        }
+
+        public int getErrorCode() {
+            return code;
+        }
+    }
+
+    /** Stands in for 48.0.2's `0Hwv`: the image loader's failure, 9999 outside and its code inside. */
+    public static class LoaderFailure extends GeneralFailure {
+        private final int loaderCode;
+
+        LoaderFailure(String message, int loaderCode) {
+            super(message, 9999);
+            this.loaderCode = loaderCode;
+        }
+
+        public int getMIOErrorCode() {
+            return loaderCode;
+        }
+    }
+
     /** Stands in for 47.9.3's network failure, an obfuscated exception with a status line. */
     static class HttpFailure extends Exception {
         HttpFailure(String message) {

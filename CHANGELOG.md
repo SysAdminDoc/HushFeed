@@ -48,6 +48,7 @@ Every Hushfeed release, newest first.
 * New `Double tap to let the host see you` switch under `Watch LIVEs unseen` in Privacy. With it on there's no eye on the LIVE at all. Double tap the LIVE and that host can see you, and the next LIVE you open hides you again. Once the host can see you, a double tap is TikTok's usual like (#359).
 * `Accent color` paints TikTok 48.0.2 again. Buttons, red text, the follow plus under feed avatars and the unread badges on the Inbox tab take your color, and `Like color` and `Save color` reach the liked heart and the saved bookmark. The patch was still looking for 47.9.3's names for those colors and pictures.
 * The patches are built with Morphe patcher 2.6.0, the one stable Morphe Manager 2.8.0, morphe-desktop 2.4.0 and morphe-cli 2.4.0 ship. Bundles from now on need Manager 2.8.0 or newer, and the README and the bug form say so.
+* When a picture fails to load, the diagnostic report's IMAGE LOADS section now adds the error code TikTok's image loader gave, so a "native error" or "task canceled" line shows what actually went wrong (#415).
 
 ## 0.85.0 (2026-11-24)
 

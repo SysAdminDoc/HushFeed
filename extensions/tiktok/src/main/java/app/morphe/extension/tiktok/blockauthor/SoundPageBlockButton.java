@@ -432,7 +432,9 @@ public final class SoundPageBlockButton {
         }
         GradientDrawable pill = new GradientDrawable();
         pill.setCornerRadius(save.getHeight() / 2f);
-        boolean lightText = Color.luminance(textColor) > 0.5f;
+        // Color.luminance(int) needs API 24, and TikTok runs from Android 6 (API 23).
+        boolean lightText = Color.red(textColor) * 299 + Color.green(textColor) * 587
+                + Color.blue(textColor) * 114 > 128_000;
         pill.setColor(lightText ? 0x29FFFFFF : 0x14000000);
         return pill;
     }

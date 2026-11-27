@@ -47,7 +47,13 @@ public final class ProfileMenuCells {
      * The list TikTok is filling on this thread: whether the last cell asked about was hidden
      * here, and how many cells it kept and how many this class took out since the list began.
      */
-    private static final ThreadLocal<int[]> FILLING = ThreadLocal.withInitial(() -> new int[3]);
+    private static final ThreadLocal<int[]> FILLING = new ThreadLocal<int[]>() {
+        // Not ThreadLocal.withInitial: that needs API 26, and TikTok runs from Android 6 (API 23).
+        @Override
+        protected int[] initialValue() {
+            return new int[3];
+        }
+    };
     private static final int LAST_HIDDEN = 0;
     private static final int KEPT = 1;
     private static final int TAKEN_OUT = 2;

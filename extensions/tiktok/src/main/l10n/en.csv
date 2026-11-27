@@ -257,6 +257,7 @@ Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving t
 "Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID.","Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to shrink it to a dot, and tap the dot to bring it back. Hold the line to copy the room ID."
 "Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back."
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
+"Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.","Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing."
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts."
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok."
 Ads,Ads
@@ -548,6 +549,7 @@ Copy user ID,Copy user ID
 Copy username,Copy username
 Copy video ID,Copy video ID
 Copy-protected videos can't be saved,Copy-protected videos can't be saved
+Corner size on profile grids,Corner size on profile grids
 Couldn't add the caption. Saving without it.,Couldn't add the caption. Saving without it.
 Couldn't add the older seen videos. Try again.,Couldn't add the older seen videos. Try again.
 Couldn't change the Lab settings. Try again.,Couldn't change the Lab settings. Try again.
@@ -886,6 +888,7 @@ Full-width progress bar,Full-width progress bar
 Fully round,Fully round
 GIF,GIF
 Galaxy Store,Galaxy Store
+Gap between videos on profile grids,Gap between videos on profile grids
 Gate data unavailable,Gate data unavailable
 Gate details,Gate details
 Generated defaults,Generated defaults
@@ -1190,6 +1193,7 @@ How many saves run at the same time. The others wait in line and start as each o
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.
 How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.
 How much the video behind the glass pill on the main feed is blurred.,How much the video behind the glass pill on the main feed is blurred.
+"How round the corners are, in dp. TikTok's own cards use about 8.","How round the corners are, in dp. TikTok's own cards use about 8."
 How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.,How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.
 "How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more.","How solid the buttons, caption and tabs are while dimmed, from %1$d to %2$d. Lower dims them more."
 "How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through.","How solid the line under the caption is drawn, from 10 to 100. Lower lets more of the video show through."

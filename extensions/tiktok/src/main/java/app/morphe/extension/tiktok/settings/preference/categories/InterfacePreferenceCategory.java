@@ -421,6 +421,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.",
                     Settings.ROUNDED_GRID_CORNERS
             ));
+            addPreference(new NumberInputPreference(context, "Corner size on profile grids",
+                    "How round the corners are, in dp. TikTok's own cards use about 8.",
+                    Settings.GRID_CORNER_RADIUS, "%1$s dp", "%1$s dp"));
+            addPreference(new NumberInputPreference(context, "Gap between videos on profile grids",
+                    "Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.",
+                    Settings.GRID_GAP, "%1$s dp", "%1$s dp").zeroMeans("Default"));
             if (SettingsStatus.gridSortEnabled) {
                 addPreference(new ChoicePreference(context, "Sort loaded videos on profile grids",
                         Settings.PROFILE_GRID_SORT,

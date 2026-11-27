@@ -3284,3 +3284,11 @@ Unavailable saved video	วิดีโอที่บันทึกไว้�
 Posted %1$s	โพสต์เมื่อ %1$s
 Remembered %1$s	จำไว้เมื่อ %1$s
 Unavailable since %1$s	ไม่พร้อมใช้งานตั้งแต่ %1$s
+# context: Number row under Round the corners on profile grids; how big the rounded corners are, in dp
+Corner size on profile grids	ขนาดมุมโค้งบนตารางโปรไฟล์
+# context: Summary of Corner size on profile grids; dp is the screen unit shown next to the number
+How round the corners are, in dp. TikTok's own cards use about 8.	ความโค้งของมุม หน่วยเป็น dp การ์ดของ TikTok เองใช้ประมาณ 8
+# context: Number row in the profile grid settings; extra space between the videos, in dp
+Gap between videos on profile grids	ระยะห่างระหว่างวิดีโอบนตารางโปรไฟล์
+# context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
+Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	เพิ่มระยะห่างระหว่างวิดีโอบนตารางโปรไฟล์ นอกเหนือจากเส้นบางๆ ของ TikTok เอง ใช้ 0 เพื่อใช้ระยะห่างของ TikTok

@@ -3281,3 +3281,11 @@ Unavailable saved video	Kullanılamayan kayıtlı video
 Posted %1$s	Paylaşıldı: %1$s
 Remembered %1$s	Hatırlandı: %1$s
 Unavailable since %1$s	%1$s tarihinden beri kullanılamıyor
+# context: Number row under Round the corners on profile grids; how big the rounded corners are, in dp
+Corner size on profile grids	Profil ızgarasında köşe boyutu
+# context: Summary of Corner size on profile grids; dp is the screen unit shown next to the number
+How round the corners are, in dp. TikTok's own cards use about 8.	Köşelerin ne kadar yuvarlak olduğu, dp cinsinden. TikTok'un kendi kartları yaklaşık 8 kullanır.
+# context: Number row in the profile grid settings; extra space between the videos, in dp
+Gap between videos on profile grids	Profil ızgarasında videolar arası boşluk
+# context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
+Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	Profil ızgarasındaki videoların arasına, TikTok'un kendi ince çizgisine ek olarak boşluk koyar. TikTok'un aralığı için 0 kullanın.

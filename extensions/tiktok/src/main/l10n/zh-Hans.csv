@@ -3106,3 +3106,7 @@ Unavailable saved video,不可用的收藏视频
 Posted %1$s,发布于 %1$s
 Remembered %1$s,记住于 %1$s
 Unavailable since %1$s,自 %1$s 起不可用
+Corner size on profile grids,个人资料网格的圆角大小
+"How round the corners are, in dp. TikTok's own cards use about 8.",圆角有多圆，单位为 dp。TikTok 自己的卡片大约是 8.
+Gap between videos on profile grids,个人资料网格的视频间距
+"Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.",在个人资料网格的视频之间加上间距，叠加在 TikTok 自带的细线之上。用 0 保留 TikTok 的间距.

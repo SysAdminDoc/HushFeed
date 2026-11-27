@@ -3281,3 +3281,11 @@ Unavailable saved video	Video salvato non disponibile
 Posted %1$s	Pubblicato il %1$s
 Remembered %1$s	Ricordato il %1$s
 Unavailable since %1$s	Non disponibile dal %1$s
+# context: Number row under Round the corners on profile grids; how big the rounded corners are, in dp
+Corner size on profile grids	Dimensione degli angoli nella griglia del profilo
+# context: Summary of Corner size on profile grids; dp is the screen unit shown next to the number
+How round the corners are, in dp. TikTok's own cards use about 8.	Quanto sono arrotondati gli angoli, in dp. Le schede di TikTok usano circa 8.
+# context: Number row in the profile grid settings; extra space between the videos, in dp
+Gap between videos on profile grids	Spazio tra i video nella griglia del profilo
+# context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
+Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	Aggiunge spazio tra i video nella griglia del profilo, oltre alla sottile linea di TikTok. Usa 0 per la spaziatura di TikTok.

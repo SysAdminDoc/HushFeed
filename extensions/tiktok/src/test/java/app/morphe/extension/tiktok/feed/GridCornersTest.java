@@ -9,7 +9,9 @@ import android.content.Context;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.FrameLayout;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -35,6 +37,8 @@ public class GridCornersTest {
         publishDate = SettingsStatus.alwaysShowPublishDateEnabled;
         SettingsStatus.alwaysShowPublishDateEnabled = true;
         Settings.ROUNDED_GRID_CORNERS.resetToDefault();
+        Settings.GRID_CORNER_RADIUS.resetToDefault();
+        Settings.GRID_GAP.resetToDefault();
         HookStatus.clear();
         context = RuntimeEnvironment.getApplication();
     }
@@ -42,7 +46,75 @@ public class GridCornersTest {
     @After public void tearDown() {
         SettingsStatus.alwaysShowPublishDateEnabled = publishDate;
         Settings.ROUNDED_GRID_CORNERS.resetToDefault();
+        Settings.GRID_CORNER_RADIUS.resetToDefault();
+        Settings.GRID_GAP.resetToDefault();
         HookStatus.clear();
+    }
+
+    @Test public void theCornerSizeSettingSetsTheRadiusAndAChangeReachesABoundCell() {
+        Settings.ROUNDED_GRID_CORNERS.save(true);
+        Settings.GRID_CORNER_RADIUS.save(12);
+        View view = cell(ViewOutlineProvider.BOUNDS, false);
+        GridCorners.cell(view);
+        assertEquals("12dp at xxhdpi", 36f, outlineOf(view).getRadius(), 0.01f);
+
+        Settings.GRID_CORNER_RADIUS.save(4);
+        GridCorners.cell(view);
+        assertEquals("the next bind takes the new size", 12f, outlineOf(view).getRadius(), 0.01f);
+
+        Settings.ROUNDED_GRID_CORNERS.save(false);
+        GridCorners.cell(view);
+        assertSame("still gives back TikTok's own outline", ViewOutlineProvider.BOUNDS, view.getOutlineProvider());
+        assertFalse(view.getClipToOutline());
+    }
+
+    /** A cell in its grid with the margins TikTok gave it. */
+    private View spacedCell(int left, int top, int right, int bottom) {
+        FrameLayout grid = new FrameLayout(context);
+        View view = new View(context);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(120, 160);
+        params.setMargins(left, top, right, bottom);
+        grid.addView(view, params);
+        return view;
+    }
+
+    private static void assertMargins(String message, View view, int left, int top, int right, int bottom) {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        assertEquals(message, new Rect(left, top, right, bottom),
+                new Rect(params.leftMargin, params.topMargin, params.rightMargin, params.bottomMargin));
+    }
+
+    @Test public void aGapAddsHalfToEachOwnMarginOnceAndZeroGivesThemBack() {
+        View view = spacedCell(3, 0, 3, 6);
+        GridCorners.cell(view);
+        assertMargins("no gap set leaves TikTok's own", view, 3, 0, 3, 6);
+
+        Settings.GRID_GAP.save(4);
+        GridCorners.cell(view);
+        assertMargins("4dp at xxhdpi is 12px, half on each side", view, 9, 6, 9, 12);
+        GridCorners.cell(view);
+        assertMargins("a second bind adds nothing more", view, 9, 6, 9, 12);
+
+        Settings.GRID_GAP.save(8);
+        GridCorners.cell(view);
+        assertMargins("a new gap starts from TikTok's own margins", view, 15, 12, 15, 18);
+
+        Settings.GRID_GAP.save(0);
+        GridCorners.cell(view);
+        assertMargins("0 gives the cell its own margins back", view, 3, 0, 3, 6);
+    }
+
+    @Test public void theGapWorksWithTheCornersOffAndReachesCollectionCells() {
+        Settings.GRID_GAP.save(2);
+        View view = spacedCell(0, 0, 0, 0);
+        GridCorners.collectionCell(new CollectionHolder(view));
+        assertMargins("2dp is 6px, 3 a side", view, 3, 3, 3, 3);
+        assertFalse("no corners without their switch", view.getClipToOutline());
+
+        SettingsStatus.alwaysShowPublishDateEnabled = false;
+        View other = spacedCell(1, 1, 1, 1);
+        GridCorners.cell(other);
+        assertMargins("without the patch nothing changes", other, 1, 1, 1, 1);
     }
 
     /** A cell laid out at 120 by 160 pixels, with whatever outline TikTok gave it. */

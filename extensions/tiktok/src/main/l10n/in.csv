@@ -3108,3 +3108,7 @@ Unavailable saved video,Video tersimpan tidak tersedia
 Posted %1$s,Diposting %1$s
 Remembered %1$s,Diingat %1$s
 Unavailable since %1$s,Tidak tersedia sejak %1$s
+Corner size on profile grids,Ukuran sudut di kisi profil
+"How round the corners are, in dp. TikTok's own cards use about 8.","Seberapa bulat sudutnya, dalam dp. Kartu TikTok sendiri memakai sekitar 8."
+Gap between videos on profile grids,Jarak antar video di kisi profil
+"Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.","Menambahkan jarak antar video di kisi profil, di luar garis tipis milik TikTok. Gunakan 0 untuk jarak bawaan TikTok."

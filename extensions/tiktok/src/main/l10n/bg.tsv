@@ -3284,3 +3284,11 @@ Unavailable saved video	Неналично запазено видео
 Posted %1$s	Публикувано на %1$s
 Remembered %1$s	Запомнено на %1$s
 Unavailable since %1$s	Не е налично от %1$s
+# context: Number row under Round the corners on profile grids; how big the rounded corners are, in dp
+Corner size on profile grids	Размер на ъглите в мрежите на профилите
+# context: Summary of Corner size on profile grids; dp is the screen unit shown next to the number
+How round the corners are, in dp. TikTok's own cards use about 8.	Колко заоблени са ъглите, в dp. Картите на самия TikTok са около 8.
+# context: Number row in the profile grid settings; extra space between the videos, in dp
+Gap between videos on profile grids	Разстояние между видеата в мрежите на профилите
+# context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
+Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	Добавя разстояние между видеата в мрежите на профилите, освен тънката линия на TikTok. Използвай 0 за разстоянието на TikTok.

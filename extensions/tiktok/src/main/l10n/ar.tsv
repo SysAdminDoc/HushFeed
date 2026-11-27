@@ -3552,3 +3552,11 @@ Unavailable saved video	فيديو محفوظ غير متاح
 Posted %1$s	نُشر في %1$s
 Remembered %1$s	تم تذكره في %1$s
 Unavailable since %1$s	غير متاح منذ %1$s
+# context: Number row under Round the corners on profile grids; how big the rounded corners are, in dp
+Corner size on profile grids	حجم الزوايا في شبكات الملف الشخصي
+# context: Summary of Corner size on profile grids; dp is the screen unit shown next to the number
+How round the corners are, in dp. TikTok's own cards use about 8.	مدى استدارة الزوايا بوحدة dp. تستخدم بطاقات TikTok نفسها نحو 8.
+# context: Number row in the profile grid settings; extra space between the videos, in dp
+Gap between videos on profile grids	المسافة بين الفيديوهات في شبكات الملف الشخصي
+# context: Summary of Gap between videos on profile grids; 0 keeps the spacing TikTok draws itself
+Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.	يضيف مسافة بين الفيديوهات في شبكات الملف الشخصي فوق الخط الرفيع الذي يرسمه TikTok. استخدم 0 لمسافات TikTok.

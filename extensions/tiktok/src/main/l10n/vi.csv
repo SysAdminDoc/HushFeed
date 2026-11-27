@@ -3106,3 +3106,7 @@ Unavailable saved video,Video đã lưu không khả dụng
 Posted %1$s,Đăng ngày %1$s
 Remembered %1$s,Ghi nhớ ngày %1$s
 Unavailable since %1$s,Không khả dụng từ %1$s
+Corner size on profile grids,Độ bo góc trên lưới trang cá nhân
+"How round the corners are, in dp. TikTok's own cards use about 8.","Độ bo tròn của góc, tính bằng dp. Thẻ của chính TikTok dùng khoảng 8."
+Gap between videos on profile grids,Khoảng cách giữa các video trên lưới trang cá nhân
+"Adds space between the videos on profile grids, on top of TikTok's own thin line. Use 0 for TikTok's spacing.","Thêm khoảng cách giữa các video trên lưới trang cá nhân, ngoài đường mảnh của chính TikTok. Dùng 0 để giữ khoảng cách của TikTok."

@@ -1097,6 +1097,11 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
     /** Rounded corners on every profile grid cell (#487). */
     public static final BooleanSetting ROUNDED_GRID_CORNERS = new BooleanSetting("rounded_grid_corners", FALSE);
+    /** How round those corners are, in dp (#549). 8 is about what TikTok's own cards use. */
+    public static final IntegerSetting GRID_CORNER_RADIUS = new IntegerSetting("grid_corner_radius_dp", 8, false,
+            Setting.parent(ROUNDED_GRID_CORNERS)).withRange(1, 48);
+    /** Space added between the videos on profile grids, in dp; 0 leaves TikTok's own spacing (#549). */
+    public static final IntegerSetting GRID_GAP = new IntegerSetting("grid_gap_dp", 0).withRange(0, 24);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** A sorted grid puts pinned videos in the chosen order with the rest instead of first (#466). */
